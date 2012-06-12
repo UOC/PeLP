@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC 
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="default" extends="struts-default">
+	<!-- 	
+		<interceptors>
+			<interceptor name="okiAuthenticationInterceptor"
+				class="uoc.edu.osid.environment.struts.interceptor.OKIAuthenticationInterceptor" />
+			<interceptor-stack name="okiStack">
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="okiAuthenticationInterceptor" />
+			</interceptor-stack>
+		</interceptors>
+
+		<default-interceptor-ref name="okiStack" />
+
+		<global-results>
+			<result name="login.required">/login-required.jsp</result>
+		</global-results>
+
+		<global-exception-mappings>
+			<exception-mapping result="login.required"
+				exception="uoc.edu.osid.environment.struts.interceptor.OKIAuthenticationException" />
+		</global-exception-mappings>
+ -->
+	</package>
+</struts>

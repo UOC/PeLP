@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+	<!-- service objects -->
+	<bean id="pelpService" class="uoc.edu.services.PelpServiceImpl">
+		<property name="objPelpBussines" ref="pelpBussines" />
+	</bean>
+
+	<!-- business objects -->
+	<bean id="pelpBussines" class="uoc.edu.model.bussines.PelpBussinesImpl">
+		<!--  Aqui es pasen els DAOS -->
+	</bean>
+
+	<!-- DAO objects -->
+	 
+	<bean id="exampleDAO" class="uoc.edu.model.dao.ExampleDAOImpl" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+ 	
+	<!-- post-processors for all standard config annotations -->
+	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+	<!-- The singleton hibernate session factory -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
+		<property name="packagesToScan" value="uoc.edu.model.vo"/>
+	</bean>
+
+	<!-- Spring's hibernate transaction manager -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- So classes/functions with @Transactional get a hibernate txn -->
+	<tx:annotation-driven />
+</beans>
+
