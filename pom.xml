@@ -71,8 +71,10 @@
 			<properties>
 				<!-- web.xml parameters -->
 				<configFilePath>${basedir}/src/main/resources/config/config.properties</configFilePath>
-
+				
 				<!--deploy parameters -->
+				
+				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
 				<jbossdeployhome>\Users\juanfrasr\servidor\jboss-4.2.3-1.GA\server\default\deploy</jbossdeployhome>
 			</properties>
 			<build>
@@ -128,6 +130,7 @@
 						<executions>
 							<execution>
 								<phase>package</phase>
+								<!-- Esto es en el caso que quieres subir directamente a un servidor externo. -->
 								<configuration>
 									<tasks>
 										<input message="kpax.uoc.es username:password"

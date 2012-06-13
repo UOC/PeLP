@@ -18,7 +18,7 @@
 	</bean>
 
 	<!-- DAO objects -->
-	 
+	<!-- Aqui definis los diferentes daos, con beans --> 
 	<bean id="exampleDAO" class="uoc.edu.model.dao.ExampleDAOImpl" >
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
