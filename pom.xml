@@ -48,11 +48,6 @@
 	<packaging>war</packaging>
 	<version>1.0-SNAPSHOT</version>
 	<name>pelp</name>
-	<scm>
-		<connection>scm:svn:http://svn.uoc.es/${jira.key}/trunk</connection>
-		<developerConnection>scm:svn:http://svn.uoc.es/${jira.key}/trunk</developerConnection>
-		<url>http://svn.uoc.es/${jira.key}</url>
-	</scm>
 	<build>
 		<finalName>pelp</finalName>
 	</build>
@@ -69,11 +64,7 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- web.xml parameters -->
-				<configFilePath>${basedir}/src/main/resources/config/config.properties</configFilePath>
-				
 				<!--deploy parameters -->
-				
 				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
 				<jbossdeployhome>\Users\juanfrasr\servidor\jboss-4.2.3-1.GA\server\default\deploy</jbossdeployhome>
 			</properties>
