@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uoc.edu.model.vo;
+package uoc.edu.pelp.model.vo;
 
 
 /**

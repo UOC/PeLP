@@ -15,7 +15,8 @@ import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-import uoc.edu.model.vo.Example;
+import uoc.edu.pelp.model.dao.ExampleDAO;
+import uoc.edu.pelp.model.vo.Example;
 
 @ContextConfiguration("/test-daos.xml")
 public class ExampleDAOTest extends AbstractTransactionalJUnit4SpringContextTests {

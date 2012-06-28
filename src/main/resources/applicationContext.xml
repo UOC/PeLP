@@ -8,18 +8,18 @@
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 	<!-- service objects -->
-	<bean id="pelpService" class="uoc.edu.services.PelpServiceImpl">
+	<bean id="pelpService" class="uoc.edu.pelp.services.PelpServiceImpl">
 		<property name="objPelpBussines" ref="pelpBussines" />
 	</bean>
 
 	<!-- business objects -->
-	<bean id="pelpBussines" class="uoc.edu.model.bussines.PelpBussinesImpl">
+	<bean id="pelpBussines" class="uoc.edu.pelp.model.bussines.PelpBussinesImpl">
 		<!--  Aqui es pasen els DAOS -->
 	</bean>
 
 	<!-- DAO objects -->
 	<!-- Aqui definis los diferentes daos, con beans --> 
-	<bean id="exampleDAO" class="uoc.edu.model.dao.ExampleDAOImpl" >
+	<bean id="exampleDAO" class="uoc.edu.pelp.model.dao.ExampleDAOImpl" >
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
  	
@@ -30,7 +30,7 @@
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
-		<property name="packagesToScan" value="uoc.edu.model.vo"/>
+		<property name="packagesToScan" value="uoc.edu.pelp.model.vo"/>
 	</bean>
 
 	<!-- Spring's hibernate transaction manager -->

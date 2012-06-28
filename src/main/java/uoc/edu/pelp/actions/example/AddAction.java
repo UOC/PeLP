@@ -1,12 +1,12 @@
 /**
  * 
  */
-package uoc.edu.actions.example;
+package uoc.edu.pelp.actions.example;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 
-import uoc.edu.model.vo.Example;
+import uoc.edu.pelp.model.vo.Example;
 
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.ModelDriven;

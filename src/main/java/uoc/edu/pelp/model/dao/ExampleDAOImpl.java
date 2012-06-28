@@ -1,14 +1,14 @@
 /**
  * 
  */
-package uoc.edu.model.dao;
+package uoc.edu.pelp.model.dao;
 
 import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
-import uoc.edu.model.vo.Example;
+import uoc.edu.pelp.model.vo.Example;
 
 /**
  * @author xaracil

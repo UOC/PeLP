@@ -1,14 +1,14 @@
 /**
  * 
  */
-package uoc.edu.services;
+package uoc.edu.pelp.services;
 
 import java.util.List;
 
-import uoc.edu.model.bussines.PelpBussines;
-import uoc.edu.model.vo.ActivityData;
-import uoc.edu.model.vo.DeliverData;
-import uoc.edu.model.vo.DeliverReport;
+import uoc.edu.pelp.model.bussines.PelpBussines;
+import uoc.edu.pelp.model.vo.ActivityData;
+import uoc.edu.pelp.model.vo.DeliverData;
+import uoc.edu.pelp.model.vo.DeliverReport;
 
 /**
  * @author jsanchezramos
@@ -43,6 +43,30 @@ public class PelpServiceImpl implements PelpService {
 			Boolean incBinari, int deliverId) {
 		return objPelpBussines.getDeliverInfoById(campusSession, incBinari, deliverId);
 	}	
+	
+	/* (non-Javadoc)
+	 * @see uoc.edu.pelp.services.PelpService#getActivityInfo(uoc.edu.pelp.model.vo.ActivityData)
+	 * Obtenir la informaci— d'una tasca
+	 */
+	public ActivityData[] getActivityInfo(ActivityData objActivityData,String campusSession){
+		return objPelpBussines.getActivityInfo(objActivityData,campusSession);
+	}
+	
+	/* (non-Javadoc)
+	 * @see uoc.edu.pelp.services.PelpService#getActivityInfoById(int)
+	 * Obtenir la informaci— d'una tasca per activityId
+	 */
+	public ActivityData[] getActivityInfoById(int activityId,String campusSession){
+		return objPelpBussines.getActivityInfoById(activityId,campusSession);
+	}
+	
+	/* (non-Javadoc)
+	 * @see uoc.edu.pelp.services.PelpService#setActivityInfo(uoc.edu.pelp.model.vo.ActivityData)
+	 * Crear una nova tasca o modificar-se una d'existent
+	 */
+	public ActivityData setActivityInfo(ActivityData objActivityData,String campusSession){
+		return objPelpBussines.setActivityInfo(objActivityData,campusSession);
+	}
 
 	
 	
