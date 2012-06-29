@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uoc.edu.actions.example;
+package uoc.edu.pelp.actions.example;
 
 import com.opensymphony.xwork2.ActionSupport;
 

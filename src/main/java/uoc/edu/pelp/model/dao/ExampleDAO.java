@@ -1,11 +1,11 @@
 /**
  * 
  */
-package uoc.edu.model.dao;
+package uoc.edu.pelp.model.dao;
 
 import java.util.List;
 
-import uoc.edu.model.vo.Example;
+import uoc.edu.pelp.model.vo.Example;
 
 /**
  * @author xaracil

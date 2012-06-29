@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
-import uoc.edu.model.vo.Example;
+import uoc.edu.pelp.model.vo.Example;
 
 @ContextConfiguration("/test-services.xml")
 public class ExampleServiceTest extends
