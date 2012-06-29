@@ -13,11 +13,55 @@
 		</repository>
 	</repositories>
 	<dependencies>
+                <dependency>
+			<groupId>biz.source_code</groupId>
+			<artifactId>base64coder</artifactId>
+                        <version>2010-12-19</version>
+		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.17</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.5.6-Final</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.5.6-Final</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-spring-plugin</artifactId>
+			<version>2.2.1.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-web</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-beans</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>spring-core</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<!-- This artifact is already loaded by JBoss 4.2.3 -->
@@ -75,7 +119,7 @@
 				<!--deploy parameters -->
 				
 				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
-				<jbossdeployhome>\Users\juanfrasr\servidor\jboss-4.2.3-1.GA\server\default\deploy</jbossdeployhome>
+				<jbossdeployhome>\jboss-6.1.0.Final\server\default\deployments</jbossdeployhome>
 			</properties>
 			<build>
 				<plugins>
@@ -133,13 +177,13 @@
 								<!-- Esto es en el caso que quieres subir directamente a un servidor externo. -->
 								<configuration>
 									<tasks>
-										<input message="kpax.uoc.es username:password"
+										<input message="corrector.uoc.es username:password"
 											addproperty="server.user" />
 										<echo message="Conectando..." />
 										<echo message="Copiando war..." />
 										<sleep seconds="2" />
 										<scp file="${basedir}/target/pelp.war"
-											todir="${server.user}@pelp.uoc.es:/opt/jboss/server/default/deploy/"
+											todir="${server.user}@corrector.uoc.es:/srv/PeLP/deployments/"
 											port="36963" trust="true" />
 										<echo message="Finalizado" />
 									</tasks>
