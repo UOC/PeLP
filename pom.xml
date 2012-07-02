@@ -13,10 +13,10 @@
 		</repository>
 	</repositories>
 	<dependencies>
-                <dependency>
+		<dependency>
 			<groupId>biz.source_code</groupId>
 			<artifactId>base64coder</artifactId>
-                        <version>2010-12-19</version>
+			<version>2010-12-19</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
@@ -71,20 +71,20 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-kernel</artifactId>
-            <version>1.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-codegen</artifactId>
-            <version>1.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-spring</artifactId>
-            <version>1.4.1</version>
-        </dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-kernel</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-codegen</artifactId>
+			<version>1.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-spring</artifactId>
+			<version>1.4.1</version>
+		</dependency>
 	</dependencies>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uoc.edu</groupId>
@@ -165,7 +165,8 @@
 						<executions>
 							<execution>
 								<phase>package</phase>
-								<!-- Esto es en el caso que quieres subir directamente a un servidor externo. -->
+								<!-- Esto es en el caso que quieres subir directamente a un servidor 
+									externo. -->
 								<configuration>
 									<tasks>
 										<input message="corrector.uoc.es username:password"
