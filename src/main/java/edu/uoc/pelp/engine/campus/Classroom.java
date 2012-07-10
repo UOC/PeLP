@@ -69,6 +69,13 @@ public class Classroom {
         _subjectRef=subject;
     }
     
+    /**
+     * Get the reference to the subject object which contains this classroom
+     * returj Subject object
+     */
+    public Subject getSubjectRef() {
+        return _subjectRef;
+    }
     
     /**
      * Add a new teacher to the classroom.
@@ -84,5 +91,65 @@ public class Classroom {
         if(!_teachers.containsKey(teacher.getUserID())) {
             _teachers.put(teacher.getUserID(), teacher);
         }
+    }
+    
+    /**
+     * Add a new student to the classroom.
+     * @param student Information for the student.
+     */
+    public void addStudent(Person student) {
+        // If the list of main teachers is null, create a new list
+        if(_students==null) {
+            _students=new HashMap<IUserID,Person>();
+        }
+        
+        // Add this person to the list if it does not exist
+        if(!_students.containsKey(student.getUserID())) {
+            _students.put(student.getUserID(), student);
+        }
+    }
+    
+    /**
+     * Gets the main teachers of the subject of this classroom
+     * @return Map with all the main teachers
+     */
+    public HashMap<IUserID, Person> getMainTeachers() {
+        return _subjectRef.getMainTeachers();
+    }
+    
+    /**
+     * Gets the teachers of the current classroom
+     * @return Map with all the teachers
+     */
+    public HashMap<IUserID, Person> getTeachers() {
+        return _teachers;
+    }
+    
+    /**
+     * Gets the students of the current classroom
+     * @return Map with all the students
+     */
+    public HashMap<IUserID, Person> getStudents() {
+        return _students;
+    }
+    
+     /**
+     * Remove all Students
+     */
+    public void clearStudents() {
+        if(_students!=null) {
+            _students.clear();
+        }
+        _students=null;
+    }
+    
+    /**
+     * Remove all teachers of the classroom
+     */
+    public void clearTeachers() {
+        if(_teachers!=null) {
+            _teachers.clear();
+        }
+        _teachers=null;
     }
 }

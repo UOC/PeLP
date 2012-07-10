@@ -47,7 +47,7 @@ final public class EngineAuthManager {
      * Check if the user is authenticated.
      * @return True if it is authenticated and False if it is not.
      */
-    boolean isUserAuthenticated() {
+    boolean isUserAuthenticated() throws AuthPelpException{
         
         // Ensure that access to campus is provided
         assert _campusConnection!=null;

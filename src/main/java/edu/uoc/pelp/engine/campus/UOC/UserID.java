@@ -19,19 +19,18 @@
 package edu.uoc.pelp.engine.campus.UOC;
 
 import edu.uoc.pelp.engine.campus.GenericID;
-import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.engine.campus.IUserID;
 
 /**
  * Implementation for the user identifier in the campus of the Universitat Oberta de Catalunya
  * @author Xavier Baró
  */
-public class UserID extends GenericID {
+public class UserID extends GenericID implements IUserID {
     
     /**
-     * Users are identified by their idp value. 
+     * Users are identified by their id value. 
      */
-    public String idp=null;
+    public String idp = null;
     
     public UserID(String idp) {
         this.idp=idp;

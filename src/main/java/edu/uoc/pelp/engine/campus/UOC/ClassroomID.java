@@ -26,7 +26,7 @@ import edu.uoc.pelp.exception.PelpException;
  * Implementation for the classroom identifier in the campus of the Universitat Oberta de Catalunya
  * @author Xavier Baró
  */
-public class ClassroomID extends GenericID {
+public class ClassroomID extends GenericID implements IClassroomID {
 
     /**
      * Classrooms are identified by the subjectID and a numeric index from 1 to N. 
@@ -55,5 +55,47 @@ public class ClassroomID extends GenericID {
         } else {
             throw new PelpException("Object of type " + genericID.getClass() + " cannot be copided to an object of class " + this.getClass());
         }
+    }
+
+    /**
+     * Get the index of this classroom inside the subject
+     * @return Classroom index
+     */
+    public Integer getClassIdx() {
+        return _classIdx;
+    }
+
+    /**
+     * Get the subject that contains this classroom
+     * @return The subject identifier for this class
+     */
+    public SubjectID getSubject() {
+        return _subjectCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ClassroomID other = (ClassroomID) obj;
+        if (this._subjectCode != other._subjectCode && (this._subjectCode == null || !this._subjectCode.equals(other._subjectCode))) {
+            return false;
+        }
+        if (this._classIdx != other._classIdx && (this._classIdx == null || !this._classIdx.equals(other._classIdx))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this._subjectCode != null ? this._subjectCode.hashCode() : 0);
+        hash = 59 * hash + (this._classIdx != null ? this._classIdx.hashCode() : 0);
+        return hash;
     }
 }

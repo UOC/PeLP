@@ -5,7 +5,7 @@ package uoc.edu.pelp.services;
 
 import java.util.List;
 
-import uoc.edu.pelp.model.bussines.PelpBussines;
+import uoc.edu.pelp.bussines.PelpBussines;
 import uoc.edu.pelp.model.vo.ActivityData;
 import uoc.edu.pelp.model.vo.DeliverData;
 import uoc.edu.pelp.model.vo.DeliverReport;

@@ -25,6 +25,6 @@ package edu.uoc.pelp.engine.campus;
  * @author Xavier Baró
  */
 public interface IUserID extends IPelpID {
-
+    
 }
 
