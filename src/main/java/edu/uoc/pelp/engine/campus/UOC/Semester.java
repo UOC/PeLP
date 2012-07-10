@@ -20,10 +20,8 @@ package edu.uoc.pelp.engine.campus.UOC;
 
 import edu.uoc.pelp.engine.campus.GenericID;
 import edu.uoc.pelp.engine.campus.ITimePeriod;
-import edu.uoc.pelp.engine.campus.Subject;
 import edu.uoc.pelp.exception.PelpException;
 import java.util.Date;
-import java.util.HashMap;
 
 /**
  * Implementation for the time period in the campus of the Universitat Oberta de Catalunya.
@@ -35,11 +33,6 @@ public class Semester extends GenericID implements ITimePeriod{
     private Date _begin=null;
     private Date _end=null;
     private String _id;
-    
-    /** 
-     * Subjects active on the semester. 
-     */
-    private HashMap<SubjectID,Subject> _subjects=null;
     
     public Semester(String id) {
         _begin=null;
@@ -88,7 +81,7 @@ public class Semester extends GenericID implements ITimePeriod{
         // Oterwise, the period is considered active 
         return true;
     }
-
+    
     @Override
     protected void copyData(GenericID genericID) throws PelpException {
         if (genericID instanceof Semester) {
@@ -98,6 +91,36 @@ public class Semester extends GenericID implements ITimePeriod{
         } else {
             throw new PelpException("Object of type " + genericID.getClass() + " cannot be copided to an object of class " + this.getClass());
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Semester other = (Semester) obj;
+        if (this._begin != other._begin && (this._begin == null || !this._begin.equals(other._begin))) {
+            return false;
+        }
+        if (this._end != other._end && (this._end == null || !this._end.equals(other._end))) {
+            return false;
+        }
+        if ((this._id == null) ? (other._id != null) : !this._id.equals(other._id)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this._begin != null ? this._begin.hashCode() : 0);
+        hash = 59 * hash + (this._end != null ? this._end.hashCode() : 0);
+        hash = 59 * hash + (this._id != null ? this._id.hashCode() : 0);
+        return hash;
     }
     
 }

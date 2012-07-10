@@ -16,13 +16,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package edu.uoc.pelp.engine.components;
+package edu.uoc.pelp.exception;
 
 /**
- * Class that extends the basic PeLP component to represent a service
+ * Execution exception class for PeLP. Launched when an execution error is detected.
  * @author Xavier Baró
  */
-public class PelpService {
-    
-    
+public class ExecPelpException extends PelpException {
+
+    public ExecPelpException(String msg) {
+        super(msg);
+    }
+
+    public ExecPelpException() {
+        super("Execution error.");
+    }  
 }

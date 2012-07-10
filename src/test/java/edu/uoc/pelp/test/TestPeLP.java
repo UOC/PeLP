@@ -23,7 +23,6 @@ import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import edu.uoc.pelp.test.engine.campus.TestUOC.LocalCampusConnection;
-import java.util.HashMap;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,7 +37,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_NotAuth.class,
                      edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_Campus.class,
-                     edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_Student.class})
+                     edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_Student.class,
+                     edu.uoc.pelp.test.aem.CodeProject_Basics.class}
+        )
 public class TestPeLP {
     
     /**
