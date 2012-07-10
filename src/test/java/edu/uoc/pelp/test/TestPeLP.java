@@ -19,13 +19,11 @@
 package edu.uoc.pelp.test;
 
 import edu.uoc.pelp.engine.auth.EngineAuthManager;
-import edu.uoc.pelp.engine.campus.Classroom;
-import edu.uoc.pelp.engine.campus.ICampusConnection;
-import edu.uoc.pelp.engine.campus.Person;
-import edu.uoc.pelp.engine.campus.Subject;
+import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import edu.uoc.pelp.test.engine.campus.TestUOC.LocalCampusConnection;
+import java.util.HashMap;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -67,7 +65,12 @@ public class TestPeLP {
     }
     
     public static Classroom getClassroom(Subject subject,int posClassroom) {
-        return subject.getClassrooms().get(new ClassroomID((SubjectID)subject.getID(),posClassroom));
+        Classroom ret=null;
+        IClassroomID id=new ClassroomID((SubjectID)subject.getID(),posClassroom);
+        if(subject.getClassrooms()!=null) {
+            ret=subject.getClassrooms().get(id);
+        }
+        return ret;
     }
     
     public static Classroom getClassroom(ICampusConnection campusConnection,int posSubject,int posClassroom) {

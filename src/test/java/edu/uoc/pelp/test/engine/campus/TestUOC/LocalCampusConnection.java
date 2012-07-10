@@ -26,6 +26,7 @@ import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.exception.AuthPelpException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -604,18 +605,31 @@ public class LocalCampusConnection implements ICampusConnection{
         
         // Check if the current user can access to this user information.
         if(_dummySubjects!=null) {
-            for(Subject s:_dummySubjects.values()) {               
-                if((isRole(UserRoles.Teacher,s.getID()) && isRole(UserRoles.Student,s.getID(),userID)) || 
-                (isRole(UserRoles.MainTeacher,s.getID()) && isRole(UserRoles.Student,s.getID(),userID)) ||
-                (isRole(UserRoles.Student,s.getID()) && isRole(UserRoles.Teacher,s.getID(),userID)) || 
-                (isRole(UserRoles.Student,s.getID()) && isRole(UserRoles.MainTeacher,s.getID(),userID))) {
+            for(Subject s:_dummySubjects.values()) {
+                // Check subject level restrictions
+                if((isRole(UserRoles.MainTeacher,s.getID()) && isRole(UserRoles.Student,s.getID(),userID)) ||
+                   (isRole(UserRoles.Student,s.getID()) && isRole(UserRoles.MainTeacher,s.getID(),userID))) {
                     return _dummyUsers.get((UserID)userID);
+                }
+                
+                // Check classroom level restrictions
+                if((isRole(UserRoles.Teacher,s.getID()) && isRole(UserRoles.Student,s.getID(),userID)) ||                  
+                (isRole(UserRoles.Student,s.getID()) && isRole(UserRoles.Teacher,s.getID(),userID))) {
+                    if(s.getClassrooms()!=null) {
+                        for(Classroom c:s.getClassrooms().values()) {
+                            if((isRole(UserRoles.Teacher,c.getClassroomID()) && isRole(UserRoles.Student,c.getClassroomID(),userID)) ||                  
+                                (isRole(UserRoles.Student,c.getClassroomID()) && isRole(UserRoles.Teacher,c.getClassroomID(),userID))) {
+                                return _dummyUsers.get((UserID)userID);
+                            }
+                        }
+                    }
                 }
             }
         }
         
-        // If no access if allowed, return a null object
-        return null;
+        // If no access if allowed, throw exception
+        throw new AuthPelpException("Authentication is reguired to retrieve this information");
+        //return null;
     }
     
     private void createDummyData() {
@@ -676,13 +690,14 @@ public class LocalCampusConnection implements ICampusConnection{
         
         // Create the semesters
         try {    
+            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
             _dummySemesters.clear();
-            _dummySemesters.put("20111",new Semester("20111",DateFormat.getDateInstance().parse("21/09/2011"),
-                                                             DateFormat.getDateInstance().parse("15/01/2012")));
-            _dummySemesters.put("20112",new Semester("20112",DateFormat.getDateInstance().parse("16/01/2011"),
-                                                             DateFormat.getDateInstance().parse("01/08/2012")));
-            _dummySemesters.put("20121",new Semester("20121",DateFormat.getDateInstance().parse("15/09/2012"),
-                                                             DateFormat.getDateInstance().parse("17/01/2013")));
+            _dummySemesters.put("20111",new Semester("20111",df.parse("21/09/2011"),
+                                                             df.parse("15/01/2012")));
+            _dummySemesters.put("20112",new Semester("20112",df.parse("16/01/2011"),
+                                                             df.parse("01/08/2012")));
+            _dummySemesters.put("20121",new Semester("20121",df.parse("15/09/2012"),
+                                                             df.parse("17/01/2013")));
         } catch (ParseException ex) {
             Logger.getLogger(LocalCampusConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -695,17 +710,17 @@ public class LocalCampusConnection implements ICampusConnection{
         _testAccessSubjects[0].addMainTeacher(getTestPersonByPos(1));
         _testAccessSubjects[0].setDescription("Introduction to Java Programming");       
         _testAccessSubjects[0].setShortName("IJP");
-              
+                             
         SubjectID sid2=new SubjectID("05.554",_dummySemesters.get("20112"));
         _testAccessSubjects[1]=new Subject(sid2);
         _testAccessSubjects[1].setDescription("Introduction to Java Programming"); 
         _testAccessSubjects[1].setShortName("IJP");
-                
+                        
         SubjectID sid3=new SubjectID("05.564",_dummySemesters.get("20112"));
         _testAccessSubjects[2]=new Subject(sid3);
         _testAccessSubjects[2].setDescription("Introduction to C Programming");       
         _testAccessSubjects[2].setShortName("ICP");
-        
+                
         // Add the classrooms to created subjects
         Classroom cr1=new Classroom(new ClassroomID(sid1,1));
         cr1.addTeacher(getTestPersonByPos(2));
@@ -716,13 +731,12 @@ public class LocalCampusConnection implements ICampusConnection{
         cr2.addStudent(getTestPersonByPos(6));
         _testAccessSubjects[0].addClassroom(cr1);
         _testAccessSubjects[0].addClassroom(cr2);
-        
-                
+                       
         // Add the subjects to the list of subjects
         _dummySubjects.clear();
         _dummySubjects.put((SubjectID)_testAccessSubjects[0].getID(), _testAccessSubjects[0]);
         _dummySubjects.put((SubjectID)_testAccessSubjects[1].getID(), _testAccessSubjects[1]);
-        _dummySubjects.put((SubjectID)_testAccessSubjects[2].getID(), _testAccessSubjects[2]);
+        _dummySubjects.put((SubjectID)_testAccessSubjects[2].getID(), _testAccessSubjects[2]);     
     }
     
     /**

@@ -50,7 +50,7 @@ public class LocalAuthManager_Student {
         // Try to obtain the user ID
         IUserID id=_campusConnection.getUserID();
         Assert.assertNotNull(id);
-        Assert.assertEquals(((UserID)id).idp,TestPeLP.getUser(_campusConnection, 3));
+        Assert.assertEquals(((UserID)id),TestPeLP.getUser(_campusConnection, 3).getUserID());
     }
     
     @Test
@@ -93,7 +93,7 @@ public class LocalAuthManager_Student {
         IClassroomID[] classroomsList=_campusConnection.getUserClassrooms();
         Assert.assertNotNull(classroomsList);
         Assert.assertTrue("One classroom is retrieved", classroomsList.length==1);
-        Assert.assertEquals(TestPeLP.getClassroom(_campusConnection, 0,0).getClassroomID(), classroomsList[0]);
+        Assert.assertEquals(TestPeLP.getClassroom(_campusConnection, 0,1).getClassroomID(), classroomsList[0]);
     }
     
     @Test
@@ -101,8 +101,8 @@ public class LocalAuthManager_Student {
         // Try to obtain the user classrooms
         IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.Student);
         Assert.assertNotNull(classroomsList);
-        Assert.assertEquals("One classroom is retrieved", classroomsList.length==1);
-        Assert.assertEquals(TestPeLP.getClassroom(_campusConnection, 0,0).getClassroomID(), classroomsList[0]);
+        Assert.assertTrue("One classroom is retrieved", classroomsList.length==1);
+        Assert.assertEquals(TestPeLP.getClassroom(_campusConnection, 0,1).getClassroomID(), classroomsList[0]);
     }
     
     @Test
@@ -172,10 +172,7 @@ public class LocalAuthManager_Student {
         
         Assert.assertNotNull(classrooms);
         Assert.assertTrue("One Classrooms is retrieved", classrooms.length==1);
-        
-        IClassroomID id=TestPeLP.getClassroom(s,0).getClassroomID();
-        
-        Assert.assertEquals(TestPeLP.getClassroom(s,0).getClassroomID(),classrooms[0]);
+        Assert.assertEquals(TestPeLP.getClassroom(s,1).getClassroomID(),classrooms[0]);
     }
     
     @Test

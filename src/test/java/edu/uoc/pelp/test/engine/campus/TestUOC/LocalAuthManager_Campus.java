@@ -126,11 +126,10 @@ public class LocalAuthManager_Campus {
         Assert.assertEquals(person, TestPeLP.getLocal(_campusConnection).getTestUser((UserID)person.getUserID()));
     }
     
-    @Test
+    @Test(expected=AuthPelpException.class)
     public void testGetOtherUserInfo() throws AuthPelpException {       
         // Obtain the information of user1
         Person person=_campusConnection.getUserData(new UserID("111111"));
-        Assert.assertNull(person);
     }
     
     @Test
