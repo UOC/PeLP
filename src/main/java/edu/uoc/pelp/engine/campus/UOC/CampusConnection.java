@@ -87,7 +87,7 @@ public class CampusConnection implements ICampusConnection{
     }
 
     public ISubjectID[] getUserSubjects() throws AuthPelpException {
-    	ArrayList<Subject> subjects;
+    	ArrayList<SubjectID> subjects;
     	if( userID == null ) {
     		userID = (UserID) getUserID();
     	}
@@ -108,15 +108,14 @@ public class CampusConnection implements ICampusConnection{
 					asignatura = assignaturaMatriculadaDocencia.getAssignatura();
 					Semester sem = new Semester(semester);
 					SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), sem);
-					Subject subject = new  Subject( subID );
-					subjects.add(subject);
+					subjects.add(subID);
 				}
 			}
     	
     	} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	Subject[] subs;
+    	SubjectID[] subs;
         return subjects.toArray(subs); 
     }
 
@@ -202,4 +201,10 @@ public class CampusConnection implements ICampusConnection{
     public Person getUserData() throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+	public ISubjectID[] getUserSubjects(UserRoles userRole)
+			throws AuthPelpException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
