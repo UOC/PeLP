@@ -18,8 +18,28 @@
 */
 package edu.uoc.pelp.engine.campus.UOC;
 
-import edu.uoc.pelp.engine.campus.*;
+import java.util.ArrayList;
+
+import net.opentrends.remoteinterface.auth.Auth;
+import net.opentrends.remoteinterface.auth.SessionContext;
+
+import org.apache.log4j.Logger;
+
+import edu.uoc.serveis.gat.dadesacademiques.model.AssignaturaReduidaVO;
+import edu.uoc.pelp.engine.campus.Classroom;
+import edu.uoc.pelp.engine.campus.ICampusConnection;
+import edu.uoc.pelp.engine.campus.IClassroomID;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.engine.campus.IUserID;
+import edu.uoc.pelp.engine.campus.Person;
+import edu.uoc.pelp.engine.campus.Subject;
+import edu.uoc.pelp.engine.campus.UserRoles;
+import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
 import edu.uoc.pelp.exception.AuthPelpException;
+import edu.uoc.serveis.gat.expedient.model.ExpedientVO;
+import edu.uoc.serveis.gat.expedient.service.ExpedientService;
+import edu.uoc.serveis.gat.matricula.model.AssignaturaMatriculadaDocenciaVO;
+import edu.uoc.serveis.gat.matricula.service.MatriculaService;
 
 /**
  * Implements the campus access for the Universitat Oberta de Catalunya (UOC).
@@ -27,41 +47,96 @@ import edu.uoc.pelp.exception.AuthPelpException;
  */
 public class CampusConnection implements ICampusConnection{
     
+    String sesion;
+    UserID userID;
+
+    private static final Logger log = Logger.getLogger(CampusConnection.class);
+
+    public CampusConnection(String sesion) {
+            super();
+            this.sesion = sesion;
+    }
+
     public boolean isUserAuthenticated() {
-        // TODO: Comprovar si l'usuari actual està autenticat o no. Segurament caldrà accedir al Request.
-        throw new UnsupportedOperationException("Not supported yet.");
+    	boolean authenticated = false;
+    	try {
+    		Auth authService = WsLibBO.getAuthServiceInstance();
+    		authenticated = authService.isUserAuthenticated( sesion );
+    	} catch ( Exception e){
+    		//throw new AuthPelpException("Authentication process failed");
+                return false;
+    	}        
+    	return authenticated;
     }
 
     public IUserID getUserID() throws AuthPelpException {
-        
-        // Check if the user is authenticated
-        if(!isUserAuthenticated()) {
-            throw new AuthPelpException("Authentication is required");
-        }
-        
-        // TODO: Retorna l'identificador de l'usuari actual. Cal utilitzar la classe UserID per al cas de la UOC.
-        throw new UnsupportedOperationException("Not supported yet.");
+        IUserID userId;  
+    	try {
+    		Auth authService = WsLibBO.getAuthServiceInstance();
+            final SessionContext sessionContext = authService.getContextBySessionId(sesion);
+            if ( sessionContext == null ) {
+                log.error("Error al obtener la SessionContext de la sesion: " + sesion);
+                throw new Exception("Error al obtener la SessionContext de la sesion: " + sesion);
+            }
+            userId = new UserID( String.valueOf(sessionContext.getIdp()) );
+           
+    	} catch ( Exception e){
+    		throw new AuthPelpException("Authentication process failed");
+    	} 
+    	 return userId;
     }
 
-    public Subject[] getUserSubjects() throws AuthPelpException {
+    public ISubjectID[] getUserSubjects() throws AuthPelpException {
+    	ArrayList<SubjectID> subjects=null;
+    	if( userID == null ) {
+    		userID = (UserID) getUserID();
+    	}
         
-        // Check if the user is authenticated
-        if(!isUserAuthenticated()) {
-            throw new AuthPelpException("Authentication is required");
+    	try {
+            int idp = Integer.valueOf( userID.idp );
+            
+            ExpedientService expedientService = WsLibBO.getExpedientServiceInstance();
+            ExpedientVO[] expedientes = expedientService.getExpedientsByEstudiant( idp );
+            MatriculaService matriculaService = WsLibBO.getMatriculaServiceInstance();
+            // TODO semester?
+            String semester = "";
+            for (ExpedientVO expedient : expedientes) {
+                int numExpedient = expedient.getNumExpedient();
+/*                AssignaturaMatriculadaDocenciaVO[] asignaturas = matriculaService.getAssignaturesDocenciaMatriculadesEstudiant(idp, semester);
+
+                for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturas) {
+                        AssignaturaReduidaVO asignatura;
+                        asignatura = assignaturaMatriculadaDocencia.getAssignatura();
+                        Semester sem = new Semester(semester);
+                        SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), sem);
+                        subjects.add(subID);
+                }
+*/            }	
+        // TODO: There is an error of incompatible data types...
+        throw new UnsupportedOperationException("Not supported yet."); 
+    	} catch (Exception e) {
+            e.printStackTrace();
         }
         
-        // TODO: Retorna la llista d'assignatures de l'usuari actual.
-        throw new UnsupportedOperationException("Not supported yet.");
+    	SubjectID[] subs=new SubjectID[subjects.size()];
+        return subjects.toArray(subs); 
     }
 
-    public Classroom[] getUserClassrooms() throws AuthPelpException {
-        
+    public IClassroomID[] getUserClassrooms() throws AuthPelpException {
+        return getUserClassrooms(null);
+    }
+    
+    public IClassroomID[] getUserClassrooms(UserRoles userRole) throws AuthPelpException {
         // Check if the user is authenticated
         if(!isUserAuthenticated()) {
             throw new AuthPelpException("Authentication is required");
         }
         
-        // TODO: Retorna la llista d'aules de l'usuari actual.
+        // TODO: Retorna la llista d'aules de l'usuari actual, filtrades per rol
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    public IClassroomID[] getSubjectClassrooms(ISubjectID subject, UserRoles userRole) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -78,7 +153,7 @@ public class CampusConnection implements ICampusConnection{
         return isRole(role,subject,getUserID());
     }
 
-    public boolean isRole(UserRoles role, IClassroomID classroom, IUserID user) {
+    public boolean isRole(UserRoles role, IClassroomID classroom, IUserID user) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -86,31 +161,53 @@ public class CampusConnection implements ICampusConnection{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Person[] getRolePersons(UserRoles role, ISubjectID subject) {
+    public IUserID[] getRolePersons(UserRoles role, ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Person[] getRolePersons(UserRoles role, IClassroomID classroom) {
+    public IUserID[] getRolePersons(UserRoles role, IClassroomID classroom) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean hasChildSubjects(ISubjectID subject) {
+    public boolean hasLabSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public ISubjectID[] getChildSubjects(ISubjectID subject) {
+    public ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean hasEquivalentSubjects(ISubjectID subject) {
+    public boolean hasEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public ISubjectID[] getEquivalentSubjects(ISubjectID subject) {
+    public ISubjectID[] getEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public boolean isCampusConnection() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public Subject getSubjectData(ISubjectID subjectID) throws AuthPelpException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Person getUserData(IUserID userID) throws AuthPelpException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Person getUserData() throws AuthPelpException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+	public ISubjectID[] getUserSubjects(UserRoles userRole)
+			throws AuthPelpException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

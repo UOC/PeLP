@@ -16,15 +16,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package edu.uoc.pelp.engine.campus;
+package edu.uoc.pelp.exception;
 
 /**
- * Interface that defines a generic identifier for a user in the application. 
- * Since it will depends of the implementation for the campus, it may be 
- * implemented for each institution.
+ * Execution exception class for PeLP. Launched when an execution error is detected.
  * @author Xavier Baró
  */
-public interface IUserID extends IPelpID {
-    
-}
+public class ExecPelpException extends PelpException {
 
+    public ExecPelpException(String msg) {
+        super(msg);
+    }
+
+    public ExecPelpException() {
+        super("Execution error.");
+    }  
+}

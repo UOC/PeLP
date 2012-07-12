@@ -43,29 +43,58 @@ public interface ICampusConnection {
     IUserID getUserID() throws AuthPelpException;
     
     /**
-     * Retrieve all the subjects where the current logged used is inscribed,
+     * Retrieve all the subjects where the current logged user is inscribed,
      * both if is the teacher or if is student.
-     * @return Array with the subjects.
+     * @return Array with the identifier for each subject.
      * @throws AuthPelpException There is no user authenticated.
      */
-    Subject[] getUserSubjects() throws AuthPelpException;
+    ISubjectID[] getUserSubjects() throws AuthPelpException;
+        
+    /**
+     * Retrieve all the subjects where the current logged user is inscribed,
+     * as the given role.
+     * @param userRole User role to filter the query. If null, teacher and student roles are used.
+     * @return Array with the identifier for each subject.
+     * @throws AuthPelpException There is no user authenticated.
+     */
+    ISubjectID[] getUserSubjects(UserRoles userRole) throws AuthPelpException;
     
     /**
-     * Retrieve all the classrooms where the current logged used is inscribed,
+     * Retrieve all the classrooms where the current logged user is inscribed,
      * both if is the teacher or if is student.
-     * @return Array with the classrooms.
+     * @return Array with the identifier for each classroom.
      * @throws AuthPelpException There is no user authenticated.
      */
-    Classroom[] getUserClassrooms() throws AuthPelpException;
+    IClassroomID[] getUserClassrooms() throws AuthPelpException;
+        
+    /**
+     * Retrieve all the classrooms where the current logged user is inscribed with
+     * the given role. If the roll is null, teacher and student roles are considered.
+     * @param userRole User role to filter the query. If null, teacher and student roles are used.
+     * @return Array with the identifier for each classroom.
+     * @throws AuthPelpException There is no user authenticated.
+     */
+    IClassroomID[] getUserClassrooms(UserRoles userRole) throws AuthPelpException;
     
+    /**
+     * Retrieve all the classrooms for the given subject, where the current logged user 
+     * is inscribed with the given role. If the roll is null, teacher and student roles are
+     * considered.
+     * @param userRole User role to filter the query. If null, teacher and student roles are used.
+     * @return Array with the identifier for each classroom.
+     * @throws AuthPelpException There is no user authenticated.
+     */
+    IClassroomID[] getSubjectClassrooms(ISubjectID subject, UserRoles userRole) throws AuthPelpException;
+        
     /**
      * Checks if the given user has the given role in this subject.
      * @param role One of the available roles in the platform
      * @param subject A subject identifier
      * @param user A user identifier.
      * @return True if the user has the role in this subject or false otherwise.
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
      */
-    boolean isRole(UserRoles role,ISubjectID subject,IUserID user);
+    boolean isRole(UserRoles role,ISubjectID subject,IUserID user) throws AuthPelpException;
     
     /**
      * Checks if the current user has the given role in this subject.
@@ -82,8 +111,9 @@ public interface ICampusConnection {
      * @param classroom A classroom identifier
      * @param user A user identifier.
      * @return True if the user has the role in this classroom or false otherwise.
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
      */
-    boolean isRole(UserRoles role,IClassroomID classroom,IUserID user);
+    boolean isRole(UserRoles role,IClassroomID classroom,IUserID user) throws AuthPelpException;
     
     /**
      * Checks if the current user has the given role in this classroom.
@@ -98,45 +128,50 @@ public interface ICampusConnection {
      * Get the persons in the given subject with the given role.
      * @param role One of the available roles in the platform
      * @param subject A subject identifier
-     * @return Array of the persons in this subject with this role.
+     * @return Array of the person ids in this subject with this role.
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
      */
-    Person[] getRolePersons(UserRoles role,ISubjectID subject);
+    IUserID[] getRolePersons(UserRoles role,ISubjectID subject) throws AuthPelpException;
     
     /**
      * Get the persons in the given classroom with the given role.
      * @param role One of the available roles in the platform
      * @param classroom A classroom identifier
-     * @return Array of the persons in this classroom with this role.
+     * @return Array of the person ids in this classroom with this role.
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
      */
-    Person[] getRolePersons(UserRoles role,IClassroomID classroom);
+    IUserID[] getRolePersons(UserRoles role,IClassroomID classroom) throws AuthPelpException;
     
     /**
-     * Ckechs if the given subject has some child subjects
+     * Ckechs if the given subject has some laboratories. Each laboratory is treated as a subject with different classrooms.
      * @param subject A subject identifier
-     * @return True if the subject has child subjects or false otherwise
+     * @return True if the subject has laboratores or false otherwise
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
      */
-    boolean hasChildSubjects(ISubjectID subject);
+    boolean hasLabSubjects(ISubjectID subject) throws AuthPelpException;
     
     /**
-     * Returns the list of child subjects for the given subject.
+     * Returns the list of laboratories for the given subject. Each laboratory is treated as a subject with different classrooms.
      * @param subject A subject identifier
-     * @return Array of child subjects
+     * @return Array of laboratories
      */
-    ISubjectID[] getChildSubjects(ISubjectID subject);
+    ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException;
     
     /**
      * Ckechs if the given subject has some equivalent subjects
      * @param subject A subject identifier
      * @return True if the subject has equivalent subjects or false otherwise
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
      */
-    boolean hasEquivalentSubjects(ISubjectID subject);
+    boolean hasEquivalentSubjects(ISubjectID subject) throws AuthPelpException;
     
     /**
      * Returns the list of equivalent subjects for the given subject.
      * @param subject A subject identifier
      * @return Array of equivalent subjects
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
      */
-    ISubjectID[] getEquivalentSubjects(ISubjectID subject);
+    ISubjectID[] getEquivalentSubjects(ISubjectID subject) throws AuthPelpException;
     
     /**
      * Check if the user is connecting to the platform from an internal campus
@@ -144,4 +179,35 @@ public interface ICampusConnection {
      * @return True if connection if from campus network or false for external connections.
      */
     boolean isCampusConnection();
+    
+    /**
+     * Retrieve all the information for the given subject.
+     * @param subjectID Subject identifier.
+     * @return Object with the information allowed for the current logged user.
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
+     */
+    Subject getSubjectData(ISubjectID subjectID) throws AuthPelpException;
+    
+    /**
+     * Retrieve all the information for the given classroom.
+     * @param classroomID Classroom identifier.
+     * @return Object with the information allowed for the current logged user.
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
+     */
+    Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException;
+    
+    /**
+     * Retrieve all the information for the current user.
+     * @return Object with the information allowed for the current logged user.
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
+     */
+    Person getUserData() throws AuthPelpException;
+    
+    /**
+     * Retrieve all the information for the given user.
+     * @param userID User identifier.
+     * @return Object with the information allowed for the current logged user.
+     * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
+     */
+    Person getUserData(IUserID userID) throws AuthPelpException;
 }

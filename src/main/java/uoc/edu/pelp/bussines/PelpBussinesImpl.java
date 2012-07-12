@@ -1,4 +1,4 @@
-package uoc.edu.pelp.model.bussines;
+package uoc.edu.pelp.bussines;
 
 import java.util.List;
 
