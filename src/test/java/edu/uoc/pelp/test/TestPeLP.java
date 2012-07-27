@@ -38,7 +38,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_NotAuth.class,
                      edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_Campus.class,
                      edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_Student.class,
-                     edu.uoc.pelp.test.aem.CodeProject_Basics.class}
+                     edu.uoc.pelp.test.aem.CodeProject_Basics.class,
+                     edu.uoc.pelp.test.aem.CodeProject_Compile.class}
         )
 public class TestPeLP {
     
