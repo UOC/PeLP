@@ -179,8 +179,47 @@ public class CodeProject_Basics {
             Assert.fail("Cannot create the temporal file");
         }
     }
+    
+    @Test
+    public void testCopyOkFiles() throws ExecPelpException, AuthPelpException {        
+        try {
+            // Create 3 temporal files
+            File f1=File.createTempFile("tmpCodeProjectBasicsTest", null, _tmpPath);
+            f1.deleteOnExit();
+            File f2=File.createTempFile("tmpCodeProjectBasicsTest", null, _tmpPath);
+            f2.deleteOnExit();
+            File f3=File.createTempFile("tmpCodeProjectBasicsTest", null, _tmpPath);
+            f3.deleteOnExit();            
+            
+            // Add the tree files
+            _project.addFile(f1);
+            _project.addFile(f2);
+            _project.addFile(f3);
+            
+            // Check that the added files are in the project
+            File[] relFiles=_project.getRelativeFiles();
+            Assert.assertTrue("All files are added", relFiles.length==3);
+            
+            // Create a temporal folder
+            File newPathFile=createTemporalFolder("DestFolder");
+            
+            // Copy to other valid temporal folder
+            File[] absFiles=_project.getAbsoluteFiles();
+            _project.copyFiles(newPathFile);
+            for(File f:absFiles) {
+                Assert.assertTrue("Old files exist.",f.exists());
+            }
+            _project.changeRootPath(newPathFile);
+            absFiles=_project.getAbsoluteFiles();
+            for(File f:absFiles) {
+                Assert.assertTrue("New file exists.",f.exists());
+            }
+        } catch (IOException ex) {
+            Assert.fail("Cannot create the temporal file");
+        }
+    }
 
-    private File createTemporalFolder(String path) {
+    private static File createTemporalFolder(String path) {
         // Remove extra separators
         if(path.charAt(0)==File.separatorChar) {
             path.substring(1);
@@ -196,4 +235,5 @@ public class CodeProject_Basics {
         
         return tmpPath;
     }
+    
 }
