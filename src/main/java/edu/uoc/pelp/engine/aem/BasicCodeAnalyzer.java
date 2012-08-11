@@ -18,8 +18,11 @@
 */
 package edu.uoc.pelp.engine.aem;
 
+import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.aem.exception.LanguageAEMPelpException;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 
 /**
@@ -33,6 +36,11 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
      * Stores the working path.
      */
     protected File _workingPath=null;
+    
+    /** 
+     * Stores the configuration object
+     */
+    protected IPelpConfiguration _confObject=null;
     
     /**
      * Table of classes implementing specific analyzers. In the future, store this table outside.
@@ -76,6 +84,9 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
                     if(instance.isValidProject(project)) {
                         break;
                     }
+                    
+                    // Invalid project, remove the instance
+                    instance=null;
                 } catch (Exception ex) {
                     throw new LanguageAEMPelpException("Cannot create an object of the class <" + c.getCanonicalName() + ">");
                 }
@@ -129,6 +140,35 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
     }
     
     /**
+     * Changes the exension of a the given file to the given extension
+     * @param file Source file with or without extension
+     * @param newExt New extension to be applied, or null to remove extension.
+     * @return New file with the new extension
+     */
+    protected File changeExtension(File file, String newExt) {
+        
+        // Obtain the file
+        String filename=file.getPath();
+
+        // Remove the extension.
+        int extensionIndex = filename.lastIndexOf(".");
+        if (extensionIndex >=0) {
+            filename=filename.substring(0,extensionIndex);
+        }
+        
+        // Add new extension
+        if(newExt!=null) {
+            if(newExt.indexOf('.')==0) {
+                filename += newExt;
+            } else {
+                filename += "." + newExt;
+            }
+        }
+        
+        return new File(filename);
+    }
+    
+    /**
      * Get the list of allowed file extensions. It is used to check the files in the project and
      * avoid the use of non code files.
      * @return Array of file extensions
@@ -142,6 +182,9 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
      */
     protected abstract boolean isMainFile(File file);
     
+    public void setConfiguration(IPelpConfiguration confObject) {
+        _confObject=confObject;
+    }
     
     public TestResult test(ProgramTest test) {
         // Call an exec method
@@ -159,11 +202,67 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
 
     public boolean isValidProject(CodeProject project) {
         // Check the assigned language
+        if(project.getLanguage()!=null) {
+            if(!getLanguageID().equals(project.getLanguage())) {
+                return false;
+            }
+        }
         
         // Check the list of extensions
+        for(File f:project.getRelativeFiles()) {
+            if(!isAccepted(f)) {
+                return false;
+            }
+        }
         
         // Check the main file
+        if(project.getMainFile()!=null) {
+            if(!isMainFile(project.getMainFile())) {
+                return false;
+            } 
+        } else {
+            boolean hasMain=false;
+            for(File f:project.getAbsoluteFiles()) {                
+                if(isMainFile(f)) {
+                    hasMain=true;
+                    break;
+                }
+            }
+            if(!hasMain) {
+                return false;
+            }
+        }
         
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
+    }
+}
+
+class StrOutputStream extends OutputStream
+{
+    private StringBuffer textBuffer = new StringBuffer();
+    
+    /**
+     * Default constructor
+     */
+    public StrOutputStream()
+    {
+        super();
+    }
+
+    public void write(int b) throws IOException
+    {
+        char a = (char)b;
+        textBuffer.append(a);
+    }
+
+    @Override
+    public String toString()
+    {
+        return textBuffer.toString();
+    }
+  
+    public void clear()
+    {
+        textBuffer.delete(0, textBuffer.length());
     }
 }

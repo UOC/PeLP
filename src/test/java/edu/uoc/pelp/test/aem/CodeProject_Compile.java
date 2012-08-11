@@ -18,10 +18,15 @@
 */
 package edu.uoc.pelp.test.aem;
 
+import edu.uoc.pelp.engine.aem.BasicCodeAnalyzer;
+import edu.uoc.pelp.engine.aem.BuildResult;
 import edu.uoc.pelp.engine.aem.CodeProject;
 import edu.uoc.pelp.exception.ExecPelpException;
+import edu.uoc.pelp.test.TestPeLP;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -39,7 +44,7 @@ public class CodeProject_Compile {
         _tmpPath=createTemporalFolder("TestCodeProject");
         
         // Create a new project in the new created temporal folder        
-        _project=new CodeProject(_tmpPath);        
+        _project=new CodeProject(_tmpPath);   
     }
     
     private static File createTemporalFolder(String path) {
@@ -59,54 +64,243 @@ public class CodeProject_Compile {
         return tmpPath;
     }
     
-    @Test 
-    public void testCompileJavaOK() {
+    @Test(expected=ExecPelpException.class)
+    public void testCompileJavaFailPath() throws ExecPelpException {
+        File srcFile=null;
         try {
             // Create a temporal folder for code
+            File tmpDir=createTemporalFolder("TestCode");
             
-            // Create 3 temporal files
-            File f1=File.createTempFile("tmpCodeProjectBasicsTest", null, _tmpPath);
-            f1.deleteOnExit();
-            File f2=File.createTempFile("tmpCodeProjectBasicsTest", null, _tmpPath);
-            f2.deleteOnExit();
-            File f3=File.createTempFile("tmpCodeProjectBasicsTest", null, _tmpPath);
-            f3.deleteOnExit();            
+            // Create a code file
+            srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "Test1.java");            
+            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
             
-            // Add the tree files
-            _project.addFile(f1);
-            _project.addFile(f2);
-            _project.addFile(f3);
+            // Add the code
+            srcFileWriter.printf("public class Test1 {\n");
+            srcFileWriter.printf("\tpublic static void main(String[] args) {\n");
+            srcFileWriter.printf("\t\tSystem.out.println(\"Hello World!\\n\");\n");
+            srcFileWriter.printf("\t}\n");
+            srcFileWriter.printf("}\n");
             
-            // Check that the added files are in the project
-            File[] relFiles=_project.getRelativeFiles();
-            Assert.assertTrue("All files are added", relFiles.length==3);
+            // Close the source file
+            srcFileWriter.close();
             
-            // Add a repeated file
-            _project.addFile(f1);
+            // Create the Code Project with a file outside the path
+            _project.addFile(srcFile);
             
-            // Check that the last added files is not in the list
-            relFiles=_project.getRelativeFiles();
-            Assert.assertTrue("Repeated files are not added", relFiles.length==3);
+            // Remove input file
+            srcFile.delete(); 
             
-            // Add a non existing main file
-            File f4=File.createTempFile("tmpCodeProjectBasicsTest", null, _tmpPath);
-            f4.deleteOnExit();            
-            _project.addMainFile(f4);
-            Assert.assertEquals("Check the main file", f4.getName(), _project.getMainFile().getName());
-            relFiles=_project.getRelativeFiles();
-            Assert.assertTrue("Repeated files are not added", relFiles.length==4);
-                        
-            // Add an existing main file
-            _project.addMainFile(f2);
-            Assert.assertEquals("Check the main file", f2.getName(), _project.getMainFile().getName());
-            relFiles=_project.getRelativeFiles();
-            Assert.assertTrue("Repeated files are not added", relFiles.length==4);
+        } catch (IOException ex) {
+            Assert.fail("Cannot create the temporal file");
+            
+            // Remove input file
+            srcFile.delete();    
+        }
+    }
+    
+    @Test
+    public void testCompileJavaFAILCompilation() {
+        try {
+            // Create a temporal folder for code
+            File tmpDir=createTemporalFolder("TestCode");
+            
+            // Create a code file
+            File srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "Test1.java");            
+            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
+            
+            // Add the code
+            srcFileWriter.printf("public class Test1 {\n");
+            srcFileWriter.printf("\tpublic static void main(String[] args) {\n");
+            srcFileWriter.printf("\t\tSystem.out.println(\"Hello World!\\n\"\n"); // => ERROR IN THIS LINE
+            srcFileWriter.printf("\t}\n");
+            srcFileWriter.printf("}\n");
+            
+            // Close the source file
+            srcFileWriter.close();
+            
+            // Create the Code Project
+            _project.changeRootPath(tmpDir);
+            _project.addFile(srcFile);
+            
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
+            
+            // Compile the code
+            BuildResult result=codeAnalyzer.build(_project);
+            
+            // Check result
+            Assert.assertFalse("Compilation Fails", result.isCorrect());
+            
+            // Remove input file
+            srcFile.delete();            
             
         } catch (ExecPelpException ex) {
-            Assert.fail("Cannot create the file");
+            Assert.fail("Compilation error");
         } catch (IOException ex) {
             Assert.fail("Cannot create the temporal file");
         }
     }
     
+    @Test
+    public void testCompileJavaOK() {
+        try {
+            // Create a temporal folder for code
+            File tmpDir=createTemporalFolder("TestCode");
+            
+            // Create a code file
+            File srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "Test1.java");            
+            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
+            
+            // Add the code
+            srcFileWriter.printf("public class Test1 {\n");
+            srcFileWriter.printf("\tpublic static void main(String[] args) {\n");
+            srcFileWriter.printf("\t\tSystem.out.println(\"Hello World!\\n\");\n");
+            srcFileWriter.printf("\t}\n");
+            srcFileWriter.printf("}\n");
+            
+            // Close the source file
+            srcFileWriter.close();
+            
+            // Create the Code Project
+            _project.changeRootPath(tmpDir);
+            _project.addFile(srcFile);
+            
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
+            
+            // Compile the code
+            BuildResult result=codeAnalyzer.build(_project);
+            
+            // Check result
+            Assert.assertTrue("Compilation OK", result.isCorrect());
+                 
+            // Remove input file
+            srcFile.delete();    
+        } catch (ExecPelpException ex) {
+            Assert.fail("Compilation error");
+        } catch (IOException ex) {
+            Assert.fail("Cannot create the temporal file");
+        }
+    }
+    
+    @Test(expected=ExecPelpException.class)
+    public void testCompileCFailPath() throws ExecPelpException {
+        File srcFile=null;
+        try {
+            // Create a temporal folder for code
+            File tmpDir=createTemporalFolder("TestCode");
+            
+            // Create a code file
+            srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "test1.c");            
+            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
+            
+            // Add the code
+            srcFileWriter.printf("\tint main(void) {\n");
+            srcFileWriter.printf("\t\tprintf(\"Hello World!\\n\");\n");
+            srcFileWriter.printf("\t}\n");
+            
+            // Close the source file
+            srcFileWriter.close();
+            
+            // Create the Code Project with a file outside the path
+            _project.addFile(srcFile);
+            
+            // Remove input file
+            srcFile.delete(); 
+            
+        } catch (IOException ex) {
+            Assert.fail("Cannot create the temporal file");
+            
+            // Remove input file
+            srcFile.delete();    
+        }
+    }
+    
+    @Test
+    public void testCompileCFAILCompilation() {
+        try {
+            // Create a temporal folder for code
+            File tmpDir=createTemporalFolder("TestCode");
+            
+            // Create a code file
+            File srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "test1.c");            
+            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
+            
+            // Add the code
+            srcFileWriter.printf("\tint main(void) {\n");
+            srcFileWriter.printf("\t\tprintf(\"Hello World!\\n\"\n"); // ==> ERROR in this line
+            srcFileWriter.printf("\t}\n");
+            
+            // Close the source file
+            srcFileWriter.close();
+            
+            // Create the Code Project
+            _project.changeRootPath(tmpDir);
+            _project.addFile(srcFile);
+            
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
+            
+            // Set the cofiguration object
+            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
+            
+            // Compile the code
+            BuildResult result=codeAnalyzer.build(_project);
+            
+            // Check result
+            Assert.assertFalse("Compilation Fails", result.isCorrect());
+            
+            // Remove input file
+            srcFile.delete();            
+            
+        } catch (ExecPelpException ex) {
+            Assert.fail("Compilation error");
+        } catch (IOException ex) {
+            Assert.fail("Cannot create the temporal file");
+        }
+    }
+    
+    @Test
+    public void testCompileCOK() {
+        try {
+            // Create a temporal folder for code
+            File tmpDir=createTemporalFolder("TestCode");
+            
+            // Create a code file
+            File srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "test1.c");            
+            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
+            
+            // Add the code
+            srcFileWriter.printf("\tint main(void) {\n");
+            srcFileWriter.printf("\t\tprintf(\"Hello World!\\n\");\n");
+            srcFileWriter.printf("\t}\n");
+            
+            // Close the source file
+            srcFileWriter.close();
+            
+            // Create the Code Project
+            _project.changeRootPath(tmpDir);
+            _project.addFile(srcFile);
+            
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
+            
+            // Set the cofiguration object
+            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
+            
+            // Compile the code
+            BuildResult result=codeAnalyzer.build(_project);
+            
+            // Check result
+            Assert.assertTrue("Compilation OK", result.isCorrect());
+                 
+            // Remove input file
+            srcFile.delete();    
+        } catch (ExecPelpException ex) {
+            Assert.fail("Compilation error");
+        } catch (IOException ex) {
+            Assert.fail("Cannot create the temporal file");
+        }
+    }
 }

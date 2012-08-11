@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import uoc.edu.pelp.model.dao.ExampleDAO;
 import uoc.edu.pelp.model.vo.Example;
 
-@ContextConfiguration("/test-daos.xml")
+/*@ContextConfiguration("/test-daos.xml")
 public class ExampleDAOTest extends AbstractTransactionalJUnit4SpringContextTests {
 	
 	@Resource
@@ -127,3 +127,4 @@ public class ExampleDAOTest extends AbstractTransactionalJUnit4SpringContextTest
 		assertTrue("Actual count of examples (" + examples.size() + ") MUST be less than previous one (" + size + ") by one element", size == examples.size() + 1);
 	}	
 }
+*/

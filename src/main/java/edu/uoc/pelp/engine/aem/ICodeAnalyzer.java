@@ -18,6 +18,7 @@
 */
 package edu.uoc.pelp.engine.aem;
 
+import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.CompilerAEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.PathAEMPelpException;
@@ -28,6 +29,12 @@ import java.io.File;
  * @author Xavier Baró
  */
 public interface ICodeAnalyzer {
+    /**
+     * Assigns the configuration object, which allows to access to the platform parameters.
+     * @param confObject Configuration object.
+     */
+    void setConfiguration(IPelpConfiguration confObject);
+    
     /**
      * Build the project. If a working path is provided, output files are generated in this directory,
      * otherwise, are generated in the default path.

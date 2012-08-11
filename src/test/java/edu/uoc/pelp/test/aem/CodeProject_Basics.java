@@ -21,6 +21,7 @@ package edu.uoc.pelp.test.aem;
 import edu.uoc.pelp.engine.aem.CodeProject;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
+import edu.uoc.pelp.test.TestPeLP;
 import java.io.File;
 import java.io.IOException;
 import junit.framework.Assert;
@@ -226,7 +227,7 @@ public class CodeProject_Basics {
         }
         
         // Create a temporal folder
-        File tmpPath=new File(System.getProperty("java.io.tmpdir")+ "PELP" + File.separator + path);  
+        File tmpPath=new File(TestPeLP.localConfiguration.getTempPath().getPath() + "PELP" + File.separator + path);  
         if(!tmpPath.exists()) {
             Assert.assertTrue("Create temporal path",tmpPath.mkdirs());
         }

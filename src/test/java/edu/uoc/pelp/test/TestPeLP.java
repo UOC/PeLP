@@ -18,6 +18,8 @@
 */
 package edu.uoc.pelp.test;
 
+import edu.uoc.pelp.conf.IPelpConfiguration;
+import edu.uoc.pelp.test.conf.PCPelpConfiguration;
 import edu.uoc.pelp.engine.auth.EngineAuthManager;
 import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
@@ -47,6 +49,11 @@ public class TestPeLP {
      * Access to an LocalAuthManager object which uses the  dummy local version of campus data
      */
     public static EngineAuthManager localDummyAuthManager=new EngineAuthManager();
+    
+    /**
+     * Access to configuration parameters for developing environments
+     */
+    public static IPelpConfiguration localConfiguration=new PCPelpConfiguration();
 
     /**
      * Access to the bussines object
