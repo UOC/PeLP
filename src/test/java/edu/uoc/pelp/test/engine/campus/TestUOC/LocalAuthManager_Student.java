@@ -22,7 +22,8 @@ import edu.uoc.pelp.engine.campus.UOC.UserID;
 import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.test.TestPeLP;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Perform all tests over the Authorization module of the PeLP platform.

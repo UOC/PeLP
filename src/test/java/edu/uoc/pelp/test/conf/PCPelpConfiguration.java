@@ -24,7 +24,6 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import junit.framework.Assert;
 
 /**
  * This class provides an implementation for the IPelpConfiguration interface,

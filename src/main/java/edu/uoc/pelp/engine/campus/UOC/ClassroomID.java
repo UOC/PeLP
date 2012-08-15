@@ -20,6 +20,7 @@ package edu.uoc.pelp.engine.campus.UOC;
 
 import edu.uoc.pelp.engine.campus.GenericID;
 import edu.uoc.pelp.engine.campus.IClassroomID;
+import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.exception.PelpException;
 
 /**
@@ -97,5 +98,27 @@ public class ClassroomID extends GenericID implements IClassroomID {
         hash = 59 * hash + (this._subjectCode != null ? this._subjectCode.hashCode() : 0);
         hash = 59 * hash + (this._classIdx != null ? this._classIdx.hashCode() : 0);
         return hash;
+    }
+
+    public int compareTo(IPelpID id) {
+        ClassroomID arg=(ClassroomID)id;
+        if(_subjectCode!=null) {
+            if(_subjectCode.compareTo(arg._subjectCode)!=0) {
+                return _subjectCode.compareTo(arg._subjectCode);
+            }
+        } else {
+            if(arg._subjectCode!=null) {
+                return -1;
+            }
+        }
+        if(_classIdx!=null) {
+            return _classIdx.compareTo(arg._classIdx);
+        } else {
+            if(arg._classIdx!=null) {
+                return -1;
+            }
+        }
+        
+        return 0;
     }
 }

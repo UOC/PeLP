@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package edu.uoc.pelp.test.aem;
+package edu.uoc.pelp.test.engine.aem;
 
 import edu.uoc.pelp.engine.aem.CodeProject;
 import edu.uoc.pelp.exception.AuthPelpException;
@@ -28,7 +28,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 /**
- * Perform all tests over the CodeProject data class.
+ * Perform basic tests over the CodeProject data class.
  * @author Xavier Baró
  */
 public class CodeProject_Basics {    

@@ -19,6 +19,7 @@
 package edu.uoc.pelp.engine.campus.UOC;
 
 import edu.uoc.pelp.engine.campus.GenericID;
+import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.engine.campus.IUserID;
 
 /**
@@ -54,5 +55,9 @@ public class UserID extends GenericID implements IUserID {
     @Override
     protected void copyData(GenericID genericID) {
         idp=((UserID)genericID).idp;
+    }
+
+    public int compareTo(IPelpID id) {
+        return idp.compareTo(((UserID)id).idp);
     }
 }
