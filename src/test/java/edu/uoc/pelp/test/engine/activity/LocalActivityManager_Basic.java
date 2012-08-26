@@ -182,6 +182,27 @@ public class LocalActivityManager_Basic {
         Assert.assertTrue("Check method return", _activityManager.editActivity(modA));
         Activity modA2=_activityManager.getActivity(a1.getActivity());
         Assert.assertFalse("Check final active value after modification", modA2.isActive());  
+        
+        // Modify the programming language and maximum delivers attribute
+        Assert.assertNull("Undefined language",modA.getLanguage());
+        Assert.assertNull("Infinite number of delivers",modA.getMaxDelivers());
+        modA.setLanguage("JAVA");
+        modA.setMaxDelivers(new Integer(4));
+        Assert.assertTrue("Check method return", _activityManager.editActivity(modA));
+        Activity modA3=_activityManager.getActivity(modA.getActivity());
+        Assert.assertEquals("Language","JAVA",modA3.getLanguage());
+        Assert.assertEquals("Max Delivers",new Integer(4),modA3.getMaxDelivers());
+        modA3.setLanguage("C");
+        modA3.setMaxDelivers(new Integer(25));
+        Assert.assertEquals("Language","C",modA3.getLanguage());
+        Assert.assertEquals("Max Delivers",new Integer(25),modA3.getMaxDelivers());
+        Activity modA3b=_activityManager.getActivity(modA3.getActivity());
+        Assert.assertEquals("Language","JAVA",modA3b.getLanguage());
+        Assert.assertEquals("Max Delivers",new Integer(4),modA3b.getMaxDelivers());
+        Assert.assertTrue("Check method return", _activityManager.editActivity(modA3));
+        Activity modA4=_activityManager.getActivity(modA3b.getActivity());
+        Assert.assertEquals("Language","C",modA4.getLanguage());
+        Assert.assertEquals("Max Delivers",new Integer(25),modA4.getMaxDelivers());
     }
     
     @Test(expected=IllegalArgumentException.class) 

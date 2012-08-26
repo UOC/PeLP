@@ -98,5 +98,4 @@ public class ActivityID extends GenericID{
         return (new Long(index)).compareTo(arg.index);
     }
     
-    
 }

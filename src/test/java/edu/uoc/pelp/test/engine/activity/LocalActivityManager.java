@@ -75,7 +75,7 @@ public class LocalActivityManager implements IActivityManager {
             }
             // Remove old entry and add the new one
             _activities.remove(activity.getActivity());
-            _activities.put(activity.getActivity(),activity);
+            _activities.put(activity.getActivity(),activity.clone());
             return true;
         }
         
@@ -127,7 +127,7 @@ public class LocalActivityManager implements IActivityManager {
         if(_tests.containsKey(test.getID())) {
             // Remove old entry and add the new one
             _tests.remove(test.getID());
-            _tests.put(test.getID(),test);
+            _tests.put(test.getID(),test.clone());
             return true;
         }
         

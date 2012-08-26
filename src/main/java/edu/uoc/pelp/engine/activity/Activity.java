@@ -47,6 +47,16 @@ public class Activity {
     private Date _end=null;
     
     /**
+     * Indicates the language for this activity (null for any)
+     */
+    private String _language=null;
+    
+    /**
+     * Indicates the number of delivers that students can perform to this activity (null means infinite)
+     */
+    private Integer _maxDelivers=null;
+    
+    /**
      * Constructor for Activity class
      * @param activityID Identifier for the activity
      * @param start Starting date. If null, is considered started from always.
@@ -95,6 +105,8 @@ public class Activity {
     @Override
     public Activity clone() {
         Activity newActivity=new Activity(_activityID,_start,_end);
+        newActivity._language=_language;
+        newActivity._maxDelivers=_maxDelivers;
         for(String lang:getLanguageCodes()) {
             newActivity.setDescription(lang, getDescription(lang));
         }
@@ -173,7 +185,39 @@ public class Activity {
         _description.keySet().toArray(retList);
         return retList;
     }
+    
+    /**
+     * Set the maximum number of delivers for this activity
+     * @param numDelivers Number of delivers or null for infinite
+     */
+    public void setMaxDelivers(Integer numDelivers) {
+        _maxDelivers=numDelivers;
+    }
 
+    /**
+     * Get the maximum number of delivers for this activity.
+     * @return Number of deliversof or null for infinite
+     */
+    public Integer getMaxDelivers() {
+        return _maxDelivers;
+    }
+    
+    /**
+     * Set the programming language for this activity.
+     * @param language Language code or null for undefined language
+     */
+    public void setLanguage(String language) {
+        _language=language;
+    }
+    
+    /**
+     * Get the programming language for this activity
+     * @return Language code or null if it is not defined.
+     */
+    public String getLanguage() {
+        return _language;
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -193,6 +237,12 @@ public class Activity {
             return false;
         }
         if (this._end != other._end && (this._end == null || !this._end.equals(other._end))) {
+            return false;
+        }
+        if (this._language != other._language && (this._language == null || !this._language.equals(other._language))) {
+            return false;
+        }
+        if (this._maxDelivers != other._maxDelivers && (this._maxDelivers == null || !this._maxDelivers.equals(other._maxDelivers))) {
             return false;
         }
         return true;

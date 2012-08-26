@@ -19,6 +19,9 @@
 package edu.uoc.pelp.test.conf;
 
 import edu.uoc.pelp.conf.IPelpConfiguration;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.engine.campus.UOC.Semester;
+import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import java.io.File;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -57,6 +60,18 @@ public class PCPelpConfiguration implements IPelpConfiguration {
     private static HashMap<String,File> _CCompiler=new HashMap<String,File>() {
         {
             put("XBARO-W7",new File("D:\\MinGW\\bin\\gcc.exe"));
+        }
+    };
+    
+    /**
+     * Table of active subjects
+     */
+    private static HashMap<String,ISubjectID[]> _configActiveSubjects=new HashMap<String,ISubjectID[]>() {
+        {
+            ISubjectID[] ids={new SubjectID("05.554",new Semester("20111")),
+                              new SubjectID("05.554",new Semester("20112")),
+                              new SubjectID("05.555",new Semester("20112"))};
+            put("XBARO-W7",ids);
         }
     };
     
@@ -108,5 +123,9 @@ public class PCPelpConfiguration implements IPelpConfiguration {
         }
         
         return compiler;
+    }
+
+    public ISubjectID[] getActiveSubjects() {
+        return _configActiveSubjects.get(getEnvironmentID());
     }
 }

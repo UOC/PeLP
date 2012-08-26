@@ -18,6 +18,7 @@
 */
 package edu.uoc.pelp.conf;
 
+import edu.uoc.pelp.engine.campus.ISubjectID;
 import java.io.File;
 
 /**
@@ -56,4 +57,10 @@ public interface IPelpConfiguration {
      * @return Path to the C compiler for this environtment.
      */
     File getCompiler(String languageID);
+    
+    /**
+     * Obtain the list of active subjects in the PeLP system
+     * @return List of subject identifyers
+     */
+    ISubjectID[] getActiveSubjects();
 }
