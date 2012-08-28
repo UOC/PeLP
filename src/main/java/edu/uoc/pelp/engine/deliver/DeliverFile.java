@@ -40,6 +40,11 @@ public class DeliverFile implements Comparable{
      * Type of this file
      */
     private FileType _type=null;
+    
+    /** 
+     * Indicates if the file is the main file (only for code files)
+     */
+    private boolean _isMainFile=false;
 
     /**
      * Default constructor
@@ -51,12 +56,40 @@ public class DeliverFile implements Comparable{
         _type=type;
     }
     
-    @Override
-    public DeliverFile clone() {
-        DeliverFile file=new DeliverFile(_file,_type);
-        return file;
+    /**
+     * Set the current file as main file. Only possible with code files.
+     * @param value True to set as main file of False otherwise
+     */
+    public void setMainProperty(boolean value) {
+        _isMainFile=value;
+        if(!_type.equals(FileType.Code)) {
+            _isMainFile=false;
+        }
     }
     
+    /**
+     * Indicates if a code file is the main file
+     * @return True if it was marked as main file or Fals otherwise.
+     */
+    public boolean isMainFile() {
+        if(!_type.equals(FileType.Code)) {
+            return false;
+        }
+        return _isMainFile;
+    }
+    
+    /**
+     * Gets the type of the file
+     * @return Object with the file's type
+     */
+    public FileType getType() {
+        return _type;
+    }
+    
+    /**
+     * Gets the absolute path of the file, using a given rootPath to complete relative paths
+     * @return Object with the file's path
+     */
     public File getAbsolutePath(File rootPath) {
         if(rootPath==null) {
             return _file.getAbsoluteFile();
@@ -73,6 +106,12 @@ public class DeliverFile implements Comparable{
             path.substring(1);
         }
         return new File(rootPath.getAbsolutePath() + File.separator + path);
+    }
+    
+    @Override
+    public DeliverFile clone() {
+        DeliverFile file=new DeliverFile(_file,_type);
+        return file;
     }
 
     @Override

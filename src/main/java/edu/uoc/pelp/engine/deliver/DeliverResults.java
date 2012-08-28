@@ -126,4 +126,16 @@ public class DeliverResults {
         }
         return newObject;
     }
+
+    /**
+     * Remove the information for a certain test.
+     * @param testID Identifier of the test
+     */
+    public void removePrivateInformation(TestID testID) {
+        for(TestResult test:_testResults.values()) {
+            if(test.getTestID().equals(testID)) {
+                test.removePrivateInformation();
+            }
+        }
+    }
 }

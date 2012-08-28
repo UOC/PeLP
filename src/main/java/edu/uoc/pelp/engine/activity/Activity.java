@@ -25,7 +25,7 @@ import java.util.HashMap;
  * This class implements an activity
  * @author Xavier Baró
  */
-public class Activity {
+public class Activity implements Comparable<Activity>{
     /**
      * Activity unique identifier
      */
@@ -253,5 +253,20 @@ public class Activity {
         int hash = 5;
         hash = 37 * hash + (this._activityID != null ? this._activityID.hashCode() : 0);
         return hash;
+    }
+
+    public int compareTo(Activity t) {
+        if(t==null) {
+            return -1;
+        }
+        ActivityID id=t.getActivity();
+        if(_activityID==null) {
+            if(id==null) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+        return _activityID.compareTo(id);
     }
 }

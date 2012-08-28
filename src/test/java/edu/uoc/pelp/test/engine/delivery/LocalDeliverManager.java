@@ -185,4 +185,8 @@ public class LocalDeliverManager implements IDeliverManager {
     public Deliver getDeliver(DeliverID deliverID) {
         return _delivers.get(deliverID).clone();
     }
+
+    public int getNumUserDelivers(IUserID userID, ActivityID activityID) {
+        return getUserDelivers(userID,activityID).length;
+    }
 }

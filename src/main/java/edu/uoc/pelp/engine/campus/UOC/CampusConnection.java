@@ -18,28 +18,16 @@
 */
 package edu.uoc.pelp.engine.campus.UOC;
 
-import java.util.ArrayList;
-
-import net.opentrends.remoteinterface.auth.Auth;
-import net.opentrends.remoteinterface.auth.SessionContext;
-
-import org.apache.log4j.Logger;
-
-import edu.uoc.serveis.gat.dadesacademiques.model.AssignaturaReduidaVO;
-import edu.uoc.pelp.engine.campus.Classroom;
-import edu.uoc.pelp.engine.campus.ICampusConnection;
-import edu.uoc.pelp.engine.campus.IClassroomID;
-import edu.uoc.pelp.engine.campus.ISubjectID;
-import edu.uoc.pelp.engine.campus.IUserID;
-import edu.uoc.pelp.engine.campus.Person;
-import edu.uoc.pelp.engine.campus.Subject;
-import edu.uoc.pelp.engine.campus.UserRoles;
 import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
+import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.serveis.gat.expedient.model.ExpedientVO;
 import edu.uoc.serveis.gat.expedient.service.ExpedientService;
-import edu.uoc.serveis.gat.matricula.model.AssignaturaMatriculadaDocenciaVO;
 import edu.uoc.serveis.gat.matricula.service.MatriculaService;
+import java.util.ArrayList;
+import net.opentrends.remoteinterface.auth.Auth;
+import net.opentrends.remoteinterface.auth.SessionContext;
+import org.apache.log4j.Logger;
 
 /**
  * Implements the campus access for the Universitat Oberta de Catalunya (UOC).
@@ -86,7 +74,7 @@ public class CampusConnection implements ICampusConnection{
     	 return userId;
     }
 
-    public ISubjectID[] getUserSubjects() throws AuthPelpException {
+    public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
     	ArrayList<SubjectID> subjects=null;
     	if( userID == null ) {
     		userID = (UserID) getUserID();
@@ -122,11 +110,11 @@ public class CampusConnection implements ICampusConnection{
         return subjects.toArray(subs); 
     }
 
-    public IClassroomID[] getUserClassrooms() throws AuthPelpException {
+    public IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException {
         return getUserClassrooms(null);
     }
     
-    public IClassroomID[] getUserClassrooms(UserRoles userRole) throws AuthPelpException {
+    public IClassroomID[] getUserClassrooms(UserRoles userRole,ISubjectID subject) throws AuthPelpException {
         // Check if the user is authenticated
         if(!isUserAuthenticated()) {
             throw new AuthPelpException("Authentication is required");
@@ -205,9 +193,18 @@ public class CampusConnection implements ICampusConnection{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-	public ISubjectID[] getUserSubjects(UserRoles userRole)
-			throws AuthPelpException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public ISubjectID[] getUserSubjects(UserRoles userRole,ITimePeriod timePeriod) throws AuthPelpException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public ITimePeriod[] getPeriods() {
+        // Accedir a una taula de la Base de Dades
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public ITimePeriod[] getActivePeriods() {
+        // Accedir a una taula de la Base de Dades
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

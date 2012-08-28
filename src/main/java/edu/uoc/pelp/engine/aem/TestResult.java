@@ -83,6 +83,13 @@ public class TestResult implements Comparable {
         return _testOutput;
     }
     
+    /**
+     * Remove information that should be hidded in private tests
+     */
+    public void removePrivateInformation() {
+        _testOutput=null;
+    }
+    
     public int compareTo(Object t) {
         TestID id=((TestResult)t)._testID;
         if(_testID==null) {

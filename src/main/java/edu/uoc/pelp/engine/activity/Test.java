@@ -18,8 +18,7 @@
 */
 package edu.uoc.pelp.engine.activity;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.util.HashMap;
 
 /**
@@ -85,6 +84,18 @@ public class Test {
         _testID=id;
         _strInput=input;
         _strOutput=output;
+    }
+    
+    /**
+     * Default constructor for basic tests
+     * @param id Test identifier
+     * @param input File with the input
+     * @param output File with the expected output
+     */
+    public Test(TestID id,File input,File output) {
+        _testID=id;
+        _fileInput=input;
+        _fileOutput=output;
     }
     
     @Override
@@ -163,6 +174,36 @@ public class Test {
         _description.keySet().toArray(retList);
         return retList;
     }
+    
+    /**
+     * Returns an Input stream to read input data, either if it is strings or file.
+     * @return Input stream accessing to the input test data
+     * @throws FileNotFoundException If the test contains an unaccessible file.
+     */
+    public InputStream getInputStream() throws FileNotFoundException {
+        if(_fileInput!=null) {
+            return new FileInputStream(_fileInput);
+        }
+        if(_strInput!=null) {
+            return new ByteArrayInputStream(_strInput.getBytes());
+        } 
+        return null;
+    }
+    
+    /**
+     * Returns an Input stream to read output data, either if it is strings or file.
+     * @return Input stream accessing to the expected output for test data
+     * @throws FileNotFoundException If the test contains an unaccessible file.
+     */
+    public InputStream getExpectedOutputStream() throws FileNotFoundException {
+        if(_fileOutput!=null) {
+            return new FileInputStream(_fileOutput);
+        }
+        if(_strOutput!=null) {
+            return new ByteArrayInputStream(_strOutput.getBytes());
+        } 
+        return null;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -210,3 +251,4 @@ public class Test {
         return hash;
     }
 }
+

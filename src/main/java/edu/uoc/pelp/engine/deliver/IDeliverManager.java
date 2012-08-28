@@ -99,4 +99,12 @@ public interface IDeliverManager {
      * @return The object with the deliver information or null if it does not exist.
      */
     Deliver getDeliver(DeliverID deliverID);
+
+    /**
+     * Obtain the number of delivers performed by a certain user to a certain activity
+     * @param userID User identifier
+     * @param activityID Activity identifier
+     * @return Number of delivers of the user to the activity
+     */
+    int getNumUserDelivers(IUserID userID, ActivityID activityID);
 }

@@ -21,8 +21,7 @@ package edu.uoc.pelp.engine.aem;
 import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.aem.exception.LanguageAEMPelpException;
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 
 /**
@@ -186,7 +185,7 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         _confObject=confObject;
     }
     
-    public TestResult test(ProgramTest test) {
+    public TestResult test(InputStream input, InputStream output) {
         // Call an exec method
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -234,35 +233,5 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         }
         
         return true;
-    }
-}
-
-class StrOutputStream extends OutputStream
-{
-    private StringBuffer textBuffer = new StringBuffer();
-    
-    /**
-     * Default constructor
-     */
-    public StrOutputStream()
-    {
-        super();
-    }
-
-    public void write(int b) throws IOException
-    {
-        char a = (char)b;
-        textBuffer.append(a);
-    }
-
-    @Override
-    public String toString()
-    {
-        return textBuffer.toString();
-    }
-  
-    public void clear()
-    {
-        textBuffer.delete(0, textBuffer.length());
     }
 }

@@ -18,9 +18,13 @@
 */
 package edu.uoc.pelp.engine.deliver;
 
+import edu.uoc.pelp.engine.aem.CodeProject;
+import edu.uoc.pelp.engine.deliver.DeliverFile.FileType;
+import edu.uoc.pelp.exception.ExecPelpException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 /**
  * This class represents a Deliver.
@@ -41,7 +45,12 @@ public class Deliver implements Comparable {
      * List of files included in this deliver
      */
     private ArrayList<DeliverFile> _files=new ArrayList<DeliverFile>();
-
+    
+    /**
+     * Creation date
+     */
+    private Date _creationDate=null;
+    
     /**
      * Basic constructor
      * @param newID Deliver Identiryer
@@ -50,6 +59,7 @@ public class Deliver implements Comparable {
     public Deliver(DeliverID newID, File rootPath) {
         _deliverID=newID;
         _rootPath=rootPath;
+        _creationDate=new Date();
     }
     
     /**
@@ -63,6 +73,7 @@ public class Deliver implements Comparable {
         for(DeliverFile file:deliver._files) {
             _files.add(file.clone());
         }
+        _creationDate=deliver._creationDate;
     }
     
     /**
@@ -147,6 +158,28 @@ public class Deliver implements Comparable {
         files.toArray(retList);
         
         return retList;
+    }
+    
+    /**
+     * Obtain the code project from this deliver
+     * @return Code project with the code files of the deliver
+     * @throws ExecPelpException If some file cannot be accessed
+     */
+    public CodeProject getCodeProject() throws ExecPelpException {
+        CodeProject project=new CodeProject(_rootPath); 
+        
+        // Add code files to the project
+        for(DeliverFile deliverFile:_files) {
+            if(deliverFile.getType().equals(FileType.Code)) {
+                if(deliverFile.isMainFile()) {
+                    project.addMainFile(deliverFile.getAbsolutePath(_rootPath));
+                } else {
+                    project.addFile(deliverFile.getAbsolutePath(_rootPath));
+                }
+            }
+        }
+        
+        return project;
     }
     
     @Override

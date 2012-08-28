@@ -24,7 +24,7 @@ import java.util.HashMap;
  * This class contains the basic information about a classroom.
  * @author Xavier Baró
  */
-public class Classroom {
+public class Classroom implements Comparable<Classroom> {
     /**
      * Reference to the subject containing this classroom.
      */
@@ -151,5 +151,20 @@ public class Classroom {
             _teachers.clear();
         }
         _teachers=null;
+    }
+
+    public int compareTo(Classroom t) {
+        if(t==null) {
+            return -1;
+        }
+        IClassroomID id=t.getClassroomID();
+        if(_classroomID==null) {
+            if(id==null) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+        return _classroomID.compareTo(id);
     }
 }

@@ -28,6 +28,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -84,11 +85,11 @@ public class LocalCampusConnection implements ICampusConnection{
         return (_userID!=null);
     }
 
-    public ISubjectID[] getUserSubjects() throws AuthPelpException {
-        return getUserSubjects(null);
+    public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
+        return getUserSubjects(null,timePeriod);
     }
     
-    public ISubjectID[] getUserSubjects(UserRoles userRole) throws AuthPelpException {
+    public ISubjectID[] getUserSubjects(UserRoles userRole,ITimePeriod timePeriod) throws AuthPelpException {
         if(!isUserAuthenticated()) {
             throw new AuthPelpException();
         }
@@ -97,14 +98,27 @@ public class LocalCampusConnection implements ICampusConnection{
         ArrayList<ISubjectID> retList=new ArrayList<ISubjectID>();
         if(_dummySubjects!=null) {
             for(Subject s:_dummySubjects.values()) {
-                if(userRole!=null) {
-                    if(isRole(userRole,s.getID())) {
-                        retList.add(s.getID());
+                boolean addResult=true;
+                // Filter by semester
+                if(addResult==true && timePeriod!=null) {
+                    if(!timePeriod.equals(timePeriod)) {
+                        addResult=false;
+                    }
+                }
+                
+                // Filter by role
+                if(addResult==true && userRole!=null) {
+                    if(!isRole(userRole,s.getID())) {
+                        addResult=false;
                     }                     
                 } else {
-                    if(isRole(UserRoles.Student,s.getID()) || isRole(UserRoles.Teacher,s.getID())) {
-                        retList.add(s.getID());
+                    if(!isRole(UserRoles.Student,s.getID()) && !isRole(UserRoles.Teacher,s.getID())) {
+                        addResult=false;
                     }
+                }
+                // Add the result
+                if(addResult) {
+                    retList.add(s.getID());
                 }
             }
         }
@@ -116,11 +130,11 @@ public class LocalCampusConnection implements ICampusConnection{
         return retArray;
     }
     
-    public IClassroomID[] getUserClassrooms() throws AuthPelpException {
-        return getUserClassrooms(null);
+    public IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException {
+        return getUserClassrooms(null,subject);
     }
     
-    public IClassroomID[] getUserClassrooms(UserRoles userRole) throws AuthPelpException {
+    public IClassroomID[] getUserClassrooms(UserRoles userRole,ISubjectID subject) throws AuthPelpException {
         if(!isUserAuthenticated()) {
             throw new AuthPelpException();
         }
@@ -129,15 +143,17 @@ public class LocalCampusConnection implements ICampusConnection{
         ArrayList<IClassroomID> retList=new ArrayList<IClassroomID>();
         if(_dummySubjects!=null) {
             for(Subject s:_dummySubjects.values()) {
-                if(s.getClassrooms()!=null) {
-                    for(Classroom c:s.getClassrooms().values()) {
-                        if(userRole!=null) {
-                            if(isRole(userRole,c.getClassroomID())) {
-                                retList.add(c.getClassroomID());
-                            }                     
-                        } else {
-                            if(isRole(UserRoles.Student,c.getClassroomID()) || isRole(UserRoles.Teacher,c.getClassroomID())) {
-                                retList.add(c.getClassroomID());
+                if(subject==null || s.getID().equals(subject)) {
+                    if(s.getClassrooms()!=null) {
+                        for(Classroom c:s.getClassrooms().values()) {
+                            if(userRole!=null) {
+                                if(isRole(userRole,c.getClassroomID())) {
+                                    retList.add(c.getClassroomID());
+                                }                     
+                            } else {
+                                if(isRole(UserRoles.Student,c.getClassroomID()) || isRole(UserRoles.Teacher,c.getClassroomID())) {
+                                    retList.add(c.getClassroomID());
+                                }
                             }
                         }
                     }
@@ -811,6 +827,42 @@ public class LocalCampusConnection implements ICampusConnection{
     public Person getTestPersonByPos(int pos) {
         return _testAccessPersons[pos];
     }
-    
-    
+
+    public ITimePeriod[] getPeriods() {
+        ArrayList<ITimePeriod> list=new ArrayList<ITimePeriod>();
+        
+        // Add all available semesters
+        for(ITimePeriod semester:_dummySemesters.values()) {
+            list.add(semester);
+        }
+        
+        // Order the semesters
+        Collections.sort(list);
+        
+        // Create the output list
+        ITimePeriod retList[]=new ITimePeriod[list.size()];
+        list.toArray(retList);
+        
+        return retList;
+    }
+
+    public ITimePeriod[] getActivePeriods() {
+        ArrayList<ITimePeriod> list=new ArrayList<ITimePeriod>();
+        
+        // Add all available semesters
+        for(ITimePeriod semester:_dummySemesters.values()) {
+            if(semester.isActive()) {
+                list.add(semester);
+            }
+        }
+        
+        // Order the semesters
+        Collections.sort(list);
+        
+        // Create the output list
+        ITimePeriod retList[]=new ITimePeriod[list.size()];
+        list.toArray(retList);
+        
+        return retList;
+    }
 }

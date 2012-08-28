@@ -57,7 +57,7 @@ public class LocalAuthManager_Student {
     @Test
     public void testAuthAllUserSubjectsAccess() throws AuthPelpException {
         // Try to obtain the user subjects
-        ISubjectID[] subjectList=_campusConnection.getUserSubjects();
+        ISubjectID[] subjectList=_campusConnection.getUserSubjects(null);
         Assert.assertNotNull(subjectList);
         Assert.assertTrue("One subject is retrived", subjectList.length==1);
         Assert.assertEquals(TestPeLP.getLocal(_campusConnection).getTestSubjectByPos(0).getID(),subjectList[0]);
@@ -66,7 +66,7 @@ public class LocalAuthManager_Student {
     @Test
     public void testAuthStudentSubjectsAccess() throws AuthPelpException {
         // Try to obtain the user subjects
-        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.Student);
+        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.Student,null);
         Assert.assertNotNull(subjectList);
         Assert.assertTrue("One subject is retrived", subjectList.length==1);
         Assert.assertEquals(TestPeLP.getLocal(_campusConnection).getTestSubjectByPos(0).getID(),subjectList[0]);
@@ -75,7 +75,7 @@ public class LocalAuthManager_Student {
     @Test
     public void testAuthTeacherSubjectsAccess() throws AuthPelpException {
         // Try to obtain the user subjects
-        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.Teacher);
+        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.Teacher,null);
         Assert.assertNotNull(subjectList);
         Assert.assertTrue("No Subjects are retrieved", subjectList.length==0);
     }
@@ -83,7 +83,7 @@ public class LocalAuthManager_Student {
     @Test
     public void testAuthMainTeacherSubjectsAccess() throws AuthPelpException {
         // Try to obtain the user subjects
-        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.MainTeacher);
+        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.MainTeacher,null);
         Assert.assertNotNull(subjectList);
         Assert.assertTrue("No Subjects are retrieved", subjectList.length==0);
     }
@@ -91,7 +91,7 @@ public class LocalAuthManager_Student {
     @Test
     public void testAuthAllUserClassroomsAccess() throws AuthPelpException {
         // Try to obtain the user classrooms
-        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms();
+        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(null);
         Assert.assertNotNull(classroomsList);
         Assert.assertTrue("One classroom is retrieved", classroomsList.length==1);
         Assert.assertEquals(TestPeLP.getClassroom(_campusConnection, 0,1).getClassroomID(), classroomsList[0]);
@@ -100,7 +100,7 @@ public class LocalAuthManager_Student {
     @Test
     public void testAuthStudentClassroomAccess() throws AuthPelpException {
         // Try to obtain the user classrooms
-        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.Student);
+        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.Student,null);
         Assert.assertNotNull(classroomsList);
         Assert.assertTrue("One classroom is retrieved", classroomsList.length==1);
         Assert.assertEquals(TestPeLP.getClassroom(_campusConnection, 0,1).getClassroomID(), classroomsList[0]);
@@ -109,7 +109,7 @@ public class LocalAuthManager_Student {
     @Test
     public void testAuthTeacherClassroomAccess() throws AuthPelpException {
         // Try to obtain the user classrooms
-        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.Teacher);
+        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.Teacher,null);
         Assert.assertNotNull(classroomsList);
         Assert.assertTrue("No Classrooms are retrieved", classroomsList.length==0);
     }
@@ -117,7 +117,7 @@ public class LocalAuthManager_Student {
     @Test
     public void testAuthMainTeacherClassroomAccess() throws AuthPelpException {
         // Try to obtain the user classrooms
-        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.MainTeacher);
+        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.MainTeacher,null);
         Assert.assertNotNull(classroomsList);
         Assert.assertTrue("No Classrooms are retrieved", classroomsList.length==0);
     }
