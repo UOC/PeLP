@@ -24,7 +24,7 @@ import java.util.HashMap;
  * This class contains the basic information about a subject. 
  * @author Xavier Baró
  */
-public class Subject {
+public class Subject implements Comparable<Subject> {
     /**
      * Unique Identifier for this subject
      */
@@ -314,5 +314,20 @@ public class Subject {
             _mainTeachers.clear();
         }
         _mainTeachers=null;
+    }
+
+    public int compareTo(Subject t) {
+        if(t==null) {
+            return -1;
+        }
+        ISubjectID id=t.getID();
+        if(_id==null) {
+            if(id==null) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+        return _id.compareTo(id);
     }
 }

@@ -22,7 +22,8 @@ import edu.uoc.pelp.engine.campus.UOC.UserID;
 import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.test.TestPeLP;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Perform all tests over the Authorization module of the PeLP platform.
@@ -53,49 +54,49 @@ public class LocalAuthManager_NotAuth {
     @Test(expected=AuthPelpException.class)
     public void testNotAuthAllUserSubjectsAccess() throws AuthPelpException {
         // Try to obtain the user subjects
-        ISubjectID[] subjectList=_campusConnection.getUserSubjects();
+        ISubjectID[] subjectList=_campusConnection.getUserSubjects(null);
     }
     
     @Test(expected=AuthPelpException.class)
     public void testNotAuthStudentSubjectsAccess() throws AuthPelpException {
         // Try to obtain the user subjects
-        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.Student);
+        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.Student,null);
     }
     
     @Test(expected=AuthPelpException.class)
     public void testNotAuthTeacherSubjectsAccess() throws AuthPelpException {
         // Try to obtain the user subjects
-        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.Teacher);
+        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.Teacher,null);
     }
     
     @Test(expected=AuthPelpException.class)
     public void testNotAuthMainTeacherSubjectsAccess() throws AuthPelpException {
         // Try to obtain the user subjects
-        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.MainTeacher);
+        ISubjectID[] subjectList=_campusConnection.getUserSubjects(UserRoles.MainTeacher,null);
     }
     
     @Test(expected=AuthPelpException.class)
     public void testNotAuthAllUserClassroomsAccess() throws AuthPelpException {
         // Try to obtain the user classrooms
-        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms();
+        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(null);
     }
     
     @Test(expected=AuthPelpException.class)
     public void testNotAuthStudentClassroomAccess() throws AuthPelpException {
         // Try to obtain the user classrooms
-        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.Student);
+        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.Student,null);
     }
     
     @Test(expected=AuthPelpException.class)
     public void testNotAuthTeacherClassroomAccess() throws AuthPelpException {
         // Try to obtain the user classrooms
-        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.Teacher);
+        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.Teacher,null);
     }
     
     @Test(expected=AuthPelpException.class)
     public void testNotAuthMainTeacherClassroomAccess() throws AuthPelpException {
         // Try to obtain the user classrooms
-        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.MainTeacher);
+        IClassroomID[] classroomsList=_campusConnection.getUserClassrooms(UserRoles.MainTeacher,null);
     }
     
     @Test(expected=AuthPelpException.class)

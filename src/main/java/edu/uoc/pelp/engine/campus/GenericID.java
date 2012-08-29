@@ -30,11 +30,7 @@ import java.util.logging.Logger;
  * @author Xavier Baró
  */
 public abstract class GenericID implements IPelpID, Serializable {
-    
-    public int compareTo(IPelpID t) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-          
+              
     /**
      * Method that copy the attribute values from a given object to the current object.
      * @param genericID Object with the values to copy from

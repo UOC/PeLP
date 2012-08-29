@@ -12,7 +12,7 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 
 import uoc.edu.pelp.model.vo.Example;
 
-@ContextConfiguration("/test-services.xml")
+/*@ContextConfiguration("/test-services.xml")
 public class ExampleServiceTest extends
 		AbstractTransactionalJUnit4SpringContextTests {
 
@@ -68,3 +68,4 @@ public class ExampleServiceTest extends
 	
 	}	
 }
+*/

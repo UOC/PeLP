@@ -45,41 +45,46 @@ public interface ICampusConnection {
     /**
      * Retrieve all the subjects where the current logged user is inscribed,
      * both if is the teacher or if is student.
+     * @param timePeriod Filter results using the time period. If null, all results are retrived. 
      * @return Array with the identifier for each subject.
      * @throws AuthPelpException There is no user authenticated.
      */
-    ISubjectID[] getUserSubjects() throws AuthPelpException;
+    ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException;
         
     /**
      * Retrieve all the subjects where the current logged user is inscribed,
      * as the given role.
      * @param userRole User role to filter the query. If null, teacher and student roles are used.
+     * @param timePeriod Filter results using the time period. If null, all results are retrived.
      * @return Array with the identifier for each subject.
      * @throws AuthPelpException There is no user authenticated.
      */
-    ISubjectID[] getUserSubjects(UserRoles userRole) throws AuthPelpException;
+    ISubjectID[] getUserSubjects(UserRoles userRole,ITimePeriod timePeriod) throws AuthPelpException;
     
     /**
-     * Retrieve all the classrooms where the current logged user is inscribed,
+     * Retrieve all the classrooms of the current logged user is inscribed,
      * both if is the teacher or if is student.
+     * @param subject Subject identifier to filter the results. If null, all subjects are considered.
      * @return Array with the identifier for each classroom.
      * @throws AuthPelpException There is no user authenticated.
      */
-    IClassroomID[] getUserClassrooms() throws AuthPelpException;
+    IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException;
         
     /**
      * Retrieve all the classrooms where the current logged user is inscribed with
      * the given role. If the roll is null, teacher and student roles are considered.
+     * @param subject Subject identifier to filter the results. If null, all subjects are considered.
      * @param userRole User role to filter the query. If null, teacher and student roles are used.
      * @return Array with the identifier for each classroom.
      * @throws AuthPelpException There is no user authenticated.
      */
-    IClassroomID[] getUserClassrooms(UserRoles userRole) throws AuthPelpException;
+    IClassroomID[] getUserClassrooms(UserRoles userRole,ISubjectID subject) throws AuthPelpException;
     
     /**
      * Retrieve all the classrooms for the given subject, where the current logged user 
      * is inscribed with the given role. If the roll is null, teacher and student roles are
      * considered.
+     * @param subject Subject identifier.
      * @param userRole User role to filter the query. If null, teacher and student roles are used.
      * @return Array with the identifier for each classroom.
      * @throws AuthPelpException There is no user authenticated.
@@ -210,4 +215,16 @@ public interface ICampusConnection {
      * @throws AuthPelpException There is no user authenticated or have not enought rights to obtain this infomation
      */
     Person getUserData(IUserID userID) throws AuthPelpException;
+    
+    /**
+     * Obtain the list of time períods.
+     * @return List of all time períods
+     */
+    ITimePeriod[] getPeriods();
+    
+    /**
+     * Obtain the list of active time períods.
+     * @return List of all active time períods
+     */
+    ITimePeriod[] getActivePeriods();
 }

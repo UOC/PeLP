@@ -338,7 +338,7 @@ public class CodeProject {
      * Returns the relative path of a given relative/absolute path from a certain root path.
      * @param file Relative or Absolute file.
      * @param rootPath Root path. If null, default root path is used.
-     * @return Absolute file object.
+     * @return Relative file object or null if it is outside the used path
      */
     public File getRelativePath(File file) {
         File relFile=null;
@@ -358,12 +358,18 @@ public class CodeProject {
                     relFile=new File(strPath);
                 }
             } else {
-                // Assume it as relative
-                String strPath=file.getPath();
-                if(strPath.length()>0 && strPath.charAt(0)==File.separatorChar) {
-                    strPath.substring(1);
+                // Chech if it is outside the path or if it already is a relative path
+                if(file.equals(file.getAbsoluteFile())) {
+                    // The given path is an absolute path, outside the given path. Therefore, return null.
+                    return null;
+                } else {
+                    // The given file is a relative path. Add the working path
+                    String strPath=file.getPath();
+                    if(strPath.length()>0 && strPath.charAt(0)==File.separatorChar) {
+                        strPath.substring(1);
+                    }
+                    relFile=new File(strPath);                
                 }
-                relFile=new File(strPath);                
             }
         } catch (IOException ex) {
             return null;
@@ -415,9 +421,17 @@ public class CodeProject {
     
     /**
      * Get the language assigned to this Code Project, or null if it is unknown.
-     * @return 
+     * @return The language ID for this project or null if it is not assigned
      */
     public String getLanguage() {
         return _language;        
+    }
+
+    /**
+     * Gets the root path for this project
+     * @return Root path of the project
+     */
+    public File getRootPath() {
+        return _path;
     }
 }

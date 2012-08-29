@@ -18,16 +18,24 @@
 */
 package edu.uoc.pelp.engine.aem;
 
+import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.CompilerAEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.PathAEMPelpException;
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * This interface describes the methods to analyze a Code Project.
  * @author Xavier Baró
  */
 public interface ICodeAnalyzer {
+    /**
+     * Assigns the configuration object, which allows to access to the platform parameters.
+     * @param confObject Configuration object.
+     */
+    void setConfiguration(IPelpConfiguration confObject);
+    
     /**
      * Build the project. If a working path is provided, output files are generated in this directory,
      * otherwise, are generated in the default path.
@@ -39,12 +47,12 @@ public interface ICodeAnalyzer {
     BuildResult build(CodeProject project) throws PathAEMPelpException, CompilerAEMPelpException;
     
     /**
-     * Test the last builded project. If a working path is provided, output files are generated in this directory,
-     * otherwise, are generated in the default path.
-     * @param project Code Project which will be builded
-     * @return Returns the result of the project building process.
+     * Test the last builded project.
+     * @param input Input stream used to pass input information to the program
+     * @param output Input stream used to read the expected output of the program
+     * @return Returns the result of the project execution process.
      */
-    TestResult test(ProgramTest test);
+    TestResult test(InputStream input, InputStream output);
     
     /**
      * Assign a working path where output files are generated.

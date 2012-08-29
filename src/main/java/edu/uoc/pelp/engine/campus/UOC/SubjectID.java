@@ -60,15 +60,14 @@ public class SubjectID extends GenericID implements ISubjectID {
         return _code;
     }
 
-	public IPelpID parse(String str) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public int compareTo(IPelpID arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int compareTo(IPelpID arg0) {
+        SubjectID arg=(SubjectID)arg0;
+        if(_semester.compareTo(arg._semester)!=0) {
+            return _semester.compareTo(arg._semester);
+        }
+        return _code.compareTo(arg._code);
+    }
 
     @Override
     protected void copyData(GenericID genericID) throws PelpException {

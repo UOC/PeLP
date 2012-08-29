@@ -18,10 +18,12 @@
 */
 package edu.uoc.pelp.test;
 
+import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.auth.EngineAuthManager;
 import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
+import edu.uoc.pelp.test.conf.PCPelpConfiguration;
 import edu.uoc.pelp.test.engine.campus.TestUOC.LocalCampusConnection;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,8 +40,10 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_NotAuth.class,
                      edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_Campus.class,
                      edu.uoc.pelp.test.engine.campus.TestUOC.LocalAuthManager_Student.class,
-                     edu.uoc.pelp.test.aem.CodeProject_Basics.class,
-                     edu.uoc.pelp.test.aem.CodeProject_Compile.class}
+                     edu.uoc.pelp.test.engine.aem.CodeProject_Basics.class,
+                     edu.uoc.pelp.test.engine.aem.CodeProject_Compile.class,
+                     edu.uoc.pelp.test.engine.aem.CodeProject_Execute.class,
+                     edu.uoc.pelp.test.engine.activity.LocalActivityManager_Basic.class}
         )
 public class TestPeLP {
     
@@ -47,6 +51,11 @@ public class TestPeLP {
      * Access to an LocalAuthManager object which uses the  dummy local version of campus data
      */
     public static EngineAuthManager localDummyAuthManager=new EngineAuthManager();
+    
+    /**
+     * Access to configuration parameters for developing environments
+     */
+    public static IPelpConfiguration localConfiguration=new PCPelpConfiguration();
 
     /**
      * Access to the bussines object

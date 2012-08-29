@@ -19,6 +19,7 @@
 package edu.uoc.pelp.engine.campus.UOC;
 
 import edu.uoc.pelp.engine.campus.GenericID;
+import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.engine.campus.ITimePeriod;
 import edu.uoc.pelp.exception.PelpException;
 import java.util.Date;
@@ -121,6 +122,37 @@ public class Semester extends GenericID implements ITimePeriod{
         hash = 59 * hash + (this._end != null ? this._end.hashCode() : 0);
         hash = 59 * hash + (this._id != null ? this._id.hashCode() : 0);
         return hash;
+    }
+
+    public int compareTo(IPelpID t) {
+        Semester s=(Semester)t;
+        if(_begin!=null) {
+            if(_begin.compareTo(s._begin)!=0) {
+                return _begin.compareTo(s._begin);
+            }
+        } else {
+            if(s._begin!=null) {
+                return -1;
+            }
+        }
+        if(_end!=null) {
+            if(_end.compareTo(s._end)!=0) {
+                return _end.compareTo(s._end);
+            }
+        } else {
+            if(s._end!=null) {
+                return -1;
+            }
+        }
+        if(_id!=null) {
+            return _id.compareTo(s._id);
+        } else {
+            if(s._id!=null) {
+                return -1;
+            }
+        }
+        
+        return 0;
     }
     
 }
