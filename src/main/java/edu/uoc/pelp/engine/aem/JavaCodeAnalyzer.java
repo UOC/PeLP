@@ -18,15 +18,16 @@
 */
 package edu.uoc.pelp.engine.aem;
 
+import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.CompilerAEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.PathAEMPelpException;
+import edu.uoc.pelp.engine.aem.exec.ExtExecUtils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.tools.*;
 
 /**
@@ -45,8 +46,22 @@ public class JavaCodeAnalyzer extends BasicCodeAnalyzer {
      */
     private ArrayList<File> _inputFiles=new ArrayList<File>();
         
-    public BuildResult build(CodeProject project) throws PathAEMPelpException, CompilerAEMPelpException {
+    @Override
+    protected BuildResult buildFileProject(CodeProject project) throws PathAEMPelpException, CompilerAEMPelpException {
         BuildResult result=new BuildResult();
+        File mainFile;
+        
+        // Remove old data
+        _inputFiles.clear();
+        _outputFiles.clear();
+        
+        // String Code based projects are not allowed
+        if(project.getProjectSourceType()==CodeProject.ProjectSource.String) {
+            throw new CompilerAEMPelpException("Wrong Project");
+        }
+        
+        // Set the main file
+        mainFile=project.getMainFile();
 
         // Create the list of input files and expected output files
         for(File f:project.getRelativeFiles()) {
@@ -58,7 +73,19 @@ public class JavaCodeAnalyzer extends BasicCodeAnalyzer {
                 if(getFileExtension(f).equalsIgnoreCase(".java")) {
                     _outputFiles.add(project.getAbsolutePath(changeExtension(f,".class"), _workingPath));
                 }
+                
+                // Set the main file          
+                if(mainFile==null && isMainFile(project.getAbsolutePath(f, _workingPath))) {  
+                    mainFile=f;
+                }
             }
+        }
+        
+        // Get the main file output
+        if(mainFile!=null) {
+            mainFile=project.getAbsolutePath(changeExtension(mainFile,".class"), _workingPath);
+        } else {
+            throw new CompilerAEMPelpException("Cannot find a main file.");  
         }
 
         // Check that working path exists and is valid
@@ -109,12 +136,22 @@ public class JavaCodeAnalyzer extends BasicCodeAnalyzer {
         // Set the final results
         result.setResult(compRes, baos.toString());
         
+        // Store output main file
+        _buildingMainFile=mainFile;
+        
         try {
             // Close the file manager
             fileManager.close();
         } catch (IOException ex) {
-            Logger.getLogger(JavaCodeAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
-            result.setResult(false, "Unexpected error.");
+            result.setResult(false, "Unexpected error. \nERROR:" + ex.getMessage());
+        }
+        
+        // Add generated files to temporal files to be removed
+        _tmpFiles.add(mainFile);
+        for(File outFile:_outputFiles) {
+            if(outFile.exists()) {
+                _tmpFiles.add(outFile);                    
+            }
         }
         
         // Check that output files are generated 
@@ -142,7 +179,7 @@ public class JavaCodeAnalyzer extends BasicCodeAnalyzer {
 
     @Override
     protected boolean isMainFile(File file) {
-        //TODO: Remove comments before search for main function and use more sofisticated patterns
+        //TODO: Remove comments before search for main function and use more sofisticated patterns (see getDestinationFileName)
         boolean isMain=false;
         Scanner scanner=null;
         try {
@@ -162,5 +199,122 @@ public class JavaCodeAnalyzer extends BasicCodeAnalyzer {
         }
         
         return isMain;
+    }
+    
+    @Override
+    protected String getDestinationFileName(String code) {
+        String fileName="TempCode.java";
+        
+        //TODO: Consider package folders getPackage
+                    
+        // Extract the public class declaration from code
+        Pattern pClassDec = Pattern.compile("public[ \t\n\r]+[[(abstract)|(static)|(final)|(strictfp)][ \t\n\r]+]*class[ \t\n\r]+");
+        String[] parts=pClassDec.split(code);
+        if(parts.length>1) {
+            // A public class has been found
+            fileName=parts[1];
+
+            // Extract the name from the declaration
+            Pattern pClassName = Pattern.compile("[ \t\n\r\\{]+");
+            parts=pClassName.split(fileName);
+            fileName=parts[0].trim() + ".java";
+        } else {
+            // Search for private class
+            pClassDec = Pattern.compile("[ \t\n\r]+class[ \t\n\r]+");
+            parts=pClassDec.split(code);
+            if(parts.length>1) {
+                // A private class has been found
+                fileName=parts[1];
+
+                // Extract the name from the declaration  
+                Pattern pClassName = Pattern.compile("[ \t\n\r\\{]+");
+                parts=pClassName.split(fileName);
+                fileName=parts[0].trim() + ".java";
+            }
+        }
+        
+        return fileName;
+    }
+    
+    @Override
+    public int execute(InputStream input,StringBuffer output,Long timeout) throws AEMPelpException {
+        int retVal=-1;
+        Process p;
+        try {
+            
+            // Get output class file and check that it exists
+            File execFile=_buildingMainFile.getAbsoluteFile();
+            if(!execFile.exists()) {
+                return -1;
+            }
+
+            //TODO: Consider package folders getPackage
+            // If working path is provided, use files location as working path            
+            File execWorkingPath=_workingPath;
+            if(execWorkingPath==null) {
+                execWorkingPath=_buildingMainFile.getParentFile();
+            }
+            
+            // Remove packages path
+            File mainClassFile=makeRelative(_buildingMainFile,execWorkingPath);
+            if(mainClassFile==null) {
+                return -1;
+            }
+            
+            // Remove the extension
+            String mainClassName=mainClassFile.getPath();
+            if(mainClassName.indexOf(".java")>=0) {
+                mainClassName=mainClassName.substring(0, mainClassName.indexOf(".java"));
+            }
+            if(mainClassName.indexOf(".class")>=0) {
+                mainClassName=mainClassName.substring(0, mainClassName.indexOf(".class"));
+            }
+            
+            // Convete path to packages
+            mainClassName=mainClassName.replace(File.separatorChar, '.');
+
+            // Create an array of commands
+            String[] cmdarray = new String[2];
+            cmdarray[0]="java";
+            cmdarray[1]=mainClassName;
+            
+            // Set the timeout
+            long timeoutValue=_maxExecutionTimeout;
+            if(timeout!=null) {
+                timeoutValue=timeout;
+            }
+            
+            // Create the process
+            p=ExtExecUtils.exec(cmdarray, execWorkingPath, _timeoutStep, timeoutValue,input,output,null);
+
+            // Check the output
+            if(p==null) {
+                retVal=-1;
+                System.out.println("Cannot run the program or timeout");
+            } else {
+                retVal=p.exitValue();
+            }
+        } catch (IOException ex) {
+            throw new AEMPelpException("Cannot run the program.\nERROR: " + ex.getMessage());
+        } catch (InterruptedException ex) {
+            throw new AEMPelpException("Cannot run the program.\nERROR: " + ex.getMessage());
+        }
+
+        return retVal;
+    }
+    
+    @Override
+    public String getSystemInfo() {
+        StringBuffer output=new StringBuffer();       
+        Process proc=null;        
+        try {
+            proc = ExtExecUtils.exec("java -version", null, 3, 1000, null, output, output);
+        } catch (IOException ex) {
+            // No extra operation
+        } catch (InterruptedException ex) {
+            // No extra operation
+        }
+
+        return output.toString();        
     }
 }

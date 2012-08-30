@@ -18,7 +18,8 @@
 */
 package edu.uoc.pelp.engine.activity;
 
-import java.io.*;
+import edu.uoc.pelp.engine.aem.TestData;
+import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -26,7 +27,7 @@ import java.util.HashMap;
  * if delivers for this activity are properly working.
  * @author Xavier Baró
  */
-public class Test {
+public class ActivityTest extends TestData {
     /**
      * Unique identifier for this test. Used when this test is linked to a certain activity
      */
@@ -41,69 +42,86 @@ public class Test {
      * String describing this test in multiple languages
      */
     private HashMap<String,String> _description=new HashMap<String,String>();
-    
-    /**
-     * String to be used as input to the program
-     */
-    private String _strInput=null;
-    
-    /**
-     * String extected as the output of the program
-     */
-    private String _strOutput=null;
-    
-    /**
-     * File to be used as input to the program
-     */
-    private File _fileInput=null;
-    
-    /**
-     * File with the extected output of the program
-     */
-    private File _fileOutput=null;
-    
-    /** 
-     * File input stream used to read the input file
-     */
-    private FileInputStream _fileIStream=null;
-    
-    /**
-     * Basic constuctor with empty inputs and outputs
-     */
-    public Test() {
         
-    }
-    
     /**
      * Default constructor for basic tests
-     * @param id Test identifier
      * @param input String with the input
      * @param output String with the expected output
      */
-    public Test(TestID id,String input,String output) {
-        _testID=id;
-        _strInput=input;
-        _strOutput=output;
+    public ActivityTest(String input,String output) {
+        super(input,output);
     }
     
     /**
      * Default constructor for basic tests
-     * @param id Test identifier
      * @param input File with the input
      * @param output File with the expected output
      */
-    public Test(TestID id,File input,File output) {
+    public ActivityTest(File input,File output) {
+        super(input,output);
+    }
+    /**
+     * Default constructor for an empty test
+     * @param id ActivityTest identifier
+     */
+    public ActivityTest(TestID id) {
+        super(null);
         _testID=id;
-        _fileInput=input;
-        _fileOutput=output;
     }
     
+    /**
+     * Default constructor for basic tests
+     * @param id ActivityTest identifier
+     * @param testData Object with test data
+     */
+    public ActivityTest(TestID id,TestData testData) {
+        super(testData);
+        _testID=id;
+    }
+    
+    /**
+     * Default constructor for basic tests
+     * @param id ActivityTest identifier
+     * @param input File with the input
+     * @param output File with the expected output
+     */
+    public ActivityTest(TestID id,File input,File output) {
+        super(input,output);
+        _testID=id;
+    }
+    
+    /**
+     * Default constructor for basic tests
+     * @param test Object with the test information
+     */
+    public ActivityTest(TestData test) {
+        super(test);
+    }
+    
+    /**
+     * Default constructor for empty tests
+     */
+    public ActivityTest() {
+        super();
+    }
+    
+    /**
+     * Default copy constructor 
+     * @param test Object with the test information
+     */
+    public ActivityTest(ActivityTest test) {
+        super(test);
+        _testID=new TestID(test._testID);
+        _public=test._public;
+        for(String lang:test.getLanguageCodes()) {
+            setDescription(lang, test.getDescription(lang));
+        }
+    }
     @Override
-    public Test clone() {
-        Test newTest=new Test(_testID,_strInput,_strOutput);
+    public ActivityTest clone() {
+        ActivityTest newTest=new ActivityTest(_testID);
+        
         newTest._public=_public;
-        newTest._fileInput=_fileInput;
-        newTest._fileOutput=_fileOutput;
         for(String lang:getLanguageCodes()) {
             newTest.setDescription(lang, getDescription(lang));
         }
@@ -174,36 +192,6 @@ public class Test {
         _description.keySet().toArray(retList);
         return retList;
     }
-    
-    /**
-     * Returns an Input stream to read input data, either if it is strings or file.
-     * @return Input stream accessing to the input test data
-     * @throws FileNotFoundException If the test contains an unaccessible file.
-     */
-    public InputStream getInputStream() throws FileNotFoundException {
-        if(_fileInput!=null) {
-            return new FileInputStream(_fileInput);
-        }
-        if(_strInput!=null) {
-            return new ByteArrayInputStream(_strInput.getBytes());
-        } 
-        return null;
-    }
-    
-    /**
-     * Returns an Input stream to read output data, either if it is strings or file.
-     * @return Input stream accessing to the expected output for test data
-     * @throws FileNotFoundException If the test contains an unaccessible file.
-     */
-    public InputStream getExpectedOutputStream() throws FileNotFoundException {
-        if(_fileOutput!=null) {
-            return new FileInputStream(_fileOutput);
-        }
-        if(_strOutput!=null) {
-            return new ByteArrayInputStream(_strOutput.getBytes());
-        } 
-        return null;
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -213,7 +201,7 @@ public class Test {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Test other = (Test) obj;
+        final ActivityTest other = (ActivityTest) obj;
         if (this._testID != other._testID && (this._testID == null || !this._testID.equals(other._testID))) {
             return false;
         }
@@ -223,32 +211,19 @@ public class Test {
         if (this._description != other._description && (this._description == null || !this._description.equals(other._description))) {
             return false;
         }
-        if ((this._strInput == null) ? (other._strInput != null) : !this._strInput.equals(other._strInput)) {
-            return false;
-        }
-        if ((this._strOutput == null) ? (other._strOutput != null) : !this._strOutput.equals(other._strOutput)) {
-            return false;
-        }
-        if (this._fileInput != other._fileInput && (this._fileInput == null || !this._fileInput.equals(other._fileInput))) {
-            return false;
-        }
-        if (this._fileOutput != other._fileOutput && (this._fileOutput == null || !this._fileOutput.equals(other._fileOutput))) {
-            return false;
-        }
         return true;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 71 * hash + (this._testID != null ? this._testID.hashCode() : 0);
-        hash = 71 * hash + (this._public ? 1 : 0);
-        hash = 71 * hash + (this._description != null ? this._description.hashCode() : 0);
-        hash = 71 * hash + (this._strInput != null ? this._strInput.hashCode() : 0);
-        hash = 71 * hash + (this._strOutput != null ? this._strOutput.hashCode() : 0);
-        hash = 71 * hash + (this._fileInput != null ? this._fileInput.hashCode() : 0);
-        hash = 71 * hash + (this._fileOutput != null ? this._fileOutput.hashCode() : 0);
+        hash = 29 * hash + (this._testID != null ? this._testID.hashCode() : 0);
+        hash = 29 * hash + (this._public ? 1 : 0);
+        hash = 29 * hash + (this._description != null ? this._description.hashCode() : 0);
         return hash;
     }
+    
+    
+    
 }
 

@@ -18,10 +18,7 @@
 */
 package edu.uoc.pelp.test.engine.activity;
 
-import edu.uoc.pelp.engine.activity.Activity;
-import edu.uoc.pelp.engine.activity.ActivityID;
-import edu.uoc.pelp.engine.activity.IActivityManager;
-import edu.uoc.pelp.engine.activity.TestID;
+import edu.uoc.pelp.engine.activity.*;
 import edu.uoc.pelp.engine.campus.UOC.Semester;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import java.util.Calendar;
@@ -261,8 +258,8 @@ public class LocalActivityManager_Basic {
         Assert.assertTrue("Active activity", activity.isActive());
         
         // Add a new test to the activity
-        edu.uoc.pelp.engine.activity.Test t1=new edu.uoc.pelp.engine.activity.Test();
-        edu.uoc.pelp.engine.activity.Test t2=_activityManager.addTest(activity.getActivity(), t1);
+        ActivityTest t1=new ActivityTest();
+        ActivityTest t2=_activityManager.addTest(activity.getActivity(), t1);
         TestID[] testList1={new TestID(activity.getActivity(),1)};
         Assert.assertArrayEquals("Check subject addition",testList1, _activityManager.getActivityTests(activity.getActivity()));
     }

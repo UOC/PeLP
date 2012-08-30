@@ -53,18 +53,18 @@ public interface IActivityManager {
     /** 
      * Add a new test to an existing activity. 
      * @param activityID Indentifier for the activity
-     * @param test Test object to be added. If testID is provided, it will be overwrited.
-     * @return The Test object with a new identifier or null if any error occurred.
+     * @param test ActivityTest object to be added. If testID is provided, it will be overwrited.
+     * @return The ActivityTest object with a new identifier or null if any error occurred.
      */
-    Test addTest(ActivityID activityID,Test test);
+    ActivityTest addTest(ActivityID activityID,ActivityTest test);
     
     /**
      * Modifies the information of a certain test. It only can be used for tests linked to any activity, and
      * testID must be set.
-     * @param test Test with new information. The testID cannot be modifyed, the rest of the information is updated.
+     * @param test ActivityTest with new information. The testID cannot be modifyed, the rest of the information is updated.
      * @return True if the new information has been correctly modified or False if any error occurred. 
      */
-    boolean editTest(Test test);
+    boolean editTest(ActivityTest test);
     
     /**
      * Delete a certain test
@@ -82,10 +82,10 @@ public interface IActivityManager {
     
     /** 
      * Retrieve the test information
-     * @param testID Test Identifier
-     * @return Test object with the information or null if no test found for this identifier.
+     * @param testID ActivityTest Identifier
+     * @return ActivityTest object with the information or null if no test found for this identifier.
      */    
-    Test getTest(TestID testID);
+    ActivityTest getTest(TestID testID);
     
     /**
      * Retrieve all the activities for a certain subject, sorted by ascending index
@@ -104,7 +104,7 @@ public interface IActivityManager {
     /**
      * Retrieve all the tests for a certain activity, sorted by ascending index
      * @param activityID Activity identifier
-     * @return Array of Test objects
+     * @return Array of ActivityTest objects
      */    
     TestID[] getActivityTests(ActivityID activityID);
 }

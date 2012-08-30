@@ -22,6 +22,7 @@ import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.campus.IUserID;
 import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverID;
+import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
 import edu.uoc.pelp.engine.deliver.IDeliverManager;
 import java.util.ArrayList;
@@ -133,16 +134,15 @@ public class LocalDeliverManager implements IDeliverManager {
         return retList;
     }
 
-    public boolean addResults(DeliverID deliverID, DeliverResults results) {
+    public boolean addResults(DeliverID deliverID, AnalysisResults results) {
         // Check if the deliver already has old results
         if(_testResults.containsKey(deliverID)) {
             return false;
         }
         
         // Create a new Results object
-        DeliverResults newResults=results.clone();
-        newResults.setDeliverID(deliverID);
-        
+        DeliverResults newResults=new DeliverResults(deliverID,results.clone());
+                
         // Add the results
         _testResults.put(deliverID, newResults);
         

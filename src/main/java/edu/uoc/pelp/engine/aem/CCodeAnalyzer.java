@@ -18,13 +18,11 @@
 */
 package edu.uoc.pelp.engine.aem;
 
+import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.CompilerAEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.PathAEMPelpException;
 import edu.uoc.pelp.engine.aem.exec.ExtExecUtils;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -46,11 +44,16 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
      */
     private ArrayList<File> _inputFiles=new ArrayList<File>();
     
-    public BuildResult build(CodeProject project) throws PathAEMPelpException, CompilerAEMPelpException {
+    @Override
+    protected BuildResult buildFileProject(CodeProject project) throws PathAEMPelpException, CompilerAEMPelpException {
         BuildResult result=new BuildResult();
         ArrayList<String> compilerArgs=new ArrayList<String>();
         ArrayList<String> linkerArgs=new ArrayList<String>();
-        File mainFile=null;
+        File mainFile;
+        
+        // Remove old data
+        _inputFiles.clear();
+        _outputFiles.clear();
         
         // Check that the compiler is present
         if(_confObject.getCompiler(getLanguageID())==null) {
@@ -59,6 +62,11 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
             if(!_confObject.getCompiler(getLanguageID()).exists() || !_confObject.getCompiler(getLanguageID()).canExecute()) {
                 throw new CompilerAEMPelpException("C Compiler <" + _confObject.getCompiler(getLanguageID()) + "> does not exist or is not executable.");  
             }
+        }
+        
+        // String Code based projects are not allowed
+        if(project.getProjectSourceType()==CodeProject.ProjectSource.String) {
+            throw new CompilerAEMPelpException("Wrong Project");
         }
         
         // Set the main file
@@ -103,6 +111,7 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
                 if(!_workingPath.mkdirs()) {
                     throw new PathAEMPelpException("Cannot create the working path <" + _workingPath.getAbsolutePath() + ">");
                 }
+                _tmpFiles.add(_workingPath);
             }
 
             // Check that it is a directory 
@@ -136,7 +145,7 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         compilerArgs.toArray(compilationCmd);
 
         // Run the compiler
-        Process proc=null;
+        Process proc;
         
         // Perform compilation
         StringBuffer output=new StringBuffer();
@@ -145,7 +154,10 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         try {    
             proc = ExtExecUtils.exec(compilationCmd, _confObject.getCompiler(getLanguageID()).getAbsoluteFile().getParentFile(), 3, 1000, null, output, output);
             if(proc.exitValue()==0) {
+                // Store succesful value
                 compRes=true;
+                // Store output main file
+                _buildingMainFile=mainFile;
             }
         } catch (IOException ex) {
             Logger.getLogger(CCodeAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
@@ -202,7 +214,15 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         // Set the final results
         result.setResult(compRes, output.toString());
         
-        // Check that output files are generated 
+        // Add generated files to temporal files to be removed
+        _tmpFiles.add(mainFile);
+        for(File outFile:_outputFiles) {
+            if(outFile.exists()) {
+                _tmpFiles.add(outFile);                    
+            }
+        }
+        
+        // Check that output files are generated
         if(result.isCorrect()) {
             for(File outFile:_outputFiles) {
                 if(!outFile.exists()) {
@@ -214,7 +234,7 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         
         return result;
     }
-
+    
     public String getLanguageID() {
         return "C";
     }
@@ -226,8 +246,81 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
     }
 
     @Override
+    protected String getDestinationFileName(String code) {
+        return "tempCode.c";
+    }
+
+    @Override
+    protected int execute(InputStream input, StringBuffer output,Long timeOut) throws AEMPelpException {
+        int retVal=-1;
+        Process p;
+        
+        try {
+            // Get executable file and check that it exists
+            File execFile=_buildingMainFile.getAbsoluteFile();
+            if(execFile==null) {
+                return -1;
+            }
+            if(!execFile.exists() || !execFile.canExecute()) {
+                return -1;
+            }
+
+            // Create an array of commands
+            String[] cmdarray = new String[1];
+            cmdarray[0]=execFile.getAbsolutePath();
+            
+            // Set the timeout
+            long timeOutValue=_maxExecutionTimeout;
+            if(timeOut!=null) {
+                timeOutValue=timeOut;
+            }
+            
+            // Create the process            
+            p=ExtExecUtils.exec(cmdarray, _workingPath, _timeoutStep, timeOutValue,input,output,null);
+            
+            // Check the output
+            if(p==null) {
+                retVal=-1;
+            } else {
+                retVal=p.exitValue();
+            }
+        }
+        catch (IOException ex) {
+            throw new AEMPelpException("Cannot run the program.\nERROR: " + ex.getMessage());
+        } catch (InterruptedException ex) {
+            throw new AEMPelpException("Cannot run the program.\nERROR: " + ex.getMessage());
+        }
+        return retVal;
+    }
+
+    public String getSystemInfo() {
+        StringBuffer output=new StringBuffer();
+        
+        // Check that compiler is configured
+        if(_confObject==null) {
+            return null;
+        }
+        if(_confObject.getCompiler(getLanguageID())==null) {
+            return null;
+        }
+        if(!_confObject.getCompiler(getLanguageID()).exists() || !_confObject.getCompiler(getLanguageID()).canExecute()) {
+            return null;
+        }
+        
+        try {
+            Process proc = ExtExecUtils.exec(_confObject.getCompiler(getLanguageID()).getPath() + " --version", null, _timeoutStep, _maxBuildingTimeout, null, output, output);
+        } catch (IOException ex) {
+            // No extra operation
+        } catch (InterruptedException ex) {
+            // No extra operations
+        }
+
+        return output.toString();
+    }
+    
+    @Override
     protected boolean isMainFile(File file) {
-        //TODO: Remove comments before search for main function and use more sofisticated patterns
+        //TODO: Remove comments before search for main function and use more sofisticated patterns (see JAVA getDestinationFileName example)
         boolean isMain=false;
         Scanner scanner=null;
         try {

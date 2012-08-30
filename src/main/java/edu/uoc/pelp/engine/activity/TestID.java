@@ -37,9 +37,23 @@ public class TestID extends GenericID {
      */
     public long index;
     
+    /**
+     * Constructor with all values
+     * @param activity Activity identifier
+     * @param index Index of this test
+     */
     public TestID(ActivityID activity,long index) {
         this.activity=activity;
         this.index=index;
+    }
+    
+    /**
+     * Default copy constructor
+     * @param testID Object to be copied
+     */
+    public TestID(TestID testID) {
+        activity=testID.activity;
+        index=testID.index;
     }
 
     @Override

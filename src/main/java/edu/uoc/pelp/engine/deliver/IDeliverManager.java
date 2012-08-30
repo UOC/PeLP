@@ -18,6 +18,7 @@
 */
 package edu.uoc.pelp.engine.deliver;
 
+import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.campus.IUserID;
 
@@ -67,10 +68,10 @@ public interface IDeliverManager {
     /**
      * Add the results of the analysis of this deliver
      * @param deliverID Object identifying a delivery
-     * @param results Object with the results of the deliver
+     * @param results Object with the results of the code analysis
      * @return True if the results has been correctly added or False if it fails.
      */    
-    boolean addResults(DeliverID deliverID, DeliverResults results);
+    boolean addResults(DeliverID deliverID, AnalysisResults results);
     
     /**
      * Modifies the information of a certain delivery results.
