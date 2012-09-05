@@ -210,7 +210,7 @@
 			<properties>
 				<!--deploy parameters -->
 				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
-				<jbossdeployhome>\Users\juanfrasr\servidor\jboss-4.2.3-1.GA\server\default\deploy</jbossdeployhome>
+				<jbossdeployhome>\Users\juanfrasr\servidor\pelpserver\server\default\deploy</jbossdeployhome>
 			</properties>
 			<build>
 				<plugins>
