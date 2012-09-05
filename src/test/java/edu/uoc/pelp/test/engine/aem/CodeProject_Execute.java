@@ -18,7 +18,9 @@
 */
 package edu.uoc.pelp.test.engine.aem;
 
-import edu.uoc.pelp.engine.aem.CodeProject;
+import edu.uoc.pelp.engine.aem.*;
+import edu.uoc.pelp.exception.ExecPelpException;
+import edu.uoc.pelp.test.TestPeLP;
 import java.io.File;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -58,96 +60,258 @@ public class CodeProject_Execute {
     }
     
     @Test
-    public void testExecuteJavaOK() {
-        
-    }
-    /*
-    @Test
-    public void testExecuteJavaOK() {
+    public void testCompileCOKStringHiWorld() {
         try {
-            // Create a temporal folder for code
-            File tmpDir=createTemporalFolder("TestCode");
             
-            // Create a code file
-            File srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "Test1.java");            
-            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
-            
-            // Add the code
-            srcFileWriter.printf("public class Test1 {\n");
-            srcFileWriter.printf("\tpublic static void main(String[] args) {\n");
-            srcFileWriter.printf("\t\tSystem.out.println(\"Hello World!\\n\");\n");
-            srcFileWriter.printf("\t}\n");
-            srcFileWriter.printf("}\n");
-            
-            // Close the source file
-            srcFileWriter.close();
+            // Create a string with the code
+            String code="int main(void) {\n" +
+                            "\tprintf(\"Hello World!\\n\");\n" + 
+                        "}\n";
             
             // Create the Code Project
-            _project.changeRootPath(tmpDir);
-            _project.addFile(srcFile);
-            
+            CodeProject project=new CodeProject("C",code);            
+                        
             // Create the analyzer
-            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
-            
-            // Compile the code
-            BuildResult result=codeAnalyzer.build(_project);
-            
-            // Check result
-            Assert.assertTrue("Compilation OK", result.isCorrect());
-                 
-            // Remove input file
-            srcFile.delete();    
-        } catch (ExecPelpException ex) {
-            Assert.fail("Compilation error");
-        } catch (IOException ex) {
-            Assert.fail("Cannot create the temporal file");
-        }
-    }
-    */
-    
-    /*
-    @Test
-    public void testExecuteCOK() {
-        try {
-            // Create a temporal folder for code
-            File tmpDir=createTemporalFolder("TestCode");
-            
-            // Create a code file
-            File srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "test1.c");            
-            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
-            
-            // Add the code
-            srcFileWriter.printf("\tint main(void) {\n");
-            srcFileWriter.printf("\t\tprintf(\"Hello World!\\n\");\n");
-            srcFileWriter.printf("\t}\n");
-            
-            // Close the source file
-            srcFileWriter.close();
-            
-            // Create the Code Project
-            _project.changeRootPath(tmpDir);
-            _project.addFile(srcFile);
-            
-            // Create the analyzer
-            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
             
             // Set the cofiguration object
             codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
             
-            // Compile the code
-            BuildResult result=codeAnalyzer.build(_project);
+            // Analyze the code
+            AnalysisResults result=codeAnalyzer.analyzeProject(project,null);
             
-            // Check result
-            Assert.assertTrue("Compilation OK", result.isCorrect());
-                 
-            // Remove input file
-            srcFile.delete();    
+            // Clear temporal data
+            codeAnalyzer.clearData();
+            
+            // Check building result
+            Assert.assertTrue("Compilation OK", result.getBuildResult().isCorrect());
+            
+            // Create some tests
+            TestData[] tests={new TestData(null,"Hello World!\n"), //1
+                              new TestData("Some text that will not be used","Hello World!\n"),//2
+                              new TestData("","Hello World!\n"),//3
+                              new TestData((String)null,null),//4
+                              new TestData("",null),//5
+                              new TestData("","")};//6
+            boolean[] expval={true,//1
+                              true,//2
+                              true,//3
+                              false,//4
+                              false,//5
+                              false};//6
+            
+            // Check test set
+            Assert.assertEquals("Check test structures",tests.length, expval.length);
+            
+            // Analyze again the code
+            result=codeAnalyzer.analyzeProject(project,tests);
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
+            
+            // Get the list of test results
+            TestResult[] testresList=result.getResults();
+            
+            // Check test set
+            Assert.assertEquals("Check test structures",tests.length, testresList.length);
+            
+            for(int i=0;i<testresList.length;i++) {
+                Assert.assertEquals("Check test result",expval[i], testresList[i].isPassed());
+            }
         } catch (ExecPelpException ex) {
             Assert.fail("Compilation error");
-        } catch (IOException ex) {
-            Assert.fail("Cannot create the temporal file");
         }
     }
     
-    */
+    @Test
+    public void testCompileCOKStringEcho() {
+        try {
+            // Create a string with the code
+            String code="#include <stdio.h>\n\n" +
+                        "int main(int argc, char *argv[]) {\n" +
+                            "\tchar buffer[32768];\n" +
+                            "\tint nbytes;\n\n" +
+                                "\twhile ((nbytes = fread(buffer, sizeof(char), sizeof(buffer), stdin)) > 0) {\n" +
+                                    "\t\tfwrite(buffer, sizeof(char), nbytes, stdout);\n" +
+                            "\t}\n" +
+                            "\treturn 0;\n" +
+                        "}\n";
+            
+            // Create the Code Project
+            CodeProject project=new CodeProject("C",code);            
+                        
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
+            
+            // Set the cofiguration object
+            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
+            
+            // Create some tests
+            TestData[] tests={new TestData("Hello World!\n","Hello World!\n"), //1
+                              new TestData("Some text that will be passed","Some text that will be passed"),//2
+                              new TestData("text with system dependant newline \r\n and classical values \n to check what happend","text with system dependant newline \r\n and classical values \n to check what happend"),//3
+                              new TestData((String)null,null),//4
+                              new TestData("fsa fsf dsf saf sa",null),//5
+                              new TestData("","")};//6
+            boolean[] expval={true,//1
+                              true,//2
+                              true,//3
+                              true,//4
+                              false,//5
+                              true};//6
+            
+            // Check test set
+            Assert.assertEquals("Check test structures",tests.length, expval.length);
+            
+            // Analyze again the code
+            AnalysisResults result=codeAnalyzer.analyzeProject(project,tests);
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
+            
+            // Check building result
+            Assert.assertTrue("Compilation OK", result.getBuildResult().isCorrect());
+            
+            // Get the list of test results
+            TestResult[] testresList=result.getResults();
+            
+            // Check test set
+            Assert.assertEquals("Check test structures",tests.length, testresList.length);
+            
+            for(int i=0;i<testresList.length;i++) {
+                Assert.assertEquals("Check test result",expval[i], testresList[i].isPassed());
+            }
+        } catch (ExecPelpException ex) {
+            Assert.fail("Compilation error");
+        }
+    }
+    
+    @Test
+    public void testCompileJAVAOKStringHiWorld() {
+        try {
+            
+            // Create a string with the code
+            String code="public class HelloWorld {\n" +
+                            "\tpublic static void main(String[] args) {\n" +
+                                "\t\tSystem.out.print(\"Hello World!\\n\");\n" +
+                            "\t}\n" +
+                        "}\n";
+            
+            // Create the Code Project
+            CodeProject project=new CodeProject("JAVA",code);            
+                        
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
+            
+            // Set the cofiguration object
+            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
+            
+            // Create some tests
+            TestData[] tests={new TestData(null,"Hello World!\n"), //1
+                              new TestData("Some text that will not be used","Hello World!\n"),//2
+                              new TestData("","Hello World!\n"),//3
+                              new TestData((String)null,null),//4
+                              new TestData("",null),//5
+                              new TestData("","")};//6
+            boolean[] expval={true,//1
+                              true,//2
+                              true,//3
+                              false,//4
+                              false,//5
+                              false};//6
+            
+            // Check test set
+            Assert.assertEquals("Check test structures",tests.length, expval.length);
+            
+            // Analyze again the code
+            AnalysisResults result=codeAnalyzer.analyzeProject(project,tests);
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
+            
+            // Check building result
+            Assert.assertTrue("Compilation OK", result.getBuildResult().isCorrect());
+            
+            // Get the list of test results
+            TestResult[] testresList=result.getResults();
+            
+            // Check test set
+            Assert.assertEquals("Check test structures",tests.length, testresList.length);
+            
+            for(int i=0;i<testresList.length;i++) {
+                Assert.assertEquals("Check test result",expval[i], testresList[i].isPassed());
+            }
+        } catch (ExecPelpException ex) {
+            Assert.fail("Compilation error");
+        }
+    }
+    
+    @Test
+    public void testCompileJAVAOKStringEcho() {
+        try {
+            // Create a string with the code
+            String code="import java.io.*;\n\n" + 
+                        "public class Echo {\n" +
+                         "\npublic static void main(String[] args) throws IOException {\n" +
+                            "\t\tchar buffer[]=new char[32768];\n" +
+                            "\t\tint nbytes;\n\n" +
+                            "\t\tBufferedReader in= new BufferedReader(new InputStreamReader(System.in),8 * 1024);\n" +
+                            "\t\tBufferedWriter out = new BufferedWriter(new OutputStreamWriter(System.out),8 * 1024);\n" +
+                            "\t\tif(in.ready()) {\n" +
+                                "\t\t\twhile ((nbytes = in.read(buffer)) != -1) {\n" +
+                                    "\t\t\t\tout.write(buffer, 0, nbytes);\n" +
+                                "\t\t\t}\n" +
+                                "\t\t\tout.close();\n" +
+                            "\t\t}\n" +
+                          "\t}\n" + 
+                         "}\n";
+            
+            // Create the Code Project
+            CodeProject project=new CodeProject("JAVA",code);            
+                        
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
+            
+            // Set the cofiguration object
+            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
+            
+            // Create some tests
+            TestData[] tests={new TestData("Hello World!\n","Hello World!\n"), //1
+                              new TestData("Some text that will be passed","Some text that will be passed"),//2
+                              new TestData("text with system dependant newline \r\n and classical values \n to check what happend","text with system dependant newline \r\n and classical values \n to check what happend"),//3
+                              new TestData((String)null,null),//4
+                              new TestData("fsa fsf dsf saf sa",null),//5
+                              new TestData("","")};//6
+            boolean[] expval={true,//1
+                              true,//2
+                              true,//3
+                              true,//4
+                              false,//5
+                              true};//6
+            
+            // Check test set
+            Assert.assertEquals("Check test structures",tests.length, expval.length);
+            
+            // Analyze again the code
+            AnalysisResults result=codeAnalyzer.analyzeProject(project,tests);
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
+            
+            // Check building result
+            Assert.assertTrue("Compilation OK", result.getBuildResult().isCorrect());
+            
+            // Get the list of test results
+            TestResult[] testresList=result.getResults();
+            
+            // Check test set
+            Assert.assertEquals("Check test structures",tests.length, testresList.length);
+            
+            for(int i=0;i<testresList.length;i++) {
+                Assert.assertEquals("Check test result",expval[i], testresList[i].isPassed());
+            }
+        } catch (ExecPelpException ex) {
+            Assert.fail("Compilation error");
+        }
+    }
 }

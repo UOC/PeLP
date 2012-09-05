@@ -19,11 +19,9 @@
 package edu.uoc.pelp.engine.aem;
 
 import edu.uoc.pelp.conf.IPelpConfiguration;
-import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.CompilerAEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.PathAEMPelpException;
 import java.io.File;
-import java.io.InputStream;
 
 /**
  * This interface describes the methods to analyze a Code Project.
@@ -38,21 +36,21 @@ public interface ICodeAnalyzer {
     
     /**
      * Build the project. If a working path is provided, output files are generated in this directory,
-     * otherwise, are generated in the default path.
+     * otherwise, are generated in the default path. Some temporal data can be created, use clearData to remove it.
      * @param project Code Project which will be builded
      * @return Returns the result of the project building process.
-     * @throws AEMPelpException If working directory is incorrect
+     * @throws PathAEMPelpException If working directory is incorrect
      * @throws CompilerAEMPelpException Cannot be reached
+     * @see clearData
      */
     BuildResult build(CodeProject project) throws PathAEMPelpException, CompilerAEMPelpException;
     
     /**
      * Test the last builded project.
-     * @param input Input stream used to pass input information to the program
-     * @param output Input stream used to read the expected output of the program
-     * @return Returns the result of the project execution process.
+     * @param test Test information that will be used to test the program.
+     * @return Returns the result of the project execution process or null if there are no succesfully previous buildings.
      */
-    TestResult test(InputStream input, InputStream output);
+    TestResult test(TestData test);
     
     /**
      * Assign a working path where output files are generated.
@@ -78,4 +76,22 @@ public interface ICodeAnalyzer {
      * @return The string representation.
      */
     String getLanguageID();
+    
+    /**
+     * Analyze the project. If a working path is provided, output files are generated in this directory,
+     * otherwise, are generated in the default path. Some temporal data can be created, use clearData to remove it.
+     * Old data from old building processes are removed before start.
+     * @param project Code Project which will be builded
+     * @param tests Array of test cases to be passed to the program. 
+     * @return Returns the result of the analysis of the project.
+     * @throws PathAEMPelpException If working directory is incorrect
+     * @throws CompilerAEMPelpException Cannot be reached
+     */
+    AnalysisResults analyzeProject(CodeProject project,TestData[] tests) throws PathAEMPelpException, CompilerAEMPelpException;
+    
+    /**
+     * Obtain information about the Analysis Module
+     * @return String with the information
+     */
+    String getSystemInfo();
 }

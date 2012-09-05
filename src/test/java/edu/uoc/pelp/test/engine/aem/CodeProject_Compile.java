@@ -21,6 +21,7 @@ package edu.uoc.pelp.test.engine.aem;
 import edu.uoc.pelp.engine.aem.BasicCodeAnalyzer;
 import edu.uoc.pelp.engine.aem.BuildResult;
 import edu.uoc.pelp.engine.aem.CodeProject;
+import edu.uoc.pelp.engine.aem.exception.LanguageAEMPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.test.TestPeLP;
 import java.io.File;
@@ -35,16 +36,12 @@ import org.junit.Test;
  * @author Xavier Baró
  */
 public class CodeProject_Compile {    
-    
-    private CodeProject _project=null;
+
     private File _tmpPath=null;    
     
     public CodeProject_Compile() {        
         // Create a temporal folder
-        _tmpPath=createTemporalFolder("TestCodeProject");
-        
-        // Create a new project in the new created temporal folder        
-        _project=new CodeProject(_tmpPath);   
+        _tmpPath=createTemporalFolder("TestCodeProject");  
     }
     
     private static File createTemporalFolder(String path) {
@@ -62,6 +59,56 @@ public class CodeProject_Compile {
         tmpPath.deleteOnExit();
         
         return tmpPath;
+    }
+    
+    @Test
+    public void testCompileInfoJava() {
+            
+        // Create the code
+        String code="public class Test1 {\n" +
+                        "\tpublic static void main(String[] args) {\n" +
+                            "\t\tSystem.out.println(\"Hello World!\\n\");\n" +
+                        "\t}\n" +
+                    "}\n";
+            
+        // Create the Code Project
+        CodeProject project=new CodeProject("JAVA",code);
+        
+        try {
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
+            Assert.assertNotNull("Default information", codeAnalyzer.getSystemInfo());
+            
+            // Set the cofiguration object
+            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
+            Assert.assertNotNull("Information after adding local configuration", codeAnalyzer.getSystemInfo());
+        } catch (LanguageAEMPelpException ex) {
+            Assert.fail("Cannot create Java compiler");
+        }
+    }
+    
+    @Test
+    public void testCompileInfoC() {
+            
+        // Create the code
+        String code="int main(void) {\n" +
+                        "\tprintf(\"Hello World!\\n\");\n" + 
+                    "}\n";
+            
+        // Create the Code Project
+        CodeProject project=new CodeProject("C",code);
+        
+        try {
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
+            Assert.assertNull("Default information", codeAnalyzer.getSystemInfo());
+            
+            // Set the cofiguration object
+            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
+            Assert.assertNotNull("Information after adding local configuration", codeAnalyzer.getSystemInfo());
+        } catch (LanguageAEMPelpException ex) {
+            Assert.fail("Cannot create Java compiler");
+        }
     }
     
     @Test(expected=ExecPelpException.class)
@@ -86,7 +133,8 @@ public class CodeProject_Compile {
             srcFileWriter.close();
             
             // Create the Code Project with a file outside the path
-            _project.addFile(srcFile);
+            CodeProject project=new CodeProject(_tmpPath);
+            project.addFile(srcFile);
             
             // Remove input file
             srcFile.delete(); 
@@ -120,20 +168,23 @@ public class CodeProject_Compile {
             srcFileWriter.close();
             
             // Create the Code Project
-            _project.changeRootPath(tmpDir);
-            _project.addFile(srcFile);
+            CodeProject project=new CodeProject(tmpDir);
+            project.addFile(srcFile);
             
             // Create the analyzer
-            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
             
             // Compile the code
-            BuildResult result=codeAnalyzer.build(_project);
+            BuildResult result=codeAnalyzer.build(project);
             
             // Check result
             Assert.assertFalse("Compilation Fails", result.isCorrect());
             
             // Remove input file
-            srcFile.delete();            
+            srcFile.delete();  
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
             
         } catch (ExecPelpException ex) {
             Assert.fail("Compilation error");
@@ -143,7 +194,7 @@ public class CodeProject_Compile {
     }
     
     @Test
-    public void testCompileJavaOK() {
+    public void testCompileJavaOKFiles() {
         try {
             // Create a temporal folder for code
             File tmpDir=createTemporalFolder("TestCode");
@@ -163,24 +214,58 @@ public class CodeProject_Compile {
             srcFileWriter.close();
             
             // Create the Code Project
-            _project.changeRootPath(tmpDir);
-            _project.addFile(srcFile);
+            CodeProject project=new CodeProject(tmpDir);
+            project.addFile(srcFile);
             
             // Create the analyzer
-            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
             
             // Compile the code
-            BuildResult result=codeAnalyzer.build(_project);
+            BuildResult result=codeAnalyzer.build(project);
             
             // Check result
             Assert.assertTrue("Compilation OK", result.isCorrect());
                  
             // Remove input file
             srcFile.delete();    
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
         } catch (ExecPelpException ex) {
             Assert.fail("Compilation error");
         } catch (IOException ex) {
             Assert.fail("Cannot create the temporal file");
+        }
+    }
+    
+    @Test
+    public void testCompileJavaOKString() {
+        try {
+            
+            // Create the code
+            String code="public class Test1 {\n" +
+                            "\tpublic static void main(String[] args) {\n" +
+                                "\t\tSystem.out.println(\"Hello World!\\n\");\n" +
+                            "\t}\n" +
+                        "}\n";
+            
+            // Create the Code Project
+            CodeProject project=new CodeProject("JAVA",code);
+                       
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
+            
+            // Compile the code
+            BuildResult result=codeAnalyzer.build(project);
+            
+            // Check result
+            Assert.assertTrue("Compilation OK", result.isCorrect());
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
+                  
+        } catch (ExecPelpException ex) {
+            Assert.fail("Compilation error");
         }
     }
     
@@ -204,7 +289,8 @@ public class CodeProject_Compile {
             srcFileWriter.close();
             
             // Create the Code Project with a file outside the path
-            _project.addFile(srcFile);
+            CodeProject project=new CodeProject(_tmpPath);
+            project.addFile(srcFile);
             
             // Remove input file
             srcFile.delete(); 
@@ -236,23 +322,26 @@ public class CodeProject_Compile {
             srcFileWriter.close();
             
             // Create the Code Project
-            _project.changeRootPath(tmpDir);
-            _project.addFile(srcFile);
+            CodeProject project=new CodeProject(tmpDir);
+            project.addFile(srcFile);
             
             // Create the analyzer
-            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
             
             // Set the cofiguration object
             codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
             
             // Compile the code
-            BuildResult result=codeAnalyzer.build(_project);
+            BuildResult result=codeAnalyzer.build(project);
             
             // Check result
             Assert.assertFalse("Compilation Fails", result.isCorrect());
             
             // Remove input file
             srcFile.delete();            
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
             
         } catch (ExecPelpException ex) {
             Assert.fail("Compilation error");
@@ -262,7 +351,7 @@ public class CodeProject_Compile {
     }
     
     @Test
-    public void testCompileCOK() {
+    public void testCompileCOKFile() {
         try {
             // Create a temporal folder for code
             File tmpDir=createTemporalFolder("TestCode");
@@ -280,27 +369,62 @@ public class CodeProject_Compile {
             srcFileWriter.close();
             
             // Create the Code Project
-            _project.changeRootPath(tmpDir);
-            _project.addFile(srcFile);
+            CodeProject project=new CodeProject(tmpDir);            
+            project.addFile(srcFile);
             
             // Create the analyzer
-            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
             
             // Set the cofiguration object
             codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
             
             // Compile the code
-            BuildResult result=codeAnalyzer.build(_project);
+            BuildResult result=codeAnalyzer.build(project);
             
             // Check result
             Assert.assertTrue("Compilation OK", result.isCorrect());
                  
             // Remove input file
             srcFile.delete();    
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
         } catch (ExecPelpException ex) {
             Assert.fail("Compilation error");
         } catch (IOException ex) {
             Assert.fail("Cannot create the temporal file");
+        }
+    }
+    
+    @Test
+    public void testCompileCOKString() {
+        try {
+            
+            // Create a string with the code
+            String code="int main(void) {\n" +
+                            "\tprintf(\"Hello World!\\n\");\n" + 
+                            "}\n";
+            
+            // Create the Code Project
+            CodeProject project=new CodeProject("C",code);            
+                        
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
+            
+            // Set the cofiguration object
+            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
+            
+            // Compile the code
+            BuildResult result=codeAnalyzer.build(project);
+            
+            // Check result
+            Assert.assertTrue("Compilation OK", result.isCorrect());
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
+   
+        } catch (ExecPelpException ex) {
+            Assert.fail("Compilation error");
         }
     }
 }

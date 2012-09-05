@@ -18,10 +18,10 @@
 */
 package edu.uoc.pelp.engine.deliver;
 
+import edu.uoc.pelp.engine.activity.ActivityTestResult;
 import edu.uoc.pelp.engine.activity.TestID;
-import edu.uoc.pelp.engine.aem.BuildResult;
+import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.TestResult;
-import java.util.HashMap;
 
 /**
  * This class implements the results obtained after the analysis of a Deliver
@@ -35,65 +35,27 @@ public class DeliverResults {
     private DeliverID _deliverID=null;
     
     /**
-     * Results of the building process
+     * Results the analysis process
      */
-    private BuildResult _buildResult=null;
-    
-    /**
-     * Results for each test
-     */
-    private HashMap<TestID,TestResult> _testResults=new HashMap<TestID,TestResult>();
-    
+    private AnalysisResults _analysisResult=null;
+        
     /**
      * Default constructor with the basic information
      * @param deliver Deliver identifyer
-     * @param buildResult Results of the building process
+     * @param analysisResult Results of the analysis process
      */
-    public DeliverResults(DeliverID deliver,BuildResult buildResult) {
+    public DeliverResults(DeliverID deliver,AnalysisResults analysisResult) {
         _deliverID=deliver;
-        _buildResult=buildResult;
+        _analysisResult=analysisResult;
     }
-    
-    /**
-     * Default constructor
-     */
-    public DeliverResults() {
         
-    }
-    
-    /**
-     * Add the building result for the deliver
-     * @param result Object with the build results
-     */
-    public void setBuildResult(BuildResult result) {
-        _buildResult=result;
-    }
-    
-    /**
-     * Add the result of a certain test to the deliver results
-     * @param result Object with the test results
-     * @return True if the result has been correctly added or False otherwise
-     */
-    public boolean addTestResult(TestResult result) {
-        if(_testResults.containsKey(result.getTestID())) {
-            return false;
-        }
-        _testResults.put(result.getTestID(),result);
-        return true;
-    }
-    
     /**
      * Return the list of results for each test over a given deliver.
      * @param deliver Object identifying a deliver
      * @return Array of results, ordered by test id
      */
     public TestResult[] getResults(DeliverID deliver) {
-        TestResult[] retValue=null;
-        
-        retValue=new TestResult[_testResults.size()];
-        _testResults.values().toArray(retValue);
-        
-        return retValue;
+        return _analysisResult.getResults();
     }
     
     /**
@@ -114,16 +76,8 @@ public class DeliverResults {
     
     @Override
     public DeliverResults clone() {
-        DeliverResults newObject=new DeliverResults();
+        DeliverResults newObject=new DeliverResults(_deliverID.clone(),_analysisResult.clone());
         
-        // Create a new Identifier
-        newObject._deliverID=_deliverID.clone();
-        
-        // Add the results
-        _testResults.clear();
-        for(TestResult test:_testResults.values()) {
-            _testResults.put(test.getTestID(), test.clone());
-        }
         return newObject;
     }
 
@@ -132,10 +86,28 @@ public class DeliverResults {
      * @param testID Identifier of the test
      */
     public void removePrivateInformation(TestID testID) {
-        for(TestResult test:_testResults.values()) {
-            if(test.getTestID().equals(testID)) {
-                test.removePrivateInformation();
+        ActivityTestResult result=getTestResult(testID);
+        if(result!=null) {
+            result.removePrivateInformation();
+        }
+    }
+    
+    /**
+     * Retrieve the information for a certain test.
+     * @param testID Identifier of the test
+     * @return Object with the test result or null if it does not exist.
+     */
+    public ActivityTestResult getTestResult(TestID testID) {
+        // Search in the list of results for result with given ID
+        for(TestResult testResult:_analysisResult.getResults()) {
+            if(testResult instanceof ActivityTestResult) {
+                ActivityTestResult result=(ActivityTestResult)testResult;
+                if(result.getTestID().equals(testID)) {
+                    return result;
+                }
             }
         }
+        
+        return null;
     }
 }

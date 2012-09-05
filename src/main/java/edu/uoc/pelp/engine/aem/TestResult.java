@@ -18,43 +18,42 @@
 */
 package edu.uoc.pelp.engine.aem;
 
-import edu.uoc.pelp.engine.activity.TestID;
-
 /**
  * This class represents the result of a Code Project over a Test. 
  * @author Xavier Baró
  */
-public class TestResult implements Comparable {
+public class TestResult {
     
-    /**
-     * Identifyer of the test related to this results
-     */
-    private TestID _testID=null;
-
     /**
      * Indicates if the test is correctly passed or not
      */
-    private boolean _passed=false;
+    protected boolean _passed=false;
     
     /**
      * In case of test fail, stores the output of the program to this test
      */
-    private String _testOutput=null;
+    protected String _testOutput=null;
     
     /**
-     * Gets the identifyer of the test related to this result
-     * @return Identyfier for the test.
+     * Elapsed time for this test
      */
-    public TestID getTestID() {
-        return _testID;
+    protected Long _elapsedTime=null;
+    
+    /**
+     * Default copy constructor
+     * @param testResult Object to by copied
+     */
+    public TestResult(TestResult testResult) {
+        _passed=testResult._passed;
+        _testOutput=testResult._testOutput;
+        _elapsedTime=testResult._elapsedTime;
     }
-    
+
     /**
-     * Assigns a new identifyer to this result 
-     * @param testID Identifyer of the test associed to this result
+     * Default constructor for an empty result
      */
-    public void setTestID(TestID testID) {
-        _testID=testID;
+    public TestResult() {
+        
     }
     
     /**
@@ -64,7 +63,11 @@ public class TestResult implements Comparable {
      */
     public void setResult(boolean passed,String output) {
         _passed=passed;
-        _testOutput=output;
+        if(!passed) {
+            _testOutput=output;
+        } else {
+            _testOutput=null;
+        }
     }
     
     /**
@@ -84,30 +87,30 @@ public class TestResult implements Comparable {
     }
     
     /**
+     * Get the elapsed time in miliseconds to run this test
+     * @return Number of miliseconds
+     */
+    public Long getElapsedTime() {
+        return _elapsedTime;
+    }
+    
+    /**
+     * Set the elapsed time in miliseconds to run this test
+     * @param elapsedTime Number of miliseconds
+     */
+    public void setElapsedTime(Long elapsedTime) {
+        _elapsedTime=elapsedTime;
+    }
+    
+    /**
      * Remove information that should be hidded in private tests
      */
     public void removePrivateInformation() {
         _testOutput=null;
     }
     
-    public int compareTo(Object t) {
-        TestID id=((TestResult)t)._testID;
-        if(_testID==null) {
-            if(id==null) {
-                return 0;
-            } else {
-                return -1;
-            }
-        }
-        return _testID.compareTo(id);
-    }
-    
     @Override
     public TestResult clone() {
-        TestResult newResult=new TestResult();
-        newResult._testID=_testID;
-        newResult._passed=_passed;
-        newResult._testOutput=_testOutput;
-        return newResult;
+        return new TestResult(this);
     }
 }

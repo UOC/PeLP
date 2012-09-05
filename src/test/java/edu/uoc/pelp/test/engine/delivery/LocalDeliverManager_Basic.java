@@ -19,7 +19,9 @@
 package edu.uoc.pelp.test.engine.delivery;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
+import edu.uoc.pelp.engine.activity.ActivityTestResult;
 import edu.uoc.pelp.engine.activity.TestID;
+import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.TestResult;
 import edu.uoc.pelp.engine.campus.UOC.Semester;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
@@ -248,25 +250,24 @@ public class LocalDeliverManager_Basic {
         DeliverID deliverId=_deliverManager.addDeliver(userID, activityID, deliver);
         
         // Create new results
-        DeliverResults result=new DeliverResults();
         TestResult testResults1=new TestResult();
-        testResults1.setTestID(new TestID(activityID,1));
         testResults1.setResult(true, "test 1 passed");
         
-        TestResult testResults2=new TestResult();
+        ActivityTestResult testResults2=new ActivityTestResult();
         testResults2.setTestID(new TestID(activityID,2));
         testResults2.setResult(false, "test 2 not passed");
         
         // Add the test results
-        Assert.assertTrue("Add results",result.addTestResult(testResults1));
-        Assert.assertTrue("Add results",result.addTestResult(testResults2));
+        AnalysisResults analysisResults=new AnalysisResults(null);
+        Assert.assertTrue("Add results",analysisResults.addTestResult(testResults1));
+        Assert.assertTrue("Add results",analysisResults.addTestResult(testResults2));
         
         // Add a repeated result
-        Assert.assertFalse("Add repeated result",result.addTestResult(testResults1));
+        Assert.assertFalse("Add repeated result",analysisResults.addTestResult(testResults1));
         
         // Assign the results to the deliver
         Assert.assertNull("Initial results are null", _deliverManager.getResults(deliverId));
-        _deliverManager.addResults(deliverId, result);
+        _deliverManager.addResults(deliverId, analysisResults);
         DeliverResults results2=_deliverManager.getResults(deliverId);
         Assert.assertEquals("Result objects are correctly stored",subjectID, results2);
         

@@ -31,23 +31,33 @@ public class ExtExecUtils extends ExecUtils{
     private static long _MaxBufferSize=1000;
     
     private static synchronized void setProgrammInput(Process process,InputStream input) throws IOException {
-        BufferedReader in= new BufferedReader(new InputStreamReader(input));
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-        String strLine=null;
+        BufferedReader in= new BufferedReader(new InputStreamReader(input),8 * 1024);
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()),8 * 1024);
+        
+        char[] cBuf = new char[1024];
+        int bufRead;
+        
         // TODO: If the System.in source is given, a programm can become idle.
+        // Use in.ready();
+        /*String strLine;           
         while((strLine = in.readLine()) != null) {
             out.write(strLine);
             out.write('\n');
+        }*/
+        if(in.ready()) {
+            while ((bufRead = in.read(cBuf)) != -1) {
+                out.write(cBuf, 0, bufRead);
+            }
+            out.close();
         }
-        out.close();       
     }
 
     private static synchronized BufferedReader getProgramOutputReader(Process process) throws IOException {
-        return new BufferedReader(new InputStreamReader(process.getInputStream()));
+        return new BufferedReader(new InputStreamReader(process.getInputStream()),8 * 1024);
     }
 
     private static synchronized BufferedReader getProgramErrorsReader(Process process) throws IOException {
-        return new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        return new BufferedReader(new InputStreamReader(process.getErrorStream()),8 * 1024);
     }
 
     public static Process exec(String command, File workDir, long interval, long timeout) throws IOException, InterruptedException {
@@ -59,14 +69,14 @@ public class ExtExecUtils extends ExecUtils{
     }
 
     public static synchronized Process exec(String command, String[] envp, File workDir, long interval, long timeout)throws IOException, InterruptedException {
-        Process	process = null;
+        Process	process;
         process = Runtime.getRuntime().exec(command, envp,workDir);
 
         return processTimeout(process, interval,timeout);
     }
 
     public static synchronized Process exec(String[] commands, String[] envp, File workDir,long interval, long timeout)throws IOException, InterruptedException {
-        Process	process = null;
+        Process	process;
         process = Runtime.getRuntime().exec(commands, envp,workDir);
 
         return processTimeout(process, interval,timeout);
@@ -81,7 +91,7 @@ public class ExtExecUtils extends ExecUtils{
     }
 
     public static synchronized Process exec(String command, String[] envp, File workDir, long interval, long timeout,InputStream input,StringBuffer output,StringBuffer errors)throws IOException, InterruptedException {
-        Process	process = null;
+        Process	process;
         process = Runtime.getRuntime().exec(command, envp,workDir);
 
         if(input!=null) {
@@ -92,7 +102,7 @@ public class ExtExecUtils extends ExecUtils{
     }
 
     public static synchronized Process exec(String[] commands, String[] envp, File workDir,long interval, long timeout,InputStream input,StringBuffer output,StringBuffer errors)throws IOException, InterruptedException {
-        Process	process = null;
+        Process	process;
         process = Runtime.getRuntime().exec(commands, envp,workDir);
 
         if(input!=null) {
@@ -107,8 +117,10 @@ public class ExtExecUtils extends ExecUtils{
         boolean	process_finished = false;
         BufferedReader out=null;
         BufferedReader err=null;
-        String strLine=null;
+        String strLine;
         long writtenChars=0;
+        char[] cBuf = new char[1024];
+        int bufRead;
 
         try {
             if(output!=null) {
@@ -141,9 +153,20 @@ public class ExtExecUtils extends ExecUtils{
                             strLine=null;
                             try {
                                 if(out.ready()) {
-                                    while ((strLine = out.readLine()) != null) {
+                                    /*while ((strLine = out.readLine()) != null) {
                                         writtenChars+=strLine.length();
                                         output.append(strLine);
+                                        if(!out.ready()) {
+                                            break;
+                                        }
+                                        // The first number of chars are written directly. Ones maximum is archieved, only one line per Interval is written
+                                        if(writtenChars>_MaxBufferSize) {
+                                            break;
+                                        }
+                                    }*/                                    
+                                    while ((bufRead = out.read(cBuf)) != -1) {
+                                        writtenChars+=bufRead;
+                                        output.append(cBuf, 0, bufRead);
                                         if(!out.ready()) {
                                             break;
                                         }
@@ -161,9 +184,20 @@ public class ExtExecUtils extends ExecUtils{
                             strLine=null;
                             try {
                                  if(err.ready()) {
-                                    while ((strLine = err.readLine()) != null) {
+                                    /*while ((strLine = err.readLine()) != null) {
                                         writtenChars+=strLine.length();
                                         errors.append(strLine);
+                                        if(!err.ready()) {
+                                            break;
+                                        }
+                                        // The first number of chars are written directly. Ones maximum is archieved, only one line per Interval is written
+                                        if(writtenChars>_MaxBufferSize) {
+                                            break;
+                                        }
+                                    }*/
+                                    while ((bufRead = err.read(cBuf)) != -1) {
+                                        writtenChars+=bufRead;
+                                        errors.append(cBuf, 0, bufRead);
                                         if(!err.ready()) {
                                             break;
                                         }

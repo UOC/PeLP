@@ -20,10 +20,11 @@ package edu.uoc.pelp.engine;
 
 import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.activity.*;
+import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.BasicCodeAnalyzer;
-import edu.uoc.pelp.engine.aem.BuildResult;
 import edu.uoc.pelp.engine.aem.CodeProject;
-import edu.uoc.pelp.engine.aem.TestResult;
+import edu.uoc.pelp.engine.aem.TestData;
+import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
 import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverID;
@@ -32,11 +33,8 @@ import edu.uoc.pelp.engine.deliver.IDeliverManager;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidActivityPelpException;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class implements the engine of the PELP system. 
@@ -110,6 +108,10 @@ public class PELPEngine {
      * @throws AuthPelpException If no user is authenticated.
      */
     public Person getUserInfo() throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
         return _campusConnection.getUserData();
     }
     
@@ -119,6 +121,11 @@ public class PELPEngine {
      * @throws AuthPelpException If no user is authenticated.
      */
     public Subject[] getActiveSubjects() throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
         ArrayList<Subject> subjectsList=new ArrayList<Subject>();
         
         // Add subjects
@@ -144,7 +151,12 @@ public class PELPEngine {
      * @return List of classrooms
      * @throws AuthPelpException If no user is authenticated.
      */
-    public Classroom[] getSubjectClassrooms(ISubjectID subjectID) throws AuthPelpException {        
+    public Classroom[] getSubjectClassrooms(ISubjectID subjectID) throws AuthPelpException {  
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
         ArrayList<Classroom> classroomList=new ArrayList<Classroom>();
         
         // Add classrooms
@@ -170,7 +182,12 @@ public class PELPEngine {
      * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
      */
     public Activity[] getSubjectActivity(ISubjectID subjectID,boolean filterActive) throws AuthPelpException {
-        ActivityID[] activityIDs=null;
+        ActivityID[] activityIDs;
+        
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
         
         // Check that current user is student or teacher of this subject
         if(!isStudent(subjectID) && !isTeacher(subjectID)) {
@@ -213,6 +230,10 @@ public class PELPEngine {
      * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
      */
     public Deliver[] getActivityDelivers(IUserID user,ActivityID activity) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
         
         // Check user restrictions
         if(!(_campusConnection.getUserID().equals(user) && isStudent(activity.subjectID)) &&
@@ -250,6 +271,11 @@ public class PELPEngine {
      */
     public DeliverResults getDeliverResults(DeliverID deliver) throws AuthPelpException {
        
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
         // Check user restrictions
         if(!isStudent(deliver.activity.subjectID) && !isTeacher(deliver.activity.subjectID)) {
             throw new AuthPelpException("Not enough rights to access this information");
@@ -272,18 +298,24 @@ public class PELPEngine {
      * @return Object with the test information
      * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
      */
-    public Test getTestInformation(TestID testID) throws AuthPelpException {
+    public ActivityTest getTestInformation(TestID testID) throws AuthPelpException {
+        
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
         // Check user restrictions
         if(!isStudent(testID.activity.subjectID) && !isTeacher(testID.activity.subjectID)) {
             throw new AuthPelpException("Not enough rights to access this information");
         }
         
         // Get the test information
-        Test test=_activityManager.getTest(testID);
+        ActivityTest test=_activityManager.getTest(testID);
         
         // If the user is not a teacher, replace private tests with tests
         if(!test.isPublic() && !isTeacher(testID.activity.subjectID)) {
-            test=new Test();
+            test=new ActivityTest(testID);
             test.setPublic(false);
             test.setTestID(testID);
         } 
@@ -301,6 +333,11 @@ public class PELPEngine {
      * @throws ExecPelpException When files cannot be accessed or for some missconfiguration of the analyzer module.
      */
     public DeliverResults createNewDeliver(Deliver deliver, ActivityID activityID) throws AuthPelpException, InvalidActivityPelpException, ExecPelpException {
+        
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
         
         // Check that the activity exists
         Activity activity=_activityManager.getActivity(activityID);
@@ -326,67 +363,59 @@ public class PELPEngine {
         
         // Create the list of tests
         TestID[] testID=_activityManager.getActivityTests(activityID);
-        Test[] tests=null;
+        ActivityTest[] tests=null;
         if(testID.length>0) {
-            tests=new Test[testID.length];
+            tests=new ActivityTest[testID.length];
             for(int i=0;i<testID.length;i++) {
                 tests[i]=_activityManager.getTest(testID[i]);
             }
         }
         
+        // Obtain the code project
+        CodeProject project=deliver.getCodeProject();
+        project.setLanguage(activity.getLanguage());
+        
         // Analyze the code project
-        DeliverResults results=analyzeCode(deliver,activity.getLanguage(),tests);
-        results.setDeliverID(deliverID);
-                
+        AnalysisResults analysisiResults=analyzeCode(project,tests);
+                        
         // Store the results
-        _deliverManager.addResults(deliverID, results);
+        _deliverManager.addResults(deliverID, analysisiResults);
         
         // Return the results
-        return results;
+        return _deliverManager.getResults(deliverID);
     }
     
-    public DeliverResults analyzeCode(Deliver deliver,String languageID,Test[] tests) throws ExecPelpException {
-        
-        // Get the code project from the deliver
-        CodeProject project=deliver.getCodeProject();
-        
-        // Force project language to the given language
-        project.setLanguage(languageID);
+    /**
+     * Perform the analysis of a code project, both, building process and execution tests.
+     * @param project Code project to be analyzed
+     * @param tests Array of tests to be passed to the program.
+     * @return Resuls obtained from the analysis of the delivery
+     * @throws AEMPelpException If the project is incorrect, no analyzer can be instantiated for the given project or fail to read project files.
+     */
+    public AnalysisResults analyzeCode(CodeProject project,TestData[] tests) throws AEMPelpException {
+              
+        // Check the project
+        if(!project.checkProject()) {
+            throw new AEMPelpException("Invalid Code Project");
+        }
         
         // Create the analyzer
         BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
             
         // Check the compiler
         if(codeAnalyzer==null) {
-            if(languageID!=null) {
-                throw new ExecPelpException("Cannot instatiate a code analyzer for this project [" + languageID + "]");
+            if(project.getLanguage()!=null) {
+                throw new AEMPelpException("Cannot instatiate a code analyzer for this project [" + project.getLanguage() + "]");
             } else {
-                throw new ExecPelpException("Cannot instatiate a code analyzer for this project");
+                throw new AEMPelpException("Cannot instatiate a code analyzer for this project");
             }
         }
         
+        // Set the configuration object
+        codeAnalyzer.setConfiguration(_configuration);
+                
         // Create the output object
-        DeliverResults result=new DeliverResults();
-        
-        // Compile the code
-        BuildResult buildResult=codeAnalyzer.build(project);
-        result.setBuildResult(buildResult);
-        
-        // If the code is corretly builded and tests are available, test the code
-        if(buildResult.isCorrect() && tests!=null) {
-            for(Test test:tests) {
-                TestResult testResult=null;
-                try {
-                    // Execute the program
-                    testResult=codeAnalyzer.test(test.getInputStream(),test.getExpectedOutputStream());
- 
-                    // Store the results
-                    result.addTestResult(testResult);
-                } catch (FileNotFoundException ex) {
-                    throw new ExecPelpException("Cannot read files in test object");
-                }
-            }
-        }
+        AnalysisResults result=codeAnalyzer.analyzeProject(project, tests);
         
         return result;
     }
@@ -427,7 +456,7 @@ public class PELPEngine {
         
         // Analyze each test and remove the information from private ones.
         for(TestID testID:_activityManager.getActivityTests(results.getDeliverID().activity)){
-            Test test=_activityManager.getTest(testID);
+            ActivityTest test=_activityManager.getTest(testID);
             if(!test.isPublic()) {
                 results.removePrivateInformation(testID);
             }

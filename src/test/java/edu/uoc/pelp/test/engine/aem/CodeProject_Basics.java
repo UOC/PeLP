@@ -168,11 +168,11 @@ public class CodeProject_Basics {
             
             // Move to other valid temporal folder
             File[] absFiles=_project.getAbsoluteFiles();
-            _project.moveFiles(newPathFile);            
+            CodeProject newProject=_project.moveFiles(newPathFile);            
             for(File f:absFiles) {
                 Assert.assertFalse("Old file does not exist.",f.exists());
             }
-            absFiles=_project.getAbsoluteFiles();
+            absFiles=newProject.getAbsoluteFiles();
             for(File f:absFiles) {
                 Assert.assertTrue("New file exists.",f.exists());
             }
@@ -206,12 +206,12 @@ public class CodeProject_Basics {
             
             // Copy to other valid temporal folder
             File[] absFiles=_project.getAbsoluteFiles();
-            _project.copyFiles(newPathFile);
+            CodeProject newProject=_project.copyFiles(newPathFile);
             for(File f:absFiles) {
                 Assert.assertTrue("Old files exist.",f.exists());
             }
-            _project.changeRootPath(newPathFile);
-            absFiles=_project.getAbsoluteFiles();
+            
+            absFiles=newProject.getAbsoluteFiles();
             for(File f:absFiles) {
                 Assert.assertTrue("New file exists.",f.exists());
             }

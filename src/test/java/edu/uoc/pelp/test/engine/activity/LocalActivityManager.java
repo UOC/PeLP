@@ -40,7 +40,7 @@ public class LocalActivityManager implements IActivityManager {
     /**
      * Map storing all tests
      */
-    private HashMap<TestID,Test> _tests=new HashMap<TestID,Test>();
+    private HashMap<TestID,ActivityTest> _tests=new HashMap<TestID,ActivityTest>();
     
     public Activity addActivity(ISubjectID subject, Date start, Date end) {
         // Get all activities of a certain subject
@@ -93,7 +93,7 @@ public class LocalActivityManager implements IActivityManager {
         return true;
     }
 
-    public Test addTest(ActivityID activityID, Test test) {
+    public ActivityTest addTest(ActivityID activityID, ActivityTest test) {
         // Check the activity
         if(!_activities.containsKey(activityID)) {
             return null;
@@ -112,7 +112,7 @@ public class LocalActivityManager implements IActivityManager {
         
         // Create a new identifier
         TestID newID=new TestID(activityID,lastID+1);
-        Test newTest=test.clone();
+        ActivityTest newTest=test.clone();
         newTest.setTestID(newID);
         
         // Add the new test
@@ -122,7 +122,7 @@ public class LocalActivityManager implements IActivityManager {
         return newTest;
     }
 
-    public boolean editTest(Test test) {
+    public boolean editTest(ActivityTest test) {
         // Check if the test exists
         if(_tests.containsKey(test.getID())) {
             // Remove old entry and add the new one
@@ -159,11 +159,11 @@ public class LocalActivityManager implements IActivityManager {
         return newActivity;
     }
 
-    public Test getTest(TestID testID) {
-        Test newTest=null;
+    public ActivityTest getTest(TestID testID) {
+        ActivityTest newTest=null;
         
         // Get the object
-        Test test=_tests.get(testID);
+        ActivityTest test=_tests.get(testID);
         
         // Create a new object, to avoid returning references
         if(test!=null) {
@@ -216,7 +216,7 @@ public class LocalActivityManager implements IActivityManager {
         ArrayList<TestID> testList=new ArrayList<TestID>();
         
         // Create the list of identifiers
-        for(Test test:_tests.values()) {
+        for(ActivityTest test:_tests.values()) {
             if(test.getID().activity.equals(activityID)) {
                 testList.add(test.getID());
             }

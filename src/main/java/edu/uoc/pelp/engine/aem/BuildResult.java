@@ -116,6 +116,9 @@ public class BuildResult {
     public void setResult(boolean correct,String message) {
         _correct=correct;
         _message=message;
+        if(_endTime==null) {
+            end();
+        }
     }
     
     /**
@@ -132,5 +135,18 @@ public class BuildResult {
      */
     public String getMessge() {
         return _message;
+    }
+    
+    @Override
+    public BuildResult clone() {
+        BuildResult newObj=new BuildResult();
+        
+        newObj._correct=_correct;
+        newObj._startTime=_startTime;
+        newObj._endTime=_endTime;
+        newObj._language=_language;
+        newObj._message=_message;
+        
+        return newObj;
     }
 }
