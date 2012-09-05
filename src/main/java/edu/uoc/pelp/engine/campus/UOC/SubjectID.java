@@ -60,7 +60,6 @@ public class SubjectID extends GenericID implements ISubjectID {
         return _code;
     }
 
-    @Override
     public int compareTo(IPelpID arg0) {
         SubjectID arg=(SubjectID)arg0;
         if(_semester.compareTo(arg._semester)!=0) {

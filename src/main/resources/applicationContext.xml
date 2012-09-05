@@ -13,15 +13,9 @@
 	</bean>
 
 	<!-- business objects -->
-	<bean id="pelpBussines" class="uoc.edu.pelp.model.bussines.PelpBussinesImpl">
-		<!--  Aqui es pasen els DAOS -->
+	<bean id="pelpBussines" class="uoc.edu.pelp.bussines.PelpBussinesImpl">
 	</bean>
 
-	<!-- DAO objects -->
-	<!-- Aqui definis los diferentes daos, con beans --> 
-	<bean id="exampleDAO" class="uoc.edu.pelp.model.dao.ExampleDAOImpl" >
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
  	
 	<!-- post-processors for all standard config annotations -->
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
