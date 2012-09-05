@@ -45,14 +45,13 @@ public class CampusConnection implements ICampusConnection{
             this.sesion = sesion;
     }
 
-    public boolean isUserAuthenticated() {
+    public boolean isUserAuthenticated() throws AuthPelpException {
     	boolean authenticated = false;
     	try {
     		Auth authService = WsLibBO.getAuthServiceInstance();
     		authenticated = authService.isUserAuthenticated( sesion );
     	} catch ( Exception e){
-    		//throw new AuthPelpException("Authentication process failed");
-                return false;
+    		throw new AuthPelpException("Authentication process failed");
     	}        
     	return authenticated;
     }

@@ -98,7 +98,7 @@ public class PELPEngine {
      * Check if the current user is authenticated or not.
      * @return True if the user is authenticated or False otherwise.
      */
-    public boolean isUserAuthenticated() {
+    public boolean isUserAuthenticated() throws AuthPelpException {
         return _campusConnection.isUserAuthenticated();
     }
     

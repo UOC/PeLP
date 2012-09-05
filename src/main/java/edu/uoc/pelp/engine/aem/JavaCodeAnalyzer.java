@@ -303,7 +303,6 @@ public class JavaCodeAnalyzer extends BasicCodeAnalyzer {
         return retVal;
     }
     
-    @Override
     public String getSystemInfo() {
         StringBuffer output=new StringBuffer();       
         Process proc=null;        
