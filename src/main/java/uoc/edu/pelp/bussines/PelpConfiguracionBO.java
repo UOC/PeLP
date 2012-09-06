@@ -1,27 +1,32 @@
 package uoc.edu.pelp.bussines;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.ResourceBundle;
+
+import edu.uoc.pelp.conf.IPelpConfiguration;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.servlets.InitServlet;
 
 /**
- * Classe que se carga al iniciar la aplicacion donde se guardan todas las variables de configuracion,
+ * Clase que se carga al iniciar la aplicacion donde se guardan todas las variables de configuracion,
  * es un Singleton donde cada vez que se consulta se mira si la variable a sido inicializada con los datos o no.
  *
- * @author dmartinj
+ * @author jmangas
  *
  */
-public class PelpConfiguracionBO extends HashMap<String, String> {
+public class PelpConfiguracionBO extends HashMap<String, String> implements IPelpConfiguration {
 
 
 	private static final long serialVersionUID = -4027985297795478169L;
 	private static PelpConfiguracionBO config;
 
+	private static String dirFile = null;
+	
 	public static final String ENTORNO_WS = 				"WSEnviroment";
 	public static final String URL_WS_AUTH	 = 				"urlSoapAuth";
 	public static final String URL_WS_RAC_SERVICE = 		"urlSoapRacService";
@@ -33,6 +38,7 @@ public class PelpConfiguracionBO extends HashMap<String, String> {
 
 	private PelpConfiguracionBO() throws IOException {
 		super();
+		dirFile = InitServlet.get_init_configPath();
 	}
 
 
@@ -52,14 +58,14 @@ public class PelpConfiguracionBO extends HashMap<String, String> {
 
 	private synchronized void inicializarConfiguracion() throws Exception {
 		// Aqui cargamos un archivo externo donde se alojara toda la configuración.
-		ResourceBundle resource = ResourceBundle.getBundle("global.properties");
+		Properties prop = new Properties();
 		InputStream is = null;
 		try {
-
-			for (Enumeration<String> e = resource.getKeys(); e.hasMoreElements() ; ) {
-				// Obtenemos el objeto
+			is=new FileInputStream(dirFile);
+			prop.load(is);
+			for (Enumeration<Object> e = prop.keys(); e.hasMoreElements() ; ) {
 				Object obj = e.nextElement();
-				config.put((String) obj, resource.getString(obj.toString()));
+				config.put((String) obj, prop.getProperty(obj.toString()));
 			}
 		} catch (Exception e) {
 			throw e;
@@ -71,6 +77,42 @@ public class PelpConfiguracionBO extends HashMap<String, String> {
 			}
 		}
 
+	}
+
+
+	public String getEnvironmentID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public String getEnvironmentDesc() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public File getTempPath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public File getDeliveryPath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public File getCompiler(String languageID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public ISubjectID[] getActiveSubjects() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

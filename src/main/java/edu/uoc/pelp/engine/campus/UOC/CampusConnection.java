@@ -35,8 +35,8 @@ import org.apache.log4j.Logger;
  */
 public class CampusConnection implements ICampusConnection{
     
-    String sesion;
-    UserID userID;
+    private String sesion;
+    private UserID userID;
 
     private static final Logger log = Logger.getLogger(CampusConnection.class);
 
