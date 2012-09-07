@@ -5,7 +5,7 @@ import org.codehaus.xfire.spring.remoting.XFireClientFactoryBean;
 import net.opentrends.remoteinterface.auth.Auth;
 
 /**
- * Client del WS d'autorització.
+ * Client del WS d'autoritzacio.
  * @author jmangas
  *
  */

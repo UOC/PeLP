@@ -154,5 +154,29 @@ public class Semester extends GenericID implements ITimePeriod{
         
         return 0;
     }
+
+	public Date get_begin() {
+		return _begin;
+	}
+
+	public void set_begin(Date _begin) {
+		this._begin = _begin;
+	}
+
+	public Date get_end() {
+		return _end;
+	}
+
+	public void set_end(Date _end) {
+		this._end = _end;
+	}
+
+	public String get_id() {
+		return _id;
+	}
+
+	public void set_id(String _id) {
+		this._id = _id;
+	}
     
 }

@@ -13,7 +13,7 @@ public class PelpBussinesImpl implements PelpBussines {
 	
 	/* (non-Javadoc)
 	 * @see uoc.edu.model.bussines.PelpBussines#setDeliver(uoc.edu.model.vo.DeliverData, uoc.edu.model.vo.ActivityData)
-	 * Analitza un lliurament i retorna toat la informaci— possible.
+	 * Analitza un lliurament i retorna toat la informacio possible.
 	 */
 	public DeliverReport setDeliver(DeliverData objDeliver, ActivityData objActivity){
 		/*Aqui feu la logica*/
@@ -23,7 +23,7 @@ public class PelpBussinesImpl implements PelpBussines {
 
 	/* (non-Javadoc)
 	 * @see uoc.edu.model.bussines.PelpBussines#getDeliverInfo(java.lang.String, java.lang.Boolean, uoc.edu.model.vo.ActivityData)
-	 * Retorna informaci— disponible sobre un o varis lliuraments.
+	 * Retorna informacio disponible sobre un o varis lliuraments.
 	 */
 	public List<DeliverReport> getDeliverInfo(String campusSession,
 			Boolean incBinari, ActivityData objActivityData) {
@@ -32,7 +32,7 @@ public class PelpBussinesImpl implements PelpBussines {
 
 	/* (non-Javadoc)
 	 * @see uoc.edu.model.bussines.PelpBussines#getDeliverInfoById(java.lang.String, java.lang.Boolean, int)
-	 * Retorna informaci— disponible sobre un o varis lliuraments by Id.
+	 * Retorna informacio disponible sobre un o varis lliuraments by Id.
 	 */
 	public List<DeliverReport> getDeliverInfoById(String campusSession,
 			Boolean incBinari, int deliverId) {
@@ -41,7 +41,7 @@ public class PelpBussinesImpl implements PelpBussines {
 	
 	/* (non-Javadoc)
 	 * @see uoc.edu.pelp.model.bussines.PelpBussines#getActivityInfo(uoc.edu.pelp.model.vo.ActivityData)
-	 * Obtenir la informaci— d'una tasca
+	 * Obtenir la informacio d'una tasca
 	 */
 	public ActivityData[] getActivityInfo(ActivityData objActivityData,String campusSession){
 		return null;
@@ -49,7 +49,7 @@ public class PelpBussinesImpl implements PelpBussines {
 	
 	/* (non-Javadoc)
 	 * @see uoc.edu.pelp.model.bussines.PelpBussines#getActivityInfoById(int)
-	 * Obtenir la informaci— d'una tasca per activityId
+	 * Obtenir la informacio d'una tasca per activityId
 	 */
 	public ActivityData[] getActivityInfoById(int activityId,String campusSession){
 		return null;
