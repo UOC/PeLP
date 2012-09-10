@@ -48,18 +48,28 @@
 
 	<!-- Listeners -->
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-
-	<servlet>
-		<servlet-name>AxisServlet</servlet-name>
-		<servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+    <servlet>
+        <servlet-name>AxisServlet</servlet-name>
+        <servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+		<servlet-name>InitServlet</servlet-name>
+		<servlet-class>edu.uoc.pelp.servlets.InitServlet</servlet-class>
+		<init-param>
+			<description>Path to config</description>
+			<param-name>StaticConfig.Path</param-name>
+			<param-value>${configFilePath}</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/services/*</url-pattern>
-	</servlet-mapping>
-
 </web-app>

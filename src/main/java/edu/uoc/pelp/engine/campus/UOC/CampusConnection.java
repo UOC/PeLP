@@ -18,16 +18,33 @@
 */
 package edu.uoc.pelp.engine.campus.UOC;
 
-import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
-import edu.uoc.pelp.engine.campus.*;
-import edu.uoc.pelp.exception.AuthPelpException;
-import edu.uoc.serveis.gat.expedient.model.ExpedientVO;
-import edu.uoc.serveis.gat.expedient.service.ExpedientService;
-import edu.uoc.serveis.gat.matricula.service.MatriculaService;
 import java.util.ArrayList;
+
 import net.opentrends.remoteinterface.auth.Auth;
 import net.opentrends.remoteinterface.auth.SessionContext;
+
 import org.apache.log4j.Logger;
+import org.osid.OsidContext;
+
+import edu.uoc.pelp.engine.campus.Classroom;
+import edu.uoc.pelp.engine.campus.ICampusConnection;
+import edu.uoc.pelp.engine.campus.IClassroomID;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.engine.campus.ITimePeriod;
+import edu.uoc.pelp.engine.campus.IUserID;
+import edu.uoc.pelp.engine.campus.Person;
+import edu.uoc.pelp.engine.campus.Subject;
+import edu.uoc.pelp.engine.campus.UserRoles;
+import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
+import edu.uoc.pelp.exception.AuthPelpException;
+import edu.uoc.serveis.exceptions.WSException;
+import edu.uoc.serveis.gat.dadesacademiques.model.AssignaturaReduidaVO;
+import edu.uoc.serveis.gat.expedient.model.ExpedientVO;
+import edu.uoc.serveis.gat.expedient.service.ExpedientService;
+import edu.uoc.serveis.gat.matricula.model.AssignaturaMatriculadaDocenciaVO;
+import edu.uoc.serveis.gat.matricula.service.MatriculaService;
+import edu.uoc.serveis.gat.rac.model.AulaVO;
+import edu.uoc.serveis.gat.rac.service.RacService;
 
 /**
  * Implements the campus access for the Universitat Oberta de Catalunya (UOC).
@@ -35,8 +52,8 @@ import org.apache.log4j.Logger;
  */
 public class CampusConnection implements ICampusConnection{
     
-    String sesion;
-    UserID userID;
+    private String sesion;
+    private UserID userID;
 
     private static final Logger log = Logger.getLogger(CampusConnection.class);
 
@@ -74,7 +91,7 @@ public class CampusConnection implements ICampusConnection{
     }
 
     public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
-    	ArrayList<SubjectID> subjects=null;
+    	ArrayList<SubjectID> subjects = new ArrayList<SubjectID>();
     	if( userID == null ) {
     		userID = (UserID) getUserID();
     	}
@@ -85,22 +102,18 @@ public class CampusConnection implements ICampusConnection{
             ExpedientService expedientService = WsLibBO.getExpedientServiceInstance();
             ExpedientVO[] expedientes = expedientService.getExpedientsByEstudiant( idp );
             MatriculaService matriculaService = WsLibBO.getMatriculaServiceInstance();
-            // TODO semester?
-            String semester = "";
+            Semester sem = (Semester) timePeriod;
+            String semester = sem.get_id();
             for (ExpedientVO expedient : expedientes) {
-                int numExpedient = expedient.getNumExpedient();
-/*                AssignaturaMatriculadaDocenciaVO[] asignaturas = matriculaService.getAssignaturesDocenciaMatriculadesEstudiant(idp, semester);
-
+                AssignaturaMatriculadaDocenciaVO[] asignaturas = matriculaService.getAssignaturesDocenciaMatriculadesEstudiant(expedient.getNumExpedient(), semester);
                 for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturas) {
-                        AssignaturaReduidaVO asignatura;
-                        asignatura = assignaturaMatriculadaDocencia.getAssignatura();
-                        Semester sem = new Semester(semester);
+                        AssignaturaReduidaVO  asignatura;
+                        asignatura = (AssignaturaReduidaVO) assignaturaMatriculadaDocencia.getAssignatura();
+                       
                         SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), sem);
                         subjects.add(subID);
                 }
-*/            }	
-        // TODO: There is an error of incompatible data types...
-        throw new UnsupportedOperationException("Not supported yet."); 
+            }	
     	} catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,6 +146,26 @@ public class CampusConnection implements ICampusConnection{
          * La equivalencia de rols son:
          *         
          */
+    	
+        try {
+			RacService rac = WsLibBO.getRacServiceInstance();
+			AulaVO[] aulas = rac.getAulesByConsultorAny(1,"");
+			for (int i=0;i<aulas.length;i++)
+			{/*
+			    if ( (codiTercers.equals(aulas[i].getAssignatura().getCodAssignatura())) && (numAula == aulas[i].getNumAula()))
+			    {
+			        return true;
+			    }*/
+			}
+			//return false;
+		} catch (WSException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -129,7 +129,7 @@
 		<dependency>
 			<groupId>edu.uoc.serveis.gat.matricula-ws</groupId>
 			<artifactId>matricula-ws-client</artifactId>
-			<version>1.1.0</version>
+			<version>1.0.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -161,7 +161,7 @@
 		<dependency>
 			<groupId>edu.uoc.serveis.gat.dades-academiques-ws</groupId>
 			<artifactId>dades-academiques-ws-client</artifactId>
-			<version>1.1.2</version>
+			<version>1.0.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -174,17 +174,8 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>edu.uoc.serveis</groupId>
-			<artifactId>exceptions-ws</artifactId>
-			<version>1.0.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+
+		
 	</dependencies>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uoc.edu</groupId>
@@ -194,6 +185,37 @@
 	<name>pelp</name>
 	<build>
 		<finalName>pelp</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+					</archive>
+
+					<webResources>
+						<resource>
+							<!-- dynamic configuration with filtering -->
+							<directory>
+								${basedir}/src/main/dynamic-configuration
+							</directory>
+							<filtering>true</filtering>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 	<properties>
 		<jira.key>pelp</jira.key>
@@ -208,9 +230,12 @@
 				</property>
 			</activation>
 			<properties>
+				<!-- web.xml parameters-->
+				<configFilePath>${basedir}/src/main/resources/pelpConfig.properties</configFilePath>
+			
 				<!--deploy parameters -->
 				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
-				<jbossdeployhome>\Users\juanfrasr\servidor\pelpserver\server\default\deploy</jbossdeployhome>
+				<jbossdeployhome>D:/jmangas/opt/jboss-4.2.3.GA/server/default/deploy</jbossdeployhome>
 			</properties>
 			<build>
 				<plugins>
@@ -245,6 +270,10 @@
 					<value>pro</value>
 				</property>
 			</activation>
+			<properties>
+				<!-- web.xml parameters-->
+				<configFilePath>/srv/PeLP/pelpConfig.properties</configFilePath>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>

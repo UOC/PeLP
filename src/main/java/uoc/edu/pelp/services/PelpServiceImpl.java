@@ -19,7 +19,7 @@ public class PelpServiceImpl implements PelpService {
 
 	/* (non-Javadoc)
 	 * @see uoc.edu.services.PelpService#setDeliver(uoc.edu.model.vo.DeliverData, uoc.edu.model.vo.ActivityData)
-	 * Analitza un lliurament i retorna toat la informaci— possible.
+	 * Analitza un lliurament i retorna toat la informacio possible.
 	 */
 	public DeliverReport setDeliver(DeliverData objDeliver,
 			ActivityData objActivity) {
@@ -28,7 +28,7 @@ public class PelpServiceImpl implements PelpService {
 
 	/* (non-Javadoc)
 	 * @see uoc.edu.services.PelpService#getDeliverInfo(java.lang.String, java.lang.Boolean, uoc.edu.model.vo.ActivityData)
-	 * Retorna informaci— disponible sobre un o varis lliuraments.
+	 * Retorna informacio disponible sobre un o varis lliuraments.
 	 */
 	public List<DeliverReport> getDeliverInfo(String campusSession,
 			Boolean incBinari, ActivityData objActivityData) {
@@ -37,7 +37,7 @@ public class PelpServiceImpl implements PelpService {
 	
 	/* (non-Javadoc)
 	 * @see uoc.edu.services.PelpService#getDeliverInfoById(java.lang.String, java.lang.Boolean, int)
-	 * Retorna informaci— disponible sobre un o varis lliuraments by Id.
+	 * Retorna informacio disponible sobre un o varis lliuraments by Id.
 	 */
 	public List<DeliverReport> getDeliverInfoById(String campusSession,
 			Boolean incBinari, int deliverId) {
@@ -46,7 +46,7 @@ public class PelpServiceImpl implements PelpService {
 	
 	/* (non-Javadoc)
 	 * @see uoc.edu.pelp.services.PelpService#getActivityInfo(uoc.edu.pelp.model.vo.ActivityData)
-	 * Obtenir la informaci— d'una tasca
+	 * Obtenir la informacio d'una tasca
 	 */
 	public ActivityData[] getActivityInfo(ActivityData objActivityData,String campusSession){
 		return objPelpBussines.getActivityInfo(objActivityData,campusSession);
@@ -54,7 +54,7 @@ public class PelpServiceImpl implements PelpService {
 	
 	/* (non-Javadoc)
 	 * @see uoc.edu.pelp.services.PelpService#getActivityInfoById(int)
-	 * Obtenir la informaci— d'una tasca per activityId
+	 * Obtenir la informacio d'una tasca per activityId
 	 */
 	public ActivityData[] getActivityInfoById(int activityId,String campusSession){
 		return objPelpBussines.getActivityInfoById(activityId,campusSession);
