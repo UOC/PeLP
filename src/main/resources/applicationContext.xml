@@ -18,7 +18,8 @@
 
 	<!-- objects test inject to pelpEnigne -->
 
-	<bean id="lcct" class="edu.uoc.pelp.test.LocalCampusConnection">
+	<bean id="lcct" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection">
+		<constructor-arg type="java.lang.String" value="a12759264e64403cf761a13d8d772764fe786bdb761638150a83500a694761b210a128573dee43cbbddbac7eabf513492199d90bbac74a9942184da84d2f4e07" />
 	</bean>
 	
 	<bean id="lamt" class="edu.uoc.pelp.test.LocalActivityManager">
