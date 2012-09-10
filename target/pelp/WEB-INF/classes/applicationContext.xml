@@ -16,6 +16,36 @@
 	<bean id="pelpBussines" class="uoc.edu.pelp.bussines.PelpBussinesImpl">
 	</bean>
 
+	<!-- objects test inject to pelpEnigne -->
+
+	<bean id="lcct" class="edu.uoc.pelp.test.LocalCampusConnection">
+	</bean>
+	
+	<bean id="lamt" class="edu.uoc.pelp.test.LocalActivityManager">
+	</bean>
+	
+	<bean id="ldmt" class="edu.uoc.pelp.test.LocalDeliverManager">
+	</bean>
+	
+	<bean id="pcpct" class="edu.uoc.pelp.test.PCPelpConfiguration">
+	</bean>
+	
+	<!-- mapping engine  -->
+ 	
+ 	<bean id="engine" class="edu.uoc.pelp.engine.PELPEngine">
+ 		<property name="campusConnection" ref="lcct" />
+ 		<property name="activityManager" ref="lamt" />
+ 		<property name="deliverManager" ref="ldmt" />
+ 		<property name="systemConfiguration" ref="pcpct" />
+	</bean>
+	
+	<!-- ACTIONS -->
+	
+	<bean id="teacherSpringAction" class="uoc.edu.pelp.actions.TeacherAction">
+		<property name="engine" ref="engine" />	
+	</bean>
+	
+	<!--  END ACTIONS -->
  	
 	<!-- post-processors for all standard config annotations -->
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
