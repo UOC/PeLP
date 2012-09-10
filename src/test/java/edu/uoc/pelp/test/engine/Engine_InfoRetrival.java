@@ -18,6 +18,12 @@
 */
 package edu.uoc.pelp.test.engine;
 
+import java.io.File;
+
+import junit.framework.Assert;
+
+import org.junit.Test;
+
 import edu.uoc.pelp.engine.PELPEngine;
 import edu.uoc.pelp.engine.activity.Activity;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
@@ -34,9 +40,6 @@ import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidActivityPelpException;
 import edu.uoc.pelp.test.TestPeLP;
-import java.io.File;
-import junit.framework.Assert;
-import org.junit.Test;
 
 /**
  * Perform information retrieval tests over the engine.
