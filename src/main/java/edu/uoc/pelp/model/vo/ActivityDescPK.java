@@ -24,22 +24,22 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- *
- * @author Xavier
+ * Annotated entity class for the primary key of table ActivityDesc
+ * @author Xavier Baró
  */
 @Embeddable
 public class ActivityDescPK implements Serializable {
     @Basic(optional = false)
-    @Column(name = "semester")
+    @Column(name = "semester",length = 5, columnDefinition="char(5)")
     private String semester;
     @Basic(optional = false)
-    @Column(name = "subject")
+    @Column(name = "subject",length = 6, columnDefinition="char(6)")
     private String subject;
     @Basic(optional = false)
     @Column(name = "index")
     private int index;
     @Basic(optional = false)
-    @Column(name = "langCode")
+    @Column(name = "langCode",length = 15, columnDefinition="char(15)")
     private String langCode;
 
     public ActivityDescPK() {

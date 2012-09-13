@@ -272,10 +272,12 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         return oldValue;
     }
     
+    @Override
     public void setConfiguration(IPelpConfiguration confObject) {
         _confObject=confObject;
     }
     
+    @Override
     public TestResult test(TestData test) {
         StringBuffer exeOutput=new StringBuffer();
         
@@ -315,10 +317,12 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         return result;
     }
 
+    @Override
     public void setWorkingPath(File path) {
         _workingPath=path;
     }
 
+    @Override
     public boolean isValidProject(CodeProject project) {
         // Check the assigned language
         if(project.getLanguage()!=null) {
@@ -356,6 +360,7 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
     }
     
    
+    @Override
     public BuildResult build(CodeProject project) throws PathAEMPelpException, CompilerAEMPelpException {
         
         // Remove old temporal information
@@ -479,6 +484,7 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
     /**
      * Remove temporal files and folders
      */
+    @Override
     public void clearData() {
         // Remove files
         clearTempFiles();
@@ -533,6 +539,7 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         }
     }
     
+    @Override
     public AnalysisResults analyzeProject(CodeProject project,TestData[] tests) throws PathAEMPelpException, CompilerAEMPelpException {
                
         // Call internal building method

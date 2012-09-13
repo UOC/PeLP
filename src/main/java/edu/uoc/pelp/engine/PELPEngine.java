@@ -66,6 +66,7 @@ public class PELPEngine implements IPELPEngine {
      * Assign a new campus object.
      * @param campus Object allowing to access the campus information
      */
+    @Override
     public void setCampusConnection(ICampusConnection campus) {
         _campusConnection=campus;
     }
@@ -74,6 +75,7 @@ public class PELPEngine implements IPELPEngine {
      * Assign a new system configuration object
      * @param conf Object that allows to retrieve system configuration parameters.
      */
+    @Override
     public void setSystemConfiguration(IPelpConfiguration conf) {
         _configuration=conf;
     }
@@ -82,6 +84,7 @@ public class PELPEngine implements IPELPEngine {
      * Assign a new activity manager
      * @param manager Object allowing to manage the activities
      */
+    @Override
     public void setActivityManager(IActivityManager manager) {
         _activityManager=manager;
     }
@@ -90,6 +93,7 @@ public class PELPEngine implements IPELPEngine {
      * Assign a new deliver manager
      * @param manager Object allowing to manage the delivers
      */
+    @Override
     public void setDeliverManager(IDeliverManager manager) {
         _deliverManager=manager;
     }           
@@ -98,6 +102,7 @@ public class PELPEngine implements IPELPEngine {
      * Check if the current user is authenticated or not.
      * @return True if the user is authenticated or False otherwise.
      */
+    @Override
     public boolean isUserAuthenticated() {
         return _campusConnection.isUserAuthenticated();
     }
@@ -107,6 +112,7 @@ public class PELPEngine implements IPELPEngine {
      * @return Object with the user information for the current user
      * @throws AuthPelpException If no user is authenticated.
      */
+    @Override
     public Person getUserInfo() throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -120,6 +126,7 @@ public class PELPEngine implements IPELPEngine {
      * @return List of active subjects for current user.
      * @throws AuthPelpException If no user is authenticated.
      */
+    @Override
     public Subject[] getActiveSubjects() throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -151,6 +158,7 @@ public class PELPEngine implements IPELPEngine {
      * @return List of classrooms
      * @throws AuthPelpException If no user is authenticated.
      */
+    @Override
     public Classroom[] getSubjectClassrooms(ISubjectID subjectID) throws AuthPelpException {  
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -181,6 +189,7 @@ public class PELPEngine implements IPELPEngine {
      * @return List of activities
      * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
      */
+    @Override
     public Activity[] getSubjectActivity(ISubjectID subjectID,boolean filterActive) throws AuthPelpException {
         ActivityID[] activityIDs;
         
@@ -229,6 +238,7 @@ public class PELPEngine implements IPELPEngine {
      * @return Array of Delivers.
      * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
      */
+    @Override
     public Deliver[] getActivityDelivers(IUserID user,ActivityID activity) throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -269,6 +279,7 @@ public class PELPEngine implements IPELPEngine {
      * @return Object with the results of the deliver analysis
      * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
      */
+    @Override
     public DeliverResults getDeliverResults(DeliverID deliver) throws AuthPelpException {
        
         // Check user authentication
@@ -298,6 +309,7 @@ public class PELPEngine implements IPELPEngine {
      * @return Object with the test information
      * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
      */
+    @Override
     public ActivityTest getTestInformation(TestID testID) throws AuthPelpException {
         
         // Check user authentication
@@ -332,6 +344,7 @@ public class PELPEngine implements IPELPEngine {
      * @throws InvalidActivityPelpException If the user cannot perform delivers to this activity, because is not a student or all allowed delivers are performed.
      * @throws ExecPelpException When files cannot be accessed or for some missconfiguration of the analyzer module.
      */
+    @Override
     public DeliverResults createNewDeliver(Deliver deliver, ActivityID activityID) throws AuthPelpException, InvalidActivityPelpException, ExecPelpException {
         
         // Check user authentication
@@ -397,6 +410,7 @@ public class PELPEngine implements IPELPEngine {
      * @return Resuls obtained from the analysis of the delivery
      * @throws AEMPelpException If the project is incorrect, no analyzer can be instantiated for the given project or fail to read project files.
      */
+    @Override
     public AnalysisResults analyzeCode(CodeProject project,TestData[] tests) throws AEMPelpException {
               
         // Check the project
@@ -430,6 +444,7 @@ public class PELPEngine implements IPELPEngine {
      * @param subject Subject Identifier
      * @throws AuthPelpException If user is not authenticated
      */
+    @Override
     public boolean isTeacher(ISubjectID subject) throws AuthPelpException {
         if(_campusConnection.isRole(UserRoles.Teacher, subject) ||
            _campusConnection.isRole(UserRoles.MainTeacher, subject)) {
@@ -445,6 +460,7 @@ public class PELPEngine implements IPELPEngine {
      * @return True if the user is an student of this subject or False otherwise.
      * @throws AuthPelpException If user is not authenticated
      */
+    @Override
     public boolean isStudent(ISubjectID subject) throws AuthPelpException {
         if(_campusConnection.isRole(UserRoles.Student, subject)) {
             return true;

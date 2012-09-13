@@ -18,7 +18,6 @@
 */
 package edu.uoc.pelp.model.vo;
 
-import edu.uoc.pelp.engine.activity.Activity;
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.activity.ActivityTestResult;
 import edu.uoc.pelp.engine.activity.TestID;
@@ -389,6 +388,44 @@ public class ObjectFactory {
                 newObj.setDescription(actDesc.activityDescPK.getLangCode(), actDesc.getDescription());
             }
         }
+        
+        return newObj;
+    }
+    
+    /**
+     * Get an entity object from the internal class object
+     * @param object Object to be processed
+     * @return Instance of the Entity class or null if information is incorrect.
+     */
+    public static edu.uoc.pelp.model.vo.UOC.Semester getSemesterReg(edu.uoc.pelp.engine.campus.UOC.Semester object) {
+        
+        // Check input parameter
+        if(object==null) {
+            return null;
+        }
+        
+        // Create the new object
+        edu.uoc.pelp.model.vo.UOC.Semester newObj=new edu.uoc.pelp.model.vo.UOC.Semester(object.getID());
+        newObj.setStartDate(object.getInitialDate());
+        newObj.setEndDate(object.getFinalDate());        
+        
+        return newObj;
+    }
+
+    /**
+     * Get an object of the internal class from the entity class object
+     * @param object Object to be processed 
+     * @return Instance of the internal class or null if information is incorrect.
+     */
+    public static edu.uoc.pelp.engine.campus.UOC.Semester getSemesterObj(edu.uoc.pelp.model.vo.UOC.Semester object) {
+        
+        // Check input parameters
+        if(object==null) {
+            return null;
+        }
+        
+        // Create the new object
+        edu.uoc.pelp.engine.campus.UOC.Semester newObj=new edu.uoc.pelp.engine.campus.UOC.Semester(object.getSemester(),object.getStartDate(),object.getEndDate());  
         
         return newObj;
     }

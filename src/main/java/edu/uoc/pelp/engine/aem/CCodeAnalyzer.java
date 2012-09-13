@@ -237,6 +237,7 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         return result;
     }
     
+    @Override
     public String getLanguageID() {
         return "C";
     }
@@ -277,7 +278,12 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
                 timeOutValue=timeOut;
             }
             
-            // Create the process            
+            // To avoid null stdin reading errors, change null inputs by empty string
+            /*if(input==null || input.available()==0) {
+                input=new ByteArrayInputStream(" ".getBytes());
+            }*/
+            
+            // Create the process         
             p=ExtExecUtils.exec(cmdarray, _workingPath, _timeoutStep, timeOutValue,input,output,null);
             
             // Check the output
@@ -295,6 +301,7 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         return retVal;
     }
 
+    @Override
     public String getSystemInfo() {
         StringBuffer output=new StringBuffer();
         

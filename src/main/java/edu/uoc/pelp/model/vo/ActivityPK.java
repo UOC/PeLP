@@ -1,26 +1,39 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+	Copyright 2011-2012 Fundació per a la Universitat Oberta de Catalunya
+
+	This file is part of PeLP (Programming eLearning Plaform).
+
+    PeLP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    PeLP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package edu.uoc.pelp.model.vo;
 
-import edu.uoc.pelp.model.vo.UOC.SubjectPK;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- *
- * @author Xavier
+ * Annotated entity class for activity primary key
+ * @author Xavier Baró
  */
 @Embeddable
 public class ActivityPK implements Serializable {
     @Basic(optional = false)
-    @Column(name = "semester")
+    @Column(name = "semester",length = 5, columnDefinition="char(5)")
     private String semester;
     @Basic(optional = false)
-    @Column(name = "subject")
+    @Column(name = "subject",length = 6, columnDefinition="char(6)")
     private String subject;
     @Basic(optional = false)
     @Column(name = "index")

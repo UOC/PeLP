@@ -34,12 +34,13 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Semester.findAll", query = "SELECT s FROM Semester s"),
     @NamedQuery(name = "Semester.findBySemester", query = "SELECT s FROM Semester s WHERE s.semester = :semester"),
     @NamedQuery(name = "Semester.findByStartDate", query = "SELECT s FROM Semester s WHERE s.startDate = :startDate"),
-    @NamedQuery(name = "Semester.findByEndDate", query = "SELECT s FROM Semester s WHERE s.endDate = :endDate")})
+    @NamedQuery(name = "Semester.findByEndDate", query = "SELECT s FROM Semester s WHERE s.endDate = :endDate"),
+    @NamedQuery(name = "Semester.findActive", query = "SELECT s FROM Semester s WHERE (s.startDate is null or s.startDate<=now()) and (s.endDate is null or s.endDate>=now())")})
 public class Semester implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "semester", nullable = false, length = 5)
+    @Column(name = "semester", nullable = false, length = 5, columnDefinition="char(5)")
     private String semester;
     @Column(name = "startDate")
     @Temporal(TemporalType.TIMESTAMP)

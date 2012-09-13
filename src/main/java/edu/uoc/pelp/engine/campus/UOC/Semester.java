@@ -73,6 +73,7 @@ public class Semester implements IPelpID,ITimePeriod{
         return true;
     }
 
+    @Override
     public boolean isActive() {
         Date now = new Date();
         
@@ -114,6 +115,21 @@ public class Semester implements IPelpID,ITimePeriod{
         }
     }
     
+    /**
+     * Set starting date for this semester
+     * @param date Starting date
+     */
+    public void setStartDate(Date date) {
+        _begin=date;
+    }
+    
+    /**
+     * Set ending date for this semester
+     * @param date Ending date
+     */
+    public void setEndDate(Date date) {
+        _end=date;
+    }
 
     protected void copyData(IPelpID genericID) throws PelpException {
         if (genericID instanceof Semester) {
