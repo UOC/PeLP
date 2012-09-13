@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+  <persistence-unit name="PELPPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>edu.uoc.pelp.model.vo.UOC.SemesterDO</class>
+    <class>edu.uoc.pelp.model.vo.ActivitytestDO</class>
+    <class>edu.uoc.pelp.model.vo.ActivitydescDO</class>
+    <class>edu.uoc.pelp.model.vo.TestdescDO</class>
+    <class>edu.uoc.pelp.model.vo.DeliverfileDO</class>
+    <class>edu.uoc.pelp.model.vo.ActivityDO</class>
+    <class>edu.uoc.pelp.model.vo.DeliverresultDO</class>
+    <class>edu.uoc.pelp.model.vo.PelpMainlabsubjectsDO</class>
+    <class>edu.uoc.pelp.model.vo.DeliverDO</class>
+    <class>edu.uoc.pelp.model.vo.ActivitytestresultDO</class>
+    <class>edu.uoc.pelp.model.vo.PelpAdminsDO</class>
+    <class>edu.uoc.pelp.model.vo.PelpActivesubjectsDO</class>
+    <class>edu.uoc.pelp.model.vo.ActivityTest</class>
+    <class>edu.uoc.pelp.model.vo.ActivityDesc</class>
+    <class>edu.uoc.pelp.model.vo.Deliver</class>
+    <class>edu.uoc.pelp.model.vo.ActivityTestResult</class>
+    <class>edu.uoc.pelp.model.vo.DeliverResult</class>
+    <class>edu.uoc.pelp.model.vo.DeliverFile</class>
+    <class>edu.uoc.pelp.model.vo.Activity</class>
+    <class>edu.uoc.pelp.model.vo.TestDesc</class>
+    <class>edu.uoc.pelp.model.vo.UOC.Semester</class>
+    <class>edu.uoc.pelp.model.vo.admin.PelpAdmins</class>
+    <class>edu.uoc.pelp.model.vo.admin.PelpMainLabSubjects</class>
+    <class>edu.uoc.pelp.model.vo.admin.PelpActiveSubjects</class>
+    <class>edu.uoc.pelp.model.vo.DeliverTestResult</class>
+    <class>edu.uoc.pelp.model.vo.admin.PelpLanguages</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/pelp"/>
+      <property name="javax.persistence.jdbc.password" value=".pelp."/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.user" value="pelp"/>
+      <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+    </properties>
+  </persistence-unit>
+</persistence>
