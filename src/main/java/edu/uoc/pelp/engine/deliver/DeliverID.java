@@ -19,7 +19,6 @@
 package edu.uoc.pelp.engine.deliver;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
-import edu.uoc.pelp.engine.campus.GenericID;
 import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.engine.campus.IUserID;
 import edu.uoc.pelp.exception.PelpException;
@@ -28,7 +27,7 @@ import edu.uoc.pelp.exception.PelpException;
  * This class implements a deliver identifier.
  * @author Xavier Baró
  */
-public class DeliverID extends GenericID{
+public class DeliverID implements IPelpID{
     /**
      * User who makes the deliver
      */
@@ -50,8 +49,13 @@ public class DeliverID extends GenericID{
         this.index=index;
     }
 
-    @Override
-    protected void copyData(GenericID genericID) throws PelpException {
+    public DeliverID(DeliverID deliverID) {
+        this.user=deliverID.user;
+        this.activity=deliverID.activity;
+        this.index=deliverID.index;
+    }
+
+    protected void copyData(IPelpID genericID) throws PelpException {
         if (genericID instanceof DeliverID) {
             user=((DeliverID)genericID).user;
             activity=((DeliverID)genericID).activity;
@@ -83,10 +87,44 @@ public class DeliverID extends GenericID{
         }
         return (new Long(index)).compareTo(arg.index);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DeliverID other = (DeliverID) obj;
+        if (this.user != other.user && (this.user == null || !this.user.equals(other.user))) {
+            return false;
+        }
+        if (this.activity != other.activity && (this.activity == null || !this.activity.equals(other.activity))) {
+            return false;
+        }
+        if (this.index != other.index) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.user != null ? this.user.hashCode() : 0);
+        hash = 19 * hash + (this.activity != null ? this.activity.hashCode() : 0);
+        hash = 19 * hash + (int) (this.index ^ (this.index >>> 32));
+        return hash;
+    }
     
     @Override
     public DeliverID clone() {
-        return new DeliverID(user,activity,index);
+        return new DeliverID(this);
+    }
+
+    public IPelpID parse(String str) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

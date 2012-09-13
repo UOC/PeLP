@@ -97,7 +97,7 @@ public class CodeSamples {
      * Add samples to the object
      */
     private void addSamples() {
-        CodeSampleID codeID=null;
+        CodeSampleID codeID;
         
         // Hello World sample in C
         codeID=addCode("C","int main(void) {\n" +

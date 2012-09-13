@@ -16,10 +16,19 @@
 	<bean id="pelpBussines" class="uoc.edu.pelp.model.bussines.PelpBussinesImpl">
 		<!--  Aqui es pasen els DAOS -->
 	</bean>
+        <bean id="activityManagerDS" class="uoc.edu.pelp.model.bussines.PelpBussinesImpl">
+            ActivityManager 
+		<!--  Aqui es pasen els DAOS -->
+                <property name="objPelpBussines" ref="pelpBussines" />
+	</bean>
+        
 
 	<!-- DAO objects -->
 	<!-- Aqui definis los diferentes daos, con beans --> 
 	<bean id="exampleDAO" class="uoc.edu.pelp.model.dao.ExampleDAOImpl" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+        <bean id="semesterDAO" class="edu.uoc.pelp.model.dao.UOC.SemesterJPA" >
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
  	
@@ -30,7 +39,8 @@
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
-		<property name="packagesToScan" value="uoc.edu.pelp.model.vo"/>
+		<property name="packagesToScan" value="edu.uoc.pelp.model.vo"/>
+                <property name="packagesToScan" value="edu.uoc.pelp.model.vo.UOC"/>
 	</bean>
 
 	<!-- Spring's hibernate transaction manager -->

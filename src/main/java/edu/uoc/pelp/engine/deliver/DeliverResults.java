@@ -21,6 +21,7 @@ package edu.uoc.pelp.engine.deliver;
 import edu.uoc.pelp.engine.activity.ActivityTestResult;
 import edu.uoc.pelp.engine.activity.TestID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
+import edu.uoc.pelp.engine.aem.BuildResult;
 import edu.uoc.pelp.engine.aem.TestResult;
 
 /**
@@ -72,6 +73,14 @@ public class DeliverResults {
      */
     public void setDeliverID(DeliverID deliverID) {
         _deliverID=deliverID.clone();
+    }
+    
+    /**
+     * Get the results of the program building analysis
+     * @return Analysis results
+     */
+    public BuildResult getBuildResults() {
+        return _analysisResult.getBuildResult();
     }
     
     @Override

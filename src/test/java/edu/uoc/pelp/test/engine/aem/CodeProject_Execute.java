@@ -314,4 +314,44 @@ public class CodeProject_Execute {
             Assert.fail("Compilation error");
         }
     }
+    
+    @Test
+    public void testJAVAExecERRInfiniteBucle() {
+        try {
+            
+            // Create a string with the code
+            String code="public class InfiniteBucle {\n" +
+                            "\tpublic static void main(String[] args) {\n" +
+                                "\t\twhile(true) {\n" +
+                                "\t\t}\n" +   
+                            "\t}\n" +
+                        "}\n";
+            
+            // Create the Code Project
+            CodeProject project=new CodeProject("JAVA",code);            
+                        
+            // Create the analyzer
+            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(project);
+            
+            // Set the cofiguration object
+            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
+            
+            // Build the code
+            BuildResult buildResult=codeAnalyzer.build(project);
+            
+            // Check test set
+            Assert.assertTrue("Check compilation",buildResult.isCorrect());
+            
+            // Analyze again the code
+            TestResult result=codeAnalyzer.test(new TestData("",""));
+            
+            // Clear temporal data
+            codeAnalyzer.clearData();
+            
+            Assert.assertFalse("Check final exectution",result.isPassed());
+            
+        } catch (ExecPelpException ex) {
+            Assert.fail("Compilation error");
+        }
+    }
 }

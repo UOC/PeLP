@@ -1,12 +1,9 @@
 package uoc.edu.pelp.bussines;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -51,7 +48,7 @@ public class PelpConfiguracionBO extends HashMap<String, String> {
 	}
 
 	private synchronized void inicializarConfiguracion() throws Exception {
-		// Aqui cargamos un archivo externo donde se alojara toda la configuración.
+		// Aqui cargamos un archivo externo donde se alojara toda la configuracion.
 		ResourceBundle resource = ResourceBundle.getBundle("global.properties");
 		InputStream is = null;
 		try {

@@ -13,6 +13,9 @@
 	<bean id="exampleDAO" class="uoc.edu.model.dao.ExampleDAOImpl" >
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+        <bean id="semesterDAO" class="edu.uoc.pelp.model.dao.UOC.SemesterDAO" >
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
 
 	<!-- post-processors for all standard config annotations -->
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
@@ -27,7 +30,7 @@
 				<prop key="hibernate.show_sql">${devMode}</prop>
 			</props>
 		</property>
-		<property name="packagesToScan" value="uoc.edu.model.vo"/>
+		<property name="packagesToScan" value="edu.uoc.pelp.model.vo.UOC"/>
 	</bean>
 
 	<!-- Spring's hibernate transaction manager -->
@@ -44,7 +47,7 @@
 		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
 		<property name="url" value="jdbc:oracle:thin:@irlanda.uoc.es:1520:CUBA"/>
 		<property name="username" value="pelp"/>
-		<property name="password" value="pelp"/>
+		<property name="password" value=".pelp."/>
 	</bean>
 
 	<jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">

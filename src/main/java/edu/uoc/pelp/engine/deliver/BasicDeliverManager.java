@@ -16,41 +16,43 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package edu.uoc.pelp.test.engine.delivery;
+package edu.uoc.pelp.engine.deliver;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.campus.IUserID;
-import edu.uoc.pelp.engine.deliver.Deliver;
-import edu.uoc.pelp.engine.deliver.DeliverID;
-import edu.uoc.pelp.engine.deliver.DeliverResults;
-import edu.uoc.pelp.engine.deliver.IDeliverManager;
+import edu.uoc.pelp.model.dao.IDeliverDAO;
+import edu.uoc.pelp.model.dao.IDeliverFilesDAO;
+import edu.uoc.pelp.model.dao.IDeliverResultDAO;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.List;
 
 /**
- * Implements a dummy class to manage delivers. It uses dynamic memory structures to
- * store the objects.
+ * Implements a basic implementation to manage delivers. 
  * @author Xavier Baró
  */
-public class LocalDeliverManager implements IDeliverManager {
-    
-    /**
-     * Map storing all the delivers
-     */
-    protected HashMap<DeliverID,Deliver> _delivers=new HashMap<DeliverID,Deliver>();
-    
-    /**
-     * Map storing all delivers test results
-     */
-    protected HashMap<DeliverID,DeliverResults> _testResults=new HashMap<DeliverID,DeliverResults>();
-    
+public class BasicDeliverManager implements IDeliverManager {
+        
     /**
      * Path where delivers are stored
      */
     protected File _deliversPath=null;
+    
+    /** 
+     * Delivers DAO
+     */
+    protected IDeliverDAO _delivers=null;
+    
+    /** 
+     * Deliver Files DAO
+     */
+    protected IDeliverFilesDAO _deliverFiles=null;
+    
+    /**
+     * Deliver Results DAO
+     */
+    protected IDeliverResultDAO _deliverResults=null;
+    
 
     /**
      * Create the path where a delived should be stored using its information
@@ -97,78 +99,99 @@ public class LocalDeliverManager implements IDeliverManager {
     }
     
     @Override
-    public synchronized DeliverID addDeliver(IUserID user, ActivityID activity, Deliver deliver) {
+    public DeliverID addDeliver(IUserID user, ActivityID activity, Deliver deliver) {
         
         //Check that the deliver has files
         if(deliver.getFiles().length==0) {
             return null;
         }
         
-        // Get all delivers of a certain user and activity
-        DeliverID[] delivers=getUserDelivers(user,activity);
+        // Add the new deliver
+        DeliverID newID=_delivers.add(user, activity, deliver);
         
-        // Search the last identifier
-        long lastID=0;
-        for(DeliverID id:delivers) {
-            if(id.index>lastID) {
-                lastID=id.index;
+        // Add the deliver files
+        for(DeliverFile file:deliver.getFiles()) {
+            DeliverFileID newFileID=_deliverFiles.add(newID, file);
+            if(newFileID==null) {
+                // Remove the inserted deliver from DB
+                _delivers.delete(newID);
+                return null;
             }
         }
         
-        // Create a new identifier
-        DeliverID newID=new DeliverID(user,activity,lastID+1);
-        
         // Move the files to the destination folder
-        deliver.moveFiles(getDeliverPath(newID));
-        
-        // Create the new Activity
-        _delivers.put(newID,new Deliver(newID,deliver));
-        
-        return newID.clone();
+        if(newID!=null) {
+            // Move the files
+            if(deliver.moveFiles(getDeliverPath(newID))) {
+                // Update the deliver information
+                _delivers.update(deliver);
+            } else {
+                // Remove remaining original files
+                for(File f:deliver.getRootPath().listFiles()) {
+                    f.delete();
+                }
+                deliver.getRootPath().delete();
+                
+                // Remove moved files
+                for(File f:getDeliverPath(newID).listFiles()) {
+                    f.delete();
+                }
+                getDeliverPath(newID).delete();
+                
+                // Remove the inserted deliver from DB
+                _delivers.delete(newID);
+                newID=null;
+            }
+        }
+                
+        return newID;
     }
 
     @Override
     public boolean editDeliver(Deliver deliver) {
-        // Check if the deliver exists
-        if(_delivers.containsKey(deliver.getID())) {
-            // Check if this deliver is correct
-            if(deliver.getID()==null || !deliver.correct()) {
-                return false;
-            }
-            // Remove old entry and add the new one
-            _delivers.remove(deliver.getID());
-            _delivers.put(deliver.getID(),deliver.clone());
-            return true;
+                
+        // Check if this deliver is correct
+        if(deliver.getID()==null || !deliver.correct()) {
+            return false;
         }
         
-        return false;
+        // Update the deliver information
+        boolean correct=_delivers.update(deliver);
+        
+        // Update the deliver files information. Only is possible to add or update files, not remove them
+        if(correct){
+            for(DeliverFile file:deliver.getFiles()) {
+                if(file.getID()!=null) {
+                    correct&=_deliverFiles.update(file);
+                } else {
+                    if(_deliverFiles.add(deliver.getID(), file)==null) {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return correct;
     }
 
     @Override
     public boolean deleteDeliver(DeliverID deliverID) {
-        // Check if the deliver exists
-        if(_delivers.containsKey(deliverID)) {
-            // Remove the deliver
-            _delivers.remove(deliverID);
-            return true;
+        
+        // Remove files
+        for(DeliverFile file:_deliverFiles.findAll(deliverID)) {
+            if(!_deliverFiles.delete(file.getID())) {
+                return false;
+            }    
         }
         
-        return true;
+        // Finally remove the deliver
+        return _delivers.delete(deliverID);
     }
 
     @Override
     public DeliverID[] getActivityDelivers(ActivityID activity) {
-        ArrayList<DeliverID> listIDs=new ArrayList<DeliverID>();
-        
-        // Create the list of identifiers
-        for(DeliverID deliverID:_delivers.keySet()) {
-            if(deliverID.activity.equals(activity)) {
-                listIDs.add(deliverID);
-            }
-        }
-        
-        // Sort the list of delivers
-        Collections.sort(listIDs);
+        // Get the list of ID's
+        List<DeliverID> listIDs=_delivers.findAllKey(activity);
         
         // Create the output array
         DeliverID[] retList=new DeliverID[listIDs.size()];
@@ -179,18 +202,9 @@ public class LocalDeliverManager implements IDeliverManager {
 
     @Override
     public DeliverID[] getUserDelivers(IUserID user, ActivityID activity) {
-        ArrayList<DeliverID> listIDs=new ArrayList<DeliverID>();
         
-        // Create the list of identifiers
-        for(DeliverID deliverID:_delivers.keySet()) {
-            if(deliverID.activity.equals(activity) && deliverID.user.equals(user)) {
-                listIDs.add(deliverID);
-            }
-        }
-        
-        // Sort the list of delivers
-        Collections.sort(listIDs);
-        
+        List<DeliverID> listIDs=_delivers.findAllKey(activity, user);
+                
         // Create the output array
         DeliverID[] retList=new DeliverID[listIDs.size()];
         listIDs.toArray(retList);
@@ -199,69 +213,50 @@ public class LocalDeliverManager implements IDeliverManager {
     }
 
     @Override
-    public boolean addResults(DeliverID deliverID, AnalysisResults results) {
-        // Check if the deliver already has old results
-        if(_testResults.containsKey(deliverID)) {
+    public boolean addResults(DeliverID deliverID, AnalysisResults deliverResults) {
+        // Check the input parameters
+        if(deliverID==null || deliverResults==null) {
             return false;
         }
         
-        // Create a new Results object
-        DeliverResults newResults=new DeliverResults(deliverID,results.clone());
+        // Create the deliver results object
+        DeliverResults results=new DeliverResults(deliverID,deliverResults);
                 
         // Add the results
-        _testResults.put(deliverID, newResults);
-        
-        // Check that it is correctly added
-        return _testResults.containsKey(deliverID);
+        return _deliverResults.add(results);
     }
 
     @Override
     public boolean editResults(DeliverResults results) {
-        // Check if the results exist
-        if(_testResults.containsKey(results.getDeliverID())) {
-            // Remove old entry and add the new one
-            _testResults.remove(results.getDeliverID());
-            _testResults.put(results.getDeliverID(),results.clone());
-            return true;
-        }
-        
-        return false;
+        // Delegate the method
+        return _deliverResults.update(results);
     }
 
     @Override
     public boolean deleteResults(DeliverID deliverID) {
-        // Check if the results exist
-        if(_testResults.containsKey(deliverID)) {
-            // Remove the results
-            _testResults.remove(deliverID);
-            return true;
-        }
-        
-        return false;
+        // Delegate the method
+        return _deliverResults.delete(deliverID);
     }
 
     @Override
     public DeliverResults getResults(DeliverID deliverID) {
-        // Check if the results exist
-        if(_testResults.containsKey(deliverID)) {
-            // Return a copy of the results
-            return _testResults.get(deliverID).clone();
-        }
-        return null;
+        // Delegate the method
+        return _deliverResults.find(deliverID);
     }
 
     @Override
     public Deliver getDeliver(DeliverID deliverID) {
-        Deliver deliver=_delivers.get(deliverID);
-        if(deliver==null) {
-            return null;
-        }
-        return deliver.clone();
+        // Delegate the method
+        return _delivers.find(deliverID);
     }
 
     @Override
     public int getNumUserDelivers(IUserID userID, ActivityID activityID) {
-        return getUserDelivers(userID,activityID).length;
+        DeliverID lastID=_delivers.getLastID(activityID, userID);
+        if(lastID==null) {
+            return 0;
+        }
+        return (int)lastID.index;
     }
 
     @Override

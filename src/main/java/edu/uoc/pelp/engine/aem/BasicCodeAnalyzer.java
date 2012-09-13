@@ -61,12 +61,12 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
     /**
      * Maximum timeout in miliseconds for the the bulding process
      */
-    protected long _maxBuildingTimeout=1000;
+    protected long _maxBuildingTimeout=5000;
     
     /**
      * Maximum timeout in miliseconds for the execution of the code
      */
-    protected long _maxExecutionTimeout=1000;
+    protected long _maxExecutionTimeout=5000;
     
     /**
      * Timeout step. Is the freqüency used to check timeout criteria
@@ -300,14 +300,17 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         result.setElapsedTime(endTime-startTime);
         
         // Compare the output and exepcted output
-        boolean sameOutput;
-        try {
-            sameOutput = test.checkResult(exeOutput.toString());
-        } catch (FileNotFoundException ex) {
-            sameOutput=false;
+        if(retVal<0) {
+            result.setResult(false, "ERROR: Timeout or execution error");
+        } else {
+            boolean sameOutput;
+            try {
+                sameOutput = test.checkResult(exeOutput.toString());
+            } catch (FileNotFoundException ex) {
+                sameOutput=false;
+            }
+            result.setResult(sameOutput, exeOutput.toString());
         }
-        
-        result.setResult(sameOutput, exeOutput.toString());
         
         return result;
     }

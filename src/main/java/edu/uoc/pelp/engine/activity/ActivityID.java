@@ -18,7 +18,6 @@
 */
 package edu.uoc.pelp.engine.activity;
 
-import edu.uoc.pelp.engine.campus.GenericID;
 import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.exception.PelpException;
@@ -27,7 +26,7 @@ import edu.uoc.pelp.exception.PelpException;
  * This class implements the identifier for an activity
  * @author Xavier Baró
  */
-public class ActivityID extends GenericID{
+public class ActivityID implements IPelpID{
     /**
      * String representation for the subject identifier
      */
@@ -46,6 +45,15 @@ public class ActivityID extends GenericID{
     public ActivityID(ISubjectID subjectID,long index) {
         this.subjectID=subjectID;
         this.index=index;
+    }
+    
+    /**
+     * Default copy constructor
+     * @param object Object to be copied
+     */
+    public ActivityID(ActivityID object) {
+        this.subjectID=object.subjectID;
+        this.index=object.index;
     }
 
     @Override
@@ -74,8 +82,7 @@ public class ActivityID extends GenericID{
         return hash;
     }
 
-    @Override
-    protected void copyData(GenericID genericID) throws PelpException {
+    protected void copyData(IPelpID genericID) throws PelpException {
         if (genericID instanceof ActivityID) {
             index=((ActivityID)genericID).index;
             subjectID=((ActivityID)genericID).subjectID;
@@ -96,6 +103,10 @@ public class ActivityID extends GenericID{
             }
         }
         return (new Long(index)).compareTo(arg.index);
+    }
+
+    public IPelpID parse(String str) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

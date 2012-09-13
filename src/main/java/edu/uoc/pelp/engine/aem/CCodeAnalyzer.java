@@ -153,11 +153,13 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         result.start();
         try {    
             proc = ExtExecUtils.exec(compilationCmd, _confObject.getCompiler(getLanguageID()).getAbsoluteFile().getParentFile(), 3, 1000, null, output, output);
-            if(proc.exitValue()==0) {
-                // Store succesful value
-                compRes=true;
-                // Store output main file
-                _buildingMainFile=mainFile;
+            if(proc!=null) {
+                if(proc.exitValue()==0) {
+                    // Store succesful value
+                    compRes=true;
+                    // Store output main file
+                    _buildingMainFile=mainFile;
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(CCodeAnalyzer.class.getName()).log(Level.SEVERE, null, ex);

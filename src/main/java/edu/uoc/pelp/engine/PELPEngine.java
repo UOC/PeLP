@@ -349,6 +349,11 @@ public class PELPEngine {
         if(!isStudent(activityID.subjectID)) {
             throw new AuthPelpException("Only students can create new delivers");
         }
+        
+        // Obtain the main classroom for this student and add them to the deliver information
+        for(IClassroomID classroom:_campusConnection.getUserClassrooms(UserRoles.Student, activityID.subjectID)) {
+            deliver.addMainClassroom(classroom);
+        }
                 
         // Check the number of delivers limit
         int numDelivers=_deliverManager.getNumUserDelivers(_campusConnection.getUserID(), activityID);   
@@ -462,4 +467,12 @@ public class PELPEngine {
             }
         }
     }   
+    
+    //TODO: Direct methods for service demands
+    
+    //TODO: Administration methods
+    // Create/Update Activities(+Tests) (Check all information)
+    // Create/Update Semesters
+    
+    //TODO: Resources access
 }

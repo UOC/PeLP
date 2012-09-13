@@ -16,8 +16,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package edu.uoc.pelp.engine.activity;
+package edu.uoc.pelp.engine.deliver;
 
+import edu.uoc.pelp.engine.activity.*;
 import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.exception.PelpException;
 
@@ -25,24 +26,24 @@ import edu.uoc.pelp.exception.PelpException;
  * This class implements a test unique identifier, used to link tests with activities.
  * @author Xavier Baró
  */
-public class TestID implements IPelpID {
+public class DeliverFileID implements IPelpID {
     /**
      * Activiy identifier
      */
-    public ActivityID activity;
+    public DeliverID deliver;
     
     /**
-     * Number identifying a certain test
+     * Number identifying a certain file
      */
     public long index;
     
     /**
      * Constructor with all values
-     * @param activity Activity identifier
-     * @param index Index of this test
+     * @param deliver Deliver identifier
+     * @param index Index of this file
      */
-    public TestID(ActivityID activity,long index) {
-        this.activity=activity;
+    public DeliverFileID(DeliverID deliver,long index) {
+        this.deliver=deliver;
         this.index=index;
     }
     
@@ -50,15 +51,15 @@ public class TestID implements IPelpID {
      * Default copy constructor
      * @param testID Object to be copied
      */
-    public TestID(TestID testID) {
-        activity=testID.activity;
+    public DeliverFileID(DeliverFileID testID) {
+        deliver=testID.deliver;
         index=testID.index;
     }
 
     protected void copyData(IPelpID genericID) throws PelpException {
-        if (genericID instanceof TestID) {
-            activity.copyData(((TestID)genericID).activity);
-            index=((TestID)genericID).index;
+        if (genericID instanceof DeliverFileID) {
+            deliver.copyData(((DeliverFileID)genericID).deliver);
+            index=((DeliverFileID)genericID).index;
         } else {
             throw new PelpException("Object of type " + genericID.getClass() + " cannot be copided to an object of class " + this.getClass());
         }
@@ -66,13 +67,13 @@ public class TestID implements IPelpID {
     
     @Override
     public int compareTo(IPelpID arg0) {
-        TestID arg=(TestID)arg0;
-        if(activity!=null) {
-            if(activity.compareTo(arg.activity)!=0) {
-                return activity.compareTo(arg.activity);
+        DeliverFileID arg=(DeliverFileID)arg0;
+        if(deliver!=null) {
+            if(deliver.compareTo(arg.deliver)!=0) {
+                return deliver.compareTo(arg.deliver);
             }
         } else {
-            if(arg.activity!=null) {
+            if(arg.deliver!=null) {
                 return -1;
             }
         }
@@ -87,8 +88,8 @@ public class TestID implements IPelpID {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final TestID other = (TestID) obj;
-        if (this.activity != other.activity && (this.activity == null || !this.activity.equals(other.activity))) {
+        final DeliverFileID other = (DeliverFileID) obj;
+        if (this.deliver != other.deliver && (this.deliver == null || !this.deliver.equals(other.deliver))) {
             return false;
         }
         return true;
@@ -97,11 +98,12 @@ public class TestID implements IPelpID {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 11 * hash + (this.activity != null ? this.activity.hashCode() : 0);
+        hash = 11 * hash + (this.deliver != null ? this.deliver.hashCode() : 0);
         hash = 11 * hash + (int) (this.index ^ (this.index >>> 32));
         return hash;
     }
 
+    @Override
     public IPelpID parse(String str) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

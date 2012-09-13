@@ -45,8 +45,9 @@ public class CampusConnection implements ICampusConnection{
             this.sesion = sesion;
     }
 
+    @Override
     public boolean isUserAuthenticated() {
-    	boolean authenticated = false;
+    	boolean authenticated;
     	try {
     		Auth authService = WsLibBO.getAuthServiceInstance();
     		authenticated = authService.isUserAuthenticated( sesion );
@@ -57,6 +58,7 @@ public class CampusConnection implements ICampusConnection{
     	return authenticated;
     }
 
+    @Override
     public IUserID getUserID() throws AuthPelpException {
         IUserID userId;  
     	try {
@@ -74,6 +76,7 @@ public class CampusConnection implements ICampusConnection{
     	 return userId;
     }
 
+    @Override
     public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
     	ArrayList<SubjectID> subjects=null;
     	if( userID == null ) {
@@ -110,10 +113,12 @@ public class CampusConnection implements ICampusConnection{
         return subjects.toArray(subs); 
     }
 
+    @Override
     public IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException {
         return getUserClassrooms(null);
     }
     
+    @Override
     public IClassroomID[] getUserClassrooms(UserRoles userRole,ISubjectID subject) throws AuthPelpException {
         // Check if the user is authenticated
         if(!isUserAuthenticated()) {
@@ -124,10 +129,12 @@ public class CampusConnection implements ICampusConnection{
         throw new UnsupportedOperationException("Not supported yet."); 
     }
 
+    @Override
     public IClassroomID[] getSubjectClassrooms(ISubjectID subject, UserRoles userRole) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isRole(UserRoles role, ISubjectID subject, IUserID user) {
         /* 
          * TODO: Comprova si l'usuari donat té el rol indicat per aquest assignatura.
@@ -137,72 +144,90 @@ public class CampusConnection implements ICampusConnection{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isRole(UserRoles role, ISubjectID subject) throws AuthPelpException {
         return isRole(role,subject,getUserID());
     }
 
+    @Override
     public boolean isRole(UserRoles role, IClassroomID classroom, IUserID user) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isRole(UserRoles role, IClassroomID classroom) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public IUserID[] getRolePersons(UserRoles role, ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public IUserID[] getRolePersons(UserRoles role, IClassroomID classroom) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean hasLabSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException {
+        //TODO: Una solucio es utilitzar la taula PELP_MainLabSubjects, amb les correspondencies
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean hasEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ISubjectID[] getEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isCampusConnection() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Subject getSubjectData(ISubjectID subjectID) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Person getUserData(IUserID userID) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Person getUserData() throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ISubjectID[] getUserSubjects(UserRoles userRole,ITimePeriod timePeriod) throws AuthPelpException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public ITimePeriod[] getPeriods() {
-        // Accedir a una taula de la Base de Dades
+        // TODO: Accedir a una taula de la Base de Dades (semester)
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ITimePeriod[] getActivePeriods() {
         // Accedir a una taula de la Base de Dades
         throw new UnsupportedOperationException("Not supported yet.");
