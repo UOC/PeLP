@@ -1,21 +1,30 @@
+/*
+	Copyright 2011-2012 Fundació per a la Universitat Oberta de Catalunya
+
+	This file is part of PeLP (Programming eLearning Plaform).
+
+    PeLP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    PeLP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package edu.uoc.pelp.engine;
 
 import edu.uoc.pelp.conf.IPelpConfiguration;
-import edu.uoc.pelp.engine.activity.Activity;
-import edu.uoc.pelp.engine.activity.ActivityID;
-import edu.uoc.pelp.engine.activity.ActivityTest;
-import edu.uoc.pelp.engine.activity.IActivityManager;
-import edu.uoc.pelp.engine.activity.TestID;
+import edu.uoc.pelp.engine.activity.*;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.CodeProject;
 import edu.uoc.pelp.engine.aem.TestData;
 import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
-import edu.uoc.pelp.engine.campus.Classroom;
-import edu.uoc.pelp.engine.campus.ICampusConnection;
-import edu.uoc.pelp.engine.campus.ISubjectID;
-import edu.uoc.pelp.engine.campus.IUserID;
-import edu.uoc.pelp.engine.campus.Person;
-import edu.uoc.pelp.engine.campus.Subject;
+import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverID;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
@@ -24,7 +33,11 @@ import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidActivityPelpException;
 
-public interface iPELPEngine {
+/**
+ * This class defines the interface of the engine of the PELP system. 
+ * @author
+ */
+public interface IPELPEngine {
 
 	/**
 	 * Assign a new campus object.

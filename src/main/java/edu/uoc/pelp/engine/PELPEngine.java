@@ -40,7 +40,7 @@ import java.util.Collections;
  * This class implements the engine of the PELP system. 
  * @author Xavier Baró
  */
-public class PELPEngine {
+public class PELPEngine implements IPELPEngine {
     
     /**
      * Object used to access the campus information
