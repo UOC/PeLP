@@ -24,7 +24,6 @@ import net.opentrends.remoteinterface.auth.Auth;
 import net.opentrends.remoteinterface.auth.SessionContext;
 
 import org.apache.log4j.Logger;
-import org.osid.OsidContext;
 
 import edu.uoc.pelp.engine.campus.Classroom;
 import edu.uoc.pelp.engine.campus.ICampusConnection;
@@ -38,7 +37,9 @@ import edu.uoc.pelp.engine.campus.UserRoles;
 import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.serveis.exceptions.WSException;
+import edu.uoc.serveis.gat.dadesacademiques.model.AnyAcademicVO;
 import edu.uoc.serveis.gat.dadesacademiques.model.AssignaturaReduidaVO;
+import edu.uoc.serveis.gat.dadesacademiques.service.DadesAcademiquesService;
 import edu.uoc.serveis.gat.expedient.model.ExpedientVO;
 import edu.uoc.serveis.gat.expedient.service.ExpedientService;
 import edu.uoc.serveis.gat.matricula.model.AssignaturaMatriculadaDocenciaVO;
@@ -55,6 +56,8 @@ public class CampusConnection implements ICampusConnection{
     private String sesion;
     private UserID userID;
 
+    private ArrayList<AssignaturaMatriculadaDocenciaVO> asignaturasMatriculadas;
+    
     private static final Logger log = Logger.getLogger(CampusConnection.class);
 
     public CampusConnection(String sesion) {
@@ -74,55 +77,106 @@ public class CampusConnection implements ICampusConnection{
     }
 
     public IUserID getUserID() throws AuthPelpException {
-        IUserID userId;  
-    	try {
-    		Auth authService = WsLibBO.getAuthServiceInstance();
-            final SessionContext sessionContext = authService.getContextBySessionId(sesion);
-            if ( sessionContext == null ) {
-                log.error("Error al obtener la SessionContext de la sesion: " + sesion);
-                throw new Exception("Error al obtener la SessionContext de la sesion: " + sesion);
-            }
-            userId = new UserID( String.valueOf(sessionContext.getIdp()) );
-           
-    	} catch ( Exception e){
-    		throw new AuthPelpException("Authentication process failed");
-    	} 
-    	 return userId;
+
+    	if( userID == null ) {
+
+    		try {
+    			Auth authService = WsLibBO.getAuthServiceInstance();
+    			final SessionContext sessionContext = authService.getContextBySessionId(sesion);
+    			if ( sessionContext == null ) {
+    				log.error("Error al obtener la SessionContext de la sesion: " + sesion);
+    				throw new Exception("Error al obtener la SessionContext de la sesion: " + sesion);
+    			}
+    			userID = new UserID( String.valueOf(sessionContext.getIdp()) );
+
+    		} catch ( Exception e){
+    			throw new AuthPelpException("Authentication process failed");
+    		}
+    	}
+    	return userID;
     }
 
+    
     public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
     	ArrayList<SubjectID> subjects = new ArrayList<SubjectID>();
-    	if( userID == null ) {
-    		userID = (UserID) getUserID();
+
+    	if( asignaturasMatriculadas == null ){
+    		asignaturasMatriculadas = getUserSubjectsObjects(timePeriod);
     	}
-        
-    	try {
-            int idp = Integer.valueOf( userID.idp );
-            
-            ExpedientService expedientService = WsLibBO.getExpedientServiceInstance();
-            ExpedientVO[] expedientes = expedientService.getExpedientsByEstudiant( idp );
-            MatriculaService matriculaService = WsLibBO.getMatriculaServiceInstance();
-            Semester sem = (Semester) timePeriod;
-            String semester = sem.get_id();
-            for (ExpedientVO expedient : expedientes) {
-                AssignaturaMatriculadaDocenciaVO[] asignaturas = matriculaService.getAssignaturesDocenciaMatriculadesEstudiant(expedient.getNumExpedient(), semester);
-                for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturas) {
-                        AssignaturaReduidaVO  asignatura;
-                        asignatura = (AssignaturaReduidaVO) assignaturaMatriculadaDocencia.getAssignatura();
-                       
-                        SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), sem);
-                        subjects.add(subID);
-                }
-            }	
-    	} catch (Exception e) {
-            e.printStackTrace();
-        }
-        
+		
+    	Semester semester = (Semester) timePeriod;
+		for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturasMatriculadas) {
+			AssignaturaReduidaVO  asignatura;
+			asignatura = (AssignaturaReduidaVO) assignaturaMatriculadaDocencia.getAssignatura();
+
+			SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), semester);
+			subjects.add(subID);
+		}
+		
     	SubjectID[] subs=new SubjectID[subjects.size()];
-        return subjects.toArray(subs); 
+    	return subjects.toArray(subs); 
     }
 
-    public IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException {
+	private ArrayList<AssignaturaMatriculadaDocenciaVO> getUserSubjectsObjects( ITimePeriod timePeriod ) throws AuthPelpException {
+		
+		asignaturasMatriculadas = new ArrayList<AssignaturaMatriculadaDocenciaVO>();
+		
+		try {
+	    	if( userID == null ) {
+	    		userID = (UserID) getUserID();
+	    	}
+    		int idp = Integer.valueOf( userID.idp );
+
+    		ExpedientService expedientService = WsLibBO.getExpedientServiceInstance();
+    		ExpedientVO[] expedientes = expedientService.getExpedientsByEstudiant( idp );
+    		MatriculaService matriculaService = WsLibBO.getMatriculaServiceInstance();
+    		Semester sem = (Semester) timePeriod;
+    		String semester = sem.get_id();
+    		for (ExpedientVO expedient : expedientes) {
+    			AssignaturaMatriculadaDocenciaVO[] asignaturas = matriculaService.getAssignaturesDocenciaMatriculadesEstudiant(expedient.getNumExpedient(), semester);
+    			for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturas) {
+    				
+    				asignaturasMatriculadas.add( assignaturaMatriculadaDocencia );
+
+    			}
+    		}
+    	} catch (Exception e) {
+    		log.error("Error al obtener el listado de asignaturas del usuario.");
+    		e.printStackTrace();
+    		throw new AuthPelpException("Error al obtener el listado de asignaturas del usuario.");            
+    	}
+		return asignaturasMatriculadas;
+	}
+
+    
+    public IClassroomID[] getUserClassrooms(ISubjectID subjectID) throws AuthPelpException {
+    	
+    	if( asignaturasMatriculadas == null ){
+    		asignaturasMatriculadas = getUserSubjectsObjects(timePeriod);
+    	}
+    	
+    	IClassroomID[] classrooms = new ClassroomID[2];
+    	
+    	Semester semester = (Semester) timePeriod;
+    	SubjectID subject = (SubjectID) subjectID;
+		for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturasMatriculadas) {
+			AssignaturaReduidaVO  asignatura;
+			asignatura = (AssignaturaReduidaVO) assignaturaMatriculadaDocencia.getAssignatura();
+			SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), semester);
+			
+			if( subject.compareTo( subID ) == 0 ) {
+				ClassroomID classroom = new ClassroomID(subject, asignatura.);
+			}
+				
+			
+			subjects.add(subID);
+		}
+		
+    	
+    	
+    	ClassroomID classroom = new ClassroomID(subject, classIdx);
+    	
+    	
         return getUserClassrooms(null);
     }
     
@@ -231,6 +285,15 @@ public class CampusConnection implements ICampusConnection{
     }
 
     public ITimePeriod[] getPeriods() {
+    	String MODUL = "NOTESAVAL0";
+    	AnyAcademicVO[] anysAcademics;
+		DadesAcademiquesService dades = WsLibBO.getDadesAcademiquesServiceInstance();
+		anysAcademics = dades.getAnysAcademicsCalendari(usuario.getAppIdTREN(), usuario.getAplicacioTren(), MODUL);
+		if( anysAcademics != null && anysAcademics.length > 0 ) {
+			anyAcademic = anysAcademics[0].getAnyAcademic();
+		} else {
+			anyAcademic = RacConfiguracion.getSingletonConfiguration().get(RacConfiguracion.ACADEMIC_DATE);
+		}
         // Accedir a una taula de la Base de Dades
         throw new UnsupportedOperationException("Not supported yet.");
     }

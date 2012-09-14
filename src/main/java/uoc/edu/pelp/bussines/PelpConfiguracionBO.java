@@ -29,7 +29,7 @@ public class PelpConfiguracionBO extends HashMap<String, String> implements IPel
 
 	private static String dirFile = null;
 	
-	public static final String ENTORNO_WS = 				"enviroment";
+	public static final String ENTORNO = 					"enviroment";
 	public static final String URL_WS_AUTH	 = 				"urlSoapAuth";
 	public static final String URL_WS_RAC_SERVICE = 		"urlSoapRacService";
 	public static final String URL_WS_DADES_ACADEMIQUES = 	"urlSoapDadesAcademiquesService";
@@ -89,12 +89,12 @@ public class PelpConfiguracionBO extends HashMap<String, String> implements IPel
 
 
 	public String getEnvironmentID() {
-		return get(ENTORNO_WS);
+		return get(ENTORNO);
 	}
 
 
 	public String getEnvironmentDesc() {
-		return get(ENTORNO_WS);
+		return get(ENTORNO);
 	}
 
 
