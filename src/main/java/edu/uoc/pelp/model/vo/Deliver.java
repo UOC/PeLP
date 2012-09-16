@@ -18,6 +18,7 @@
 */
 package edu.uoc.pelp.model.vo;
 
+import edu.uoc.pelp.model.vo.UOC.ClassroomPK;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
@@ -105,6 +106,13 @@ public class Deliver implements Serializable {
     public void setClassroom(String classroom) {
         this.classroom = classroom;
     }
+    
+    public void setClassroom(ClassroomPK classroom) {
+        this.classroom=null;
+        if(classroom!=null) {
+            this.classroom = classroom.toString();
+        }
+    }
 
     public String getLaboratory() {
         return laboratory;
@@ -112,6 +120,13 @@ public class Deliver implements Serializable {
 
     public void setLaboratory(String laboratory) {
         this.laboratory = laboratory;
+    }
+    
+    public void setLaboratory(ClassroomPK laboratory) {
+        this.laboratory=null;
+        if(laboratory!=null) {
+            this.laboratory = laboratory.toString();
+        }
     }
 
     @Override

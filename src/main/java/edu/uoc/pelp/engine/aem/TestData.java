@@ -169,11 +169,88 @@ public class TestData {
     
     /**
      * Assign the maximum time allowed for this test. If null, default time is used
-     * @param timeout 
+     * @param timeout Time in miliseconds
      */
     public void setMaxTime(Long timeout) {
         _maxTime=timeout;
     }
+
+    /**
+     * Get the file containing the expected output
+     * @return File object with the path
+     */
+    public File getExpectedOutputFile() {
+        return _expectedOutputFile;
+    }
+    
+    /**
+     * Set the file containing the expected output. If a non null string is gived, any existent output string will be set to null.
+     * @param file File object with the path
+     */
+    public void setExpectedOutputFile(File file) {
+        _expectedOutputFile=file;
+        if(_expectedOutputFile!=null) {
+            _expectedOutputStr=null;
+        }
+    }
+
+    /**
+     * Get the expected output string
+     * @return String with the expected object
+     */
+    public String getExpectedOutputStr() {
+        return _expectedOutputStr;
+    }
+    
+    /**
+     * Set the expected output string. If a non null string is gived, any existent output file will be set to null.
+     * @param str String with the expected object
+     */
+    public void setExpectedOutputStr(String str) {
+        _expectedOutputStr=str;
+        if(_expectedOutputStr!=null) {
+            _expectedOutputFile=null;
+        }
+    }
+
+    /**
+     * Get the file containing the input data to be passed to the program.
+     * @return File object with the path
+     */
+    public File getInputFile() {
+        return _inputFile;
+    }
+    
+    /**
+     * Set the file containing the input data to be passed to the program. If a non null file is gived, any existent input string will be set to null.
+     * @param file File object with the path
+     */
+    public void setInputFile(File file) {
+        _inputFile=file;
+        if(_inputFile!=null) {
+            _inputStr=null;
+        }
+    }
+
+    /**
+     * Get the input string, that will be passed to the program.  
+     * @return String with the input data
+     */
+    public String getInputStr() {
+        return _inputStr;
+    }
+    
+    /**
+     * Set the input string, that will be passed to the program. If a non null string is gived, any existent input file will be set to null.
+     * @param str String with the input data
+     */
+    public void getInputStr(String str) {
+        _inputStr=str;
+        if(_inputStr!=null) {
+            _inputFile=null;
+        }
+    }
+    
     
     /**
      * Read all the information from an InputStream and stores it in a String

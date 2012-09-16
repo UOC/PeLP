@@ -23,15 +23,23 @@ import edu.uoc.pelp.engine.activity.ActivityTestResult;
 import edu.uoc.pelp.engine.activity.TestID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.BuildResult;
+import edu.uoc.pelp.engine.aem.TestData;
 import edu.uoc.pelp.engine.aem.TestResult;
+import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.engine.campus.IUserID;
+import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
 import edu.uoc.pelp.engine.campus.UOC.Semester;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import edu.uoc.pelp.engine.campus.UOC.UserID;
+import edu.uoc.pelp.engine.deliver.DeliverFile.FileType;
+import edu.uoc.pelp.engine.deliver.DeliverFileID;
 import edu.uoc.pelp.engine.deliver.DeliverID;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
+import edu.uoc.pelp.model.vo.UOC.ClassroomPK;
 import edu.uoc.pelp.model.vo.UOC.SubjectPK;
+import edu.uoc.pelp.model.vo.UOC.UserPK;
+import java.io.File;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -46,9 +54,72 @@ public class ObjectFactory {
      * @param objectID Object identifier to be processed 
      * @return Instance of the primary key or null if information is incorrect.
      */
+    public static UserPK getUserPK(IUserID objectID) {
+        UserID userID=null;
+        
+        // Check input parameters
+        if(objectID==null) {
+            return null;
+        }
+        
+        // Get proper objects
+        if(objectID instanceof UserID) {
+            userID=(UserID)objectID;
+        }
+        
+        // Check the types
+        if(userID==null) {
+            return null;
+        }
+        
+        // Extract the parameters from previous objects
+        String idp=userID.idp;
+        
+        // Return the new object
+        return new UserPK(idp);
+    }
+    
+    /**
+     * Get the primary key from of the entity class from the internal Id class
+     * @param objectID Object identifier to be processed 
+     * @return Instance of the primary key or null if information is incorrect.
+     */
+    public static ClassroomPK getClassroomPK(IClassroomID objectID) {
+        ClassroomID classroomID=null;
+        
+        // Check input parameters
+        if(objectID==null) {
+            return null;
+        }
+        
+        // Get proper objects
+        if(objectID instanceof ClassroomID) {
+            classroomID=(ClassroomID)objectID;
+        }
+        
+        // Check the types
+        if(classroomID==null) {
+            return null;
+        }
+        
+        // Extract the parameters from previous objects
+        SubjectPK subjectPK=ObjectFactory.getSubjectPK(classroomID.getSubject());
+        Integer classIdx=classroomID.getClassIdx();
+        if(subjectPK==null || classIdx==null) {
+            return null;
+        }
+        
+        // Return the new object
+        return new ClassroomPK(subjectPK,classIdx);
+    }
+    
+    /**
+     * Get the primary key from of the entity class from the internal Id class
+     * @param objectID Object identifier to be processed 
+     * @return Instance of the primary key or null if information is incorrect.
+     */
     public static ActivityPK getActivityPK(ActivityID objectID) {
         SubjectID subjectID=null;
-        UserID userID=null;
         
         // Check input parameters
         if(objectID==null) {
@@ -72,6 +143,31 @@ public class ObjectFactory {
 
         // Return the new object
         return new ActivityPK(semester,subject,activityIndex);
+    }
+    
+    /**
+     * Get the primary key from of the entity class from the internal Id class
+     * @param objectID Object identifier to be processed 
+     * @return Instance of the primary key or null if information is incorrect.
+     */
+    public static ActivityTestPK getActivityTestPK(TestID objectID) {
+        
+        // Check input parameters
+        if(objectID==null) {
+            return null;
+        }
+        
+        // Get proper objects
+        ActivityPK activityPK=getActivityPK(objectID.activity);
+        if(activityPK==null) {
+            return null;
+        }
+                
+        // Extract the parameters from previous objects
+        int testIndex=(int)objectID.index;                
+
+        // Return the new object
+        return new ActivityTestPK(activityPK,testIndex);
     }
     
     /**
@@ -148,6 +244,31 @@ public class ObjectFactory {
      * @param objectID Object identifier to be processed 
      * @return Instance of the primary key or null if information is incorrect.
      */
+    public static DeliverFilePK getDeliverFilePK(DeliverFileID objectID) {
+        // Check input parameters
+        if(objectID==null) {
+            return null;
+        }
+        if(objectID.deliver==null) {
+            return null;
+        }
+        
+        // Get proper objects
+        DeliverPK deliverPK=getDeliverPK(objectID.deliver);
+        if(deliverPK==null) {
+            return null;
+        }
+        int fileIdx=(int) objectID.index;
+        
+        // Return the new object
+        return new DeliverFilePK(deliverPK,fileIdx);
+    }
+    
+    /**
+     * Get the primary key from of the entity class from the internal Id class
+     * @param objectID Object identifier to be processed 
+     * @return Instance of the primary key or null if information is incorrect.
+     */
     public static DeliverTestResultPK getDeliverTestResultPK(DeliverID deliverID,TestID testID) {
         
         // Check input objects
@@ -217,6 +338,60 @@ public class ObjectFactory {
      * @param key Primary key to be processed 
      * @return Instance of the object ID or null if information is incorrect.
      */
+    public static UserID getUserID(UserPK key) {
+        // Check input parameters
+        if(key==null) {
+            return null;
+        }
+        
+        // Return the new object
+        return new UserID(key.getIdp());
+    }
+    
+    /**
+     * Get the internal object ID from the primary key
+     * @param key Primary key to be processed 
+     * @return Instance of the object ID or null if information is incorrect.
+     */
+    public static ClassroomID getClassroomID(ClassroomPK key) {
+        // Check input parameters
+        if(key==null) {
+            return null;
+        }
+        
+        // Get the fields
+        SubjectID subject=getSubjectID(key.getSubject());
+        int classIdx=key.getIndex();
+        
+        // Return the new object
+        return new ClassroomID(subject, classIdx);
+    }
+    
+    /**
+     * Get the internal object ID from the primary key
+     * @param key Primary key to be processed 
+     * @return Instance of the object ID or null if information is incorrect.
+     */
+    public static SubjectID getSubjectID(SubjectPK key) {
+        // Check input parameters
+        if(key==null) {
+            return null;
+        }
+        
+        // Check information
+        if(key.getSemester()==null || key.getSubject()==null) {
+            return null;
+        }
+        
+        // Return the new object
+        return new SubjectID(key.getSubject(),new Semester(key.getSemester()));
+    }
+    
+    /**
+     * Get the internal object ID from the primary key
+     * @param key Primary key to be processed 
+     * @return Instance of the object ID or null if information is incorrect.
+     */
     public static ActivityID getActivityID(ActivityPK key) {
         // Check input parameters
         if(key==null) {
@@ -228,6 +403,24 @@ public class ObjectFactory {
         
         // Return the new object
         return new ActivityID(subjectID,key.getIndex());
+    }
+    
+    /**
+     * Get the internal object ID from the primary key
+     * @param key Primary key to be processed 
+     * @return Instance of the object ID or null if information is incorrect.
+     */
+    public static TestID getActivityTestID(ActivityTestPK key) {
+        // Check input parameters
+        if(key==null) {
+            return null;
+        }
+        
+        // Get parameters
+        ActivityID activityID=getActivityID(key.getActivityPK());
+        
+        // Return the new object
+        return new TestID(activityID,key.getTestIndex());
     }
     
     /**
@@ -249,6 +442,29 @@ public class ObjectFactory {
                 
         // Return the new object
         return new DeliverID(user,activity,key.getDeliverIndex());
+    }
+    
+    /**
+     * Get the internal object ID from the primary key
+     * @param key Primary key to be processed 
+     * @return Instance of the object ID or null if information is incorrect.
+     */
+    public static DeliverFileID getDeliverFileID(DeliverFilePK key) {        
+        // Check input parameters
+        if(key==null) {
+            return null;
+        }
+        
+        // Get parameters
+        IUserID user=new UserID(key.getUserID());
+        Semester semester=new Semester(key.getSemester());
+        ISubjectID subjectID=new SubjectID(key.getSubject(),semester);
+        ActivityID activity=new ActivityID(subjectID,key.getActivityIndex());
+        DeliverID deliverID=new DeliverID(user,activity,key.getDeliverIndex());
+        long index=key.getFileIndex();
+                
+        // Return the new object
+        return new DeliverFileID(deliverID,index);
     }
     
     /**
@@ -367,6 +583,7 @@ public class ObjectFactory {
     /**
      * Get an object of the internal class from the entity class object
      * @param object Object to be processed 
+     * @param descriptions Array with the descriptions for this activity
      * @return Instance of the internal class or null if information is incorrect.
      */
     public static edu.uoc.pelp.engine.activity.Activity getActivityObj(edu.uoc.pelp.model.vo.Activity object, ActivityDesc[] descriptions) {
@@ -383,6 +600,8 @@ public class ObjectFactory {
         edu.uoc.pelp.engine.activity.Activity newObj=new edu.uoc.pelp.engine.activity.Activity(activityID,object.getStartDate(),object.getEndDate());  
         newObj.setLanguage(object.getLanguage());
         newObj.setMaxDelivers(object.getMaxDelivers());
+        
+        // Add the descriptions
         if(descriptions!=null) {
             for(ActivityDesc actDesc:descriptions) {
                 newObj.setDescription(actDesc.activityDescPK.getLangCode(), actDesc.getDescription());
@@ -426,6 +645,208 @@ public class ObjectFactory {
         
         // Create the new object
         edu.uoc.pelp.engine.campus.UOC.Semester newObj=new edu.uoc.pelp.engine.campus.UOC.Semester(object.getSemester(),object.getStartDate(),object.getEndDate());  
+        
+        return newObj;
+    }
+    
+    /**
+     * Get an entity object from the internal class object
+     * @param object Object to be processed
+     * @return Instance of the Entity class or null if information is incorrect.
+     */
+    public static edu.uoc.pelp.model.vo.ActivityTest getActivityTestReg(edu.uoc.pelp.engine.activity.ActivityTest object) {
+        
+        // Check input parameter
+        if(object==null) {
+            return null;
+        }
+        
+        // Get the actiivty test key
+        ActivityTestPK activityTestPK=getActivityTestPK(object.getID());
+        
+        // Create the new object
+        edu.uoc.pelp.model.vo.ActivityTest newObj=new edu.uoc.pelp.model.vo.ActivityTest(activityTestPK);
+        if(object.getInputFile()!=null) {
+            newObj.setFileInput(object.getInputFile().getPath());
+        }
+        if(object.getExpectedOutputFile()!=null) {
+            newObj.setFileOutput(object.getExpectedOutputFile().getPath());
+        }
+        if(object.getMaxTime()!=null) {
+            newObj.setMaxTime(BigInteger.valueOf(object.getMaxTime()));
+        }
+        newObj.setPublicTest(object.isPublic());
+        newObj.setStrInput(object.getInputStr());
+        newObj.setStrOutput(object.getExpectedOutputStr());
+        
+        return newObj;
+    }
+
+    /**
+     * Get an object of the internal class from the entity class object
+     * @param object Object to be processed 
+     * @return Instance of the internal class or null if information is incorrect.
+     */
+    public static edu.uoc.pelp.engine.activity.ActivityTest getActivityTestObj(edu.uoc.pelp.model.vo.ActivityTest object, TestDesc[] descriptions) {
+        
+        // Check input parameters
+        if(object==null) {
+            return null;
+        }
+        
+        // Create the new object
+        TestID testID=getActivityTestID(object.getActivityTestPK());
+        TestData testData=new TestData();
+        if(object.getMaxTime()!=null) {
+            testData.setMaxTime(object.getMaxTime().longValue());
+        }
+        object.setStrInput(object.getStrInput());
+        object.setStrOutput(object.getStrOutput());
+        if(object.getFileInput()!=null) {
+            testData.setInputFile(new File(object.getFileInput()));
+        }
+        if(object.getFileOutput()!=null) {
+            testData.setExpectedOutputFile(new File(object.getFileOutput()));
+        }
+        edu.uoc.pelp.engine.activity.ActivityTest newObj=new edu.uoc.pelp.engine.activity.ActivityTest(testID,testData);  
+        if(object.getPublicTest()!=null) {
+            newObj.setPublic(object.getPublicTest());
+        }
+        
+        // Add the descriptions
+        if(descriptions!=null) {
+            for(TestDesc testDesc:descriptions) {
+                newObj.setDescription(testDesc.getTestDescPK().getLangCode(),testDesc.getDescription());
+            }
+        }
+        
+        return newObj;
+    }
+    
+    /**
+     * Get an entity object from the internal class object
+     * @param object Object to be processed
+     * @return Instance of the Entity class or null if information is incorrect.
+     */
+    public static edu.uoc.pelp.model.vo.Deliver getDeliverReg(edu.uoc.pelp.engine.deliver.Deliver object) {
+        
+        // Check input parameter
+        if(object==null) {
+            return null;
+        }
+        
+        // Get the primary key
+        DeliverPK deliverPK=ObjectFactory.getDeliverPK(object.getID());
+        
+        // Create the new object
+        edu.uoc.pelp.model.vo.Deliver newObj=new edu.uoc.pelp.model.vo.Deliver(deliverPK);
+        newObj.setRootPath(object.getRootPath().getPath());
+        newObj.setSubmissionDate(object.getCreationDate());
+        ClassroomPK mainClass=ObjectFactory.getClassroomPK(object.getUserMainClassroom());
+        ClassroomPK labClass=ObjectFactory.getClassroomPK(object.getUserLabClassroom());
+        newObj.setClassroom(mainClass);
+        newObj.setLaboratory(labClass);
+        
+        return newObj;
+    }
+    
+    /**
+     * Get an entity object from the internal class object
+     * @param object Object to be processed
+     * @return Instance of the Entity class or null if information is incorrect.
+     */
+    public static edu.uoc.pelp.model.vo.DeliverFile getDeliverFileReg(edu.uoc.pelp.engine.deliver.DeliverFile object) {
+        
+        // Check input parameter
+        if(object==null) {
+            return null;
+        }
+        
+        // Get the primary key
+        DeliverFilePK deliverFilePK=ObjectFactory.getDeliverFilePK(object.getID());
+        
+        // Create the new object
+        edu.uoc.pelp.model.vo.DeliverFile newObj=new edu.uoc.pelp.model.vo.DeliverFile(deliverFilePK);
+        newObj.setMain(object.isMainFile());
+        if(object.getRelativePath()!=null) {
+            newObj.setRelativePath(object.getRelativePath().getPath());
+        }
+        newObj.setType(object.getType().name());
+        
+        return newObj;
+    }
+
+    /**
+     * Get an object of the internal class from the entity class object
+     * @param object Object to be processed 
+     * @param descriptions Array with the descriptions for this activity
+     * @return Instance of the internal class or null if information is incorrect.
+     */
+    public static edu.uoc.pelp.engine.deliver.Deliver getDeliverObj(edu.uoc.pelp.model.vo.Deliver object,edu.uoc.pelp.model.vo.DeliverFile[] files) {
+        
+        // Check input parameters
+        if(object==null) {
+            return null;
+        }
+        
+        // Get the parameters
+        DeliverID deliverID=ObjectFactory.getDeliverID(object.getDeliverPK());
+        
+        // Create the new object
+        File rootPath=null;
+        if(object.getRootPath()!=null) {
+            rootPath=new File(object.getRootPath());
+        }
+        edu.uoc.pelp.engine.deliver.Deliver newObj=new edu.uoc.pelp.engine.deliver.Deliver(deliverID,rootPath);
+        newObj.setCreationDate(object.getSubmissionDate());
+        ClassroomPK mainClass=null;
+        ClassroomPK labClass=null;
+        if(object.getClassroom()!=null) {
+            mainClass=new ClassroomPK(object.getClassroom());
+        }
+        if(object.getLaboratory()!=null) {
+            labClass=new ClassroomPK(object.getLaboratory());
+        }
+        newObj.setUserMainClassroom(ObjectFactory.getClassroomID(mainClass));
+        newObj.setUserLabClassroom(ObjectFactory.getClassroomID(labClass));
+        
+        // Add the files
+        if(files!=null) {
+            for(edu.uoc.pelp.model.vo.DeliverFile deliverFile:files) {
+                newObj.addFile(getDeliverFileObj(deliverFile));
+            }
+        }
+        
+        return newObj;
+    }
+    
+    /**
+     * Get an object of the internal class from the entity class object
+     * @param object Object to be processed 
+     * @param descriptions Array with the descriptions for this activity
+     * @return Instance of the internal class or null if information is incorrect.
+     */
+    public static edu.uoc.pelp.engine.deliver.DeliverFile getDeliverFileObj(edu.uoc.pelp.model.vo.DeliverFile object) {
+        
+        // Check input parameters
+        if(object==null) {
+            return null;
+        }
+        
+        // Get the parameters
+        DeliverFileID deliverFileID=ObjectFactory.getDeliverFileID(object.getDeliverFilePK());
+        File path=null;
+        if(object.getRelativePath()!=null) {
+            path=new File(object.getRelativePath());
+        }
+        FileType type=null;
+        if(object.getType()!=null) {
+            type=FileType.valueOf(object.getType());
+        }
+        
+        // Create the new object
+        edu.uoc.pelp.engine.deliver.DeliverFile newObj=new edu.uoc.pelp.engine.deliver.DeliverFile(deliverFileID,path,type);
+        newObj.setMainProperty(object.getMain());
         
         return newObj;
     }

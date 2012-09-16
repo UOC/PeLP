@@ -24,6 +24,11 @@ import edu.uoc.pelp.engine.campus.IUserID;
 import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverID;
 import edu.uoc.pelp.model.dao.IDeliverDAO;
+import edu.uoc.pelp.model.vo.ActivityPK;
+import edu.uoc.pelp.model.vo.DeliverPK;
+import edu.uoc.pelp.model.vo.ObjectFactory;
+import edu.uoc.pelp.model.vo.UOC.SubjectPK;
+import edu.uoc.pelp.model.vo.UOC.UserPK;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,7 +44,7 @@ public class DeliverDAO implements IDeliverDAO {
     /**
      * Table simulating the database table
      */
-    private HashMap<DeliverID,Deliver> _deliver=new HashMap<DeliverID,Deliver>();
+    private HashMap<DeliverPK,edu.uoc.pelp.model.vo.Deliver> _deliver=new HashMap<DeliverPK,edu.uoc.pelp.model.vo.Deliver>();
 
     @Override
     public DeliverID add(IUserID user, ActivityID activity, Deliver object) {
@@ -61,11 +66,19 @@ public class DeliverDAO implements IDeliverDAO {
             newID=new DeliverID(user,activity,1);
         }
         
+        // Get the object
+        edu.uoc.pelp.model.vo.Deliver newObj=ObjectFactory.getDeliverReg(object);
+        
         // Add a new object from given object, to break the reference
-        _deliver.put(newID, new Deliver(object));
+        DeliverPK key=ObjectFactory.getDeliverPK(newID);
+        if(key==null) {
+            return null;
+        }
+                
+        // Add a new object from given object, to break the reference
+        _deliver.put(key, newObj);
         
-        
-        return newID.clone();
+        return newID;
     }
 
     @Override
@@ -76,8 +89,11 @@ public class DeliverDAO implements IDeliverDAO {
             return false;
         }
         
+        // Get the primary key
+        DeliverPK key=ObjectFactory.getDeliverPK(id);
+        
         // Check that the object does not exists
-        if(_deliver.remove(id)==null) {
+        if(_deliver.remove(key)==null) {
             return false;
         }
         
@@ -91,15 +107,24 @@ public class DeliverDAO implements IDeliverDAO {
             return false;
         }
         
+        // Get the primary key
+        DeliverPK key=ObjectFactory.getDeliverPK(object.getID());
+        
+        // Get a low-level representation
+        edu.uoc.pelp.model.vo.Deliver newObj=ObjectFactory.getDeliverReg(object);
+        
         // Check that the object does not exists
-        if(_deliver.remove(object.getID())==null) {
+        if(newObj!=null) {
+            if(_deliver.remove(key)==null) {
+                return false;
+            }
+            // Store the new object
+            _deliver.put(key, newObj);
+        } else {
             return false;
         }
-        
-        // Store the new object
-        _deliver.put(object.getID(), new Deliver(object.getID(),object));
-        
-        return _deliver.containsKey(object.getID());
+                
+        return _deliver.containsKey(key);
     }
 
     @Override
@@ -107,8 +132,17 @@ public class DeliverDAO implements IDeliverDAO {
         ArrayList<Deliver> list=new ArrayList<Deliver>();
         
         // Build the output list
-        for(Deliver deliver:_deliver.values()) {
-            list.add(new Deliver(deliver));
+        for(DeliverPK deliverPK:_deliver.keySet()) { 
+            // Get the Id 
+            DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+            
+            // Create the activity object
+            Deliver deliverObj=find(deliverID);
+           
+            // Add the object to the output list
+            if(deliverObj!=null) {
+                list.add(deliverObj);
+            }
         }
         
         // Sort the list of delivers
@@ -123,18 +157,46 @@ public class DeliverDAO implements IDeliverDAO {
         if(object==null) {
             return null;
         }
+                
+        // Get the key
+        DeliverPK key=ObjectFactory.getDeliverPK(object);
+                
+        // Get the deliver register
+        edu.uoc.pelp.model.vo.Deliver deliverReg=_deliver.get(key);
         
-        return new Deliver(_deliver.get(object));
+        // Get the files
+        edu.uoc.pelp.model.vo.DeliverFile[] files=null;
+            
+        // Create the activity object
+        Deliver actObj=ObjectFactory.getDeliverObj(deliverReg,files);
+           
+        return actObj;
     }
    
     @Override
     public List<Deliver> findAll(IUserID user) {
         ArrayList<Deliver> list=new ArrayList<Deliver>();
         
+        // Get the user ID
+        UserPK userPK=ObjectFactory.getUserPK(user); 
+        if(userPK==null) {
+            return null;
+        }
+        
         // Build the output list
-        for(Deliver deliver:_deliver.values()) {
-            if(deliver.getID().user.equals(user)) {
-                list.add(new Deliver(deliver));
+        for(DeliverPK deliverPK:_deliver.keySet()) {
+            UserPK deliverUser=new UserPK(deliverPK.getUserID());
+            if(deliverUser.equals(userPK)) {
+                DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+                if(deliverID==null) {
+                    continue;
+                }
+            
+                // Create the activity object
+                Deliver actObj=find(deliverID);
+                if(actObj!=null) {
+                    list.add(actObj);
+                }
             }
         }
         
@@ -148,11 +210,31 @@ public class DeliverDAO implements IDeliverDAO {
     public List<Deliver> findAll(ISubjectID subject, IUserID user) {
         ArrayList<Deliver> list=new ArrayList<Deliver>();
         
+        // Get the subject ID and user ID
+        UserPK userPK=ObjectFactory.getUserPK(user); 
+        if(userPK==null) {
+            return null;
+        }
+        SubjectPK subjectPK=ObjectFactory.getSubjectPK(subject);
+        if(subjectPK==null) {
+            return null;
+        }
+        
         // Build the output list
-        for(Deliver deliver:_deliver.values()) {
-            if(deliver.getID().activity.subjectID.equals(subject) && 
-               deliver.getID().user.equals(user)) {
-                list.add(new Deliver(deliver));
+        for(DeliverPK deliverPK:_deliver.keySet()) {
+            UserPK deliverUser=new UserPK(deliverPK.getUserID());
+            SubjectPK deliverSubject=new SubjectPK(deliverPK.getActivityPK());
+            if(deliverUser.equals(userPK) && subjectPK.equals(deliverSubject)) {
+                DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+                if(deliverID==null) {
+                    continue;
+                }
+            
+                // Create the activity object
+                Deliver actObj=find(deliverID);
+                if(actObj!=null) {
+                    list.add(actObj);
+                }
             }
         }
         
@@ -166,11 +248,31 @@ public class DeliverDAO implements IDeliverDAO {
     public List<Deliver> findAll(ActivityID activity, IUserID user) {
         ArrayList<Deliver> list=new ArrayList<Deliver>();
         
+        // Get the activity ID and user ID
+        UserPK userPK=ObjectFactory.getUserPK(user); 
+        if(userPK==null) {
+            return null;
+        }
+        ActivityPK activityPK=ObjectFactory.getActivityPK(activity);
+        if(activityPK==null) {
+            return null;
+        }
+        
         // Build the output list
-        for(Deliver deliver:_deliver.values()) {
-            if(deliver.getID().activity.equals(activity) && 
-               deliver.getID().user.equals(user)) {
-                list.add(new Deliver(deliver));
+        for(DeliverPK deliverPK:_deliver.keySet()) {
+            UserPK deliverUser=new UserPK(deliverPK.getUserID());
+            ActivityPK deliverActivity=deliverPK.getActivityPK();
+            if(deliverUser.equals(userPK) && activityPK.equals(deliverActivity)) {
+                DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+                if(deliverID==null) {
+                    continue;
+                }
+            
+                // Create the activity object
+                Deliver actObj=find(deliverID);
+                if(actObj!=null) {
+                    list.add(actObj);
+                }
             }
         }
         
@@ -187,38 +289,59 @@ public class DeliverDAO implements IDeliverDAO {
             return null;
         }
         
+        // Get low level representations
+        ActivityPK activityPK=ObjectFactory.getActivityPK(activity);
+        if(activityPK==null) {
+            return null;
+        }
+        UserPK userPK=ObjectFactory.getUserPK(user);
+        if(userPK==null) {
+            return null;
+        }
+        
         // Search the last identifier
-        DeliverID lastID=null;
-        for(DeliverID id:_deliver.keySet()) {
-            if(id.activity.equals(activity) && 
-               id.user.equals(user)) {
+        DeliverPK lastID=null;
+        for(DeliverPK deliverPK:_deliver.keySet()) {
+            UserPK deliverUser=new UserPK(deliverPK.getUserID());
+            if(activityPK.equals(deliverPK.getActivityPK()) && userPK.equals(deliverUser)){
                 if(lastID==null) {
-                    lastID=id;
+                    lastID=deliverPK;
                 } else {
-                    if(lastID.index<id.index) {
-                        lastID=id;
+                    if(lastID.getDeliverIndex()<deliverPK.getDeliverIndex()) {
+                        lastID=deliverPK;
                     }
                 }
             }
         }
-        
+                
         // Return last id
-        if(lastID!=null) {
-            return new DeliverID(lastID);
-        }
-        
-        // If no deliver is found, return null
-        return lastID;
+        return ObjectFactory.getDeliverID(lastID);
     }
 
     @Override
     public List<Deliver> findAll(ActivityID activity) {
         ArrayList<Deliver> list=new ArrayList<Deliver>();
         
-        // Create the list of identifiers
-        for(Deliver deliver:_deliver.values()) {
-            if(deliver.getID().activity.equals(activity)) {
-                list.add(deliver);
+        // Get the activity ID 
+        ActivityPK activityPK=ObjectFactory.getActivityPK(activity);
+        if(activityPK==null) {
+            return null;
+        }
+        
+        // Build the output list
+        for(DeliverPK deliverPK:_deliver.keySet()) {
+            ActivityPK deliverActivity=deliverPK.getActivityPK();
+            if(activityPK.equals(deliverActivity)) {
+                DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+                if(deliverID==null) {
+                    continue;
+                }
+            
+                // Create the activity object
+                Deliver actObj=find(deliverID);
+                if(actObj!=null) {
+                    list.add(actObj);
+                }
             }
         }
         
@@ -232,10 +355,24 @@ public class DeliverDAO implements IDeliverDAO {
     public List<DeliverID> findAllKey(ActivityID activity) {
         ArrayList<DeliverID> listIDs=new ArrayList<DeliverID>();
         
-        // Create the list of identifiers
-        for(DeliverID deliverID:_deliver.keySet()) {
-            if(deliverID.activity.equals(activity)) {
-                listIDs.add(new DeliverID(deliverID));
+        // Get the activity ID 
+        ActivityPK activityPK=ObjectFactory.getActivityPK(activity);
+        if(activityPK==null) {
+            return null;
+        }
+        
+        // Build the output list
+        for(DeliverPK deliverPK:_deliver.keySet()) {
+            UserPK deliverUser=new UserPK(deliverPK.getUserID());
+            ActivityPK deliverActivity=deliverPK.getActivityPK();
+            if(activityPK.equals(deliverActivity)) {
+                DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+                if(deliverID==null) {
+                    continue;
+                }
+            
+                // Add the key
+                listIDs.add(deliverID);               
             }
         }
         
@@ -250,8 +387,14 @@ public class DeliverDAO implements IDeliverDAO {
         ArrayList<DeliverID> list=new ArrayList<DeliverID>();
         
         // Build the output list
-        for(DeliverID deliverID:_deliver.keySet()) {
-            list.add(new DeliverID(deliverID));
+        for(DeliverPK deliverPK:_deliver.keySet()) { 
+            // Get the Id 
+            DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+            
+            // Add the identifier object to the output list
+            if(deliverID!=null) {
+                list.add(deliverID);
+            }
         }
         
         // Sort the list of delivers
@@ -264,10 +407,23 @@ public class DeliverDAO implements IDeliverDAO {
     public List<DeliverID> findAllKey(IUserID user) {
         ArrayList<DeliverID> list=new ArrayList<DeliverID>();
         
+        // Get the user ID
+        UserPK userPK=ObjectFactory.getUserPK(user); 
+        if(userPK==null) {
+            return null;
+        }
+        
         // Build the output list
-        for(DeliverID deliverID:_deliver.keySet()) {
-            if(deliverID.user.equals(user)) {
-                list.add(new DeliverID(deliverID));
+        for(DeliverPK deliverPK:_deliver.keySet()) {
+            UserPK deliverUser=new UserPK(deliverPK.getUserID());
+            if(deliverUser.equals(userPK)) {
+                DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+                if(deliverID==null) {
+                    continue;
+                }
+            
+                // Add the deliver identifier
+                list.add(deliverID);
             }
         }
         
@@ -281,11 +437,28 @@ public class DeliverDAO implements IDeliverDAO {
     public List<DeliverID> findAllKey(ISubjectID subject, IUserID user) {
         ArrayList<DeliverID> list=new ArrayList<DeliverID>();
         
+        // Get the subject ID and user ID
+        UserPK userPK=ObjectFactory.getUserPK(user); 
+        if(userPK==null) {
+            return null;
+        }
+        SubjectPK subjectPK=ObjectFactory.getSubjectPK(subject);
+        if(subjectPK==null) {
+            return null;
+        }
+        
         // Build the output list
-        for(DeliverID deliverID:_deliver.keySet()) {
-            if(deliverID.activity.subjectID.equals(subject) && 
-               deliverID.user.equals(user)) {
-                list.add(new DeliverID(deliverID));
+        for(DeliverPK deliverPK:_deliver.keySet()) {
+            UserPK deliverUser=new UserPK(deliverPK.getUserID());
+            SubjectPK deliverSubject=new SubjectPK(deliverPK.getActivityPK());
+            if(deliverUser.equals(userPK) && subjectPK.equals(deliverSubject)) {
+                DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+                if(deliverID==null) {
+                    continue;
+                }
+            
+                // Add the deliver id
+                list.add(deliverID);
             }
         }
         
@@ -299,11 +472,28 @@ public class DeliverDAO implements IDeliverDAO {
     public List<DeliverID> findAllKey(ActivityID activity, IUserID user) {
         ArrayList<DeliverID> list=new ArrayList<DeliverID>();
         
+        // Get the activity ID and user ID
+        UserPK userPK=ObjectFactory.getUserPK(user); 
+        if(userPK==null) {
+            return null;
+        }
+        ActivityPK activityPK=ObjectFactory.getActivityPK(activity);
+        if(activityPK==null) {
+            return null;
+        }
+        
         // Build the output list
-        for(DeliverID deliverID:_deliver.keySet()) {
-            if(deliverID.activity.equals(activity) && 
-               deliverID.user.equals(user)) {
-                list.add(new DeliverID(deliverID));
+        for(DeliverPK deliverPK:_deliver.keySet()) {
+            UserPK deliverUser=new UserPK(deliverPK.getUserID());
+            ActivityPK deliverActivity=deliverPK.getActivityPK();
+            if(deliverUser.equals(userPK) && activityPK.equals(deliverActivity)) {
+                DeliverID deliverID=ObjectFactory.getDeliverID(deliverPK);
+                if(deliverID==null) {
+                    continue;
+                }
+            
+                // Add the identifier
+                list.add(deliverID);                
             }
         }
         
@@ -312,5 +502,6 @@ public class DeliverDAO implements IDeliverDAO {
         
         return list;
     }
+    
 }
 

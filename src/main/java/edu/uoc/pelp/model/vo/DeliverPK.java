@@ -18,6 +18,7 @@
 */
 package edu.uoc.pelp.model.vo;
 
+import edu.uoc.pelp.model.vo.UOC.UserPK;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -62,6 +63,10 @@ public class DeliverPK implements Serializable {
         this.activityIndex = activity.getIndex();
         this.userID = userID;
         this.deliverIndex = deliverIndex;
+    }
+    
+    public ActivityPK getActivityPK() {
+        return new ActivityPK(semester,subject, activityIndex);
     }
 
     public String getSemester() {
