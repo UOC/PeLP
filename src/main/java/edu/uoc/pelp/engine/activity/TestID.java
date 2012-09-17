@@ -18,7 +18,6 @@
 */
 package edu.uoc.pelp.engine.activity;
 
-import edu.uoc.pelp.engine.campus.GenericID;
 import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.exception.PelpException;
 
@@ -26,7 +25,7 @@ import edu.uoc.pelp.exception.PelpException;
  * This class implements a test unique identifier, used to link tests with activities.
  * @author Xavier Baró
  */
-public class TestID extends GenericID {
+public class TestID implements IPelpID {
     /**
      * Activiy identifier
      */
@@ -56,8 +55,7 @@ public class TestID extends GenericID {
         index=testID.index;
     }
 
-    @Override
-    protected void copyData(GenericID genericID) throws PelpException {
+    protected void copyData(IPelpID genericID) throws PelpException {
         if (genericID instanceof TestID) {
             activity.copyData(((TestID)genericID).activity);
             index=((TestID)genericID).index;
@@ -66,6 +64,7 @@ public class TestID extends GenericID {
         }
     }
     
+    @Override
     public int compareTo(IPelpID arg0) {
         TestID arg=(TestID)arg0;
         if(activity!=null) {
@@ -101,6 +100,10 @@ public class TestID extends GenericID {
         hash = 11 * hash + (this.activity != null ? this.activity.hashCode() : 0);
         hash = 11 * hash + (int) (this.index ^ (this.index >>> 32));
         return hash;
+    }
+
+    public IPelpID parse(String str) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     

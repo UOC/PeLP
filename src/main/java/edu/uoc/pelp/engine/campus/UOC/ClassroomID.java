@@ -18,7 +18,6 @@
 */
 package edu.uoc.pelp.engine.campus.UOC;
 
-import edu.uoc.pelp.engine.campus.GenericID;
 import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.exception.PelpException;
@@ -27,7 +26,7 @@ import edu.uoc.pelp.exception.PelpException;
  * Implementation for the classroom identifier in the campus of the Universitat Oberta de Catalunya
  * @author Xavier Baró
  */
-public class ClassroomID extends GenericID implements IClassroomID {
+public class ClassroomID implements IClassroomID {
 
     /**
      * Classrooms are identified by the subjectID and a numeric index from 1 to N. 
@@ -48,8 +47,7 @@ public class ClassroomID extends GenericID implements IClassroomID {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    protected void copyData(GenericID genericID) throws PelpException {
+    protected void copyData(IPelpID genericID) throws PelpException {
         if (genericID instanceof ClassroomID) {
             _subjectCode=((ClassroomID)genericID)._subjectCode;
             _classIdx=((ClassroomID)genericID)._classIdx;
@@ -120,5 +118,9 @@ public class ClassroomID extends GenericID implements IClassroomID {
         }
         
         return 0;
+    }
+
+    public IPelpID parse(String str) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

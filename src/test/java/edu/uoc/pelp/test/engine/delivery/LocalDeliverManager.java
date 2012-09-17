@@ -19,12 +19,13 @@
 package edu.uoc.pelp.test.engine.delivery;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
+import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.campus.IUserID;
 import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverID;
-import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
 import edu.uoc.pelp.engine.deliver.IDeliverManager;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,14 +40,70 @@ public class LocalDeliverManager implements IDeliverManager {
     /**
      * Map storing all the delivers
      */
-    private HashMap<DeliverID,Deliver> _delivers=new HashMap<DeliverID,Deliver>();
+    protected HashMap<DeliverID,Deliver> _delivers=new HashMap<DeliverID,Deliver>();
     
     /**
      * Map storing all delivers test results
      */
-    private HashMap<DeliverID,DeliverResults> _testResults=new HashMap<DeliverID,DeliverResults>();
+    protected HashMap<DeliverID,DeliverResults> _testResults=new HashMap<DeliverID,DeliverResults>();
+    
+    /**
+     * Path where delivers are stored
+     */
+    protected File _deliversPath=null;
 
-    public DeliverID addDeliver(IUserID user, ActivityID activity, Deliver deliver) {
+    /**
+     * Create the path where a delived should be stored using its information
+     * @param deliverID Deliver identifier object
+     * @return Path of the delivery
+     */
+    private File getDeliverPath(DeliverID deliverID) {
+        // If no deliver information, return null
+        if(deliverID==null) {
+            return null;
+        }
+        
+        // In no deliver path is given, store delivers in temporal system path
+        File deliversPath=_deliversPath;
+        if(_deliversPath==null) {
+            deliversPath=new File(System.getProperty("java.io.tmpdir") + "PELP" + File.separator + "Delivers");
+        }
+        
+        // Add subject information
+        String subject=deliverID.activity.subjectID.toString();
+        subject=subject.replace("\\","");
+        subject=subject.replace("/","");
+        subject=subject.replace(".","");
+        subject=subject.trim();
+        
+        // Add activity information
+        String activity=String.format("%04d", deliverID.activity.index);
+        
+        // Add user information
+        String user= deliverID.user.toString();
+        user=user.replace("\\","");
+        user=user.replace("/","");
+        user=user.replace(".","");
+        user=user.trim();
+        
+        // Add deliver index
+        String deliver=String.format("%04d", deliverID.index);
+        
+        // Create final folder
+        deliversPath=new File(deliversPath.getAbsolutePath() + File.separator + subject + File.separator + activity+ File.separator + user + File.separator + deliver);
+        
+        
+        return deliversPath;
+    }
+    
+    @Override
+    public synchronized DeliverID addDeliver(IUserID user, ActivityID activity, Deliver deliver) {
+        
+        //Check that the deliver has files
+        if(deliver.getFiles().length==0) {
+            return null;
+        }
+        
         // Get all delivers of a certain user and activity
         DeliverID[] delivers=getUserDelivers(user,activity);
         
@@ -61,12 +118,16 @@ public class LocalDeliverManager implements IDeliverManager {
         // Create a new identifier
         DeliverID newID=new DeliverID(user,activity,lastID+1);
         
+        // Move the files to the destination folder
+        deliver.moveFiles(getDeliverPath(newID));
+        
         // Create the new Activity
         _delivers.put(newID,new Deliver(newID,deliver));
         
         return newID.clone();
     }
 
+    @Override
     public boolean editDeliver(Deliver deliver) {
         // Check if the deliver exists
         if(_delivers.containsKey(deliver.getID())) {
@@ -83,6 +144,7 @@ public class LocalDeliverManager implements IDeliverManager {
         return false;
     }
 
+    @Override
     public boolean deleteDeliver(DeliverID deliverID) {
         // Check if the deliver exists
         if(_delivers.containsKey(deliverID)) {
@@ -94,6 +156,7 @@ public class LocalDeliverManager implements IDeliverManager {
         return true;
     }
 
+    @Override
     public DeliverID[] getActivityDelivers(ActivityID activity) {
         ArrayList<DeliverID> listIDs=new ArrayList<DeliverID>();
         
@@ -114,6 +177,7 @@ public class LocalDeliverManager implements IDeliverManager {
         return retList;
     }
 
+    @Override
     public DeliverID[] getUserDelivers(IUserID user, ActivityID activity) {
         ArrayList<DeliverID> listIDs=new ArrayList<DeliverID>();
         
@@ -134,6 +198,7 @@ public class LocalDeliverManager implements IDeliverManager {
         return retList;
     }
 
+    @Override
     public boolean addResults(DeliverID deliverID, AnalysisResults results) {
         // Check if the deliver already has old results
         if(_testResults.containsKey(deliverID)) {
@@ -150,6 +215,7 @@ public class LocalDeliverManager implements IDeliverManager {
         return _testResults.containsKey(deliverID);
     }
 
+    @Override
     public boolean editResults(DeliverResults results) {
         // Check if the results exist
         if(_testResults.containsKey(results.getDeliverID())) {
@@ -162,6 +228,7 @@ public class LocalDeliverManager implements IDeliverManager {
         return false;
     }
 
+    @Override
     public boolean deleteResults(DeliverID deliverID) {
         // Check if the results exist
         if(_testResults.containsKey(deliverID)) {
@@ -173,6 +240,7 @@ public class LocalDeliverManager implements IDeliverManager {
         return false;
     }
 
+    @Override
     public DeliverResults getResults(DeliverID deliverID) {
         // Check if the results exist
         if(_testResults.containsKey(deliverID)) {
@@ -182,11 +250,39 @@ public class LocalDeliverManager implements IDeliverManager {
         return null;
     }
 
+    @Override
     public Deliver getDeliver(DeliverID deliverID) {
-        return _delivers.get(deliverID).clone();
+        Deliver deliver=_delivers.get(deliverID);
+        if(deliver==null) {
+            return null;
+        }
+        return deliver.clone();
     }
 
+    @Override
     public int getNumUserDelivers(IUserID userID, ActivityID activityID) {
         return getUserDelivers(userID,activityID).length;
+    }
+
+    @Override
+    public boolean setDeliverPath(File path) {
+        // Check for null paths
+        if(path==null) {
+            return false;
+        }
+        
+        // Create the delivers path
+        if(!_deliversPath.exists()) {
+            if(!_deliversPath.mkdirs()) {
+                return false;
+            }
+        }
+        
+        // Check that the path is writable
+        if(!_deliversPath.canWrite()) {
+            return false;
+        }
+        
+        return true;
     }
 }

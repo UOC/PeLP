@@ -4,7 +4,6 @@
 package uoc.edu.pelp.services;
 
 import java.util.List;
-
 import uoc.edu.pelp.bussines.PelpBussines;
 import uoc.edu.pelp.model.vo.ActivityData;
 import uoc.edu.pelp.model.vo.DeliverData;
@@ -81,3 +80,4 @@ public class PelpServiceImpl implements PelpService {
 	}
 
 }
+ 

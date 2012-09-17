@@ -40,7 +40,7 @@ import java.util.Collections;
  * This class implements the engine of the PELP system. 
  * @author Xavier Baró
  */
-public class PELPEngine implements iPELPEngine {
+public class PELPEngine implements IPELPEngine {
     
     /**
      * Object used to access the campus information
@@ -62,44 +62,57 @@ public class PELPEngine implements iPELPEngine {
      */
     protected IPelpConfiguration _configuration=null;
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#setCampusConnection(edu.uoc.pelp.engine.campus.ICampusConnection)
-	 */
+    /**
+     * Assign a new campus object.
+     * @param campus Object allowing to access the campus information
+     */
+    @Override
     public void setCampusConnection(ICampusConnection campus) {
         _campusConnection=campus;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#setSystemConfiguration(edu.uoc.pelp.conf.IPelpConfiguration)
-	 */
+    /**
+     * Assign a new system configuration object
+     * @param conf Object that allows to retrieve system configuration parameters.
+     */
+    @Override
     public void setSystemConfiguration(IPelpConfiguration conf) {
         _configuration=conf;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#setActivityManager(edu.uoc.pelp.engine.activity.IActivityManager)
-	 */
+    /**
+     * Assign a new activity manager
+     * @param manager Object allowing to manage the activities
+     */
+    @Override
     public void setActivityManager(IActivityManager manager) {
         _activityManager=manager;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#setDeliverManager(edu.uoc.pelp.engine.deliver.IDeliverManager)
-	 */
+    /**
+     * Assign a new deliver manager
+     * @param manager Object allowing to manage the delivers
+     */
+    @Override
     public void setDeliverManager(IDeliverManager manager) {
         _deliverManager=manager;
     }           
 
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#isUserAuthenticated()
-	 */
-    public boolean isUserAuthenticated() throws AuthPelpException {
-    	return _campusConnection.isUserAuthenticated();
+    /**
+     * Check if the current user is authenticated or not.
+     * @return True if the user is authenticated or False otherwise.
+     */
+    @Override
+    public boolean isUserAuthenticated() {
+        return _campusConnection.isUserAuthenticated();
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#getUserInfo()
-	 */
+    /**
+     * Obtain the information of currently authenticated user
+     * @return Object with the user information for the current user
+     * @throws AuthPelpException If no user is authenticated.
+     */
+    @Override
     public Person getUserInfo() throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -108,9 +121,12 @@ public class PELPEngine implements iPELPEngine {
         return _campusConnection.getUserData();
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#getActiveSubjects()
-	 */
+    /**
+     * Return the list of active subjects for authenticated user
+     * @return List of active subjects for current user.
+     * @throws AuthPelpException If no user is authenticated.
+     */
+    @Override
     public Subject[] getActiveSubjects() throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -136,9 +152,13 @@ public class PELPEngine implements iPELPEngine {
         return retList;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#getSubjectClassrooms(edu.uoc.pelp.engine.campus.ISubjectID)
-	 */
+    /**
+     * Return the list of classrooms for authenticated user
+     * @param subjectID Subject identifier
+     * @return List of classrooms
+     * @throws AuthPelpException If no user is authenticated.
+     */
+    @Override
     public Classroom[] getSubjectClassrooms(ISubjectID subjectID) throws AuthPelpException {  
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -162,9 +182,14 @@ public class PELPEngine implements iPELPEngine {
         return retList;
     } 
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#getSubjectActivity(edu.uoc.pelp.engine.campus.ISubjectID, boolean)
-	 */
+    /**
+     * Get the list of activities of a given subject
+     * @param subjectID Identifier of the subject
+     * @param filterActive If True, only active activities are returned, otherwise, all activities are returned.
+     * @return List of activities
+     * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+     */
+    @Override
     public Activity[] getSubjectActivity(ISubjectID subjectID,boolean filterActive) throws AuthPelpException {
         ActivityID[] activityIDs;
         
@@ -205,9 +230,15 @@ public class PELPEngine implements iPELPEngine {
         return retList;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#getActivityDelivers(edu.uoc.pelp.engine.campus.IUserID, edu.uoc.pelp.engine.activity.ActivityID)
-	 */
+    /**
+     * Obtain the list of delivers of a certain user for a certain activity. Only the same user or a teacher
+     * of the subject can access to this information.
+     * @param user Identifier of the user for which delivers are requested.
+     * @param activity Identifier of the activity delivers are requested from.
+     * @return Array of Delivers.
+     * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+     */
+    @Override
     public Deliver[] getActivityDelivers(IUserID user,ActivityID activity) throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -241,9 +272,14 @@ public class PELPEngine implements iPELPEngine {
         return retList;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#getDeliverResults(edu.uoc.pelp.engine.deliver.DeliverID)
-	 */
+    /**
+     * Obtain the results of a certain deliver. Only the owner of the deliver and the teachers of the
+     * related subject can access this information.
+     * @param deliver Deliver identifier
+     * @return Object with the results of the deliver analysis
+     * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+     */
+    @Override
     public DeliverResults getDeliverResults(DeliverID deliver) throws AuthPelpException {
        
         // Check user authentication
@@ -267,9 +303,13 @@ public class PELPEngine implements iPELPEngine {
         return results;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#getTestInformation(edu.uoc.pelp.engine.activity.TestID)
-	 */
+    /**
+     * Obain the test information. Only teachers can access to private tests information.
+     * @param testID Identifier for the test
+     * @return Object with the test information
+     * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+     */
+    @Override
     public ActivityTest getTestInformation(TestID testID) throws AuthPelpException {
         
         // Check user authentication
@@ -295,9 +335,16 @@ public class PELPEngine implements iPELPEngine {
         return test;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#createNewDeliver(edu.uoc.pelp.engine.deliver.Deliver, edu.uoc.pelp.engine.activity.ActivityID)
-	 */
+    /**
+     * Perform a new deliver for current user to the given activity
+     * @param deliver Deliver object with all the files
+     * @param activityID Identifier for the target activity
+     * @return Results obtained from the analisis of this deliver
+     * @throws AuthPelpException If the user is not authenticated.
+     * @throws InvalidActivityPelpException If the user cannot perform delivers to this activity, because is not a student or all allowed delivers are performed.
+     * @throws ExecPelpException When files cannot be accessed or for some missconfiguration of the analyzer module.
+     */
+    @Override
     public DeliverResults createNewDeliver(Deliver deliver, ActivityID activityID) throws AuthPelpException, InvalidActivityPelpException, ExecPelpException {
         
         // Check user authentication
@@ -314,6 +361,11 @@ public class PELPEngine implements iPELPEngine {
         // Check user information
         if(!isStudent(activityID.subjectID)) {
             throw new AuthPelpException("Only students can create new delivers");
+        }
+        
+        // Obtain the main classroom for this student and add them to the deliver information
+        for(IClassroomID classroom:_campusConnection.getUserClassrooms(UserRoles.Student, activityID.subjectID)) {
+            deliver.addMainClassroom(classroom);
         }
                 
         // Check the number of delivers limit
@@ -351,9 +403,14 @@ public class PELPEngine implements iPELPEngine {
         return _deliverManager.getResults(deliverID);
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#analyzeCode(edu.uoc.pelp.engine.aem.CodeProject, edu.uoc.pelp.engine.aem.TestData[])
-	 */
+    /**
+     * Perform the analysis of a code project, both, building process and execution tests.
+     * @param project Code project to be analyzed
+     * @param tests Array of tests to be passed to the program.
+     * @return Resuls obtained from the analysis of the delivery
+     * @throws AEMPelpException If the project is incorrect, no analyzer can be instantiated for the given project or fail to read project files.
+     */
+    @Override
     public AnalysisResults analyzeCode(CodeProject project,TestData[] tests) throws AEMPelpException {
               
         // Check the project
@@ -382,9 +439,12 @@ public class PELPEngine implements iPELPEngine {
         return result;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#isTeacher(edu.uoc.pelp.engine.campus.ISubjectID)
-	 */
+    /**
+     * Checks if the current user is teacher (Teacher of MainTeacher) of the given subject. 
+     * @param subject Subject Identifier
+     * @throws AuthPelpException If user is not authenticated
+     */
+    @Override
     public boolean isTeacher(ISubjectID subject) throws AuthPelpException {
         if(_campusConnection.isRole(UserRoles.Teacher, subject) ||
            _campusConnection.isRole(UserRoles.MainTeacher, subject)) {
@@ -394,9 +454,13 @@ public class PELPEngine implements iPELPEngine {
         return false;
     }
     
-    /* (non-Javadoc)
-	 * @see edu.uoc.pelp.engine.iPELPEngine#isStudent(edu.uoc.pelp.engine.campus.ISubjectID)
-	 */
+    /**
+     * Checks if the current user is student of the given subject. 
+     * @param subject Subject Identifier
+     * @return True if the user is an student of this subject or False otherwise.
+     * @throws AuthPelpException If user is not authenticated
+     */
+    @Override
     public boolean isStudent(ISubjectID subject) throws AuthPelpException {
         if(_campusConnection.isRole(UserRoles.Student, subject)) {
             return true;
@@ -419,4 +483,12 @@ public class PELPEngine implements iPELPEngine {
             }
         }
     }   
+    
+    //TODO: Direct methods for service demands
+    
+    //TODO: Administration methods
+    // Create/Update Activities(+Tests) (Check all information)
+    // Create/Update Semesters
+    
+    //TODO: Resources access
 }

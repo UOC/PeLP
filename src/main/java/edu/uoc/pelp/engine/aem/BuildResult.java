@@ -52,6 +52,41 @@ public class BuildResult {
     private String _language=null;
     
     /**
+     * Default constructor
+     */
+    public BuildResult() {
+     
+    }
+    
+    /**
+     * Default constructor
+     * @param correct Flag indicating if the process ended correctly or not
+     * @param message Messages outputed by the compiler
+     * @param language Programming language used to evaluate the code
+     * @param startTime Starting time of the process
+     * @param endTime Ending time of the process
+     */
+    public BuildResult(boolean correct,String message,String language,Date startTime,Date endTime) {
+        _correct=correct;
+        _message=message;
+        _language=language;
+        _startTime=startTime;
+        _endTime=endTime;
+    }
+    
+    /**
+     * Default copy constructor
+     * @param object Object to be copied
+     */
+    public BuildResult(BuildResult object) {
+        _correct=object._correct;
+        _message=object._message;
+        _language=object._language;
+        _startTime=object._startTime;
+        _endTime=object._endTime;
+    }
+    
+    /**
      * Obtain the elapsed time in miliseconds for the building procedure.
      * @return Elapsed time in miliseconds.
      */
@@ -139,14 +174,6 @@ public class BuildResult {
     
     @Override
     public BuildResult clone() {
-        BuildResult newObj=new BuildResult();
-        
-        newObj._correct=_correct;
-        newObj._startTime=_startTime;
-        newObj._endTime=_endTime;
-        newObj._language=_language;
-        newObj._message=_message;
-        
-        return newObj;
+        return new BuildResult(this);
     }
 }

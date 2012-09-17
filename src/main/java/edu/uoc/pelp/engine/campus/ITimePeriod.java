@@ -18,6 +18,8 @@
 */
 package edu.uoc.pelp.engine.campus;
 
+import java.util.Date;
+
 /**
  * Interface that defines a generic identifier for a time period (year, semester, ...)
  * in the application. Since it will depends of the implementation for the campus, 
@@ -30,4 +32,16 @@ public interface ITimePeriod extends IPelpID{
      * @return True if it is active or false if not (future or past period)
      */
     boolean isActive();
+    
+    /**
+     * Get the starting moment of this period
+     * @return Date object with the starting moment
+     */
+    Date getInitialDate();
+    
+    /**
+     * Get the ending moment of this period
+     * @return Date object with the ending moment
+     */
+    Date getFinalDate();
 }

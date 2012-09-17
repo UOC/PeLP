@@ -19,6 +19,7 @@
 package edu.uoc.pelp.engine.deliver;
 
 import edu.uoc.pelp.engine.aem.CodeProject;
+import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.deliver.DeliverFile.FileType;
 import edu.uoc.pelp.exception.ExecPelpException;
 import java.io.File;
@@ -51,6 +52,16 @@ public class Deliver implements Comparable {
      */
     private Date _creationDate=null;
     
+    /** 
+     * Main classroom of the student for this deliver
+     */
+    private IClassroomID _userMainClassroom=null;
+    
+    /** 
+     * Laboratory classroom of the student for this deliver
+     */
+    private IClassroomID _userLabClassroom=null;
+    
     /**
      * Basic constructor
      * @param newID Deliver Identiryer
@@ -74,6 +85,23 @@ public class Deliver implements Comparable {
             _files.add(file.clone());
         }
         _creationDate=deliver._creationDate;
+        _userLabClassroom=deliver._userLabClassroom;
+        _userMainClassroom=deliver._userMainClassroom;
+    }
+    
+    /**
+     * Basic copy constructor
+     * @param deliver Deliver object with data
+     */
+    public Deliver(Deliver deliver) {
+        _deliverID=new DeliverID(deliver._deliverID);
+        _rootPath=deliver._rootPath;
+        for(DeliverFile file:deliver._files) {
+            _files.add(file.clone());
+        }
+        _creationDate=deliver._creationDate;
+        _userLabClassroom=deliver._userLabClassroom;
+        _userMainClassroom=deliver._userMainClassroom;
     }
     
     /**
@@ -182,6 +210,38 @@ public class Deliver implements Comparable {
         return project;
     }
     
+    /**
+     * Move the files of the deliver to a new path. If old path 
+     * @param dstPath Path to store the files. It cannot exist previously.
+     * @return True if all files have been correctly moved to the new path of False otherwise
+     */
+    public boolean moveFiles(File dstPath) {
+        // Check that destination folder does not exist
+        if(dstPath.getAbsoluteFile().exists()) {
+            return false;
+        }
+        
+        // Create the output path
+        if(!dstPath.getAbsoluteFile().mkdirs()) {
+            return false;
+        }
+        
+        // Move the files    
+        for(DeliverFile f:_files) {
+            if(!f.getAbsolutePath(_rootPath).renameTo(f.getAbsolutePath(dstPath))) {
+                return false;
+            }
+        }
+        
+        // Remove old path
+        _rootPath.getAbsoluteFile().delete();
+        
+        // Change the root path to the new folder
+        _rootPath=dstPath;
+        
+        return true;
+    }
+    
     @Override
     public Deliver clone() {
         return new Deliver(_deliverID,this);
@@ -192,5 +252,21 @@ public class Deliver implements Comparable {
             return -1;
         }
         return _deliverID.compareTo(((Deliver)t).getID());
+    }
+
+    /**
+     * Add the main classroom to the deliver
+     * @param classroom Identifier of the classroom
+     */
+    public void addMainClassroom(IClassroomID classroom) {
+        _userMainClassroom=classroom;
+    }
+    
+    /**
+     * Add the laboratory classroom to the deliver
+     * @param classroom Identifier of the classroom
+     */
+    public void addLabClassroom(IClassroomID classroom) {
+        _userLabClassroom=classroom;
     }
 }

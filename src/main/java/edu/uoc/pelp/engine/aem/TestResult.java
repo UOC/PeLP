@@ -40,6 +40,18 @@ public class TestResult {
     protected Long _elapsedTime=null;
     
     /**
+     * Default constructor
+     * @param passed Flag that indicates if the test has been passed correctly
+     * @param output If the test has not been passed, contains the program output.
+     * @param elapsedTime Time elapsed for this test
+     */
+    public TestResult(boolean passed, String output,Long elapsedTime) {
+        _passed=passed;
+        _testOutput=output;
+        _elapsedTime=elapsedTime;
+    }
+    
+    /**
      * Default copy constructor
      * @param testResult Object to by copied
      */

@@ -18,7 +18,6 @@
 */
 package edu.uoc.pelp.engine.campus.UOC;
 
-import edu.uoc.pelp.engine.campus.GenericID;
 import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.engine.campus.ITimePeriod;
 import edu.uoc.pelp.exception.PelpException;
@@ -29,7 +28,7 @@ import java.util.Date;
  * As semesters are the organization períods, it represents a semster.
  * @author Xavier Baró
  */
-public class Semester extends GenericID implements ITimePeriod{
+public class Semester implements IPelpID,ITimePeriod{
     
     private Date _begin=null;
     private Date _end=null;
@@ -46,7 +45,19 @@ public class Semester extends GenericID implements ITimePeriod{
         _end=end;
         _id=id;
     }
+    
+    /**
+     * Obtain the semester id
+     * @return Identifier of the semester
+     */
+    public String getID() {
+        return _id;
+    }
 
+    /**
+     * Check if the object contains valid data
+     * @return True if the data is valid, and False if there are incoherent values
+     */
     public boolean isValid() {
         // Identifier always must be provided
         if(_id==null) {
@@ -62,6 +73,7 @@ public class Semester extends GenericID implements ITimePeriod{
         return true;
     }
 
+    @Override
     public boolean isActive() {
         Date now = new Date();
         
@@ -83,8 +95,43 @@ public class Semester extends GenericID implements ITimePeriod{
         return true;
     }
     
-    @Override
-    protected void copyData(GenericID genericID) throws PelpException {
+    /**
+     * This method allow fast cast from base class
+     * @param timePeriod Generic object
+     * @return Object casted to the Semester class or null if is not possible.
+     */
+    public static Semester toSemester(ITimePeriod timePeriod) {
+        
+        // Check input object
+        if(timePeriod==null) {
+            return null;
+        }
+        
+        // Convert to specific object
+        if(timePeriod instanceof Semester) {
+            return (Semester)timePeriod;
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Set starting date for this semester
+     * @param date Starting date
+     */
+    public void setStartDate(Date date) {
+        _begin=date;
+    }
+    
+    /**
+     * Set ending date for this semester
+     * @param date Ending date
+     */
+    public void setEndDate(Date date) {
+        _end=date;
+    }
+
+    protected void copyData(IPelpID genericID) throws PelpException {
         if (genericID instanceof Semester) {
             _begin=((Semester)genericID)._begin;
             _end=((Semester)genericID)._end;
@@ -103,12 +150,6 @@ public class Semester extends GenericID implements ITimePeriod{
             return false;
         }
         final Semester other = (Semester) obj;
-        if (this._begin != other._begin && (this._begin == null || !this._begin.equals(other._begin))) {
-            return false;
-        }
-        if (this._end != other._end && (this._end == null || !this._end.equals(other._end))) {
-            return false;
-        }
         if ((this._id == null) ? (other._id != null) : !this._id.equals(other._id)) {
             return false;
         }
@@ -155,28 +196,20 @@ public class Semester extends GenericID implements ITimePeriod{
         return 0;
     }
 
-	public Date get_begin() {
-		return _begin;
-	}
+    @Override
+    public String toString() {
+        return _id;
+    }
 
-	public void set_begin(Date _begin) {
-		this._begin = _begin;
-	}
+    public IPelpID parse(String str) {
+        return new Semester(str);
+    }
 
-	public Date get_end() {
-		return _end;
-	}
+    public Date getInitialDate() {
+        return _begin;
+    }
 
-	public void set_end(Date _end) {
-		this._end = _end;
-	}
-
-	public String get_id() {
-		return _id;
-	}
-
-	public void set_id(String _id) {
-		this._id = _id;
-	}
-    
+    public Date getFinalDate() {
+        return _end;
+    }
 }

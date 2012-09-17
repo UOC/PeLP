@@ -42,7 +42,6 @@ import edu.uoc.serveis.gat.dadesacademiques.model.AssignaturaReduidaVO;
 import edu.uoc.serveis.gat.dadesacademiques.service.DadesAcademiquesService;
 import edu.uoc.serveis.gat.expedient.model.ExpedientVO;
 import edu.uoc.serveis.gat.expedient.service.ExpedientService;
-import edu.uoc.serveis.gat.matricula.model.AssignaturaMatriculadaDocenciaVO;
 import edu.uoc.serveis.gat.matricula.service.MatriculaService;
 import edu.uoc.serveis.gat.rac.model.AulaVO;
 import edu.uoc.serveis.gat.rac.service.RacService;
@@ -65,6 +64,7 @@ public class CampusConnection implements ICampusConnection{
             this.sesion = sesion;
     }
 
+    @Override
     public boolean isUserAuthenticated() throws AuthPelpException {
     	boolean authenticated = false;
     	try {
@@ -72,10 +72,12 @@ public class CampusConnection implements ICampusConnection{
     		authenticated = authService.isUserAuthenticated( sesion );
     	} catch ( Exception e){
     		throw new AuthPelpException("Authentication process failed");
+                return false;
     	}        
     	return authenticated;
     }
 
+    @Override
     public IUserID getUserID() throws AuthPelpException {
 
     	if( userID == null ) {
@@ -180,6 +182,7 @@ public class CampusConnection implements ICampusConnection{
         return getUserClassrooms(null);
     }
     
+    @Override
     public IClassroomID[] getUserClassrooms(UserRoles userRole,ISubjectID subject) throws AuthPelpException {
         // Check if the user is authenticated
         if(!isUserAuthenticated()) {
@@ -190,100 +193,99 @@ public class CampusConnection implements ICampusConnection{
         throw new UnsupportedOperationException("Not supported yet."); 
     }
 
+    @Override
     public IClassroomID[] getSubjectClassrooms(ISubjectID subject, UserRoles userRole) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isRole(UserRoles role, ISubjectID subject, IUserID user) {
         /* 
          * TODO: Comprova si l'usuari donat té el rol indicat per aquest assignatura.
          * La equivalencia de rols son:
          *         
          */
-    	
-        try {
-			RacService rac = WsLibBO.getRacServiceInstance();
-			AulaVO[] aulas = rac.getAulesByConsultorAny(1,"");
-			for (int i=0;i<aulas.length;i++)
-			{/*
-			    if ( (codiTercers.equals(aulas[i].getAssignatura().getCodAssignatura())) && (numAula == aulas[i].getNumAula()))
-			    {
-			        return true;
-			    }*/
-			}
-			//return false;
-		} catch (WSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isRole(UserRoles role, ISubjectID subject) throws AuthPelpException {
         return isRole(role,subject,getUserID());
     }
 
+    @Override
     public boolean isRole(UserRoles role, IClassroomID classroom, IUserID user) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isRole(UserRoles role, IClassroomID classroom) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public IUserID[] getRolePersons(UserRoles role, ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public IUserID[] getRolePersons(UserRoles role, IClassroomID classroom) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean hasLabSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException {
+        //TODO: Una solucio es utilitzar la taula PELP_MainLabSubjects, amb les correspondencies
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean hasEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ISubjectID[] getEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isCampusConnection() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Subject getSubjectData(ISubjectID subjectID) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Person getUserData(IUserID userID) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Person getUserData() throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ISubjectID[] getUserSubjects(UserRoles userRole,ITimePeriod timePeriod) throws AuthPelpException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public ITimePeriod[] getPeriods() {
     	String MODUL = "NOTESAVAL0";
     	AnyAcademicVO[] anysAcademics;
@@ -298,6 +300,7 @@ public class CampusConnection implements ICampusConnection{
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ITimePeriod[] getActivePeriods() {
         // Accedir a una taula de la Base de Dades
         throw new UnsupportedOperationException("Not supported yet.");

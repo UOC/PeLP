@@ -18,9 +18,10 @@
 */
 package edu.uoc.pelp.engine.deliver;
 
-import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.activity.ActivityID;
+import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.campus.IUserID;
+import java.io.File;
 
 /**
  * This interface describes the methods for delivers managing.
@@ -108,4 +109,11 @@ public interface IDeliverManager {
      * @return Number of delivers of the user to the activity
      */
     int getNumUserDelivers(IUserID userID, ActivityID activityID);
+    
+    /**
+     * Assign the root path to store the delivers. All the files of a deliver will be stored at this path.
+     * @param path Path where to store the delivers
+     * @return True if the path exists or was correctly created, and it is writable.
+     */
+    boolean setDeliverPath(File path);
 }

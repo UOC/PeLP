@@ -153,11 +153,13 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         result.start();
         try {    
             proc = ExtExecUtils.exec(compilationCmd, _confObject.getCompiler(getLanguageID()).getAbsoluteFile().getParentFile(), 3, 1000, null, output, output);
-            if(proc.exitValue()==0) {
-                // Store succesful value
-                compRes=true;
-                // Store output main file
-                _buildingMainFile=mainFile;
+            if(proc!=null) {
+                if(proc.exitValue()==0) {
+                    // Store succesful value
+                    compRes=true;
+                    // Store output main file
+                    _buildingMainFile=mainFile;
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(CCodeAnalyzer.class.getName()).log(Level.SEVERE, null, ex);
@@ -235,6 +237,7 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         return result;
     }
     
+    @Override
     public String getLanguageID() {
         return "C";
     }
@@ -275,7 +278,12 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
                 timeOutValue=timeOut;
             }
             
-            // Create the process            
+            // To avoid null stdin reading errors, change null inputs by empty string
+            /*if(input==null || input.available()==0) {
+                input=new ByteArrayInputStream(" ".getBytes());
+            }*/
+            
+            // Create the process         
             p=ExtExecUtils.exec(cmdarray, _workingPath, _timeoutStep, timeOutValue,input,output,null);
             
             // Check the output
@@ -293,6 +301,7 @@ public class CCodeAnalyzer extends BasicCodeAnalyzer {
         return retVal;
     }
 
+    @Override
     public String getSystemInfo() {
         StringBuffer output=new StringBuffer();
         

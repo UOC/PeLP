@@ -32,9 +32,9 @@ public interface IActivityManager {
      * @param subject Subject identifier.
      * @param start Starting date. This activity will be available from this date, or if null, from any moment.
      * @param end Ending date. This activity will be available until this date, or if null, forever.
-     * @return Returns a new Activity or null if it cannot be created. Further information can be added to the activity using the editActivity method
+     * @return Returns a new Activity identifier or null if it cannot be created. Further information can be added to the activity using the editActivity method
      */
-    Activity addActivity(ISubjectID subject, Date start, Date end);
+    ActivityID addActivity(ISubjectID subject, Date start, Date end);
     
     /**
      * Modify the information of a certain activity
@@ -54,9 +54,9 @@ public interface IActivityManager {
      * Add a new test to an existing activity. 
      * @param activityID Indentifier for the activity
      * @param test ActivityTest object to be added. If testID is provided, it will be overwrited.
-     * @return The ActivityTest object with a new identifier or null if any error occurred.
+     * @return The ActivityTest identifier object or null if any error occurred.
      */
-    ActivityTest addTest(ActivityID activityID,ActivityTest test);
+    TestID addTest(ActivityID activityID,ActivityTest test);
     
     /**
      * Modifies the information of a certain test. It only can be used for tests linked to any activity, and

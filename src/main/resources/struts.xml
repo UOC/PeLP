@@ -27,6 +27,5 @@
 				exception="uoc.edu.osid.environment.struts.interceptor.OKIAuthenticationException" />
 		</global-exception-mappings>
  -->
- 	
 	</package>
 </struts>

@@ -41,7 +41,7 @@ public class LocalAuthManager_Campus {
     }
     
     @Test 
-    public void testNotAuthUserRightsToCampus()  throws AuthPelpException  {
+    public void testNotAuthUserRightsToCampus() {
         // Check that user is not authenticated
         Assert.assertTrue("Check if user is authenticated.",_campusConnection.isUserAuthenticated());
     }
