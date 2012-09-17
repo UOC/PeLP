@@ -19,6 +19,7 @@
 package edu.uoc.pelp.model.vo;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -54,9 +55,8 @@ public class ActivityTest implements Serializable {
     private String fileInput;
     @Column(name = "fileOutput")
     private String fileOutput;
-    @Lob
     @Column(name = "maxTime")
-    private String maxTime;
+    private BigInteger maxTime;
 
     public ActivityTest() {
     }
@@ -117,11 +117,11 @@ public class ActivityTest implements Serializable {
         this.fileOutput = fileOutput;
     }
 
-    public String getMaxTime() {
+    public BigInteger getMaxTime() {
         return maxTime;
     }
 
-    public void setMaxTime(String maxTime) {
+    public void setMaxTime(BigInteger maxTime) {
         this.maxTime = maxTime;
     }
 

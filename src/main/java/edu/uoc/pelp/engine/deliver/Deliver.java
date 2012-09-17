@@ -135,6 +135,54 @@ public class Deliver implements Comparable {
     public void setRootPath(File rootPath) {
         _rootPath=rootPath;
     }
+
+    /**
+     * Get the creation date of the deliver
+     * @return Creation date
+     */
+    public Date getCreationDate() {
+        return _creationDate;
+    }
+
+    /**
+     * Set the creation date of the deliver
+     * @param creationDate Creation date
+     */
+    public void setCreationDate(Date creationDate) {
+        this._creationDate = creationDate;
+    }
+
+    /**
+     * Get the laboratory classroom assigned to this deliver
+     * @return Classroom identifier for the laboratory
+     */
+    public IClassroomID getUserLabClassroom() {
+        return _userLabClassroom;
+    }
+
+    /**
+     * Set the laboratory classroom assigned to this deliver
+     * @param userLabClassroom Classroom identifier for the laboratory
+     */
+    public void setUserLabClassroom(IClassroomID userLabClassroom) {
+        this._userLabClassroom = userLabClassroom;
+    }
+
+    /**
+     * Get the main classroom assigned to this deliver
+     * @return Classroom identifier for the main classroom
+     */
+    public IClassroomID getUserMainClassroom() {
+        return _userMainClassroom;
+    }
+
+    /**
+     * Set the main classroom assigned to this deliver
+     * @param userMainClassroom Classroom identifier for the main classroom
+     */
+    public void setUserMainClassroom(IClassroomID userMainClassroom) {
+        this._userMainClassroom = userMainClassroom;
+    }
     
     /**
      * Checks if the deliver is correct

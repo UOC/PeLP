@@ -30,7 +30,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Perform all tests over the DAO object for the SemesterDO table of the database

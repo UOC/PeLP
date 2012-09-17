@@ -103,6 +103,10 @@ public class TestDescPK implements Serializable {
     public void setLangCode(String langCode) {
         this.langCode = langCode;
     }
+    
+    public ActivityTestPK getActivityTestPK() {
+        return new ActivityTestPK(semester,subject,activityIndex, testIndex);
+    }
 
     @Override
     public int hashCode() {

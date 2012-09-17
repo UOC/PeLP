@@ -18,7 +18,6 @@
 */
 package edu.uoc.pelp.test.model.dao;
 
-import edu.uoc.pelp.engine.activity.ActivityTestResult;
 import edu.uoc.pelp.engine.deliver.DeliverID;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
 import edu.uoc.pelp.model.dao.IDeliverResultDAO;

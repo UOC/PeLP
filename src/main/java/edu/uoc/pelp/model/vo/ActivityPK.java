@@ -40,12 +40,19 @@ public class ActivityPK implements Serializable {
     private int index;
 
     public ActivityPK() {
+        
     }
 
     public ActivityPK(String semester, String subject, int index) {
         this.semester = semester;
         this.subject = subject;
         this.index = index;
+    }
+    
+    public ActivityPK(ActivityTestPK activityTestPK) {
+        this.semester=activityTestPK.getSemester();
+        this.subject=activityTestPK.getSubject();
+        this.index=activityTestPK.getActivityIndex();
     }
 
     public String getSemester() {

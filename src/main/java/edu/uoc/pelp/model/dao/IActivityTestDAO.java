@@ -21,6 +21,7 @@ package edu.uoc.pelp.model.dao;
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.activity.ActivityTest;
 import edu.uoc.pelp.engine.activity.TestID;
+import edu.uoc.pelp.engine.campus.ISubjectID;
 import java.util.List;
 
 /**
@@ -69,4 +70,11 @@ public interface IActivityTestDAO {
      * @return Object with all the information or null if not exists.
      */
     ActivityTest find(TestID id);
+    
+    /**
+     * Obtain the identifier of the last stored test for a certain activity
+     * @param activityID Information for the subject
+     * @return Object identifier
+     */
+    TestID getLastID(ActivityID activityID);
 }

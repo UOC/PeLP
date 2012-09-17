@@ -93,7 +93,7 @@ public class DeliverFilePK implements Serializable {
         this.activityIndex = activityIndex;
     }
 
-    public String getUserD() {
+    public String getUserID() {
         return userID;
     }
 

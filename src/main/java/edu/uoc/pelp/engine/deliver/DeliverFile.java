@@ -153,6 +153,14 @@ public class DeliverFile implements Comparable{
         return new File(rootPath.getAbsolutePath() + File.separator + path);
     }
     
+    /**
+     * Gets the absolute path of the file, using a given rootPath to complete relative paths
+     * @return Object with the file's path
+     */
+    public File getRelativePath() {
+        return _file;
+    }
+    
     @Override
     public DeliverFile clone() {
         return new DeliverFile(this);
