@@ -15,12 +15,20 @@
 	<!-- business objects -->
 	<bean id="pelpBussines" class="uoc.edu.pelp.bussines.PelpBussinesImpl">
 	</bean>
+	
+	<bean id="bUOC" class="uoc.edu.pelp.bussines.UocBussinesImpl">
+		<property name="engine" ref="engine" />	
+	</bean>
 
 	<!-- objects test inject to pelpEnigne -->
 
-	<bean id="lcct" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection">
-		<constructor-arg type="java.lang.String" value="a12759264e64403cf761a13d8d772764fe786bdb761638150a83500a694761b210a128573dee43cbbddbac7eabf513492199d90bbac74a9942184da84d2f4e07" />
+	<bean id="lcctj" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection">
+		<constructor-arg type="java.lang.String" value="11e7592afee1c0b7674ba1324d21376bde966b2106ffd8417a2c1006e96b01fd409238675dd043873d4e4c3beb98238461c559093ae38a0aa2325d697dde8e18" />
 	</bean>
+	<!-- TEMPORAL -->
+	<bean id="lcct" class="edu.uoc.pelp.test.LocalCampusConnection">
+	</bean>
+	<!-- FIN TEMPORAL -->
 	
 	<bean id="lamt" class="edu.uoc.pelp.test.LocalActivityManager">
 	</bean>
@@ -40,10 +48,11 @@
  		<property name="systemConfiguration" ref="pcpct" />
 	</bean>
 	
+	
 	<!-- ACTIONS -->
 	
 	<bean id="teacherSpringAction" class="uoc.edu.pelp.actions.TeacherAction">
-		<property name="engine" ref="engine" />	
+		<property name="bUOC" ref="bUOC" />	
 	</bean>
 	
 	<!--  END ACTIONS -->

@@ -78,7 +78,7 @@ public class LocalCampusConnection implements ICampusConnection{
     private Person[] _testAccessPersons=null;
     
     public LocalCampusConnection() {
-        createDummyData();
+        setProfile("teacher2");
     }
         
     public boolean isUserAuthenticated() {

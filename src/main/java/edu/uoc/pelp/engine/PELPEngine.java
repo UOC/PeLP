@@ -118,7 +118,7 @@ public class PELPEngine implements iPELPEngine {
         }
         
         ArrayList<Subject> subjectsList=new ArrayList<Subject>();
-        
+
         // Add subjects
         for(ITimePeriod period:_campusConnection.getActivePeriods()) {            
             for(ISubjectID subjectID:_campusConnection.getUserSubjects(period)) {
