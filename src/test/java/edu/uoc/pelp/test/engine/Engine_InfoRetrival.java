@@ -107,7 +107,7 @@ public class Engine_InfoRetrival {
     }
     
     @Test(expected=AEMPelpException.class) // 9.1
-    public void noAuthAccessAnalyzeCodeInvalidProject1() throws AEMPelpException {
+    public void noAuthAccessAnalyzeCodeInvalidProject1() throws AEMPelpException, AuthPelpException {
         CodeProject project=null;
         
         Assert.assertFalse("Test authentication", _engine.isUserAuthenticated());
@@ -125,7 +125,7 @@ public class Engine_InfoRetrival {
     }
     
     @Test(expected=AEMPelpException.class) // 9.2
-    public void noAuthAccessAnalyzeCodeInvalidProject2() throws AEMPelpException {
+    public void noAuthAccessAnalyzeCodeInvalidProject2() throws AEMPelpException, AuthPelpException {
         Assert.assertFalse("Test authentication", _engine.isUserAuthenticated());
             
         // Project with out files and string code, obtained from an empty deliver

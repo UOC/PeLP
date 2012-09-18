@@ -101,9 +101,10 @@ public class PELPEngine implements IPELPEngine {
     /**
      * Check if the current user is authenticated or not.
      * @return True if the user is authenticated or False otherwise.
+     * @throws AuthPelpException 
      */
     @Override
-    public boolean isUserAuthenticated() {
+    public boolean isUserAuthenticated() throws AuthPelpException {
         return _campusConnection.isUserAuthenticated();
     }
     

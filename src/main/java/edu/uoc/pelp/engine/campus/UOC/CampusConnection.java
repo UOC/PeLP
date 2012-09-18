@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package edu.uoc.pelp.engine.campus.UOC;
 
 import java.util.ArrayList;
@@ -42,6 +42,7 @@ import edu.uoc.serveis.gat.dadesacademiques.model.AssignaturaReduidaVO;
 import edu.uoc.serveis.gat.dadesacademiques.service.DadesAcademiquesService;
 import edu.uoc.serveis.gat.expedient.model.ExpedientVO;
 import edu.uoc.serveis.gat.expedient.service.ExpedientService;
+import edu.uoc.serveis.gat.matricula.model.AssignaturaMatriculadaDocenciaVO;
 import edu.uoc.serveis.gat.matricula.service.MatriculaService;
 import edu.uoc.serveis.gat.rac.model.AulaVO;
 import edu.uoc.serveis.gat.rac.service.RacService;
@@ -51,258 +52,428 @@ import edu.uoc.serveis.gat.rac.service.RacService;
  * @author Xavier Baró
  */
 public class CampusConnection implements ICampusConnection{
-    
-    private String sesion;
-    private UserID userID;
 
-    private ArrayList<AssignaturaMatriculadaDocenciaVO> asignaturasMatriculadas;
-    
-    private static final Logger log = Logger.getLogger(CampusConnection.class);
+	private String sesion;
+	private UserID userID;
 
-    public CampusConnection(String sesion) {
-            super();
-            this.sesion = sesion;
-    }
+	private String aplicacioTren;
+	private String appIdTREN;
+	private String appId;
 
-    @Override
-    public boolean isUserAuthenticated() throws AuthPelpException {
-    	boolean authenticated = false;
-    	try {
-    		Auth authService = WsLibBO.getAuthServiceInstance();
-    		authenticated = authService.isUserAuthenticated( sesion );
-    	} catch ( Exception e){
-    		throw new AuthPelpException("Authentication process failed");
-                return false;
-    	}        
-    	return authenticated;
-    }
+	private ArrayList<AssignaturaMatriculadaDocenciaVO> asignaturasMatriculadas;
+	private ArrayList<AulaVO> asignaturasConsultor;
+	private ArrayList<AssignaturaReduidaVO> asignaturasPRA;
 
-    @Override
-    public IUserID getUserID() throws AuthPelpException {
+	private static final Logger log = Logger.getLogger(CampusConnection.class);
 
-    	if( userID == null ) {
+	public CampusConnection(String sesion) {
+		super();
+		this.sesion = sesion;
+	}
 
-    		try {
-    			Auth authService = WsLibBO.getAuthServiceInstance();
-    			final SessionContext sessionContext = authService.getContextBySessionId(sesion);
-    			if ( sessionContext == null ) {
-    				log.error("Error al obtener la SessionContext de la sesion: " + sesion);
-    				throw new Exception("Error al obtener la SessionContext de la sesion: " + sesion);
-    			}
-    			userID = new UserID( String.valueOf(sessionContext.getIdp()) );
-
-    		} catch ( Exception e){
-    			throw new AuthPelpException("Authentication process failed");
-    		}
-    	}
-    	return userID;
-    }
-
-    
-    public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
-    	ArrayList<SubjectID> subjects = new ArrayList<SubjectID>();
-
-    	if( asignaturasMatriculadas == null ){
-    		asignaturasMatriculadas = getUserSubjectsObjects(timePeriod);
-    	}
-		
-    	Semester semester = (Semester) timePeriod;
-		for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturasMatriculadas) {
-			AssignaturaReduidaVO  asignatura;
-			asignatura = (AssignaturaReduidaVO) assignaturaMatriculadaDocencia.getAssignatura();
-
-			SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), semester);
-			subjects.add(subID);
-		}
-		
-    	SubjectID[] subs=new SubjectID[subjects.size()];
-    	return subjects.toArray(subs); 
-    }
-
-	private ArrayList<AssignaturaMatriculadaDocenciaVO> getUserSubjectsObjects( ITimePeriod timePeriod ) throws AuthPelpException {
-		
-		asignaturasMatriculadas = new ArrayList<AssignaturaMatriculadaDocenciaVO>();
-		
+	@Override
+	public boolean isUserAuthenticated() throws AuthPelpException {
+		boolean authenticated = false;
 		try {
-	    	if( userID == null ) {
-	    		userID = (UserID) getUserID();
-	    	}
-    		int idp = Integer.valueOf( userID.idp );
+			Auth authService = WsLibBO.getAuthServiceInstance();
+			authenticated = authService.isUserAuthenticated( sesion );
+		} catch ( Exception e){
+			throw new AuthPelpException("Authentication process failed");
+		}        
+		return authenticated;
+	}
 
-    		ExpedientService expedientService = WsLibBO.getExpedientServiceInstance();
-    		ExpedientVO[] expedientes = expedientService.getExpedientsByEstudiant( idp );
-    		MatriculaService matriculaService = WsLibBO.getMatriculaServiceInstance();
-    		Semester sem = (Semester) timePeriod;
-    		String semester = sem.get_id();
-    		for (ExpedientVO expedient : expedientes) {
-    			AssignaturaMatriculadaDocenciaVO[] asignaturas = matriculaService.getAssignaturesDocenciaMatriculadesEstudiant(expedient.getNumExpedient(), semester);
-    			for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturas) {
-    				
-    				asignaturasMatriculadas.add( assignaturaMatriculadaDocencia );
+	@Override
+	public IUserID getUserID() throws AuthPelpException {
 
-    			}
-    		}
-    	} catch (Exception e) {
-    		log.error("Error al obtener el listado de asignaturas del usuario.");
-    		e.printStackTrace();
-    		throw new AuthPelpException("Error al obtener el listado de asignaturas del usuario.");            
-    	}
+		if( userID == null ) {
+
+			try {
+				Auth authService = WsLibBO.getAuthServiceInstance();
+				final SessionContext sessionContext = authService.getContextBySessionId(sesion);
+				if ( sessionContext == null ) {
+					log.error("Error al obtener la SessionContext de la sesion: " + sesion);
+					throw new Exception("Error al obtener la SessionContext de la sesion: " + sesion);
+				}
+				userID = new UserID( String.valueOf(sessionContext.getIdp()) );
+
+				appId = UserUtils.getAppId(sessionContext);
+				aplicacioTren = UserUtils.getAplicacioTren(appId);
+				appIdTREN = UserUtils.getAplicacioTren(appId);
+
+			} catch ( Exception e){
+				throw new AuthPelpException("Authentication process failed");
+			}
+		}
+		return userID;
+	}
+
+
+	public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
+
+		return getUserSubjects(null, timePeriod); 
+	}
+
+	@Override
+	public ISubjectID[] getUserSubjects(UserRoles userRole,ITimePeriod timePeriod) throws AuthPelpException {
+		ArrayList<SubjectID> subjects = new ArrayList<SubjectID>();
+
+		if( userRole == null || userRole.compareTo(UserRoles.Student) == 0 ){
+			if( asignaturasMatriculadas == null ){
+				asignaturasMatriculadas = getListaAsignaturasMatriculadas( null );
+			}
+		} 
+		if(  userRole == null || userRole.compareTo(UserRoles.Teacher) == 0 ){
+			if( asignaturasConsultor == null ){
+				asignaturasConsultor = getListaAsignaturasConsultor( null );
+			}
+		} 
+		if(  userRole == null || userRole.compareTo(UserRoles.MainTeacher) == 0 ){
+			if( asignaturasPRA == null ){
+				asignaturasPRA = getListaAsignaturasPRA( timePeriod );
+			}
+		}
+
+		ITimePeriod[] semestres;
+		if( timePeriod == null ){
+			semestres = getActivePeriods();
+		} else {
+			semestres = new ITimePeriod[1];
+			semestres[0] = timePeriod;
+		}
+
+		for (ITimePeriod iTimePeriod : semestres) {
+			Semester semester = (Semester) iTimePeriod;
+			// asignaturas matriculadas estudiante
+			for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturasMatriculadas) {
+				AssignaturaReduidaVO asignatura;
+				asignatura = (AssignaturaReduidaVO) assignaturaMatriculadaDocencia.getAssignatura();
+				if( assignaturaMatriculadaDocencia.getAnyAcademic().equalsIgnoreCase(semester.getID()) ){
+					SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), semester);
+					subjects.add(subID);
+				}
+			}
+			// asignaturas consultores
+			for (AulaVO aula : asignaturasConsultor) {
+				if( aula.getAnyAcademic().equalsIgnoreCase(semester.getID()) ){
+					SubjectID subID = new SubjectID(aula.getAssignatura().getCodAssignatura(), semester);
+					subjects.add(subID);
+				}
+			}
+
+			// asignaturas PRA
+			for (AssignaturaReduidaVO asignatura : asignaturasPRA) {
+				SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), semester);
+				subjects.add(subID);
+			}
+
+		}
+
+		SubjectID[] subs = new SubjectID[subjects.size()];
+		return subjects.toArray(subs); 
+	}
+
+	private ArrayList<AssignaturaMatriculadaDocenciaVO> getListaAsignaturasMatriculadas(ITimePeriod timePeriod) throws AuthPelpException {
+
+		asignaturasMatriculadas = new ArrayList<AssignaturaMatriculadaDocenciaVO>();
+
+		try {
+			if( userID == null ) {
+				userID = (UserID) getUserID();
+			}
+			int idp = Integer.valueOf( userID.idp );
+
+			ExpedientService expedientService = WsLibBO.getExpedientServiceInstance();
+			ExpedientVO[] expedientes = expedientService.getExpedientsByEstudiant( idp );
+			MatriculaService matriculaService = WsLibBO.getMatriculaServiceInstance();
+
+			ITimePeriod[] semestres;
+			if( timePeriod == null ){
+				semestres = getActivePeriods();
+			} else {
+				semestres = new ITimePeriod[1];
+				semestres[0] = timePeriod;
+			}
+
+			for (ITimePeriod iTimePeriod : semestres) {
+				Semester semester = (Semester) iTimePeriod;
+				String semesterId = semester.getID();
+				for (ExpedientVO expedient : expedientes) {
+					AssignaturaMatriculadaDocenciaVO[] asignaturas = matriculaService.getAssignaturesDocenciaMatriculadesEstudiant(expedient.getNumExpedient(), semesterId);
+					for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturas) {
+
+						asignaturasMatriculadas.add( assignaturaMatriculadaDocencia );
+
+					}
+				}
+			}
+
+		} catch (Exception e) {
+			log.error("Error al obtener el listado de asignaturas del usuario.");
+			e.printStackTrace();
+			throw new AuthPelpException("Error al obtener el listado de asignaturas del usuario.");            
+		}
 		return asignaturasMatriculadas;
 	}
 
-    
-    public IClassroomID[] getUserClassrooms(ISubjectID subjectID) throws AuthPelpException {
-    	
-    	if( asignaturasMatriculadas == null ){
-    		asignaturasMatriculadas = getUserSubjectsObjects(timePeriod);
-    	}
-    	
-    	IClassroomID[] classrooms = new ClassroomID[2];
-    	
-    	Semester semester = (Semester) timePeriod;
-    	SubjectID subject = (SubjectID) subjectID;
-		for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturasMatriculadas) {
-			AssignaturaReduidaVO  asignatura;
-			asignatura = (AssignaturaReduidaVO) assignaturaMatriculadaDocencia.getAssignatura();
-			SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), semester);
-			
-			if( subject.compareTo( subID ) == 0 ) {
-				ClassroomID classroom = new ClassroomID(subject, asignatura.);
+	private ArrayList<AulaVO> getListaAsignaturasConsultor(ITimePeriod timePeriod) throws AuthPelpException {
+
+		asignaturasConsultor = new ArrayList<AulaVO>();
+		try {
+			if( userID == null ) {
+				userID = (UserID) getUserID();
 			}
-				
+			int idp = Integer.valueOf( userID.idp );
+			RacService rac = WsLibBO.getRacServiceInstance();
+
+			ITimePeriod[] semestres;
+			if( timePeriod == null ){
+				semestres = getActivePeriods();
+			} else {
+				semestres = new ITimePeriod[1];
+				semestres[0] = timePeriod;
+			}
+
+			for (ITimePeriod iTimePeriod : semestres) {
+				Semester semester = (Semester) iTimePeriod;
+				String semesterId = semester.getID();
+				AulaVO[] asignaturas = rac.getAulesByConsultorAny(idp, semesterId);
+				for (AulaVO aula : asignaturas) {
+					asignaturasConsultor.add( aula );
+				}
+			}
+		} catch (Exception e) {
+			log.error("Error al obtener el listado de asignaturas del consultor.");
+			e.printStackTrace();
+			throw new AuthPelpException("Error al obtener el listado de asignaturas del consultor.");   
+		}
+
+		return asignaturasConsultor;
+	}
+
+	private ArrayList<AssignaturaReduidaVO> getListaAsignaturasPRA(ITimePeriod timePeriod) throws AuthPelpException {
+
+		asignaturasPRA = new ArrayList<AssignaturaReduidaVO>();
+		try {
+			if( userID == null ) {
+				userID = (UserID) getUserID();
+			}
+			int idp = Integer.valueOf( userID.idp );
+			DadesAcademiquesService dades = WsLibBO.getDadesAcademiquesServiceInstance();
+
+			ITimePeriod[] semestres;
+			if( timePeriod == null ){
+				semestres = getActivePeriods();
+			} else {
+				semestres = new ITimePeriod[1];
+				semestres[0] = timePeriod;
+			}
+
+			for (ITimePeriod iTimePeriod : semestres) {
+				Semester semester = (Semester) iTimePeriod;
+				String semesterId = semester.getID();
+
+				AssignaturaReduidaVO[] asignaturas = dades.getAssignaturesByResponsableAny(idp, semesterId);
+				for (AssignaturaReduidaVO aula : asignaturas) {
+					asignaturasPRA.add( aula );
+				}
+			}
+		} catch (Exception e) {
+			log.error("Error al obtener el listado de asignaturas del PRA.");
+			e.printStackTrace();
+			throw new AuthPelpException("Error al obtener el listado de asignaturas del PRA.");   
+		}
+
+		return asignaturasPRA;
+	}
+
+	public IClassroomID[] getUserClassrooms(ISubjectID subjectID) throws AuthPelpException {
+
+		return getUserClassrooms(null, subjectID);
+	}
+
+	@Override
+	public IClassroomID[] getUserClassrooms(UserRoles userRole, ISubjectID subjectID) throws AuthPelpException {
+		ArrayList<ClassroomID> classrooms = new ArrayList<ClassroomID>();
+
+
+		if( userRole == null || userRole.compareTo(UserRoles.Student) == 0 ){
+			if( asignaturasMatriculadas == null ){
+				asignaturasMatriculadas = getListaAsignaturasMatriculadas( null );
+			}
+		} 
+		if(  userRole == null || userRole.compareTo(UserRoles.Teacher) == 0 ){
+			if( asignaturasConsultor == null ){
+				asignaturasConsultor = getListaAsignaturasConsultor( null );
+			}
+		} 
+		if(  userRole == null || userRole.compareTo(UserRoles.MainTeacher) == 0 ){
+			if( asignaturasPRA == null ){
+				asignaturasPRA = getListaAsignaturasPRA( null );
+			}
+		}
+		try {
+
+			ITimePeriod[] semestres = getActivePeriods();
+			SubjectID subject = (SubjectID) subjectID;
+			for (ITimePeriod iTimePeriod : semestres) {
+				Semester semester = (Semester) iTimePeriod;
+				ClassroomID classroom;
+
+				// asignaturas matriculadas estudiante
+				for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturasMatriculadas) {
+					AssignaturaReduidaVO asignatura;
+					asignatura = (AssignaturaReduidaVO) assignaturaMatriculadaDocencia.getAssignatura();
+					if( assignaturaMatriculadaDocencia.getAssignatura().getCodAssignatura().equalsIgnoreCase( subject.getCode() ) ){
+						classroom = new ClassroomID(subject, assignaturaMatriculadaDocencia.getNumAula() );
+						classrooms.add(classroom);
+					}
+				}
+
+				// asignaturas consultores
+				for (AulaVO aula : asignaturasConsultor) {
+					if( aula.getAssignatura().getCodAssignatura().equalsIgnoreCase( subject.getCode()  ) ){
+						classroom = new ClassroomID(subject, aula.getNumAula() );
+						classrooms.add(classroom);
+					}
+				}
+
+
+				// asignaturas PRA
+				for (AssignaturaReduidaVO asignatura : asignaturasPRA) {
+					if(asignatura.getCodAssignatura().equalsIgnoreCase( subject.getCode() )){
+
+						RacService racService = WsLibBO.getRacServiceInstance();
+						AulaVO[] aulas = racService.getAulesByAssignaturaAny(subject.getCode(), semester.getID());
+
+						for (AulaVO aula : aulas) {
+							classroom = new ClassroomID(subject, aula.getNumAula() );
+							classrooms.add(classroom);
+						}
+					}
+				}
+			}
 			
-			subjects.add(subID);
+		} catch (Exception e) {
+			log.error("Error al obtener el listado de aulas");
+			e.printStackTrace();
+			throw new AuthPelpException("Error al obtener el listado de aulas.");   
 		}
-		
-    	
-    	
-    	ClassroomID classroom = new ClassroomID(subject, classIdx);
-    	
-    	
-        return getUserClassrooms(null);
-    }
-    
-    @Override
-    public IClassroomID[] getUserClassrooms(UserRoles userRole,ISubjectID subject) throws AuthPelpException {
-        // Check if the user is authenticated
-        if(!isUserAuthenticated()) {
-            throw new AuthPelpException("Authentication is required");
-        }
-        
-        // TODO: Retorna la llista d'aules de l'usuari actual, filtrades per rol
-        throw new UnsupportedOperationException("Not supported yet."); 
-    }
+		ClassroomID[] classroomsArray = new ClassroomID[classrooms.size()];
+		return classrooms.toArray(classroomsArray); 
+	}
 
-    @Override
-    public IClassroomID[] getSubjectClassrooms(ISubjectID subject, UserRoles userRole) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public IClassroomID[] getSubjectClassrooms(ISubjectID subject, UserRoles userRole) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public boolean isRole(UserRoles role, ISubjectID subject, IUserID user) {
-        /* 
-         * TODO: Comprova si l'usuari donat té el rol indicat per aquest assignatura.
-         * La equivalencia de rols son:
-         *         
-         */
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public boolean isRole(UserRoles role, ISubjectID subject, IUserID user) {
+		/* 
+		 * TODO: Comprova si l'usuari donat té el rol indicat per aquest assignatura.
+		 * La equivalencia de rols son:
+		 *         
+		 */
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public boolean isRole(UserRoles role, ISubjectID subject) throws AuthPelpException {
-        return isRole(role,subject,getUserID());
-    }
+	@Override
+	public boolean isRole(UserRoles role, ISubjectID subject) throws AuthPelpException {
+		return isRole(role,subject,getUserID());
+	}
 
-    @Override
-    public boolean isRole(UserRoles role, IClassroomID classroom, IUserID user) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public boolean isRole(UserRoles role, IClassroomID classroom, IUserID user) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public boolean isRole(UserRoles role, IClassroomID classroom) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public boolean isRole(UserRoles role, IClassroomID classroom) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public IUserID[] getRolePersons(UserRoles role, ISubjectID subject) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public IUserID[] getRolePersons(UserRoles role, ISubjectID subject) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public IUserID[] getRolePersons(UserRoles role, IClassroomID classroom) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public IUserID[] getRolePersons(UserRoles role, IClassroomID classroom) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public boolean hasLabSubjects(ISubjectID subject) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public boolean hasLabSubjects(ISubjectID subject) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException {
-        //TODO: Una solucio es utilitzar la taula PELP_MainLabSubjects, amb les correspondencies
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException {
+		//TODO: Una solucio es utilitzar la taula PELP_MainLabSubjects, amb les correspondencies
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public boolean hasEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public boolean hasEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public ISubjectID[] getEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public ISubjectID[] getEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public boolean isCampusConnection() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public boolean isCampusConnection() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public Subject getSubjectData(ISubjectID subjectID) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public Subject getSubjectData(ISubjectID subjectID) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public Person getUserData(IUserID userID) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public Person getUserData(IUserID userID) throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public Person getUserData() throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public Person getUserData() throws AuthPelpException {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 
-    @Override
-    public ISubjectID[] getUserSubjects(UserRoles userRole,ITimePeriod timePeriod) throws AuthPelpException {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
-    @Override
-    public ITimePeriod[] getPeriods() {
-    	String MODUL = "NOTESAVAL0";
-    	AnyAcademicVO[] anysAcademics;
-		DadesAcademiquesService dades = WsLibBO.getDadesAcademiquesServiceInstance();
-		anysAcademics = dades.getAnysAcademicsCalendari(usuario.getAppIdTREN(), usuario.getAplicacioTren(), MODUL);
-		if( anysAcademics != null && anysAcademics.length > 0 ) {
-			anyAcademic = anysAcademics[0].getAnyAcademic();
-		} else {
-			anyAcademic = RacConfiguracion.getSingletonConfiguration().get(RacConfiguracion.ACADEMIC_DATE);
+
+	@Override
+	public ITimePeriod[] getPeriods() {
+		String MODUL = "NOTESAVAL0";
+		AnyAcademicVO[] anysAcademics;
+		ArrayList<Semester> semestres =  new ArrayList<Semester>();
+		try {
+			DadesAcademiquesService dades = WsLibBO.getDadesAcademiquesServiceInstance();
+			anysAcademics = dades.getAnysAcademicsCalendari(appIdTREN, aplicacioTren, MODUL);
+			for (AnyAcademicVO anyAcademic : anysAcademics) {
+				semestres.add( new Semester(anyAcademic.getAnyAcademic(), anyAcademic.getDataInici(), anyAcademic.getDataFinal()) );			
+			}
+		}  catch (Exception e) {
+			log.error("Error al obtener la lista de calendarios abiertos");
+			e.printStackTrace();			
 		}
-        // Accedir a una taula de la Base de Dades
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
-    @Override
-    public ITimePeriod[] getActivePeriods() {
-        // Accedir a una taula de la Base de Dades
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+		Semester[] sems = new Semester[ semestres.size() ];
+		semestres.toArray(sems);
+		return sems;
+	}
+
+	@Override
+	public ITimePeriod[] getActivePeriods() {
+		return getPeriods();
+	}
 }

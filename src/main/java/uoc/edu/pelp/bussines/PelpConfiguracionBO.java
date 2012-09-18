@@ -1,10 +1,18 @@
 package uoc.edu.pelp.bussines;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
+
+import edu.uoc.pelp.conf.IPelpConfiguration;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.engine.campus.UOC.Semester;
+import edu.uoc.pelp.engine.campus.UOC.SubjectID;
+import edu.uoc.pelp.servlets.InitServlet;
 
 /**
  * Clase que se carga al iniciar la aplicacion donde se guardan todas las variables de configuracion,
@@ -28,10 +36,18 @@ public class PelpConfiguracionBO extends HashMap<String, String> implements IPel
 	public static final String URL_WS_MATRICULA = 			"urlSoapMatriculaService";
 	public static final String URL_WS_EXPEDIENTE = 			"urlSoapExpedientService";
 	public static final String URL_WS_CUA_MAIL = 			"urlSoapCUAMail";
+	
+	public static final String TEMP_PATH = 					"tempPath";
+	public static final String DELIVERY_PATH = 				"deliveryPath";
+	public static final String COMPILER_PATH = 				"compilerPath";
+	
+	public static final String ACTIVE_SUBJECTS = 			"activeSubjects";
+	
 
 
 	private PelpConfiguracionBO() throws IOException {
 		super();
+		dirFile = InitServlet.get_init_configPath();
 	}
 
 
