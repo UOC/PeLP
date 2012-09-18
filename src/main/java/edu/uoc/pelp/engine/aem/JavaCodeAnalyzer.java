@@ -167,6 +167,7 @@ public class JavaCodeAnalyzer extends BasicCodeAnalyzer {
         return result;
     }
 
+    @Override
     public String getLanguageID() {
         return "JAVA";
     }
@@ -303,6 +304,7 @@ public class JavaCodeAnalyzer extends BasicCodeAnalyzer {
         return retVal;
     }
     
+    @Override
     public String getSystemInfo() {
         StringBuffer output=new StringBuffer();       
         Process proc=null;        

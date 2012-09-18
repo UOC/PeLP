@@ -42,7 +42,7 @@ public class LocalActivityManager implements IActivityManager {
      */
     private HashMap<TestID,ActivityTest> _tests=new HashMap<TestID,ActivityTest>();
     
-    public Activity addActivity(ISubjectID subject, Date start, Date end) {
+    public ActivityID addActivity(ISubjectID subject, Date start, Date end) {
         // Get all activities of a certain subject
         ActivityID[] activities=getSubjectActivities(subject);
         
@@ -60,7 +60,7 @@ public class LocalActivityManager implements IActivityManager {
         // Create the new Activity
         _activities.put(newID,new Activity(newID,start,end));
         
-        return _activities.get(newID).clone();
+        return newID;
     }
 
     public boolean editActivity(Activity activity) {
@@ -93,7 +93,7 @@ public class LocalActivityManager implements IActivityManager {
         return true;
     }
 
-    public ActivityTest addTest(ActivityID activityID, ActivityTest test) {
+    public TestID addTest(ActivityID activityID, ActivityTest test) {
         // Check the activity
         if(!_activities.containsKey(activityID)) {
             return null;
@@ -119,7 +119,7 @@ public class LocalActivityManager implements IActivityManager {
         _tests.put(newID, newTest);
                 
         // Return the modified object
-        return newTest;
+        return newID;
     }
 
     public boolean editTest(ActivityTest test) {

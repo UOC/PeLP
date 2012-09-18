@@ -25,11 +25,16 @@ import java.io.File;
  * @author Xavier Baró
  */
 public class DeliverFile implements Comparable{
-
+    
     /**
      * Enumerator for file's type.
      */
     public enum FileType {Code, Report};
+    
+    /**
+     * Identifier for this file
+     */
+    private DeliverFileID _id=null;
     
     /**
      * Relative path of the file
@@ -45,15 +50,39 @@ public class DeliverFile implements Comparable{
      * Indicates if the file is the main file (only for code files)
      */
     private boolean _isMainFile=false;
-
+    
     /**
      * Default constructor
+     * @param id Deliver identifier
+     * @param path Path of the file
+     * @param type Type of file
+     */
+    public DeliverFile(DeliverFileID id,File path,FileType type) {
+        _id=id;
+        _file=path;
+        _type=type;
+    }
+    
+    /**
+     * Default constructor for unassigned files
      * @param path Path of the file
      * @param type Type of file
      */
     public DeliverFile(File path,FileType type) {
+        _id=null;
         _file=path;
         _type=type;
+    }
+    
+    /**
+     * Default copy constructor
+     * @param object Object to by copied
+     */
+    public DeliverFile(DeliverFile object) {
+        _id=object._id;
+        _file=object._file;
+        _type=object._type;
+        _isMainFile=object._isMainFile;
     }
     
     /**
@@ -87,6 +116,22 @@ public class DeliverFile implements Comparable{
     }
     
     /**
+     * Assigns a new identifier to this file
+     * @param id Identifier for this file
+     */
+    public void setID(DeliverFileID id) {
+        _id=id;
+    }
+    
+    /**
+     * Get the identifier of this file
+     * @return Identifier for this file
+     */
+    public DeliverFileID getID() {
+        return _id;
+    }
+    
+    /**
      * Gets the absolute path of the file, using a given rootPath to complete relative paths
      * @return Object with the file's path
      */
@@ -108,10 +153,17 @@ public class DeliverFile implements Comparable{
         return new File(rootPath.getAbsolutePath() + File.separator + path);
     }
     
+    /**
+     * Gets the absolute path of the file, using a given rootPath to complete relative paths
+     * @return Object with the file's path
+     */
+    public File getRelativePath() {
+        return _file;
+    }
+    
     @Override
     public DeliverFile clone() {
-        DeliverFile file=new DeliverFile(_file,_type);
-        return file;
+        return new DeliverFile(this);
     }
 
     @Override
@@ -140,6 +192,7 @@ public class DeliverFile implements Comparable{
         return hash;
     }
     
+    @Override
     public int compareTo(Object t) {
         if(t==null) {
             return -1;

@@ -18,7 +18,6 @@
 */
 package edu.uoc.pelp.engine.campus.UOC;
 
-import edu.uoc.pelp.engine.campus.GenericID;
 import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.exception.PelpException;
@@ -27,7 +26,7 @@ import edu.uoc.pelp.exception.PelpException;
  * Implementation for the subject identifier in the campus of the Universitat Oberta de Catalunya
  * @author Xavier Baró
  */
-public class SubjectID extends GenericID implements ISubjectID {
+public class SubjectID implements ISubjectID {
 
     /**
      * Subjects are identified by their code value. 
@@ -60,6 +59,7 @@ public class SubjectID extends GenericID implements ISubjectID {
         return _code;
     }
 
+    @Override
     public int compareTo(IPelpID arg0) {
         SubjectID arg=(SubjectID)arg0;
         if(_semester.compareTo(arg._semester)!=0) {
@@ -68,8 +68,7 @@ public class SubjectID extends GenericID implements ISubjectID {
         return _code.compareTo(arg._code);
     }
 
-    @Override
-    protected void copyData(GenericID genericID) throws PelpException {
+    protected void copyData(IPelpID genericID) throws PelpException {
         if (genericID instanceof SubjectID) {
             _semester=((SubjectID)genericID)._semester;
             _code=((SubjectID)genericID)._code;
@@ -103,5 +102,22 @@ public class SubjectID extends GenericID implements ISubjectID {
         hash = 89 * hash + (this._semester != null ? this._semester.hashCode() : 0);
         return hash;
     }
-    
+
+    @Override
+    public String toString() {
+        return _semester + "__" + _code;
+    }
+
+    public IPelpID parse(String str) {
+        if(str==null) {
+            return null;
+        }
+        int pos=str.indexOf("__");
+        if(pos<0) {
+            return null;
+        }
+        Semester semester=new Semester(str.substring(0,pos));
+        String code=str.substring(pos+2);
+        return new SubjectID(code,semester);
+    }
 }

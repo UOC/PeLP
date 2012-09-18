@@ -61,12 +61,12 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
     /**
      * Maximum timeout in miliseconds for the the bulding process
      */
-    protected long _maxBuildingTimeout=1000;
+    protected long _maxBuildingTimeout=5000;
     
     /**
      * Maximum timeout in miliseconds for the execution of the code
      */
-    protected long _maxExecutionTimeout=1000;
+    protected long _maxExecutionTimeout=5000;
     
     /**
      * Timeout step. Is the freqüency used to check timeout criteria
@@ -272,10 +272,12 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         return oldValue;
     }
     
+    @Override
     public void setConfiguration(IPelpConfiguration confObject) {
         _confObject=confObject;
     }
     
+    @Override
     public TestResult test(TestData test) {
         StringBuffer exeOutput=new StringBuffer();
         
@@ -300,22 +302,27 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         result.setElapsedTime(endTime-startTime);
         
         // Compare the output and exepcted output
-        boolean sameOutput;
-        try {
-            sameOutput = test.checkResult(exeOutput.toString());
-        } catch (FileNotFoundException ex) {
-            sameOutput=false;
+        if(retVal<0) {
+            result.setResult(false, "ERROR: Timeout or execution error");
+        } else {
+            boolean sameOutput;
+            try {
+                sameOutput = test.checkResult(exeOutput.toString());
+            } catch (FileNotFoundException ex) {
+                sameOutput=false;
+            }
+            result.setResult(sameOutput, exeOutput.toString());
         }
-        
-        result.setResult(sameOutput, exeOutput.toString());
         
         return result;
     }
 
+    @Override
     public void setWorkingPath(File path) {
         _workingPath=path;
     }
 
+    @Override
     public boolean isValidProject(CodeProject project) {
         // Check the assigned language
         if(project.getLanguage()!=null) {
@@ -353,6 +360,7 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
     }
     
    
+    @Override
     public BuildResult build(CodeProject project) throws PathAEMPelpException, CompilerAEMPelpException {
         
         // Remove old temporal information
@@ -476,6 +484,7 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
     /**
      * Remove temporal files and folders
      */
+    @Override
     public void clearData() {
         // Remove files
         clearTempFiles();
@@ -530,6 +539,7 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         }
     }
     
+    @Override
     public AnalysisResults analyzeProject(CodeProject project,TestData[] tests) throws PathAEMPelpException, CompilerAEMPelpException {
                
         // Call internal building method

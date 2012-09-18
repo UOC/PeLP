@@ -26,7 +26,10 @@ package edu.uoc.pelp.engine.campus;
  */
 public interface ISubjectID extends IPelpID {
     @Override
-    public boolean equals(Object object);
+    public abstract boolean equals(Object object);
+    
+    @Override
+    public abstract String toString();
     
     /**
      * Checks if the information stored in the object corresponds to a valid subject.

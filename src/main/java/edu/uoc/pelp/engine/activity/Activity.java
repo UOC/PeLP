@@ -58,6 +58,13 @@ public class Activity implements Comparable<Activity>{
     
     /**
      * Constructor for Activity class
+     */
+    public Activity() {
+        
+    }
+    
+    /**
+     * Constructor for Activity class
      * @param activityID Identifier for the activity
      * @param start Starting date. If null, is considered started from always.
      * @param end Ending date. If null, will remain opened forever.
@@ -75,6 +82,36 @@ public class Activity implements Comparable<Activity>{
             if(_start.after(end)) {
                 throw new IllegalArgumentException("Ending date must be posterior to the starting date.");
             }
+        }
+    }
+    
+    /**
+     * Constructor for Activity class
+     * @param activity Object to be copied
+     */
+    public Activity(ActivityID id, Activity object) {
+        _activityID=id;
+        _start=object._start;
+        _end=object._end;
+        _language=object._language;
+        _maxDelivers=object._maxDelivers;
+        for(String lang:object.getLanguageCodes()) {
+            setDescription(lang, object.getDescription(lang));
+        }
+    }
+    
+    /**
+     * Copy constructor for Activity class
+     * @param activity Object to be copied
+     */
+    public Activity(Activity object) {
+        _activityID=new ActivityID(object._activityID.subjectID,object._activityID.index);
+        _start=object._start;
+        _end=object._end;
+        _language=object._language;
+        _maxDelivers=object._maxDelivers;
+        for(String lang:object.getLanguageCodes()) {
+            setDescription(lang, object.getDescription(lang));
         }
     }
     
@@ -104,13 +141,7 @@ public class Activity implements Comparable<Activity>{
     
     @Override
     public Activity clone() {
-        Activity newActivity=new Activity(_activityID,_start,_end);
-        newActivity._language=_language;
-        newActivity._maxDelivers=_maxDelivers;
-        for(String lang:getLanguageCodes()) {
-            newActivity.setDescription(lang, getDescription(lang));
-        }
-        return newActivity;
+        return new Activity(this);
     }
     
     /**

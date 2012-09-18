@@ -62,19 +62,23 @@ public class LocalActivityManager_Basic {
         Date tomorrow = c.getTime();
         
         // Add a new active activity without dates
-        Activity activity=_activityManager.addActivity(subjectID1, null, null);
+        ActivityID activityID=_activityManager.addActivity(subjectID1, null, null);
+        Activity activity=_activityManager.getActivity(activityID);
         Assert.assertTrue("Active activity", activity.isActive());
         
         // Add a future activity
-        activity=_activityManager.addActivity(subjectID1, tomorrow, null);
+        activityID=_activityManager.addActivity(subjectID1, tomorrow, null);
+        activity=_activityManager.getActivity(activityID);
         Assert.assertFalse("Future activity", activity.isActive());
         
         // Add a past activity
-        activity=_activityManager.addActivity(subjectID1, null, yesterday);
+        activityID=_activityManager.addActivity(subjectID1, null, yesterday);
+        activity=_activityManager.getActivity(activityID);
         Assert.assertFalse("Past activity", activity.isActive());
         
         // Add an active activity with dates
-        activity=_activityManager.addActivity(subjectID1, yesterday, tomorrow);
+        activityID=_activityManager.addActivity(subjectID1, yesterday, tomorrow);
+        activity=_activityManager.getActivity(activityID);
         Assert.assertTrue("Active activity with dates", activity.isActive());
     }
     
@@ -98,40 +102,40 @@ public class LocalActivityManager_Basic {
         Date tomorrow = c.getTime();
         
         // Add a new active activity for subject 1
-        Activity a1=_activityManager.addActivity(subjectID1, null, null);
+        Assert.assertNotNull("Adding new activity",_activityManager.addActivity(subjectID1, null, null));
         ActivityID[] activityList1={new ActivityID(subjectID1,1)};
         Assert.assertArrayEquals("Check subject addition",activityList1, _activityManager.getSubjectActivities(subjectID1));
         Assert.assertArrayEquals("Check subject addition",activityList1, _activityManager.getSubjectActiveActivities(subjectID1));
         
         // Add another active activity for subject 1
-        Activity a2=_activityManager.addActivity(subjectID1, null, null);        
+        Assert.assertNotNull("Adding new activity",_activityManager.addActivity(subjectID1, null, null));        
         ActivityID[] activityList2={new ActivityID(subjectID1,1),new ActivityID(subjectID1,2)};
         Assert.assertArrayEquals("Check subject addition",activityList2, _activityManager.getSubjectActivities(subjectID1));
         Assert.assertArrayEquals("Check subject addition",activityList2, _activityManager.getSubjectActiveActivities(subjectID1));
         
         // Add a past inactive activity for subject 1
-        Activity a3=_activityManager.addActivity(subjectID1, null,yesterday);
+        Assert.assertNotNull("Adding new activity",_activityManager.addActivity(subjectID1, null,yesterday));
         ActivityID[] activityList3a={new ActivityID(subjectID1,1),new ActivityID(subjectID1,2),new ActivityID(subjectID1,3)};
         ActivityID[] activityList3b={new ActivityID(subjectID1,1),new ActivityID(subjectID1,2)};
         Assert.assertArrayEquals("Check subject addition",activityList3a, _activityManager.getSubjectActivities(subjectID1));
         Assert.assertArrayEquals("Check subject addition",activityList3b, _activityManager.getSubjectActiveActivities(subjectID1));
         
         // Add a future inactive activity for subject 1
-        Activity a4=_activityManager.addActivity(subjectID1, tomorrow,null);
+        Assert.assertNotNull("Adding new activity",_activityManager.addActivity(subjectID1, tomorrow,null));
         ActivityID[] activityList4a={new ActivityID(subjectID1,1),new ActivityID(subjectID1,2),new ActivityID(subjectID1,3),new ActivityID(subjectID1,4)};
         ActivityID[] activityList4b={new ActivityID(subjectID1,1),new ActivityID(subjectID1,2)};
         Assert.assertArrayEquals("Check subject addition",activityList4a, _activityManager.getSubjectActivities(subjectID1));
         Assert.assertArrayEquals("Check subject addition",activityList4b, _activityManager.getSubjectActiveActivities(subjectID1));        
         
         // Add a new active activity for subject 2
-        Activity a5=_activityManager.addActivity(subjectID2, null, null);
+        Assert.assertNotNull("Adding new activity",_activityManager.addActivity(subjectID2, null, null));
         ActivityID[] activityList5={new ActivityID(subjectID2,1)};
         Assert.assertArrayEquals("Check subject addition",activityList4a, _activityManager.getSubjectActivities(subjectID1));
         Assert.assertArrayEquals("Check subject addition",activityList4b, _activityManager.getSubjectActiveActivities(subjectID1));        
         Assert.assertArrayEquals("Check subject addition",activityList5, _activityManager.getSubjectActivities(subjectID2));
            
         // Add a past inactive activity for subject 2
-        Activity a6=_activityManager.addActivity(subjectID2, null, yesterday);        
+        Assert.assertNotNull("Adding new activity",_activityManager.addActivity(subjectID2, null, yesterday));
         ActivityID[] activityList6a={new ActivityID(subjectID2,1),new ActivityID(subjectID2,2)};
         ActivityID[] activityList6b={new ActivityID(subjectID2,1)};
         Assert.assertArrayEquals("Check subject addition",activityList4a, _activityManager.getSubjectActivities(subjectID1));
@@ -160,13 +164,19 @@ public class LocalActivityManager_Basic {
         Date tomorrow = c.getTime();
         
         // Add a new active activity for subject 1
-        Activity a1=_activityManager.addActivity(subjectID1, null, null);
+        ActivityID a1ID=_activityManager.addActivity(subjectID1, null, null);
+        Assert.assertNotNull("Adding new activity",a1ID);
+        Activity a1=_activityManager.getActivity(a1ID);
+        Assert.assertNotNull("Retrieve the activity",a1);
         ActivityID[] activityList1={new ActivityID(subjectID1,1)};
         Assert.assertArrayEquals("Check subject addition",activityList1, _activityManager.getSubjectActivities(subjectID1));
         Assert.assertArrayEquals("Check subject addition",activityList1, _activityManager.getSubjectActiveActivities(subjectID1));
         
         // Add another active activity for subject 1
-        Activity a2=_activityManager.addActivity(subjectID1, null, null);        
+        ActivityID a2ID=_activityManager.addActivity(subjectID1, null, null); 
+        Assert.assertNotNull("Adding new activity",a2ID);
+        Activity a2=_activityManager.getActivity(a2ID);
+        Assert.assertNotNull("Retrieve the activity",a1);
         ActivityID[] activityList2={new ActivityID(subjectID1,1),new ActivityID(subjectID1,2)};
         Assert.assertArrayEquals("Check subject addition",activityList2, _activityManager.getSubjectActivities(subjectID1));
         Assert.assertArrayEquals("Check subject addition",activityList2, _activityManager.getSubjectActiveActivities(subjectID1));
@@ -218,7 +228,7 @@ public class LocalActivityManager_Basic {
         Date yesterday = c.getTime();
         
         // Add a new activity for subject 1
-        Activity a1=_activityManager.addActivity(subjectID1, now, yesterday);
+        ActivityID a1ID=_activityManager.addActivity(subjectID1, now, yesterday);
     }
     
     @Test 
@@ -237,7 +247,10 @@ public class LocalActivityManager_Basic {
         Date yesterday = c.getTime();
         
         // Add a new activity for subject 1, with incorrect information
-        Activity a1=_activityManager.addActivity(subjectID1, now, null);
+        ActivityID a1ID=_activityManager.addActivity(subjectID1, now, null);
+        Assert.assertNotNull("Adding new activity",a1ID);
+        Activity a1=_activityManager.getActivity(a1ID);
+        Assert.assertNotNull("Retrieve the activity",a1);
         a1.setEnd(yesterday);
         Assert.assertFalse("Update with incorrect information", _activityManager.editActivity(a1));
         Activity aMod=_activityManager.getActivity(a1.getActivity());
@@ -254,12 +267,19 @@ public class LocalActivityManager_Basic {
         SubjectID subjectID1=new SubjectID("05.062",new Semester("20111"));
                 
         // Add a new active activity without dates
-        Activity activity=_activityManager.addActivity(subjectID1, null, null);
+        ActivityID activityID=_activityManager.addActivity(subjectID1, null, null);
+        Assert.assertNotNull("Adding new activity",activityID);
+        Activity activity=_activityManager.getActivity(activityID);
+        Assert.assertNotNull("Retrieve the activity",activity);
         Assert.assertTrue("Active activity", activity.isActive());
         
         // Add a new test to the activity
         ActivityTest t1=new ActivityTest();
-        ActivityTest t2=_activityManager.addTest(activity.getActivity(), t1);
+        TestID t2ID=_activityManager.addTest(activity.getActivity(), t1);
+        Assert.assertNotNull("Adding new test",t2ID);
+        ActivityTest t2=_activityManager.getTest(t2ID);
+        Assert.assertNotNull("Adding new test",t2);
+        Assert.assertEquals("Retrieve a test",t2ID, t2.getID());
         TestID[] testList1={new TestID(activity.getActivity(),1)};
         Assert.assertArrayEquals("Check subject addition",testList1, _activityManager.getActivityTests(activity.getActivity()));
     }

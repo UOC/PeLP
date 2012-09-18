@@ -52,7 +52,9 @@ import org.junit.runners.Suite;
                      edu.uoc.pelp.test.engine.aem.CodeProject_Compile.class,
                      edu.uoc.pelp.test.engine.aem.CodeProject_Execute.class,
                      edu.uoc.pelp.test.engine.activity.LocalActivityManager_Basic.class,
-                     edu.uoc.pelp.test.engine.Engine_InfoRetrival.class}
+                     edu.uoc.pelp.test.engine.activity.LocalDAOActivityManager_Basic.class,
+                     edu.uoc.pelp.test.engine.Engine_InfoRetrival.class,
+                     edu.uoc.pelp.test.model.dao.TDAO_Semester.class}
         )
 public class TestPeLP {
     

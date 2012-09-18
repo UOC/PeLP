@@ -18,7 +18,6 @@
 */
 package edu.uoc.pelp.engine.campus.UOC;
 
-import edu.uoc.pelp.engine.campus.GenericID;
 import edu.uoc.pelp.engine.campus.IPelpID;
 import edu.uoc.pelp.engine.campus.IUserID;
 
@@ -26,7 +25,7 @@ import edu.uoc.pelp.engine.campus.IUserID;
  * Implementation for the user identifier in the campus of the Universitat Oberta de Catalunya
  * @author Xavier Baró
  */
-public class UserID extends GenericID implements IUserID {
+public class UserID implements IUserID {
     
     /**
      * Users are identified by their id value. 
@@ -52,12 +51,47 @@ public class UserID extends GenericID implements IUserID {
         return idp.compareTo(strUserID);
     }
 
-    @Override
-    protected void copyData(GenericID genericID) {
+    protected void copyData(IPelpID genericID) {
         idp=((UserID)genericID).idp;
     }
 
     public int compareTo(IPelpID id) {
         return idp.compareTo(((UserID)id).idp);
     }
+
+    public IPelpID parse(String str) {
+        if(str==null) {
+            return null;
+        }
+        return new UserID(str);
+    }
+
+    @Override
+    public String toString() {
+        return  idp;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UserID other = (UserID) obj;
+        if ((this.idp == null) ? (other.idp != null) : !this.idp.equals(other.idp)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + (this.idp != null ? this.idp.hashCode() : 0);
+        return hash;
+    }
+    
+    
 }

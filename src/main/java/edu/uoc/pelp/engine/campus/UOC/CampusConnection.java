@@ -18,33 +18,16 @@
 */
 package edu.uoc.pelp.engine.campus.UOC;
 
-import java.util.ArrayList;
-
-import net.opentrends.remoteinterface.auth.Auth;
-import net.opentrends.remoteinterface.auth.SessionContext;
-
-import org.apache.log4j.Logger;
-import org.osid.OsidContext;
-
-import edu.uoc.pelp.engine.campus.Classroom;
-import edu.uoc.pelp.engine.campus.ICampusConnection;
-import edu.uoc.pelp.engine.campus.IClassroomID;
-import edu.uoc.pelp.engine.campus.ISubjectID;
-import edu.uoc.pelp.engine.campus.ITimePeriod;
-import edu.uoc.pelp.engine.campus.IUserID;
-import edu.uoc.pelp.engine.campus.Person;
-import edu.uoc.pelp.engine.campus.Subject;
-import edu.uoc.pelp.engine.campus.UserRoles;
 import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
+import edu.uoc.pelp.engine.campus.*;
 import edu.uoc.pelp.exception.AuthPelpException;
-import edu.uoc.serveis.exceptions.WSException;
-import edu.uoc.serveis.gat.dadesacademiques.model.AssignaturaReduidaVO;
 import edu.uoc.serveis.gat.expedient.model.ExpedientVO;
 import edu.uoc.serveis.gat.expedient.service.ExpedientService;
-import edu.uoc.serveis.gat.matricula.model.AssignaturaMatriculadaDocenciaVO;
 import edu.uoc.serveis.gat.matricula.service.MatriculaService;
-import edu.uoc.serveis.gat.rac.model.AulaVO;
-import edu.uoc.serveis.gat.rac.service.RacService;
+import java.util.ArrayList;
+import net.opentrends.remoteinterface.auth.Auth;
+import net.opentrends.remoteinterface.auth.SessionContext;
+import org.apache.log4j.Logger;
 
 /**
  * Implements the campus access for the Universitat Oberta de Catalunya (UOC).
@@ -52,8 +35,8 @@ import edu.uoc.serveis.gat.rac.service.RacService;
  */
 public class CampusConnection implements ICampusConnection{
     
-    private String sesion;
-    private UserID userID;
+    String sesion;
+    UserID userID;
 
     private static final Logger log = Logger.getLogger(CampusConnection.class);
 
@@ -62,17 +45,20 @@ public class CampusConnection implements ICampusConnection{
             this.sesion = sesion;
     }
 
-    public boolean isUserAuthenticated() throws AuthPelpException {
-    	boolean authenticated = false;
+    @Override
+    public boolean isUserAuthenticated() {
+    	boolean authenticated;
     	try {
     		Auth authService = WsLibBO.getAuthServiceInstance();
     		authenticated = authService.isUserAuthenticated( sesion );
     	} catch ( Exception e){
-    		throw new AuthPelpException("Authentication process failed");
+    		//throw new AuthPelpException("Authentication process failed");
+                return false;
     	}        
     	return authenticated;
     }
 
+    @Override
     public IUserID getUserID() throws AuthPelpException {
         IUserID userId;  
     	try {
@@ -90,8 +76,9 @@ public class CampusConnection implements ICampusConnection{
     	 return userId;
     }
 
+    @Override
     public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
-    	ArrayList<SubjectID> subjects = new ArrayList<SubjectID>();
+    	ArrayList<SubjectID> subjects=null;
     	if( userID == null ) {
     		userID = (UserID) getUserID();
     	}
@@ -102,18 +89,22 @@ public class CampusConnection implements ICampusConnection{
             ExpedientService expedientService = WsLibBO.getExpedientServiceInstance();
             ExpedientVO[] expedientes = expedientService.getExpedientsByEstudiant( idp );
             MatriculaService matriculaService = WsLibBO.getMatriculaServiceInstance();
-            Semester sem = (Semester) timePeriod;
-            String semester = sem.get_id();
+            // TODO semester?
+            String semester = "";
             for (ExpedientVO expedient : expedientes) {
-                AssignaturaMatriculadaDocenciaVO[] asignaturas = matriculaService.getAssignaturesDocenciaMatriculadesEstudiant(expedient.getNumExpedient(), semester);
+                int numExpedient = expedient.getNumExpedient();
+/*                AssignaturaMatriculadaDocenciaVO[] asignaturas = matriculaService.getAssignaturesDocenciaMatriculadesEstudiant(idp, semester);
+
                 for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturas) {
-                        AssignaturaReduidaVO  asignatura;
-                        asignatura = (AssignaturaReduidaVO) assignaturaMatriculadaDocencia.getAssignatura();
-                       
+                        AssignaturaReduidaVO asignatura;
+                        asignatura = assignaturaMatriculadaDocencia.getAssignatura();
+                        Semester sem = new Semester(semester);
                         SubjectID subID = new SubjectID(asignatura.getCodAssignatura(), sem);
                         subjects.add(subID);
                 }
-            }	
+*/            }	
+        // TODO: There is an error of incompatible data types...
+        throw new UnsupportedOperationException("Not supported yet."); 
     	} catch (Exception e) {
             e.printStackTrace();
         }
@@ -122,10 +113,12 @@ public class CampusConnection implements ICampusConnection{
         return subjects.toArray(subs); 
     }
 
+    @Override
     public IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException {
         return getUserClassrooms(null);
     }
     
+    @Override
     public IClassroomID[] getUserClassrooms(UserRoles userRole,ISubjectID subject) throws AuthPelpException {
         // Check if the user is authenticated
         if(!isUserAuthenticated()) {
@@ -136,105 +129,105 @@ public class CampusConnection implements ICampusConnection{
         throw new UnsupportedOperationException("Not supported yet."); 
     }
 
+    @Override
     public IClassroomID[] getSubjectClassrooms(ISubjectID subject, UserRoles userRole) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isRole(UserRoles role, ISubjectID subject, IUserID user) {
         /* 
          * TODO: Comprova si l'usuari donat té el rol indicat per aquest assignatura.
          * La equivalencia de rols son:
          *         
          */
-    	
-        try {
-			RacService rac = WsLibBO.getRacServiceInstance();
-			AulaVO[] aulas = rac.getAulesByConsultorAny(1,"");
-			for (int i=0;i<aulas.length;i++)
-			{/*
-			    if ( (codiTercers.equals(aulas[i].getAssignatura().getCodAssignatura())) && (numAula == aulas[i].getNumAula()))
-			    {
-			        return true;
-			    }*/
-			}
-			//return false;
-		} catch (WSException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isRole(UserRoles role, ISubjectID subject) throws AuthPelpException {
         return isRole(role,subject,getUserID());
     }
 
+    @Override
     public boolean isRole(UserRoles role, IClassroomID classroom, IUserID user) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isRole(UserRoles role, IClassroomID classroom) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public IUserID[] getRolePersons(UserRoles role, ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public IUserID[] getRolePersons(UserRoles role, IClassroomID classroom) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean hasLabSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException {
+        //TODO: Una solucio es utilitzar la taula PELP_MainLabSubjects, amb les correspondencies
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean hasEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ISubjectID[] getEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public boolean isCampusConnection() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Subject getSubjectData(ISubjectID subjectID) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Person getUserData(IUserID userID) throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Person getUserData() throws AuthPelpException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ISubjectID[] getUserSubjects(UserRoles userRole,ITimePeriod timePeriod) throws AuthPelpException {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Override
     public ITimePeriod[] getPeriods() {
-        // Accedir a una taula de la Base de Dades
+        // TODO: Accedir a una taula de la Base de Dades (semester)
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public ITimePeriod[] getActivePeriods() {
         // Accedir a una taula de la Base de Dades
         throw new UnsupportedOperationException("Not supported yet.");

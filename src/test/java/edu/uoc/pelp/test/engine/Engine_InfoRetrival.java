@@ -18,12 +18,6 @@
 */
 package edu.uoc.pelp.test.engine;
 
-import java.io.File;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
-
 import edu.uoc.pelp.engine.PELPEngine;
 import edu.uoc.pelp.engine.activity.Activity;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
@@ -40,6 +34,9 @@ import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidActivityPelpException;
 import edu.uoc.pelp.test.TestPeLP;
+import java.io.File;
+import junit.framework.Assert;
+import org.junit.Test;
 
 /**
  * Perform information retrieval tests over the engine.
@@ -110,7 +107,7 @@ public class Engine_InfoRetrival {
     }
     
     @Test(expected=AEMPelpException.class) // 9.1
-    public void noAuthAccessAnalyzeCodeInvalidProject1() throws AEMPelpException, AuthPelpException {
+    public void noAuthAccessAnalyzeCodeInvalidProject1() throws AEMPelpException {
         CodeProject project=null;
         
         Assert.assertFalse("Test authentication", _engine.isUserAuthenticated());
@@ -128,7 +125,7 @@ public class Engine_InfoRetrival {
     }
     
     @Test(expected=AEMPelpException.class) // 9.2
-    public void noAuthAccessAnalyzeCodeInvalidProject2() throws AEMPelpException, AuthPelpException {
+    public void noAuthAccessAnalyzeCodeInvalidProject2() throws AEMPelpException {
         Assert.assertFalse("Test authentication", _engine.isUserAuthenticated());
             
         // Project with out files and string code, obtained from an empty deliver
