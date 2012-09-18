@@ -24,7 +24,6 @@ public class UocBussinesImpl implements UocBussines  {
 	/* (non-Javadoc)
 	 * @see uoc.edu.pelp.bussines.UocBussines#getSubjects()
 	 */
-	@Override
 	public Subject[] getSubjects() throws Exception{
 		return engine.getActiveSubjects();
 	}

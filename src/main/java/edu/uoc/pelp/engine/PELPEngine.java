@@ -126,7 +126,6 @@ public class PELPEngine implements IPELPEngine {
      * @return List of active subjects for current user.
      * @throws AuthPelpException If no user is authenticated.
      */
-    @Override
     public Subject[] getActiveSubjects() throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {

@@ -65,15 +65,15 @@
 					 <select name="s_assign" id="s_assign">
 					 	<option value="">Assignatura</option>
 						<s:iterator value="listSubjects" >
-							<s:if test="%{s_assign == ID.Code+'-'+ID.Semester._id}"> <option selected="selected" value="<s:property value="ID.Code" />-<s:property value="ID.Semester._id" />"><s:property value="Description"/></option></s:if> 
-							<s:else> <option value="<s:property value="ID.Code" />-<s:property value="ID.Semester._id" />"><s:property value="Description"/></option> </s:else> 
+							<s:if test="%{s_assign == ID.Code+'-'+ID.Semester}"> <option selected="selected" value="<s:property value="ID.Code" />-<s:property value="ID.Semester" />"><s:property value="Description"/></option></s:if> 
+							<s:else> <option value="<s:property value="ID.Code" />-<s:property value="ID.Semester" />"><s:property value="Description"/></option> </s:else> 
 						</s:iterator> 
 					</select>
 					<select name="s_aula" id="s_aula">
 						<option value="">Aula</option>
 						<s:iterator value="listClassroms">
-							<s:if test="%{s_aula == ClassroomID.Subject.Code+'-'+ClassroomID.Subject.Semester._id+'-'+ClassroomID.ClassIdx}"><option selected="selected" value="<s:property value="ClassroomID.Subject.Code" />-<s:property value="ClassroomID.Subject.Semester._id" />-<s:property value="ClassroomID.ClassIdx" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:if>
-							<s:else><option value="<s:property value="ClassroomID.Subject.Code" />-<s:property value="ClassroomID.Subject.Semester._id" />-<s:property value="ClassroomID.ClassIdx" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:else>
+							<s:if test="%{s_aula == ClassroomID.Subject.Code+'-'+ClassroomID.Subject.Semester+'-'+ClassroomID.ClassIdx}"><option selected="selected" value="<s:property value="ClassroomID.Subject.Code" />-<s:property value="ClassroomID.Subject.Semester" />-<s:property value="ClassroomID.ClassIdx" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:if>
+							<s:else><option value="<s:property value="ClassroomID.Subject.Code" />-<s:property value="ClassroomID.Subject.Semester" />-<s:property value="ClassroomID.ClassIdx" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:else>
 						</s:iterator>
 					</select>
 					<select name="s_activ" id="s_activ">
