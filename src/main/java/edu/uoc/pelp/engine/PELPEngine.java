@@ -127,7 +127,6 @@ public class PELPEngine implements IPELPEngine {
      * @return List of active subjects for current user.
      * @throws AuthPelpException If no user is authenticated.
      */
-    @Override
     public Subject[] getActiveSubjects() throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -135,7 +134,7 @@ public class PELPEngine implements IPELPEngine {
         }
         
         ArrayList<Subject> subjectsList=new ArrayList<Subject>();
-        
+
         // Add subjects
         for(ITimePeriod period:_campusConnection.getActivePeriods()) {            
             for(ISubjectID subjectID:_campusConnection.getUserSubjects(period)) {

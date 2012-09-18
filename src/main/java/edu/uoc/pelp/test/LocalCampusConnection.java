@@ -18,12 +18,6 @@
 */
 package edu.uoc.pelp.test;
 
-import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
-import edu.uoc.pelp.engine.campus.UOC.Semester;
-import edu.uoc.pelp.engine.campus.UOC.SubjectID;
-import edu.uoc.pelp.engine.campus.UOC.UserID;
-import edu.uoc.pelp.engine.campus.*;
-import edu.uoc.pelp.exception.AuthPelpException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +26,21 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import edu.uoc.pelp.engine.campus.Classroom;
+import edu.uoc.pelp.engine.campus.ICampusConnection;
+import edu.uoc.pelp.engine.campus.IClassroomID;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.engine.campus.ITimePeriod;
+import edu.uoc.pelp.engine.campus.IUserID;
+import edu.uoc.pelp.engine.campus.Person;
+import edu.uoc.pelp.engine.campus.Subject;
+import edu.uoc.pelp.engine.campus.UserRoles;
+import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
+import edu.uoc.pelp.engine.campus.UOC.Semester;
+import edu.uoc.pelp.engine.campus.UOC.SubjectID;
+import edu.uoc.pelp.engine.campus.UOC.UserID;
+import edu.uoc.pelp.exception.AuthPelpException;
 
 /**
  * Implements a dummy class simulating the campus access for the 
@@ -78,7 +87,7 @@ public class LocalCampusConnection implements ICampusConnection{
     private Person[] _testAccessPersons=null;
     
     public LocalCampusConnection() {
-        createDummyData();
+        setProfile("teacher2");
     }
         
     public boolean isUserAuthenticated() {
@@ -866,3 +875,4 @@ public class LocalCampusConnection implements ICampusConnection{
         return retList;
     }
 }
+
