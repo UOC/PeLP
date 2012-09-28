@@ -73,7 +73,6 @@ public class Semester implements IPelpID,ITimePeriod{
         return true;
     }
 
-    @Override
     public boolean isActive() {
         Date now = new Date();
         

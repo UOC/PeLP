@@ -32,8 +32,9 @@ public interface ICampusConnection {
      * Verify that it is an authenticated user to the campus. The implementation 
      * may provide de mechanisms to make this check.
      * @return True if the user is authenticated or false otherwise.
+     * @throws AuthPelpException 
      */
-    boolean isUserAuthenticated();
+    boolean isUserAuthenticated() throws AuthPelpException;
     
     /**
      * Retrieve the logged user identifier

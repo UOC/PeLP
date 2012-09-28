@@ -35,11 +35,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DeliverResult.findBySemester", query = "SELECT d FROM DeliverResult d WHERE d.deliverResultPK.semester = :semester"),
     @NamedQuery(name = "DeliverResult.findBySubject", query = "SELECT d FROM DeliverResult d WHERE d.deliverResultPK.subject = :subject"),
     @NamedQuery(name = "DeliverResult.findByActivityIndex", query = "SELECT d FROM DeliverResult d WHERE d.deliverResultPK.activityIndex = :activityIndex"),
-    @NamedQuery(name = "DeliverResult.findByUser", query = "SELECT d FROM DeliverResult d WHERE d.deliverResultPK.user = :user"),
+    @NamedQuery(name = "DeliverResult.findByUser", query = "SELECT d FROM DeliverResult d WHERE d.deliverResultPK.userID = :user"),
     @NamedQuery(name = "DeliverResult.findByDeliverIndex", query = "SELECT d FROM DeliverResult d WHERE d.deliverResultPK.deliverIndex = :deliverIndex"),
     @NamedQuery(name = "DeliverResult.findByCompilation", query = "SELECT d FROM DeliverResult d WHERE d.compilation = :compilation"),
     @NamedQuery(name = "DeliverResult.findByExecution", query = "SELECT d FROM DeliverResult d WHERE d.execution = :execution"),
-    @NamedQuery(name = "DeliverResult.findByLanguage", query = "SELECT d FROM DeliverResult d WHERE d.language = :language"),
+    @NamedQuery(name = "DeliverResult.findByLanguage", query = "SELECT d FROM DeliverResult d WHERE d.progLanguage = :language"),
     @NamedQuery(name = "DeliverResult.findByStartDate", query = "SELECT d FROM DeliverResult d WHERE d.startDate = :startDate"),
     @NamedQuery(name = "DeliverResult.findByEndDate", query = "SELECT d FROM DeliverResult d WHERE d.endDate = :endDate")})
 public class DeliverResult implements Serializable {

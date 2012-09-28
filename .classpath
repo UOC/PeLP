@@ -1,84 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <classpath>
   <classpathentry kind="src" path="src/test/java" output="target/test-classes" including="**/*.java"/>
   <classpathentry kind="src" path="src/test/resources" output="target/test-classes" excluding="**/*.java"/>
   <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
   <classpathentry kind="src" path="src/main/resources" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/transaction/jta/1.1/jta-1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4/mail-1.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/annogen/annogen/0.1.0/annogen-0.1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.7.0/ant-1.7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
-  <classpathentry kind="var" path="M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/ws/commons/axiom/axiom-api/1.2.7/axiom-api-1.2.7.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/ws/commons/axiom/axiom-dom/1.2.7/axiom-dom-1.2.7.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/ws/commons/axiom/axiom-impl/1.2.7/axiom-impl-1.2.7.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/axis2/axis2-adb/1.4.1/axis2-adb-1.4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/axis2/axis2-codegen/1.4.1/axis2-codegen-1.4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/axis2/axis2-kernel/1.4.1/axis2-kernel-1.4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/axis2/axis2-spring/1.4.1/axis2-spring-1.4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/campusproject/CampusComponentsJava/1.4.1/CampusComponentsJava-1.4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.2/commons-codec-1.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-fileupload/commons-fileupload/1.2/commons-fileupload-1.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-io/commons-io/1.4/commons-io-1.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-pool/commons-pool/1.5.6/commons-pool-1.5.6.jar"/>
-  <classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/freemarker/freemarker/2.3.16/freemarker-2.3.16.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-activation_1.1_spec/1.0.1/geronimo-activation_1.1_spec-1.0.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-javamail_1.4_spec/1.2/geronimo-javamail_1.4_spec-1.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/geronimo-jms_1.1_spec-1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0.1/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-annotations/3.5.6-Final/hibernate-annotations-3.5.6-Final.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-commons-annotations/3.2.0.Final/hibernate-commons-annotations-3.2.0.Final.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/mail/mail/1.4/mail-1.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/biz/source_code/base64coder/2010-12-19/base64coder-2010-12-19.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/biz/source_code/base64coder/2010-12-19/base64coder-2010-12-19-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/mysql/mysql-connector-java/5.1.17/mysql-connector-java-5.1.17.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-core/3.5.6-Final/hibernate-core-3.5.6-Final.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.0.Final/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+  <classpathentry kind="var" path="M2_REPO/antlr/antlr/2.7.6/antlr-2.7.6.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/commons-collections/commons-collections/3.1/commons-collections-3.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.3.04/xml-apis-1.3.04.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-annotations/3.5.6-Final/hibernate-annotations-3.5.6-Final.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-commons-annotations/3.2.0.Final/hibernate-commons-annotations-3.2.0.Final.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/hibernate/hibernate-commons-annotations/3.2.0.Final/hibernate-commons-annotations-3.2.0.Final-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.0.Final/hibernate-jpa-2.0-api-1.0.0.Final.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/hibernate/javax/persistence/hibernate-jpa-2.0-api/1.0.0.Final/hibernate-jpa-2.0-api-1.0.0.Final-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/struts/struts2-spring-plugin/2.2.1.1/struts2-spring-plugin-2.2.1.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/apache/struts/struts2-spring-plugin/2.2.1.1/struts2-spring-plugin-2.2.1.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/struts/struts2-core/2.2.1.1/struts2-core-2.2.1.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/apache/struts/struts2-core/2.2.1.1/struts2-core-2.2.1.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/struts/xwork/xwork-core/2.2.1.1/xwork-core-2.2.1.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/apache/struts/xwork/xwork-core/2.2.1.1/xwork-core-2.2.1.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/ognl/ognl/3.0/ognl-3.0.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/ognl/ognl/3.0/ognl-3.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/freemarker/freemarker/2.3.16/freemarker-2.3.16.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-fileupload/commons-fileupload/1.2/commons-fileupload-1.2.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/commons-fileupload/commons-fileupload/1.2/commons-fileupload-1.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-io/commons-io/1.4/commons-io-1.4.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/commons-io/commons-io/1.4/commons-io-1.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="lib" path="C:/Java/jdk1.6.0/lib/tools.jar"/>
+  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/axis2/axis2-kernel/1.4.1/axis2-kernel-1.4.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.2/commons-codec-1.2.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/commons-codec/commons-codec/1.2/commons-codec-1.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.0-beta1/httpcore-4.0-beta1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore-nio/4.0-beta1/httpcore-nio-4.0-beta1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/javassist/javassist/3.15.0-GA/javassist-3.15.0-GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/campusproject/JavaUtils/1.1.0/JavaUtils-1.1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/jaxen/jaxen/1.1.1/jaxen-1.1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/junit/junit/4.8.2/junit-4.8.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
-  <classpathentry kind="var" path="M2_REPO/mysql/mysql-connector-java/5.1.17/mysql-connector-java-5.1.17.jar"/>
+  <classpathentry kind="var" path="M2_REPO/wsdl4j/wsdl4j/1.6.2/wsdl4j-1.6.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/woodstox/wstx-asl/3.2.4/wstx-asl-3.2.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/ws/commons/schema/XmlSchema/1.4.2/XmlSchema-1.4.2.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/apache/ws/commons/schema/XmlSchema/1.4.2/XmlSchema-1.4.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
   <classpathentry kind="var" path="M2_REPO/org/apache/neethi/neethi/2.0.4/neethi-2.0.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/ognl/ognl/3.0/ognl-3.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/com/oracle/ojdbc14/10.2.0/ojdbc14-10.2.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/OKI/OkiOSID/2.0/OkiOSID-2.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/edu/uoc/te/osid-environment/2.1.2/osid-environment-2.1.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/edu/uoc/te/osid-environment-struts/1.1.0/osid-environment-struts-1.1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-aop/3.0.5.RELEASE/spring-aop-3.0.5.RELEASE.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-asm/3.0.5.RELEASE/spring-asm-3.0.5.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/ws/commons/axiom/axiom-api/1.2.7/axiom-api-1.2.7.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-activation_1.1_spec/1.0.1/geronimo-activation_1.1_spec-1.0.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/apache/geronimo/specs/geronimo-activation_1.1_spec/1.0.1/geronimo-activation_1.1_spec-1.0.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-javamail_1.4_spec/1.2/geronimo-javamail_1.4_spec-1.2.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/apache/geronimo/specs/geronimo-javamail_1.4_spec/1.2/geronimo-javamail_1.4_spec-1.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/jaxen/jaxen/1.1.1/jaxen-1.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.8.1/xercesImpl-2.8.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0.1/geronimo-stax-api_1.0_spec-1.0.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/ws/commons/axiom/axiom-impl/1.2.7/axiom-impl-1.2.7.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/woden/woden-api/1.0M8/woden-api-1.0M8.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant/1.7.0/ant-1.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xerces/xmlParserAPIs/2.6.0/xmlParserAPIs-2.6.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/woden/woden-impl-dom/1.0M8/woden-impl-dom-1.0M8.jar"/>
+  <classpathentry kind="var" path="M2_REPO/annogen/annogen/0.1.0/annogen-0.1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/geronimo-jms_1.1_spec-1.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1/geronimo-jms_1.1_spec-1.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/ws/commons/axiom/axiom-dom/1.2.7/axiom-dom-1.2.7.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xalan/xalan/2.7.0/xalan-2.7.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/axis2/axis2-codegen/1.4.1/axis2-codegen-1.4.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/axis2/axis2-adb/1.4.1/axis2-adb-1.4.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/axis2/axis2-spring/1.4.1/axis2-spring-1.4.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/3.0.5.RELEASE/spring-core-3.0.5.RELEASE.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/3.0.5.RELEASE/spring-beans-3.0.5.RELEASE.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/3.0.5.RELEASE/spring-context-3.0.5.RELEASE.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/3.0.5.RELEASE/spring-core-3.0.5.RELEASE.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-expression/3.0.5.RELEASE/spring-expression-3.0.5.RELEASE.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-jdbc/3.0.5.RELEASE/spring-jdbc-3.0.5.RELEASE.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-orm/3.0.5.RELEASE/spring-orm-3.0.5.RELEASE.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-test/3.0.5.RELEASE/spring-test-3.0.5.RELEASE.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-tx/3.0.5.RELEASE/spring-tx-3.0.5.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/3.0.5.RELEASE/spring-web-3.0.5.RELEASE.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/struts/struts2-convention-plugin/2.2.1.1/struts2-convention-plugin-2.2.1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/struts/struts2-core/2.2.1.1/struts2-core-2.2.1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/struts/struts2-spring-plugin/2.2.1.1/struts2-spring-plugin-2.2.1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/woden/woden-api/1.0M8/woden-api-1.0M8.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/woden/woden-impl-dom/1.0M8/woden-impl-dom-1.0M8.jar"/>
-  <classpathentry kind="var" path="M2_REPO/wsdl4j/wsdl4j/1.6.2/wsdl4j-1.6.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/codehaus/woodstox/wstx-asl/3.2.4/wstx-asl-3.2.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/xalan/xalan/2.7.0/xalan-2.7.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.8.1/xercesImpl-2.8.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/xml-apis/xml-apis/1.3.04/xml-apis-1.3.04.jar"/>
-  <classpathentry kind="var" path="M2_REPO/xerces/xmlParserAPIs/2.6.0/xmlParserAPIs-2.6.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/ws/commons/schema/XmlSchema/1.4.2/XmlSchema-1.4.2.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/apache/struts/xwork/xwork-core/2.2.1.1/xwork-core-2.2.1.1.jar"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+  <classpathentry kind="var" path="M2_REPO/remoteinterface/remoteinterface-ws-client/2.0.0/remoteinterface-ws-client-2.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/xfire/xfire-spring/1.2.4/xfire-spring-1.2.4.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/codehaus/xfire/xfire-spring/1.2.4/xfire-spring-1.2.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/junit/junit/4.8.2/junit-4.8.2.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/junit/junit/4.8.2/junit-4.8.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/apache/xbean/xbean-spring/2.7/xbean-spring-2.7.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/xfire/xfire-xmlbeans/1.2.4/xfire-xmlbeans-1.2.4.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/codehaus/xfire/xfire-xmlbeans/1.2.4/xfire-xmlbeans-1.2.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/xfire/xfire-aegis/1.2.4/xfire-aegis-1.2.4.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/codehaus/xfire/xfire-aegis/1.2.4/xfire-aegis-1.2.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/xfire/xfire-core/1.2.4/xfire-core-1.2.4.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/codehaus/xfire/xfire-core/1.2.4/xfire-core-1.2.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/stax/stax-api/1.0.1/stax-api-1.0.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/ws/commons/XmlSchema/1.1/XmlSchema-1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/jdom/jdom/1.0/jdom-1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/net/java/dev/stax-utils/stax-utils/20040917/stax-utils-20040917.jar"/>
+  <classpathentry kind="var" path="M2_REPO/xmlbeans/xbean/2.2.0/xbean-2.2.0.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/xmlbeans/xbean/2.2.0/xbean-2.2.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/xfire/xfire-annotations/1.2.4/xfire-annotations-1.2.4.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/codehaus/xfire/xfire-annotations/1.2.4/xfire-annotations-1.2.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-attributes/commons-attributes-api/2.1/commons-attributes-api-2.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/ant/ant/1.5/ant-1.5.jar"/>
+  <classpathentry kind="var" path="M2_REPO/qdox/qdox/1.5/qdox-1.5.jar"/>
+  <classpathentry kind="var" path="M2_REPO/remoteinterface/remoteinterface-metadata/2.0.0/remoteinterface-metadata-2.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/gat/expedient-ws/expedient-ws-client/1.0.3/expedient-ws-client-1.0.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/gat/expedient-ws/expedient-metadata/1.0.3/expedient-metadata-1.0.3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.1/commons-lang-2.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/commons-lang/commons-lang/2.1/commons-lang-2.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/exceptions-ws/1.0.0/exceptions-ws-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/utils/general-utils/1.0.0/general-utils-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/gat/dades-academiques-ws/dades-academiques-metadata/1.0.0/dades-academiques-metadata-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/utils/environment-utils/1.0.0/environment-utils-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/gat/matricula-ws/matricula-ws-client/1.0.0/matricula-ws-client-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/gat/matricula-ws/matricula-metadata/1.0.0/matricula-metadata-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/gat/rac-ws/rac-ws-client/1.1.0/rac-ws-client-1.1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/gat/rac-ws/rac-metadata/1.1.0/rac-metadata-1.1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/gat/gatconfig-ws/gatconfig-metadata/1.1.0/gatconfig-metadata-1.1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/serveis/gat/dades-academiques-ws/dades-academiques-ws-client/1.0.0/dades-academiques-ws-client-1.0.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/te/osid-environment/2.1.2/osid-environment-2.1.2.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/edu/uoc/te/osid-environment/2.1.2/osid-environment-2.1.2-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/edu/uoc/te/osid-environment-struts/1.1.0/osid-environment-struts-1.1.0.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/edu/uoc/te/osid-environment-struts/1.1.0/osid-environment-struts-1.1.0-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/campusproject/CampusComponentsJava/1.4.1/CampusComponentsJava-1.4.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/OKI/OkiOSID/2.0/OkiOSID-2.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/campusproject/JavaUtils/1.1.0/JavaUtils-1.1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/struts/struts2-convention-plugin/2.2.1.1/struts2-convention-plugin-2.2.1.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/apache/struts/struts2-convention-plugin/2.2.1.1/struts2-convention-plugin-2.2.1.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-aop/3.0.5.RELEASE/spring-aop-3.0.5.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-asm/3.0.5.RELEASE/spring-asm-3.0.5.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-expression/3.0.5.RELEASE/spring-expression-3.0.5.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-tx/3.0.5.RELEASE/spring-tx-3.0.5.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-orm/3.0.5.RELEASE/spring-orm-3.0.5.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-jdbc/3.0.5.RELEASE/spring-jdbc-3.0.5.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/springframework/spring-test/3.0.5.RELEASE/spring-test-3.0.5.RELEASE.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/commons-pool/commons-pool/1.5.6/commons-pool-1.5.6.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/commons-pool/commons-pool/1.5.6/commons-pool-1.5.6-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/org/javassist/javassist/3.15.0-GA/javassist-3.15.0-GA.jar">
+    <attributes>
+      <attribute value="jar:file:/D:/jmangas/mavenRepository/org/javassist/javassist/3.15.0-GA/javassist-3.15.0-GA-javadoc.jar!/" name="javadoc_location"/>
+    </attributes>
+  </classpathentry>
+  <classpathentry kind="var" path="M2_REPO/com/oracle/ojdbc14/10.2.0/ojdbc14-10.2.0.jar"/>
 </classpath>

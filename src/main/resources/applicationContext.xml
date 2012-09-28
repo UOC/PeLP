@@ -13,34 +13,70 @@
 	</bean>
 
 	<!-- business objects -->
-	<bean id="pelpBussines" class="uoc.edu.pelp.model.bussines.PelpBussinesImpl">
-		<!--  Aqui es pasen els DAOS -->
+	<bean id="pelpBussines" class="uoc.edu.pelp.bussines.PelpBussinesImpl">
 	</bean>
-        <bean id="activityManagerDS" class="uoc.edu.pelp.model.bussines.PelpBussinesImpl">
-            ActivityManager 
-		<!--  Aqui es pasen els DAOS -->
-                <property name="objPelpBussines" ref="pelpBussines" />
+
+	<!-- objects test inject to pelpEnigne -->
+
+	<bean id="lcctj" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection">
+		<constructor-arg type="java.lang.String"
+			value="11e7592afee1c0b7674ba1324d21376bde966b2106ffd8417a2c1006e96b01fd409238675dd043873d4e4c3beb98238461c559093ae38a0aa2325d697dde8e18" />
 	</bean>
-        
+	<!-- TEMPORAL -->
+	<bean id="lcct" class="edu.uoc.pelp.test.LocalCampusConnection">
+	</bean>
+	<!-- FIN TEMPORAL -->
+
+	<bean id="lamt" class="edu.uoc.pelp.test.LocalActivityManager">
+	</bean>
+
+	<bean id="ldmt" class="edu.uoc.pelp.test.LocalDeliverManager">
+	</bean>
+
+	<bean id="pcpct" class="edu.uoc.pelp.test.PCPelpConfiguration">
+	</bean>
+
+	<bean id="engine" class="edu.uoc.pelp.engine.PELPEngine">
+		<property name="campusConnection" ref="lcct" />
+		<property name="activityManager" ref="lamt" />
+		<property name="deliverManager" ref="ldmt" />
+		<property name="systemConfiguration" ref="pcpct" />
+	</bean>
+
+	<bean id="bUOC" class="uoc.edu.pelp.bussines.UocBussinesImpl">
+		<property name="engine" ref="engine" />
+	</bean>
 
 	<!-- DAO objects -->
-	<!-- Aqui definis los diferentes daos, con beans --> 
-	<bean id="exampleDAO" class="uoc.edu.pelp.model.dao.ExampleDAOImpl" >
-		<property name="sessionFactory" ref="sessionFactory" />
+	
+<!-- 	<bean id="exampleDAO" class="uoc.edu.pelp.model.dao.ExampleDAOImpl"> -->
+<!-- 		<property name="sessionFactory" ref="sessionFactory" /> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="semesterDAO" class="edu.uoc.pelp.model.dao.UOC.SemesterJPA"> -->
+<!-- 		<property name="sessionFactory" ref="sessionFactory" /> -->
+<!-- 	</bean> -->
+
+
+	<!-- ACTIONS -->
+
+	<bean id="teacherSpringAction" class="uoc.edu.pelp.actions.TeacherAction">
+		<property name="bUOC" ref="bUOC" />
 	</bean>
-        <bean id="semesterDAO" class="edu.uoc.pelp.model.dao.UOC.SemesterJPA" >
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
- 	
+
 	<!-- post-processors for all standard config annotations -->
-	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
 	<!-- The singleton hibernate session factory -->
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
-		<property name="packagesToScan" value="edu.uoc.pelp.model.vo"/>
-                <property name="packagesToScan" value="edu.uoc.pelp.model.vo.UOC"/>
+		<property name="packagesToScan">
+			<list>
+				<value>edu.uoc.pelp.model.vo</value>
+				<value>edu.uoc.pelp.model.vo.UOC</value>
+			</list>
+		</property>
 	</bean>
 
 	<!-- Spring's hibernate transaction manager -->
