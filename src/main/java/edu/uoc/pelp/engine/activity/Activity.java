@@ -145,6 +145,16 @@ public class Activity implements Comparable<Activity>{
     }
     
     /**
+     * Assigns the activity Identifier. Only valid if the current identifier is null.
+     * @par id Activity ID 
+     */
+    public void setActivityID(ActivityID id) {
+        if(_activityID==null) {
+            _activityID=id;
+        }
+    }
+    
+    /**
      * Gets the activity ID
      * @return Activity ID 
      */
@@ -198,13 +208,15 @@ public class Activity implements Comparable<Activity>{
      * @param languageCode Code for desired language (CAT for Catalan, ES for Spanish, ENG for English, ...)
      * @param description Description of the activity
      */
-    public void setDescription(String languageCode,String description) {
+    final public void setDescription(String languageCode,String description) {
         // Remove old descriptions
         if(_description.containsKey(languageCode)) {
             _description.remove(languageCode);
         }
         // Add new description
-        _description.put(languageCode, description);
+        if(description!=null) {
+            _description.put(languageCode, description);
+        }
     }
     
     /**
@@ -265,10 +277,16 @@ public class Activity implements Comparable<Activity>{
             return false;
         }
         if (this._start != other._start && (this._start == null || !this._start.equals(other._start))) {
-            return false;
+            long diff=Math.abs(this._start.getTime()-other._start.getTime());
+                if(diff>=1000) {
+                    return false;
+                }
         }
         if (this._end != other._end && (this._end == null || !this._end.equals(other._end))) {
-            return false;
+            long diff=Math.abs(this._end.getTime()-other._end.getTime());
+                if(diff>=1000) {
+                    return false;
+                }
         }
         if (this._language != other._language && (this._language == null || !this._language.equals(other._language))) {
             return false;
@@ -286,6 +304,7 @@ public class Activity implements Comparable<Activity>{
         return hash;
     }
 
+    @Override
     public int compareTo(Activity t) {
         if(t==null) {
             return -1;
@@ -299,5 +318,5 @@ public class Activity implements Comparable<Activity>{
             }
         }
         return _activityID.compareTo(id);
-    }
+    }            
 }

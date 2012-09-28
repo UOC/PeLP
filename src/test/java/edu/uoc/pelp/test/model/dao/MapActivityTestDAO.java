@@ -31,7 +31,7 @@ import java.util.List;
  * Implements the DAO object for the test Activities.
  * @author Xavier Baró
  */
-public class ActivityTestDAO implements IActivityTestDAO {
+public class MapActivityTestDAO implements IActivityTestDAO {
     
     /**
      * Table simulating the database table

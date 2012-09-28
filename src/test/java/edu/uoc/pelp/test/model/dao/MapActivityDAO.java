@@ -36,7 +36,7 @@ import java.util.List;
  * and copy objects to break the references.
  * @author Xavier Baró
  */
-public class ActivityDAO implements IActivityDAO {
+public class MapActivityDAO implements IActivityDAO {
     
     /**
      * Table simulating the database table
@@ -318,7 +318,7 @@ public class ActivityDAO implements IActivityDAO {
                 if(lastID==null) {
                     lastID=id;
                 } else {
-                    if(lastID.getIndex()<id.getIndex()) {
+                    if(lastID.getActivityIndex()<id.getActivityIndex()) {
                         lastID=id;
                     }
                 }

@@ -55,7 +55,7 @@ public class ActivityTestPK implements Serializable {
     public ActivityTestPK(ActivityPK activityPK, int testIndex) {
         this.semester = activityPK.getSemester();
         this.subject = activityPK.getSubject();
-        this.activityIndex = activityPK.getIndex();
+        this.activityIndex = activityPK.getActivityIndex();
         this.testIndex = testIndex;
     }
 

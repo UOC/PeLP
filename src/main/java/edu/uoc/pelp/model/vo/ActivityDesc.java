@@ -33,9 +33,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ActivityDesc.findAll", query = "SELECT a FROM ActivityDesc a"),
     @NamedQuery(name = "ActivityDesc.findBySemester", query = "SELECT a FROM ActivityDesc a WHERE a.activityDescPK.semester = :semester"),
     @NamedQuery(name = "ActivityDesc.findBySubject", query = "SELECT a FROM ActivityDesc a WHERE a.activityDescPK.subject = :subject"),
-    @NamedQuery(name = "ActivityDesc.findByIndex", query = "SELECT a FROM ActivityDesc a WHERE a.activityDescPK.index = :index"),
+    @NamedQuery(name = "ActivityDesc.findByActivityIndex", query = "SELECT a FROM ActivityDesc a WHERE a.activityDescPK.activityIndex = :activityIndex"),
     @NamedQuery(name = "ActivityDesc.findByLangCode", query = "SELECT a FROM ActivityDesc a WHERE a.activityDescPK.langCode = :langCode"),
-    @NamedQuery(name = "ActivityDesc.findByActivityDesc", query = "SELECT a FROM ActivityDesc a WHERE a.activityDesc = :activityDesc")})
+    @NamedQuery(name = "ActivityDesc.findByActivity", query = "SELECT a FROM ActivityDesc a WHERE a.activityDescPK.semester = :semester AND a.activityDescPK.subject = :subject AND a.activityDescPK.activityIndex = :activityIndex"),
+    @NamedQuery(name = "ActivityDesc.findByPK", query = "SELECT a FROM ActivityDesc a WHERE a.activityDescPK.semester = :semester AND a.activityDescPK.subject = :subject AND a.activityDescPK.activityIndex = :activityIndex AND a.activityDescPK.langCode = :langCode ORDER BY a.activityDescPK.semester,a.activityDescPK.subject,a.activityDescPK.activityIndex,a.activityDescPK.langCode ASC")})
 public class ActivityDesc implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -44,9 +45,7 @@ public class ActivityDesc implements Serializable {
     @Lob
     @Column(name = "description")
     private String description;
-    @Column(name = "activityDesc")
-    private String activityDesc;
-
+    
     public ActivityDesc() {
     }
 
@@ -77,14 +76,6 @@ public class ActivityDesc implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getActivityDesc() {
-        return activityDesc;
-    }
-
-    public void setActivityDesc(String activityDesc) {
-        this.activityDesc = activityDesc;
     }
 
     @Override

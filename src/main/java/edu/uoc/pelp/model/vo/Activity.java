@@ -34,11 +34,17 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Activity.findAll", query = "SELECT a FROM Activity a"),
     @NamedQuery(name = "Activity.findBySemester", query = "SELECT a FROM Activity a WHERE a.activityPK.semester = :semester"),
     @NamedQuery(name = "Activity.findBySubject", query = "SELECT a FROM Activity a WHERE a.activityPK.subject = :subject"),
-    @NamedQuery(name = "Activity.findByIndex", query = "SELECT a FROM Activity a WHERE a.activityPK.index = :index"),
+    @NamedQuery(name = "Activity.findByActivityIndex", query = "SELECT a FROM Activity a WHERE a.activityPK.activityIndex = :activityIndex"),
     @NamedQuery(name = "Activity.findByStartDate", query = "SELECT a FROM Activity a WHERE a.startDate = :startDate"),
     @NamedQuery(name = "Activity.findByEndDate", query = "SELECT a FROM Activity a WHERE a.endDate = :endDate"),
     @NamedQuery(name = "Activity.findByMaxDelivers", query = "SELECT a FROM Activity a WHERE a.maxDelivers = :maxDelivers"),
-    @NamedQuery(name = "Activity.findByProgLanguage", query = "SELECT a FROM Activity a WHERE a.progLanguage = :progLanguage")})
+    @NamedQuery(name = "Activity.findByProgLanguage", query = "SELECT a FROM Activity a WHERE a.progLanguage = :progLanguage"),
+    @NamedQuery(name = "Activity.findLast", query = "SELECT a FROM Activity a WHERE a.activityPK.semester = :semester AND a.activityPK.subject = :subject ORDER BY a.activityPK.activityIndex desc limit 1"),
+    @NamedQuery(name = "Activity.findActive", query = "SELECT a FROM Activity a WHERE (a.startDate is null or a.startDate<=now()) and (a.endDate is null or a.endDate>=now()) order by a.activityPK.semester,a.activityPK.subject,a.activityPK.activityIndex asc"),
+    @NamedQuery(name = "Activity.findActivity", query = "SELECT a FROM Activity a WHERE a.activityPK.semester = :semester AND a.activityPK.subject = :subject AND a.activityPK.activityIndex = :activityIndex"),
+    @NamedQuery(name = "Activity.findAllBySubject", query = "SELECT a FROM Activity a WHERE a.activityPK.semester = :semester AND a.activityPK.subject = :subject ORDER BY a.activityPK.semester,a.activityPK.subject,a.activityPK.activityIndex asc"),
+    @NamedQuery(name = "Activity.findActiveBySubject", query = "SELECT a FROM Activity a WHERE a.activityPK.semester = :semester AND a.activityPK.subject = :subject AND (a.startDate is null or a.startDate<=now()) and (a.endDate is null or a.endDate>=now()) order by a.activityPK.semester,a.activityPK.subject,a.activityPK.activityIndex asc")
+})
 public class Activity implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId

@@ -54,7 +54,8 @@ import org.junit.runners.Suite;
                      edu.uoc.pelp.test.engine.activity.LocalActivityManager_Basic.class,
                      edu.uoc.pelp.test.engine.activity.LocalDAOActivityManager_Basic.class,
                      edu.uoc.pelp.test.engine.Engine_InfoRetrival.class,
-                     edu.uoc.pelp.test.model.dao.TDAO_Semester.class}
+                     edu.uoc.pelp.test.model.dao.UOC.TDAO_Semester.class,
+                     edu.uoc.pelp.test.model.dao.TDAO_Activity.class}
         )
 public class TestPeLP {
     

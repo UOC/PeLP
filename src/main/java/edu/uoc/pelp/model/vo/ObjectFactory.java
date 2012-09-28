@@ -402,7 +402,7 @@ public class ObjectFactory {
         ISubjectID subjectID=new SubjectID(key.getSubject(),new Semester(key.getSemester()));
         
         // Return the new object
-        return new ActivityID(subjectID,key.getIndex());
+        return new ActivityID(subjectID,key.getActivityIndex());
     }
     
     /**
@@ -642,7 +642,7 @@ public class ObjectFactory {
         if(object==null) {
             return null;
         }
-        
+               
         // Create the new object
         edu.uoc.pelp.engine.campus.UOC.Semester newObj=new edu.uoc.pelp.engine.campus.UOC.Semester(object.getSemester(),object.getStartDate(),object.getEndDate());  
         

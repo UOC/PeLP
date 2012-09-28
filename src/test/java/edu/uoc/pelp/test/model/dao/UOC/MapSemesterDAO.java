@@ -29,13 +29,14 @@ import java.util.List;
  * Implements the DAO object for the Semester class
  * @author Xavier Baró
  */
-public class SemesterDAO implements ITimePeriodDAO {
+public class MapSemesterDAO implements ITimePeriodDAO {
     
     /**
      * Table simulating the database table
      */
     private HashMap<String,Semester> _semester=new HashMap<String,Semester>();
 
+    @Override
     public boolean save(ITimePeriod object) {
         
         // Check the input object
@@ -54,6 +55,7 @@ public class SemesterDAO implements ITimePeriodDAO {
         return _semester.containsKey(Semester.toSemester(object).getID());
     }
 
+    @Override
     public boolean delete(ITimePeriod object) {
         
         // Check the input object
@@ -69,6 +71,7 @@ public class SemesterDAO implements ITimePeriodDAO {
         return true;
     }
 
+    @Override
     public boolean update(ITimePeriod object) {
         // Check the input object
         if(Semester.toSemester(object)==null) {
@@ -86,6 +89,7 @@ public class SemesterDAO implements ITimePeriodDAO {
         return _semester.containsKey(Semester.toSemester(object).getID());
     }
 
+    @Override
     public List<ITimePeriod> findAll() {
         ArrayList<ITimePeriod> list=new ArrayList<ITimePeriod>();
         
@@ -97,6 +101,7 @@ public class SemesterDAO implements ITimePeriodDAO {
         return list;
     }
 
+    @Override
     public List<ITimePeriod> findActive() {
         ArrayList<ITimePeriod> list=new ArrayList<ITimePeriod>();
         
@@ -110,6 +115,7 @@ public class SemesterDAO implements ITimePeriodDAO {
         return list;
     }
 
+    @Override
     public ITimePeriod find(ITimePeriod object) {
         // Check the input object
         if(Semester.toSemester(object)==null) {
