@@ -20,6 +20,8 @@ package edu.uoc.pelp.model.dao;
 
 import edu.uoc.pelp.engine.activity.Activity;
 import edu.uoc.pelp.engine.activity.ActivityID;
+import edu.uoc.pelp.engine.activity.ActivityTest;
+import edu.uoc.pelp.engine.activity.TestID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.model.vo.ActivityDesc;
 import edu.uoc.pelp.model.vo.ActivityDescPK;
@@ -40,6 +42,22 @@ import org.hibernate.Transaction;
 public class ActivityDAO implements IActivityDAO {
     
     protected SessionFactory _sessionFactory = null;
+    
+    /**
+     * Dafault constructor for compatibility or Spring session factory assignment
+     */
+    public ActivityDAO() {
+        super();
+    }
+    
+    /**
+     * Dafault constructor with session factory assignment
+     * @param sessionFactory Session factory of DAO access to the database
+     */
+    public ActivityDAO(SessionFactory sessionFactory) {
+        super();
+        _sessionFactory=sessionFactory;
+    }
     
     /**
      * Gets the session factory object
@@ -472,6 +490,41 @@ public class ActivityDAO implements IActivityDAO {
         }
         
         return desc;
+    }
+
+    @Override
+    public TestID add(ActivityID activityID, ActivityTest object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean delete(TestID id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean update(ActivityTest object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<ActivityTest> findAllTests() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<ActivityTest> findAll(ActivityID activity) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public ActivityTest find(TestID id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public TestID getLastID(ActivityID activityID) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

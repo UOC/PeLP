@@ -18,17 +18,14 @@
 */
 package edu.uoc.pelp.test.bussines;
 
-import edu.uoc.pelp.engine.aem.BasicCodeAnalyzer;
-import edu.uoc.pelp.engine.aem.BuildResult;
-import edu.uoc.pelp.engine.aem.CodeProject;
-import edu.uoc.pelp.exception.ExecPelpException;
-import edu.uoc.pelp.test.TestPeLP;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import edu.uoc.pelp.bussines.PelpBussines;
+import edu.uoc.pelp.bussines.exception.InvalidCampusConnectionException;
+import edu.uoc.pelp.bussines.exception.InvalidConfigurationException;
+import edu.uoc.pelp.bussines.exception.InvalidEngineException;
+import edu.uoc.pelp.bussines.exception.InvalidSessionFactoryException;
+import edu.uoc.pelp.test.conf.PCPelpConfiguration;
+import edu.uoc.pelp.test.engine.campus.TestUOC.LocalCampusConnection;
 import junit.framework.Assert;
-import org.junit.Test;
 
 /**
  * Perform tests over the bussines class without authentication.
@@ -36,121 +33,30 @@ import org.junit.Test;
  */
 public class Bussines_NoAuth {    
     
-    private CodeProject _project=null;
-    private File _tmpPath=null;    
-    
-    public Bussines_NoAuth() {        
-        // Create a temporal folder
-        _tmpPath=createTemporalFolder("TestCodeProject");
+    private PelpBussines _bussines;   
         
-        // Create a new project in the new created temporal folder        
-        _project=new CodeProject(_tmpPath);   
-    }
-    
-    private static File createTemporalFolder(String path) {
-        // Remove extra separators
-        if(path.charAt(0)==File.separatorChar) {
-            path.substring(1);
-        }
-        
-        // Create a temporal folder
-        File tmpPath=new File(System.getProperty("java.io.tmpdir")+ "PELP" + File.separator + path);  
-        if(!tmpPath.exists()) {
-            Assert.assertTrue("Create temporal path",tmpPath.mkdirs());
-        }
-        Assert.assertTrue("Temporal folder exists",tmpPath.exists() && tmpPath.isDirectory() && tmpPath.canWrite() && tmpPath.canRead() && tmpPath.canExecute());
-        tmpPath.deleteOnExit();
-        
-        return tmpPath;
-    }
-    
-    /*
-    @Test
-    public void testExecuteJavaOK() {
+    public Bussines_NoAuth() {                
         try {
-            // Create a temporal folder for code
-            File tmpDir=createTemporalFolder("TestCode");
+            // Create the bussines object using local resource
+            _bussines=new LocalPelpBussinesImpl("hibernate_test.cfg.xml");
             
-            // Create a code file
-            File srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "Test1.java");            
-            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
+            // Assign the campus connection
+            _bussines.setCampusConnection(new LocalCampusConnection());
             
-            // Add the code
-            srcFileWriter.printf("public class Test1 {\n");
-            srcFileWriter.printf("\tpublic static void main(String[] args) {\n");
-            srcFileWriter.printf("\t\tSystem.out.println(\"Hello World!\\n\");\n");
-            srcFileWriter.printf("\t}\n");
-            srcFileWriter.printf("}\n");
-            
-            // Close the source file
-            srcFileWriter.close();
-            
-            // Create the Code Project
-            _project.changeRootPath(tmpDir);
-            _project.addFile(srcFile);
-            
-            // Create the analyzer
-            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
-            
-            // Compile the code
-            BuildResult result=codeAnalyzer.build(_project);
-            
-            // Check result
-            Assert.assertTrue("Compilation OK", result.isCorrect());
-                 
-            // Remove input file
-            srcFile.delete();    
-        } catch (ExecPelpException ex) {
-            Assert.fail("Compilation error");
-        } catch (IOException ex) {
-            Assert.fail("Cannot create the temporal file");
+            // Assign the test local configuration object
+            PCPelpConfiguration conf=new PCPelpConfiguration();
+            _bussines.setConfiguration(conf);
+           
+            // Initialize the engine
+            _bussines.initializeEngine();
+        } catch (InvalidEngineException ex) {
+            Assert.fail(ex.getMessage());
+        } catch (InvalidConfigurationException ex) {
+            Assert.fail(ex.getMessage());
+        } catch (InvalidSessionFactoryException ex) {
+            Assert.fail(ex.getMessage());
+        } catch (InvalidCampusConnectionException ex) {
+            Assert.fail(ex.getMessage());
         }
-    }
-    */
-    
-    /*
-    @Test
-    public void testExecuteCOK() {
-        try {
-            // Create a temporal folder for code
-            File tmpDir=createTemporalFolder("TestCode");
-            
-            // Create a code file
-            File srcFile=new File(tmpDir.getAbsolutePath() + File.separator + "test1.c");            
-            PrintWriter srcFileWriter=new PrintWriter(new FileOutputStream(srcFile));
-            
-            // Add the code
-            srcFileWriter.printf("\tint main(void) {\n");
-            srcFileWriter.printf("\t\tprintf(\"Hello World!\\n\");\n");
-            srcFileWriter.printf("\t}\n");
-            
-            // Close the source file
-            srcFileWriter.close();
-            
-            // Create the Code Project
-            _project.changeRootPath(tmpDir);
-            _project.addFile(srcFile);
-            
-            // Create the analyzer
-            BasicCodeAnalyzer codeAnalyzer=BasicCodeAnalyzer.getInstance(_project);
-            
-            // Set the cofiguration object
-            codeAnalyzer.setConfiguration(TestPeLP.localConfiguration);
-            
-            // Compile the code
-            BuildResult result=codeAnalyzer.build(_project);
-            
-            // Check result
-            Assert.assertTrue("Compilation OK", result.isCorrect());
-                 
-            // Remove input file
-            srcFile.delete();    
-        } catch (ExecPelpException ex) {
-            Assert.fail("Compilation error");
-        } catch (IOException ex) {
-            Assert.fail("Cannot create the temporal file");
-        }
-    }
-    
-    */
+    } 
 }

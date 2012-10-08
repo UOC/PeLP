@@ -36,6 +36,9 @@ import edu.uoc.pelp.test.engine.campus.TestUOC.LocalCampusConnection;
 import edu.uoc.pelp.test.engine.delivery.LocalDeliverManager;
 import edu.uoc.pelp.test.resource.CodeSamples;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -55,7 +58,8 @@ import org.junit.runners.Suite;
                      edu.uoc.pelp.test.engine.activity.LocalDAOActivityManager_Basic.class,
                      edu.uoc.pelp.test.engine.Engine_InfoRetrival.class,
                      edu.uoc.pelp.test.model.dao.UOC.TDAO_Semester.class,
-                     edu.uoc.pelp.test.model.dao.TDAO_Activity.class}
+                     edu.uoc.pelp.test.model.dao.TDAO_Activity.class,
+                     edu.uoc.pelp.test.model.dao.TDAO_Deliver.class}
         )
 public class TestPeLP {
     
@@ -174,6 +178,28 @@ public class TestPeLP {
         tmpPath.deleteOnExit();
         
         return tmpPath;
+    }
+    
+    public static File createTempFile(File filePath,File rootPath) {
+        File fullPath;
+        
+        try {
+            if(filePath==null || rootPath==null) {
+                return null;
+            }            
+            fullPath=new File(rootPath.getAbsolutePath() + File.separator + filePath.getPath());
+            if(!fullPath.getParentFile().exists()) {
+                if(!fullPath.getParentFile().mkdirs()) {
+                    return null;
+                }
+            }
+            fullPath.createNewFile();
+            fullPath.deleteOnExit();
+        } catch (IOException ex) {
+            fullPath=null;
+        }
+        
+        return fullPath;
     }
     
     @BeforeClass

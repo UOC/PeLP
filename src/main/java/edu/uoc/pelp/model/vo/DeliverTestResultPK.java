@@ -72,6 +72,14 @@ public class DeliverTestResultPK implements Serializable {
     public DeliverPK getDeliverPK() {
         return new DeliverPK(semester,subject,activityIndex,userID,deliverIndex);
     }
+    
+    public ActivityPK getActivityPK() {
+        return new ActivityPK(semester,subject,activityIndex);
+    }
+    
+    public ActivityTestPK getActivityTestPK() {
+        return new ActivityTestPK(semester,subject,activityIndex,testIndex);
+    }
 
     public String getSemester() {
         return semester;

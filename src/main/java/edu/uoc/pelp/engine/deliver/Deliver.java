@@ -109,7 +109,16 @@ public class Deliver implements Comparable {
      * @param rootPath Deliver root path
      */
     public Deliver(File rootPath) {
+        _creationDate=new Date();
         _rootPath=rootPath;
+    }
+    
+    /**
+     * Set the deliver Identifier
+     * @param deliverID Identifyer object
+     */
+    public void setID(DeliverID deliverID) {
+        _deliverID=deliverID;
     }
     
     /**
@@ -295,6 +304,7 @@ public class Deliver implements Comparable {
         return new Deliver(_deliverID,this);
     }
 
+    @Override
     public int compareTo(Object t) {
         if(t==null) {
             return -1;
@@ -316,5 +326,61 @@ public class Deliver implements Comparable {
      */
     public void addLabClassroom(IClassroomID classroom) {
         _userLabClassroom=classroom;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Deliver other = (Deliver) obj;
+        if (this._deliverID != other._deliverID && (this._deliverID == null || !this._deliverID.equals(other._deliverID))) {
+            return false;
+        }
+        if (this._rootPath != other._rootPath && (this._rootPath == null || !this._rootPath.equals(other._rootPath))) {
+            return false;
+        }
+        if (this._files != other._files && (this._files == null || !this._files.equals(other._files))) {
+            // Before to reject, try sorting file lists
+            if(this._files!=null && other._files!=null && this._files.size()==other._files.size()) {
+                Collections.sort(this._files);
+                Collections.sort(other._files);
+            
+                return this._files.equals(other._files);
+            }
+            return false;
+        }
+        if (this._userMainClassroom != other._userMainClassroom && (this._userMainClassroom == null || !this._userMainClassroom.equals(other._userMainClassroom))) {
+            return false;
+        }
+        if (this._userLabClassroom != other._userLabClassroom && (this._userLabClassroom == null || !this._userLabClassroom.equals(other._userLabClassroom))) {
+            return false;
+        }
+        if (this._creationDate != other._creationDate && (this._creationDate == null || !this._creationDate.equals(other._creationDate))) {
+            if(this._creationDate!=null && other._creationDate!=null) {
+                long diff=Math.abs(this._creationDate.getTime()-other._creationDate.getTime());
+                if(diff>=1000) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (this._deliverID != null ? this._deliverID.hashCode() : 0);
+        hash = 59 * hash + (this._rootPath != null ? this._rootPath.hashCode() : 0);
+        hash = 59 * hash + (this._files != null ? this._files.hashCode() : 0);
+        hash = 59 * hash + (this._creationDate != null ? this._creationDate.hashCode() : 0);
+        hash = 59 * hash + (this._userMainClassroom != null ? this._userMainClassroom.hashCode() : 0);
+        hash = 59 * hash + (this._userLabClassroom != null ? this._userLabClassroom.hashCode() : 0);
+        return hash;
     }
 }

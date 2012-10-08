@@ -20,6 +20,7 @@ package edu.uoc.pelp.engine.deliver;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
+import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.IUserID;
 import java.io.File;
 
@@ -116,4 +117,23 @@ public interface IDeliverManager {
      * @return True if the path exists or was correctly created, and it is writable.
      */
     boolean setDeliverPath(File path);
+
+    /**
+    * Obtain the list of all the delivers of a certain classroom for a certain activity. Only a teacher
+    * of the classroom can access to this information. Both, laboratory and main classrooms are checked.
+    * @param classroom Identifier of the classroom for which delivers are requested.
+    * @param activity Identifier of the activity delivers are requested from.
+    * @return Array of Delivers.
+    * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+    */
+    public Deliver[] getClassroomDelivers(IClassroomID classroom, ActivityID activity);
+
+    /**
+    * Obtain the last submitted deliver for each user of a certain classroom for a certain activity. 
+    * @param classroom Identifier of the classroom for which delivers are requested.
+    * @param activity Identifier of the activity delivers are requested from.
+    * @return Array of Delivers.
+    * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+    */
+    public Deliver[] getClassroomLastDelivers(IClassroomID classroom, ActivityID activity);
 }

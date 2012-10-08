@@ -19,7 +19,6 @@
 package edu.uoc.pelp.model.vo;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -40,7 +39,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ActivityTest.findByStrInput", query = "SELECT a FROM ActivityTest a WHERE a.strInput = :strInput"),
     @NamedQuery(name = "ActivityTest.findByStrOutput", query = "SELECT a FROM ActivityTest a WHERE a.strOutput = :strOutput"),
     @NamedQuery(name = "ActivityTest.findByFileInput", query = "SELECT a FROM ActivityTest a WHERE a.fileInput = :fileInput"),
-    @NamedQuery(name = "ActivityTest.findByFileOutput", query = "SELECT a FROM ActivityTest a WHERE a.fileOutput = :fileOutput")})
+    @NamedQuery(name = "ActivityTest.findByFileOutput", query = "SELECT a FROM ActivityTest a WHERE a.fileOutput = :fileOutput"),
+    @NamedQuery(name = "ActivityTest.findById", query = "SELECT a FROM ActivityTest a WHERE a.activityTestPK.semester = :semester AND a.activityTestPK.subject = :subject AND a.activityTestPK.activityIndex = :activityIndex AND a.activityTestPK.testIndex = :testIndex"),
+    @NamedQuery(name = "ActivityTest.findByActivityID", query = "SELECT a FROM ActivityTest a WHERE a.activityTestPK.semester = :semester AND a.activityTestPK.subject = :subject AND a.activityTestPK.activityIndex = :activityIndex")})
 public class ActivityTest implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -56,7 +57,7 @@ public class ActivityTest implements Serializable {
     @Column(name = "fileOutput")
     private String fileOutput;
     @Column(name = "maxTime")
-    private BigInteger maxTime;
+    private Long maxTime;
 
     public ActivityTest() {
     }
@@ -117,11 +118,11 @@ public class ActivityTest implements Serializable {
         this.fileOutput = fileOutput;
     }
 
-    public BigInteger getMaxTime() {
+    public Long getMaxTime() {
         return maxTime;
     }
 
-    public void setMaxTime(BigInteger maxTime) {
+    public void setMaxTime(Long maxTime) {
         this.maxTime = maxTime;
     }
 

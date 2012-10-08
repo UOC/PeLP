@@ -20,6 +20,7 @@ package edu.uoc.pelp.engine;
 
 import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.activity.*;
+import edu.uoc.pelp.engine.admin.IAdministrationManager;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.BasicCodeAnalyzer;
 import edu.uoc.pelp.engine.aem.CodeProject;
@@ -30,6 +31,8 @@ import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverID;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
 import edu.uoc.pelp.engine.deliver.IDeliverManager;
+import edu.uoc.pelp.engine.information.DAOInformationManager;
+import edu.uoc.pelp.engine.information.IInformationManager;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidActivityPelpException;
@@ -56,6 +59,16 @@ public class PELPEngine implements IPELPEngine {
      * Object to access the delivers manager
      */
     protected IDeliverManager _deliverManager=null;
+    
+    /**
+     * Object to access the administration manager
+     */
+    protected IAdministrationManager _administrationManager=null;
+    
+    /**
+     * Object to access the information manager
+     */
+    protected IInformationManager _informationManager=null;
     
     /**
      * Object to access the system configuration
@@ -97,6 +110,24 @@ public class PELPEngine implements IPELPEngine {
     public void setDeliverManager(IDeliverManager manager) {
         _deliverManager=manager;
     }           
+    
+    /**
+     * Assign a new administration manager
+     * @param manager Object allowing to manage the delivers
+     */
+    @Override
+    public void setAdministrationManager(IAdministrationManager manager) {
+        _administrationManager=manager;
+    } 
+    
+    /**
+    * Assign a new information manager
+    * @param manager Object allowing to manage the platform information and statistics
+    */
+    @Override
+    public void setInformationManager(DAOInformationManager manager) {
+        _informationManager=manager;
+    }
 
     /**
      * Check if the current user is authenticated or not.
@@ -127,6 +158,7 @@ public class PELPEngine implements IPELPEngine {
      * @return List of active subjects for current user.
      * @throws AuthPelpException If no user is authenticated.
      */
+    @Override
     public Subject[] getActiveSubjects() throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -467,6 +499,69 @@ public class PELPEngine implements IPELPEngine {
         }
         
         return false;
+    }
+    
+    /**
+    * Obtain the list of all the delivers of a certain classroom for a certain activity. Only a teacher
+    * of the classroom can access to this information. Both, laboratory and main classrooms are checked.
+    * @param classroom Identifier of the classroom for which delivers are requested.
+    * @param activity Identifier of the activity delivers are requested from.
+    * @return Array of Delivers.
+    * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+    */
+    @Override
+    public Deliver[] getClassroomDelivers(IClassroomID classroom, ActivityID activity) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!_campusConnection.isRole(UserRoles.Teacher, classroom) && !_campusConnection.isRole(UserRoles.MainTeacher, classroom))  {
+            throw new AuthPelpException("Not enough rights to access this information");
+        }
+        
+        // Return the delivers
+        return _deliverManager.getClassroomDelivers(classroom, activity);
+    }
+
+    /**
+    * Obtain the last submitted deliver for each user of a certain classroom for a certain activity. Only a teacher
+    * of the classroom can access to this information. Both, laboratory and main classrooms are checked.
+    * @param classroom Identifier of the classroom for which delivers are requested.
+    * @param activity Identifier of the activity delivers are requested from.
+    * @return Array of Delivers.
+    * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+    */
+    @Override
+    public Deliver[] getClassroomLastDelivers(IClassroomID classroom, ActivityID activity) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!_campusConnection.isRole(UserRoles.Teacher, classroom) && !_campusConnection.isRole(UserRoles.MainTeacher, classroom))  {
+            throw new AuthPelpException("Not enough rights to access this information");
+        }
+                
+        // Return the delivers
+        return _deliverManager.getClassroomLastDelivers(classroom, activity);
+    }
+    
+    /**
+    * Checks if the current user is administrator of the platform. 
+    * @param subject Subject Identifier
+    * @return True if the user is an administrator or False otherwise.
+    * @throws AuthPelpException If user is not authenticated
+    */
+    @Override
+    public boolean isAdministrator() throws AuthPelpException {
+        // Get the user information
+        Person userData=getUserInfo();
+        
+        // Check if this user is an administrator
+        return _administrationManager.isAdministrator(userData);
     }
 
     /**

@@ -20,7 +20,9 @@ package edu.uoc.pelp.test;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
+import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.IUserID;
+import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
 import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverID;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
@@ -284,5 +286,78 @@ public class LocalDeliverManager implements IDeliverManager {
         }
         
         return true;
+    }
+
+    @Override
+    public Deliver[] getClassroomDelivers(IClassroomID classroom, ActivityID activity) {
+        ArrayList<Deliver> list=new ArrayList<Deliver>();
+        
+        // Check the parameters
+        ClassroomID classroomID=(ClassroomID) classroom;
+        if(classroomID==null) {
+            return null;
+        }
+        if(activity==null) {
+            return null;
+        }
+        
+        // Create the list of identifiers
+        for(Deliver deliver:_delivers.values()) {
+            DeliverID deliverID=deliver.getID();
+            if(deliverID==null) {
+                return null;
+            }
+            if(deliverID.activity.equals(activity) && (classroomID.equals(deliver.getUserMainClassroom()) || classroomID.equals(deliver.getUserLabClassroom()))) {
+                list.add(deliver);
+            }
+        }
+        
+        // Sort the list of delivers
+        Collections.sort(list);
+        
+        // Create the output array
+        Deliver[] retList=new Deliver[list.size()];
+        list.toArray(retList);
+        
+        return retList;
+    }
+
+    @Override
+    public Deliver[] getClassroomLastDelivers(IClassroomID classroom, ActivityID activity) {
+        ArrayList<Deliver> list=new ArrayList<Deliver>();
+        
+        // Check the parameters
+        ClassroomID classroomID=(ClassroomID) classroom;
+        if(classroomID==null) {
+            return null;
+        }
+        if(activity==null) {
+            return null;
+        }
+        
+        // Create the list of identifiers
+        for(Deliver deliver:_delivers.values()) {
+            DeliverID deliverID=deliver.getID();
+            if(deliverID==null) {
+                return null;
+            }
+            if(deliverID.activity.equals(activity) && (classroomID.equals(deliver.getUserMainClassroom()) || classroomID.equals(deliver.getUserLabClassroom()))) {
+                // Find the last deliver for this user
+                DeliverID[] userDelivers=getUserDelivers(deliverID.user, activity);
+                DeliverID lastDeliver=userDelivers[userDelivers.length-1];
+                if(deliverID.equals(lastDeliver)) {
+                    list.add(deliver);
+                }
+            }
+        }
+        
+        // Sort the list of delivers
+        Collections.sort(list);
+        
+        // Create the output array
+        Deliver[] retList=new Deliver[list.size()];
+        list.toArray(retList);
+        
+        return retList;
     }
 }

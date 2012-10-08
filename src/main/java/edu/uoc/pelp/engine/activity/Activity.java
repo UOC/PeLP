@@ -277,16 +277,24 @@ public class Activity implements Comparable<Activity>{
             return false;
         }
         if (this._start != other._start && (this._start == null || !this._start.equals(other._start))) {
-            long diff=Math.abs(this._start.getTime()-other._start.getTime());
+            if(this._start!=null && other._start!=null) {
+                long diff=Math.abs(this._start.getTime()-other._start.getTime());
                 if(diff>=1000) {
                     return false;
                 }
+            } else {
+                return false;
+            }
         }
         if (this._end != other._end && (this._end == null || !this._end.equals(other._end))) {
-            long diff=Math.abs(this._end.getTime()-other._end.getTime());
+            if(this._end!=null && other._end!=null) {
+                long diff=Math.abs(this._end.getTime()-other._end.getTime());
                 if(diff>=1000) {
                     return false;
                 }
+            } else {
+                return false;
+            }
         }
         if (this._language != other._language && (this._language == null || !this._language.equals(other._language))) {
             return false;

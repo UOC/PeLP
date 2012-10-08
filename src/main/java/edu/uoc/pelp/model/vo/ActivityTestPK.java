@@ -30,10 +30,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class ActivityTestPK implements Serializable {
     @Basic(optional = false)
-    @Column(name = "semester")
+    @Column(name = "semester",length = 5, columnDefinition="char(5)")
     private String semester;
     @Basic(optional = false)
-    @Column(name = "subject")
+    @Column(name = "subject",length = 6, columnDefinition="char(6)")
     private String subject;
     @Basic(optional = false)
     @Column(name = "activityIndex")

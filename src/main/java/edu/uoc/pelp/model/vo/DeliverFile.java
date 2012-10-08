@@ -39,7 +39,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DeliverFile.findByFileIndex", query = "SELECT d FROM DeliverFile d WHERE d.deliverFilePK.fileIndex = :fileIndex"),
     @NamedQuery(name = "DeliverFile.findByRelativePath", query = "SELECT d FROM DeliverFile d WHERE d.relativePath = :relativePath"),
     @NamedQuery(name = "DeliverFile.findByType", query = "SELECT d FROM DeliverFile d WHERE d.type = :type"),
-    @NamedQuery(name = "DeliverFile.findByMain", query = "SELECT d FROM DeliverFile d WHERE d.main = :main")})
+    @NamedQuery(name = "DeliverFile.findByMain", query = "SELECT d FROM DeliverFile d WHERE d.main = :main"),
+    @NamedQuery(name = "DeliverFile.findByDeliverID", query = "SELECT d FROM DeliverFile d WHERE d.deliverFilePK.semester = :semester AND d.deliverFilePK.subject = :subject AND d.deliverFilePK.activityIndex = :activityIndex AND d.deliverFilePK.userID = :userID AND d.deliverFilePK.deliverIndex = :deliverIndex ORDER BY d.deliverFilePK.fileIndex ASC"),
+    @NamedQuery(name = "DeliverFile.findById", query = "SELECT d FROM DeliverFile d WHERE d.deliverFilePK.semester = :semester AND d.deliverFilePK.subject = :subject AND d.deliverFilePK.activityIndex = :activityIndex AND d.deliverFilePK.userID = :userID AND d.deliverFilePK.deliverIndex = :deliverIndex AND d.deliverFilePK.fileIndex = :fileIndex"),
+    @NamedQuery(name = "DeliverFile.findLast", query = "SELECT d FROM DeliverFile d WHERE d.deliverFilePK.semester = :semester AND d.deliverFilePK.subject = :subject AND d.deliverFilePK.activityIndex = :activityIndex AND d.deliverFilePK.userID = :userID AND d.deliverFilePK.deliverIndex = :deliverIndex ORDER BY d.deliverFilePK.fileIndex desc limit 1")})
 public class DeliverFile implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId

@@ -22,11 +22,11 @@ import edu.uoc.pelp.engine.activity.Activity;
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.model.dao.ActivityDAO;
+import java.io.File;
+import java.net.URL;
 import java.util.List;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
 
 /**
  * Implements the DAO object for the Activity class. It uses a local database connection
@@ -34,80 +34,120 @@ import org.hibernate.cfg.AnnotationConfiguration;
  */
 public class LocalActivityDAO extends ActivityDAO {
     
-    private static Session _session=null;
+    private LocalDAO _localDAO=null;
+    
+    /**
+     * Creates a new LocalActivityDAO object from given Hibernate SessionFactory
+     * @param sessionFactory SessionFactory object
+     */
+    public LocalActivityDAO(SessionFactory sessionFactory) {
+        // Call parent constructor
+        super();
         
-    private static SessionFactory buildSessionFactory() {
-        try {
-            // Assign the new session Factory using the local configuration
-            return new AnnotationConfiguration().configure("hibernate_test.cfg.xml").buildSessionFactory();
-        } catch (Throwable ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
+        // Create object to access local database
+        _localDAO=new LocalDAO(sessionFactory) {
+            @Override
+            public void clearTableData() {
+                deleteTableData("ActivityDesc");
+                deleteTableData("ActivityTest");
+                deleteTableData("Activity");
+            }
+        };
+        // Assign the session Factory to the parent object
+        _sessionFactory=_localDAO.getSessionFactory();
     }
     
-    protected void closeSession() {
-        if(_session!=null) {
-            _session.flush();
-            _session.close();
-            _session=null;
-        }
+    /**
+     * Creates a new LocalActivityDAO object from given Hibernate configuration resource
+     * @param resource Resource with configuration for Hibernate Database Connection
+     */
+    public LocalActivityDAO(String resource) {
+        // Call parent constructor
+        super();
+        
+        // Create object to access local database
+        _localDAO=new LocalDAO(resource) {
+            @Override
+            public void clearTableData() {
+                deleteTableData("ActivityDesc");
+                deleteTableData("ActivityTest");
+                deleteTableData("Activity");
+            }
+        };
+        // Assign the session Factory to the parent object
+        _sessionFactory=_localDAO.getSessionFactory();
+    }
+    
+    /**
+     * Creates a new LocalActivityDAO object from given Hibernate configuration file
+     * @param confFile File with configuration for Hibernate Database Connection
+     */
+    public LocalActivityDAO(File confFile) {
+        // Call parent constructor
+        super();
+        
+        // Create object to access local database
+        _localDAO=new LocalDAO(confFile) {
+            @Override
+            public void clearTableData() {
+                deleteTableData("ActivityDesc");
+                deleteTableData("ActivityTest");
+                deleteTableData("Activity");
+            }
+        };
+        // Assign the session Factory to the parent object
+        _sessionFactory=_localDAO.getSessionFactory();
+    }
+    
+    /**
+     * Creates a new LocalActivityDAO object from given Hibernate configuration url
+     * @param url URL with configuration for Hibernate Database Connection
+     */
+    public LocalActivityDAO(URL url) {
+        // Call parent constructor
+        super();
+        
+        // Create object to access local database
+        _localDAO=new LocalDAO(url) {
+            @Override
+            public void clearTableData() {
+                deleteTableData("ActivityDesc");
+                deleteTableData("ActivityTest");
+                deleteTableData("Activity");
+            }
+        };
+        // Assign the session Factory to the parent object
+        _sessionFactory=_localDAO.getSessionFactory();
     }
     
     @Override
     protected Session getSession() {     
-        // Close open sessions
-        if(_session==null) {
-            _session=_sessionFactory.openSession();
+        if(_localDAO==null) {
+            return null;
         }
-        return _session;
+        return _localDAO.getSession();
     }
         
     /**
      * Remove all the data in this table of the database
      */
     public void clearTableData() {
-        boolean createdNewSession=false;
-        
-        // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
-        
-        // Perform action
-        Query q = getSession().createQuery("delete from ActivityDesc");      
-        q.executeUpdate();
-        q = getSession().createQuery("delete from Activity");      
-        q.executeUpdate();
-        
-        // Close new created session
-        if(createdNewSession) {
-            closeSession();
-        }
-    }
-    
-    /**
-     * Default constructor. Creates an ObjectFactory using local hibernate configuration file
-     */
-    public LocalActivityDAO() {
-        setSessionFactory(buildSessionFactory());        
+        _localDAO.clearTableData();
     }
 
     @Override
     public boolean delete(ActivityID id) {
         boolean retVal;
-        boolean createdNewSession=false;
-        
+                
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
                 
         // Perform action
         retVal=super.delete(id);
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -117,19 +157,16 @@ public class LocalActivityDAO extends ActivityDAO {
     @Override
     public Activity find(ActivityID object) {
         Activity retVal;
-        boolean createdNewSession=false;
-        
+                
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
                
         // Perform action
         retVal=super.find(object);
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -139,19 +176,16 @@ public class LocalActivityDAO extends ActivityDAO {
     @Override
     public List<Activity> findActive() {
         List<Activity> retVal;
-        boolean createdNewSession=false;
-        
+                
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
         
         // Perform action
         retVal=super.findActive();
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -161,19 +195,16 @@ public class LocalActivityDAO extends ActivityDAO {
     @Override
     public List<Activity> findAll() {
         List<Activity> retVal;
-        boolean createdNewSession=false;
         
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
         
         // Perform action
         retVal=super.findAll();
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -183,19 +214,16 @@ public class LocalActivityDAO extends ActivityDAO {
     @Override
     public ActivityID add(ISubjectID subjectID, Activity object) {
         ActivityID retVal;
-        boolean createdNewSession=false;
         
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
                        
         // Perform action
         retVal=super.add(subjectID,object);
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -205,24 +233,16 @@ public class LocalActivityDAO extends ActivityDAO {
     @Override
     public boolean update(Activity object) {
         boolean retVal;
-        boolean createdNewSession=false;
-        
-        // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
-        
-        // Close open sessions
-        if(_session!=null) {
-            _session.close();
-        }
                 
+        // Check current session status
+        boolean createdNewSession=!_localDAO.hasOpenSession();
+                        
         // Perform action
         retVal=super.update(object);
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value

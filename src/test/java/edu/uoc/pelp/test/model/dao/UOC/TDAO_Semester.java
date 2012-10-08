@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class TDAO_Semester {
     
-    private LocalSemesterDAO _semesterDAO=new LocalSemesterDAO(); 
+    private LocalSemesterDAO _semesterDAO=new LocalSemesterDAO("hibernate_test.cfg.xml"); 
     
     @Test 
     public void testAddSemester() {

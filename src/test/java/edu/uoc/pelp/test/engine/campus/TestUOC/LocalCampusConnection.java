@@ -81,14 +81,17 @@ public class LocalCampusConnection implements ICampusConnection{
         createDummyData();
     }
         
+    @Override
     public boolean isUserAuthenticated() {
         return (_userID!=null);
     }
 
+    @Override
     public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
         return getUserSubjects(null,timePeriod);
     }
     
+    @Override
     public ISubjectID[] getUserSubjects(UserRoles userRole,ITimePeriod timePeriod) throws AuthPelpException {
         if(!isUserAuthenticated()) {
             throw new AuthPelpException();
@@ -130,10 +133,12 @@ public class LocalCampusConnection implements ICampusConnection{
         return retArray;
     }
     
+    @Override
     public IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException {
         return getUserClassrooms(null,subject);
     }
     
+    @Override
     public IClassroomID[] getUserClassrooms(UserRoles userRole,ISubjectID subject) throws AuthPelpException {
         if(!isUserAuthenticated()) {
             throw new AuthPelpException();
@@ -168,6 +173,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return retArray;
     }
 
+    @Override
     public IClassroomID[] getSubjectClassrooms(ISubjectID subject, UserRoles userRole) throws AuthPelpException {
         
         assert(subject!=null);
@@ -202,6 +208,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return retArray;
     }
     
+    @Override
     public IUserID getUserID() throws AuthPelpException {
         if(!isUserAuthenticated()) {
             throw new AuthPelpException();
@@ -209,12 +216,14 @@ public class LocalCampusConnection implements ICampusConnection{
         return _userID;
     }
     
+    @Override
     public boolean isRole(UserRoles role, ISubjectID subject)  throws AuthPelpException{
         assert(role!=null);
         assert(subject!=null);
         return isRole(role,subject,getUserID());
     }
 
+    @Override
     public boolean isRole(UserRoles role, ISubjectID subject, IUserID userID) throws AuthPelpException {
         boolean retVal=false;
         
@@ -283,12 +292,14 @@ public class LocalCampusConnection implements ICampusConnection{
         return retVal;
     }
 
+    @Override
     public boolean isRole(UserRoles role, IClassroomID classroom)  throws AuthPelpException{
         assert(role!=null);
         assert(classroom!=null);
         return isRole(role,classroom,getUserID());
     }
 
+    @Override
     public boolean isRole(UserRoles role, IClassroomID classroom, IUserID userID) throws AuthPelpException {
         boolean retVal=false;
         
@@ -330,10 +341,12 @@ public class LocalCampusConnection implements ICampusConnection{
         return retVal;
     }
     
+    @Override
     public boolean isCampusConnection() {
         return _campusConnection;
     }
 
+    @Override
     public IUserID[] getRolePersons(UserRoles role, ISubjectID subject) throws AuthPelpException {
         
         assert(role!=null);
@@ -409,6 +422,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return retArray;
     }
 
+    @Override
     public IUserID[] getRolePersons(UserRoles role, IClassroomID classroom) throws AuthPelpException {
         
         assert(role!=null);
@@ -478,6 +492,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return retArray;
     }
 
+    @Override
     public boolean hasLabSubjects(ISubjectID subject) throws AuthPelpException {
         
         assert(subject!=null);
@@ -486,6 +501,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return s.getChildSubjects()!=null;
     }
 
+    @Override
     public ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException {
         
         assert(subject!=null);
@@ -509,6 +525,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return retList;
     }
     
+    @Override
     public boolean hasEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         
         assert(subject!=null);
@@ -517,6 +534,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return s.getEquivalentSubjects()!=null;
     }
 
+    @Override
     public ISubjectID[] getEquivalentSubjects(ISubjectID subject) throws AuthPelpException {
         
         assert(subject!=null);
@@ -540,6 +558,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return retList;
     }
     
+    @Override
     public Subject getSubjectData(ISubjectID subjectID) throws AuthPelpException {
         
         assert(subjectID!=null);
@@ -579,6 +598,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return retObject;
     }
 
+    @Override
     public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
 
         assert(classroomID!=null);
@@ -606,10 +626,12 @@ public class LocalCampusConnection implements ICampusConnection{
         return classroom;
     }
     
+    @Override
     public Person getUserData() throws AuthPelpException {
         return getUserData(getUserID());
     }
 
+    @Override
     public Person getUserData(IUserID userID) throws AuthPelpException {
         
         assert(userID!=null);
@@ -650,7 +672,7 @@ public class LocalCampusConnection implements ICampusConnection{
     
     private void createDummyData() {
         // Create dummy users with "punny" names (http://sandgroper14.wordpress.com/2007/04/30/fake-names-for-documentation/)
-        _testAccessPersons=new Person[8];
+        _testAccessPersons=new Person[9];
         
         _testAccessPersons[0]=new Person(((IUserID)new UserID("000000")));
         _testAccessPersons[0]._eMail="user0@uoc.edu";
@@ -692,6 +714,12 @@ public class LocalCampusConnection implements ICampusConnection{
         _testAccessPersons[7]._fullName="Theresa Green";
         _testAccessPersons[7]._name="Theresa";
         
+        
+        // User with administration privilegies
+        _testAccessPersons[8]=new Person(((IUserID)new UserID("888888")));
+        _testAccessPersons[8]._eMail="admin@uoc.edu";
+        _testAccessPersons[8]._fullName="PELP admin user";
+        _testAccessPersons[8]._name="admin";
         
         // Add users to the list of users
         _dummyUsers.clear();
@@ -805,6 +833,9 @@ public class LocalCampusConnection implements ICampusConnection{
         } else if("pra1".equalsIgnoreCase(profileID)) {
             // Main teacher whith a subject with two classrooms
             _userID=(UserID) getTestPersonByPos(1).getUserID();
+        } else if("admin".equalsIgnoreCase(profileID)) {
+            // User with administration privilegies
+            _userID=(UserID) getTestPersonByPos(8).getUserID();
         }
     }
 
@@ -828,6 +859,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return _testAccessPersons[pos];
     }
 
+    @Override
     public ITimePeriod[] getPeriods() {
         ArrayList<ITimePeriod> list=new ArrayList<ITimePeriod>();
         
@@ -846,6 +878,7 @@ public class LocalCampusConnection implements ICampusConnection{
         return retList;
     }
 
+    @Override
     public ITimePeriod[] getActivePeriods() {
         ArrayList<ITimePeriod> list=new ArrayList<ITimePeriod>();
         

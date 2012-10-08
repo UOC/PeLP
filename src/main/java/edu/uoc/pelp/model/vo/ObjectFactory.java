@@ -19,7 +19,6 @@
 package edu.uoc.pelp.model.vo;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
-import edu.uoc.pelp.engine.activity.ActivityTestResult;
 import edu.uoc.pelp.engine.activity.TestID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.BuildResult;
@@ -32,6 +31,7 @@ import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
 import edu.uoc.pelp.engine.campus.UOC.Semester;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import edu.uoc.pelp.engine.campus.UOC.UserID;
+import edu.uoc.pelp.engine.deliver.ActivityTestResult;
 import edu.uoc.pelp.engine.deliver.DeliverFile.FileType;
 import edu.uoc.pelp.engine.deliver.DeliverFileID;
 import edu.uoc.pelp.engine.deliver.DeliverID;
@@ -40,7 +40,6 @@ import edu.uoc.pelp.model.vo.UOC.ClassroomPK;
 import edu.uoc.pelp.model.vo.UOC.SubjectPK;
 import edu.uoc.pelp.model.vo.UOC.UserPK;
 import java.io.File;
-import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -313,7 +312,7 @@ public class ObjectFactory {
         boolean execution=false;
         if(compilation) {
             execution=true;
-            for(TestResult test:object.getResults(object.getDeliverID())) {
+            for(TestResult test:object.getResults()) {
                 if(!test.isPassed()) {
                     execution=false;
                     break;
@@ -331,6 +330,50 @@ public class ObjectFactory {
         
         // Return the new object
         return result;
+    }
+    
+    /**
+     * Get an object of the entity class from the internal class
+     * @param object Object with compilation results
+     * @param results Array of individual tests results
+     * @return Instance of the entity or null if information is incorrect.
+     */
+    public static DeliverResults getDeliverResultObj(DeliverResult object, DeliverTestResult[] results) {
+        
+        // Check input
+        if(object==null) {
+            return null;
+        }
+        
+        // Get the deliver identifier
+        DeliverID deliverID=getDeliverID(object.getDeliverPK());
+        if(deliverID==null) {
+            return null;
+        }
+        
+        // Get the building results
+        BuildResult buildResults=ObjectFactory.getBuildResultObj(object);
+        if(buildResults==null) {
+            return null;
+        }
+        
+        // Create the final analysis object
+        AnalysisResults analysisResult=new AnalysisResults(buildResults);
+        
+        // Add test results
+        for(DeliverTestResult test:results) {
+            ActivityTestResult activityTest=ObjectFactory.getTestResultObj(test);
+            if(activityTest==null) {
+                return null;
+            }
+            analysisResult.addTestResult(activityTest);
+        }
+        
+        // Create the object
+        DeliverResults newObj=new DeliverResults(deliverID,analysisResult);
+        
+        // Return the new object
+        return newObj;
     }
     
     /**
@@ -472,10 +515,17 @@ public class ObjectFactory {
      * @param object Entity object to be processed
      * @return Instance of the internal class or null if information is incorrect.
      */
-    public static TestResult getTestResultObj(DeliverTestResult object) {
+    public static ActivityTestResult getTestResultObj(DeliverTestResult object) {
+        if(object==null) {
+            return null;
+        } 
+        
+        // Get high level representations
+        TestID testID=getActivityTestID(object.getDeliverTestResultPK().getActivityTestPK());
+        TestResult testResult=new TestResult(object.getPassed(),object.getProgramOutput(),object.getElapsedTime());
         
         // Build output object
-        return new TestResult(object.getPassed(),object.getProgramOutput(),object.getElapsedTime().longValue());
+        return new ActivityTestResult(testID,testResult);
     }
     
     /**
@@ -502,39 +552,9 @@ public class ObjectFactory {
         
         // Build output object
         DeliverTestResult newObject=new DeliverTestResult(deliverTestPK,object.isPassed());
-        newObject.setElapsedTime(BigInteger.valueOf(object.getElapsedTime()));
+        newObject.setElapsedTime(object.getElapsedTime());
         newObject.setProgramOutput(object.getOutput());
         return newObject;
-    }
-    
-    /**
-     * Get an object of the internal class from the entity class object
-     * @param object Entity object to be processed
-     * @param tests List of test results
-     * @return Instance of the internal class or null if information is incorrect.
-     */
-    public static DeliverResults getDeliverResulsObj(DeliverResult object,DeliverTestResult[] tests) {
-        
-        // Get the identifier
-        DeliverID deliverID=getDeliverID(object.getDeliverPK());
-        if(deliverID==null) {
-            return null;
-        }
-                
-        // Get the results
-        AnalysisResults analysisResult=new AnalysisResults(getBuildResultObj(object));
-        
-        // Add the tests
-        if(tests!=null) {
-            for(DeliverTestResult test:tests) {
-                if(!analysisResult.addTestResult(getTestResultObj(test))) {
-                    return null;
-                }
-            }
-        }
-        
-        // Return the new object
-        return new DeliverResults(deliverID,analysisResult);
     }
     
     /**
@@ -673,7 +693,7 @@ public class ObjectFactory {
             newObj.setFileOutput(object.getExpectedOutputFile().getPath());
         }
         if(object.getMaxTime()!=null) {
-            newObj.setMaxTime(BigInteger.valueOf(object.getMaxTime()));
+            newObj.setMaxTime(object.getMaxTime());
         }
         newObj.setPublicTest(object.isPublic());
         newObj.setStrInput(object.getInputStr());
@@ -698,7 +718,7 @@ public class ObjectFactory {
         TestID testID=getActivityTestID(object.getActivityTestPK());
         TestData testData=new TestData();
         if(object.getMaxTime()!=null) {
-            testData.setMaxTime(object.getMaxTime().longValue());
+            testData.setMaxTime(object.getMaxTime());
         }
         object.setStrInput(object.getStrInput());
         object.setStrOutput(object.getStrOutput());

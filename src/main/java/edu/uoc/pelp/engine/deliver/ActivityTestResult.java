@@ -16,8 +16,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package edu.uoc.pelp.engine.activity;
+package edu.uoc.pelp.engine.deliver;
 
+import edu.uoc.pelp.engine.activity.TestID;
 import edu.uoc.pelp.engine.aem.TestResult;
 
 /**
@@ -38,6 +39,16 @@ public class ActivityTestResult extends TestResult {
     public ActivityTestResult(ActivityTestResult testResult) {
         super(testResult);
         _testID=testResult._testID;
+    }
+    
+    /**
+     * Default constructor
+     * @param testID Identifier for the test related to this result
+     * @param testResult Result of the test
+     */
+    public ActivityTestResult(TestID testID,TestResult testResult) {
+        super(testResult);
+        _testID=testID;
     }
     
     /**

@@ -20,7 +20,6 @@ package edu.uoc.pelp.engine.activity;
 
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.model.dao.IActivityDAO;
-import edu.uoc.pelp.model.dao.IActivityTestDAO;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -29,7 +28,7 @@ import java.util.Date;
  * Implements a class to manage activities.
  * @author Xavier Baró
  */
-public class ActivityManager implements IActivityManager {
+public class DAOActivityManager implements IActivityManager {
     
     /**
      * Activities DAO
@@ -37,18 +36,11 @@ public class ActivityManager implements IActivityManager {
     private IActivityDAO _activities;
     
     /**
-     * Tests DAO
-     */
-    private IActivityTestDAO _tests;
-    
-    /**
-     * Default constructor for the ActivityManager
+     * Default constructor for the DAOActivityManager
      * @param activityDAO Object to access all the activities information
-     * @param activityTestDAO Object to access all test information
      */
-    public ActivityManager(IActivityDAO activityDAO,IActivityTestDAO activityTestDAO) {
+    public DAOActivityManager(IActivityDAO activityDAO) {
         _activities=activityDAO;
-        _tests=activityTestDAO;
     }
     
     @Override
@@ -91,17 +83,17 @@ public class ActivityManager implements IActivityManager {
         }
                 
         // Return the new identifier
-        return _tests.add(activityID, test);
+        return _activities.add(activityID, test);
     }
 
     @Override
     public boolean editTest(ActivityTest test) {      
-        return _tests.update(test);
+        return _activities.update(test);
     }
 
     @Override
     public boolean deleteTest(TestID testID) {
-        return _tests.delete(testID);
+        return _activities.delete(testID);
     }
 
     @Override
@@ -112,7 +104,7 @@ public class ActivityManager implements IActivityManager {
 
     @Override
     public ActivityTest getTest(TestID testID) {  
-        return _tests.find(testID);
+        return _activities.find(testID);
     }
 
     @Override
@@ -158,7 +150,7 @@ public class ActivityManager implements IActivityManager {
         ArrayList<TestID> testList=new ArrayList<TestID>();
         
         // Create the list of identifiers
-        for(ActivityTest test:_tests.findAll(activityID)) {
+        for(ActivityTest test:_activities.findAll(activityID)) {
             testList.add(test.getID());
         }
         

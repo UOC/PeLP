@@ -20,9 +20,9 @@ package edu.uoc.pelp.engine.deliver;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
+import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.IUserID;
 import edu.uoc.pelp.model.dao.IDeliverDAO;
-import edu.uoc.pelp.model.dao.IDeliverFilesDAO;
 import edu.uoc.pelp.model.dao.IDeliverResultDAO;
 import java.io.File;
 import java.util.List;
@@ -31,7 +31,7 @@ import java.util.List;
  * Implements a basic implementation to manage delivers. 
  * @author Xavier Baró
  */
-public class BasicDeliverManager implements IDeliverManager {
+public class DAODeliverManager implements IDeliverManager {
         
     /**
      * Path where delivers are stored
@@ -42,18 +42,22 @@ public class BasicDeliverManager implements IDeliverManager {
      * Delivers DAO
      */
     protected IDeliverDAO _delivers=null;
-    
-    /** 
-     * Deliver Files DAO
-     */
-    protected IDeliverFilesDAO _deliverFiles=null;
-    
+        
     /**
      * Deliver Results DAO
      */
     protected IDeliverResultDAO _deliverResults=null;
     
-
+    /**
+     * Basic constructor with DAO objects
+     * @param deliverDAO Object to access the deliver details
+     * @param deliverFilesDAO Object to access the deliver files
+     */
+    public DAODeliverManager(IDeliverDAO deliverDAO,IDeliverResultDAO deliverResultsDAO) {
+        _delivers=deliverDAO;
+        _deliverResults=deliverResultsDAO;
+    }
+    
     /**
      * Create the path where a delived should be stored using its information
      * @param deliverID Deliver identifier object
@@ -109,16 +113,6 @@ public class BasicDeliverManager implements IDeliverManager {
         // Add the new deliver
         DeliverID newID=_delivers.add(user, activity, deliver);
         
-        // Add the deliver files
-        for(DeliverFile file:deliver.getFiles()) {
-            DeliverFileID newFileID=_deliverFiles.add(newID, file);
-            if(newFileID==null) {
-                // Remove the inserted deliver from DB
-                _delivers.delete(newID);
-                return null;
-            }
-        }
-        
         // Move the files to the destination folder
         if(newID!=null) {
             // Move the files
@@ -156,35 +150,32 @@ public class BasicDeliverManager implements IDeliverManager {
         }
         
         // Update the deliver information
-        boolean correct=_delivers.update(deliver);
-        
-        // Update the deliver files information. Only is possible to add or update files, not remove them
-        if(correct){
-            for(DeliverFile file:deliver.getFiles()) {
-                if(file.getID()!=null) {
-                    correct&=_deliverFiles.update(file);
-                } else {
-                    if(_deliverFiles.add(deliver.getID(), file)==null) {
-                        return false;
-                    }
-                }
-            }
-        }
-        
-        return correct;
+        return _delivers.update(deliver);
     }
 
     @Override
     public boolean deleteDeliver(DeliverID deliverID) {
         
-        // Remove files
-        for(DeliverFile file:_deliverFiles.findAll(deliverID)) {
-            if(!_deliverFiles.delete(file.getID())) {
-                return false;
-            }    
+        // Remove files from disc
+        Deliver deliver=_delivers.find(deliverID);
+        if(deliver==null) {
+            return false;
         }
         
-        // Finally remove the deliver
+        // Get the path of all files
+        for(DeliverFile file:deliver.getFiles()) {
+            File f=file.getAbsolutePath(deliver.getRootPath());
+            if(f.exists()) {
+                f.delete();
+            } else {
+                return false;
+            }
+        }
+        
+        // Remove the root path for this deliver
+        deliver.getRootPath().delete();
+        
+        // Finally remove the deliver from the database
         return _delivers.delete(deliverID);
     }
 
@@ -279,5 +270,27 @@ public class BasicDeliverManager implements IDeliverManager {
         }
         
         return true;
+    }
+
+    @Override
+    public Deliver[] getClassroomDelivers(IClassroomID classroom, ActivityID activity) {
+        List<Deliver> list=_delivers.findAllClassroom(classroom,activity);
+                
+        // Create the output array
+        Deliver[] retList=new Deliver[list.size()];
+        list.toArray(retList);
+        
+        return retList;
+    }
+
+    @Override
+    public Deliver[] getClassroomLastDelivers(IClassroomID classroom, ActivityID activity) {
+        List<Deliver> list=_delivers.findLastClassroom(classroom,activity);
+                
+        // Create the output array
+        Deliver[] retList=new Deliver[list.size()];
+        list.toArray(retList);
+        
+        return retList;
     }
 }

@@ -19,14 +19,19 @@
 package edu.uoc.pelp.test.model.dao;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
+import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.engine.campus.IUserID;
 import edu.uoc.pelp.engine.deliver.Deliver;
+import edu.uoc.pelp.engine.deliver.DeliverFile;
+import edu.uoc.pelp.engine.deliver.DeliverFileID;
 import edu.uoc.pelp.engine.deliver.DeliverID;
 import edu.uoc.pelp.model.dao.IDeliverDAO;
 import edu.uoc.pelp.model.vo.ActivityPK;
+import edu.uoc.pelp.model.vo.DeliverFilePK;
 import edu.uoc.pelp.model.vo.DeliverPK;
 import edu.uoc.pelp.model.vo.ObjectFactory;
+import edu.uoc.pelp.model.vo.UOC.ClassroomPK;
 import edu.uoc.pelp.model.vo.UOC.SubjectPK;
 import edu.uoc.pelp.model.vo.UOC.UserPK;
 import java.util.ArrayList;
@@ -35,17 +40,82 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Implements the DAO object for the Delivers. It uses memory structures to store de data
+ * Implements the DAO object for the Delivers and their files. It uses memory structures to store de data
  * and copy objects to break the references.
  * @author Xavier Baró
  */
-public class DeliverDAO implements IDeliverDAO {
+public class MapDeliverDAO implements IDeliverDAO {
     
     /**
-     * Table simulating the database table
+     * Table simulating the database table for delivers
      */
     private HashMap<DeliverPK,edu.uoc.pelp.model.vo.Deliver> _deliver=new HashMap<DeliverPK,edu.uoc.pelp.model.vo.Deliver>();
+    
+    /**
+     * Table simulating the database table for deliver files
+     */
+    private HashMap<DeliverFilePK,edu.uoc.pelp.model.vo.DeliverFile> _deliverFile=new HashMap<DeliverFilePK,edu.uoc.pelp.model.vo.DeliverFile>();
 
+
+    /**
+     * Get a list of Deliver objects from a list of low level objects, adding the correspondant files
+     * @param list List of low level objects
+     * @return List of high level objects
+     */
+    protected List<Deliver> getDeliverList(List<edu.uoc.pelp.model.vo.Deliver> list) {
+        List<Deliver> retList=new ArrayList<Deliver>();
+        for(edu.uoc.pelp.model.vo.Deliver register:list) {  
+            // Get the list of files
+            List<edu.uoc.pelp.model.vo.DeliverFile> filesList=findDeliverFiles(register.getDeliverPK());
+            edu.uoc.pelp.model.vo.DeliverFile[] filesArray=null;
+            if(filesList!=null) {
+                filesArray=new edu.uoc.pelp.model.vo.DeliverFile[filesList.size()];
+                filesList.toArray(filesArray);
+            }
+            
+            // Add the final register
+            retList.add(ObjectFactory.getDeliverObj(register, filesArray));
+        }
+        return retList;
+    }
+    
+    /**
+     * Get a list of Deliver objects from a list of low level object identifiers
+     * @param list List of low level object keys
+     * @return List of high level object identifiers
+     */
+    protected List<DeliverID> getDeliverIDList(List<edu.uoc.pelp.model.vo.Deliver> list) {
+        List<DeliverID> retList=new ArrayList<DeliverID>();
+        for(edu.uoc.pelp.model.vo.Deliver register:list) {  
+            // Add the final register
+            retList.add(ObjectFactory.getDeliverID(register.getDeliverPK()));
+        }
+        return retList;
+    }
+    
+    /**
+     * Get the list of files for a certain deliver.
+     * @param key Deliver primary key
+     * @return Low level file objects
+     */
+    private List<edu.uoc.pelp.model.vo.DeliverFile> findDeliverFiles(DeliverPK key) {
+        List<edu.uoc.pelp.model.vo.DeliverFile> retList=new ArrayList<edu.uoc.pelp.model.vo.DeliverFile>();
+        // Check the input object
+        if(key==null) {
+            return null;
+        }
+              
+        // Filter the files
+        for(edu.uoc.pelp.model.vo.DeliverFile file:_deliverFile.values()) {
+            if(key.equals(file.getDeliverFilePK().getDeliverPK())) {
+                retList.add(file);
+            }
+        }
+        
+        // Get the list of descriptions
+        return retList;
+    }
+    
     @Override
     public DeliverID add(IUserID user, ActivityID activity, Deliver object) {
         
@@ -501,6 +571,133 @@ public class DeliverDAO implements IDeliverDAO {
         Collections.sort(list);
         
         return list;
+    }
+
+    @Override
+    public List<Deliver> findAllClassroom(IClassroomID classroom, ActivityID activity) {
+        List<edu.uoc.pelp.model.vo.Deliver> list=new ArrayList<edu.uoc.pelp.model.vo.Deliver>();
+        
+        // Get the activity ID and classroom ID
+        ClassroomPK classPK=ObjectFactory.getClassroomPK(classroom);
+        if(classPK==null) {
+            return null;
+        }
+        ActivityPK activityPK=ObjectFactory.getActivityPK(activity);
+        if(activityPK==null) {
+            return null;
+        }
+        
+        // Create the list of identifiers
+        for(edu.uoc.pelp.model.vo.Deliver deliver:_deliver.values()) {
+            DeliverPK deliverPK=deliver.getDeliverPK();
+            if(deliverPK==null) {
+                return null;
+            }
+            ClassroomPK mainClass=new ClassroomPK(deliver.getClassroom());
+            ClassroomPK labClass=new ClassroomPK(deliver.getLaboratory());
+            if(activityPK.equals(deliverPK.getActivityPK()) && (classPK.equals(mainClass) || classPK.equals(labClass))) {
+                list.add(deliver);
+            }
+        }
+        
+        return getDeliverList(list);
+    }
+
+    @Override
+    public List<Deliver> findLastClassroom(IClassroomID classroom, ActivityID activity) {
+        List<edu.uoc.pelp.model.vo.Deliver> list=new ArrayList<edu.uoc.pelp.model.vo.Deliver>();
+        
+        // Get the activity ID and classroom ID
+        ClassroomPK classPK=ObjectFactory.getClassroomPK(classroom);
+        if(classPK==null) {
+            return null;
+        }
+        ActivityPK activityPK=ObjectFactory.getActivityPK(activity);
+        if(activityPK==null) {
+            return null;
+        }
+        
+        // Create the list of identifiers
+        for(edu.uoc.pelp.model.vo.Deliver deliver:_deliver.values()) {
+            DeliverPK deliverPK=deliver.getDeliverPK();
+            if(deliverPK==null) {
+                return null;
+            }
+            ClassroomPK mainClass=new ClassroomPK(deliver.getClassroom());
+            ClassroomPK labClass=new ClassroomPK(deliver.getLaboratory());
+            if(activityPK.equals(deliverPK.getActivityPK()) && (classPK.equals(mainClass) || classPK.equals(labClass))) {
+                DeliverPK lastDeliver=null;
+                for(DeliverPK devKey:_deliver.keySet()) {
+                    if(lastDeliver==null) {
+                        lastDeliver=devKey;
+                    } else {
+                        if(lastDeliver.getDeliverIndex()<devKey.getDeliverIndex()) {
+                            lastDeliver=devKey;
+                        }
+                    }
+                }               
+                if(deliverPK.equals(lastDeliver)) {                    
+                    list.add(deliver);
+                }
+            }
+        }
+        
+        return getDeliverList(list);
+    }
+
+    @Override
+    public DeliverFileID add(DeliverID deliver, DeliverFile object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean delete(DeliverFileID id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean update(DeliverFile object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<DeliverFile> findAllFiles() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<DeliverFile> findAll(DeliverID deliver) {
+        // Check the input object
+        if(deliver==null) {
+            return null;
+        }
+        DeliverPK key=ObjectFactory.getDeliverPK(deliver);
+        List<edu.uoc.pelp.model.vo.DeliverFile> filesList=findDeliverFiles(key);
+        if(filesList==null) {
+            return null;
+        }
+        
+        // Create the output list
+        List<edu.uoc.pelp.engine.deliver.DeliverFile> retList=new ArrayList<edu.uoc.pelp.engine.deliver.DeliverFile>();
+        for(edu.uoc.pelp.model.vo.DeliverFile file:filesList) {
+            retList.add(ObjectFactory.getDeliverFileObj(file));
+        }
+        
+        // Sort the lits
+        Collections.sort(retList);
+              
+        // Get the list of descriptions
+        return retList;
+    }
+
+    @Override
+    public DeliverFile find(DeliverFileID id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public DeliverFileID getLastID(DeliverID deliver) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }
