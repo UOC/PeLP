@@ -31,9 +31,8 @@ import edu.uoc.pelp.engine.deliver.DeliverID;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
 import edu.uoc.pelp.engine.deliver.IDeliverManager;
 import edu.uoc.pelp.engine.information.DAOInformationManager;
-import edu.uoc.pelp.exception.AuthPelpException;
-import edu.uoc.pelp.exception.ExecPelpException;
-import edu.uoc.pelp.exception.InvalidActivityPelpException;
+import edu.uoc.pelp.exception.*;
+import java.util.Date;
 
 /**
  * This class defines the interface of the engine of the PELP system. 
@@ -210,4 +209,123 @@ public interface IPELPEngine {
 	 * @throws AuthPelpException If user is not authenticated
 	 */
 	public boolean isAdministrator() throws AuthPelpException;
+        
+        /**
+        * Add a new activity to the given subject
+        * @param subject Subject where activity will be added
+        * @param activity Activity object to be added. Activity identifier must be null
+        * @param tests Tests that delivers to this acivity should pass. It can be null.
+        * @return Identifier for the new created activity
+        * @throws AuthPelpException If the user is not authenticated.
+	* @throws InvalidActivityPelpException If the information for this activity is incorrect.
+        * @throws InvalidSubjectPelpException If the user cannot add activities to this subject, because is not a teacher.
+	* @throws ExecPelpException When files in tests cannot be accessed or there is any problem adding the activity.
+        */
+        public ActivityID addActivity(ISubjectID subject,Activity activity, TestData[] tests) throws AuthPelpException,InvalidActivityPelpException,InvalidSubjectPelpException,ExecPelpException;     
+        
+        /**
+        * Get the information of an activity
+        * @param activityID Activity identifier
+        * @return Activity object
+        * @throws AuthPelpException If the user is not authenticated.
+	* @throws InvalidActivityPelpException If the information for this activity is incorrect.
+        * @throws InvalidSubjectPelpException If the user cannot add activities to this subject, because is not a teacher.
+	* @throws ExecPelpException When files in tests cannot be accessed or there is any problem adding the activity.
+        */
+        public Activity getActivity(ActivityID activityID) throws AuthPelpException,InvalidActivityPelpException,InvalidSubjectPelpException,ExecPelpException;
+        
+        /**
+        * Get the activity tests
+        * @param activityID Activity identifier
+        * @return Activity tests
+        * @throws AuthPelpException If the user is not authenticated.
+	* @throws InvalidActivityPelpException If the information for this activity is incorrect.
+        * @throws InvalidSubjectPelpException If the user cannot add activities to this subject, because is not a teacher.
+	* @throws ExecPelpException When files in tests cannot be accessed or there is any problem adding the activity.
+        */
+        public ActivityTest[] getActivityTests(ActivityID activityID) throws AuthPelpException,InvalidActivityPelpException,InvalidSubjectPelpException,ExecPelpException;
+        
+        /** 
+         * Get the current user language
+         * @return Language code for current user
+         * @throws AuthPelpException If the user is not authenticated.
+         */
+        public String getUserLanguageCode() throws AuthPelpException;
+        
+        /**
+        * Adds a new semester to the platform
+        * @param semester Semester code
+        * @param start Starting date
+        * @param end Ending date
+        * @return True if the semester has been correctly added or false otherwise
+        * @throws InvalidTimePeriodPelpException if the provided information for time register is incorrect
+        * @throws AuthPelpException if user is not an administrator
+        */
+        public boolean addSemester(String semester,Date start,Date end) throws AuthPelpException,InvalidTimePeriodPelpException;
+
+        /**
+        * Updates the dates of an existing semester
+        * @param semester Semester code
+        * @param start Starting date
+        * @param end Ending date
+        * @return True if the semester has been correctly updated or false otherwise
+        * @throws InvalidTimePeriodPelpException if the provided information for time register is incorrect
+        * @throws AuthPelpException if user is not an administrator
+        */
+        public boolean updateSemester(String semester,Date start,Date end) throws AuthPelpException,InvalidTimePeriodPelpException;
+
+        /**
+        * Remove an existing semester. Any operation with this semester will be done if it does not exist in the platform
+        * @param semester Semester code
+        * @return True if the semester has been correctly deleted or false otherwise
+        * @throws AuthPelpException if user is not an administrator
+        */
+        public boolean removeSemester(String semester) throws AuthPelpException;
+        
+            /**
+     * Adds a laboratory subject to a certain main subject. This relation does not depends on the semester. If it exists, does nothing.
+     * @param mainSubject Main subject code
+     * @param labSubject Laboratory subject code
+     * @return True if the laboratory has been correctly added or false otherwise
+     * @throws AuthPelpException if user is not an administrator
+     */
+    public boolean addLaboratory(String mainSubject,String laboratory) throws AuthPelpException;
+    
+    /**
+     * Remove a laboratory subject from a certain main subject. This relation does not depends on the semester.
+     * @param mainSubject Main subject code
+     * @param labSubject Laboratory subject code
+     * @return True if the laboratory has been correctly removed or false otherwise
+     * @throws AuthPelpException if user is not an administrator
+     */
+    public boolean removeLaboratory(String mainSubject,String laboratory) throws AuthPelpException;
+
+    /**
+     * Activate a subject in the platform. If it exists an activation register for this subject, it sets it as active, if not, it creates a new one
+     * @param semester Semester code
+     * @param subject Subject code
+     * @return True if the subject has been correctly activated or false otherwise
+     * @throws AuthPelpException if user is not an administrator
+     */
+    public boolean activateSubject(String semester,String subject) throws AuthPelpException;
+
+    /**
+     * Disable a subject in the platform. If it exists an activation register for this subject, it sets it as inactive, if not, it does nothing
+     * @param semester Semester code
+     * @param subject Subject code
+     * @return True if the subject has been correctly disabled or false otherwise
+     * @throws AuthPelpException if user is not an administrator
+     */
+    public boolean deactivateSubject(String semester,String subject) throws AuthPelpException;
+
+    /**
+     * Removes the activation register for this subject. The subject will become inactive.
+     * @param semester Semester code
+     * @param subject Subject code
+     * @return True if the subject activation register has been correctly removed or false otherwise
+     * @throws AuthPelpException if user is not an administrator
+     */
+    public boolean removeSubjectActivationRegister(String semester,String subject) throws AuthPelpException;
+
+
 }

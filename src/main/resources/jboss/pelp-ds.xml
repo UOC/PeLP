@@ -7,8 +7,8 @@
 		<driver-class>com.mysql.jdbc.Driver</driver-class>
 		<min-pool-size>10</min-pool-size>
 		<max-pool-size>20</max-pool-size>
-		<user-name>root</user-name>
-		<password></password>
+		<user-name>pelp</user-name>
+		<password>.pelp.</password>
 		<metadata>
 			<type-mapping>mySQL</type-mapping>
 		</metadata>

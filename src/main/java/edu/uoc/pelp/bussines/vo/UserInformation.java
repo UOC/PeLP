@@ -29,6 +29,11 @@ public class UserInformation {
     private String _userID;
     
     /**
+     * User photo
+     */
+    private String _userPhoto;
+    
+    /**
      * Full name of the user
      */
     private String _userFullName;  
@@ -42,6 +47,19 @@ public class UserInformation {
      * Email of the user
      */
     private String _eMail;
+    
+    /**
+     * User language
+     */
+    private String _language;
+
+    public String getUserPhoto() {
+        return _userPhoto;
+    }
+
+    public void setUserPhoto(String _userPhoto) {
+        this._userPhoto = _userPhoto;
+    }
 
     public String geteMail() {
         return _eMail;
@@ -74,4 +92,14 @@ public class UserInformation {
     public void setUsername(String _username) {
         this._username = _username;
     }
+
+    public String getLanguage() {
+        return _language;
+    }
+
+    public void setLanguage(String _language) {
+        this._language = _language;
+    }
+    
+    
 }

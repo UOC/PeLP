@@ -23,17 +23,23 @@ package edu.uoc.pelp.bussines.vo;
  * @author Xavier Baró
  */
 public class Activity {
+    /**
+     * Subject object
+     */
     private Subject _subject;
+    
+    /**
+     * Activity index in this subject
+     */
     private int _index;
+    
+    /**
+     * Activity description
+     */
     private String _description;
     
     public Activity() {
         
-    }
-    
-    public Activity(String semester, String subjectCode, int index) {
-        this._subject=new Subject(semester,subjectCode);
-        this._index=index;
     }
     
     public Activity(Subject subject, int index) {

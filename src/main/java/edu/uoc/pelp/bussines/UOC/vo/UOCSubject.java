@@ -16,41 +16,42 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package edu.uoc.pelp.bussines.vo;
+package edu.uoc.pelp.bussines.UOC.vo;
+
+import edu.uoc.pelp.bussines.vo.*;
 
 /**
- * Subject information. This class should be extended using custom subject details
+ * Subject information
  * @author Xavier Baró
  */
-public abstract class Subject {
-
-    /**
-     * Short description for the subject
-     */
-    protected String _shortName;
+public class UOCSubject extends Subject {
+    // Semester 
+    private String _semester;
+    private String _subjectCode;
     
-    /**
-     * Full description of the subject
-     */
-    protected String _description;
-
-    public Subject() {
-        
+    public UOCSubject() {
+        super();
     }
     
-    public String getDescription() {
-        return _description;
+    public UOCSubject(String semester, String subject) {
+        super();
+        this._semester=semester;
+        this._subjectCode=subject;
+    }
+    
+    public String getSemester() {
+        return _semester;
     }
 
-    public void setDescription(String _description) {
-        this._description = _description;
+    public void setSemester(String _semester) {
+        this._semester = _semester;
     }
 
-    public String getShortName() {
-        return _shortName;
+    public String getSubjectCode() {
+        return _subjectCode;
     }
 
-    public void setShortName(String _shortName) {
-        this._shortName = _shortName;
+    public void setSubjectCode(String subjectCode) {
+        this._subjectCode = subjectCode;
     }
 }

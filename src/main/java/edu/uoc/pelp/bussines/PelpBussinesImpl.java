@@ -12,12 +12,15 @@ import edu.uoc.pelp.engine.aem.CodeProject;
 import edu.uoc.pelp.engine.aem.TestData;
 import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
 import edu.uoc.pelp.engine.campus.ICampusConnection;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.engine.campus.ITimePeriod;
 import edu.uoc.pelp.engine.campus.Person;
 import edu.uoc.pelp.engine.deliver.DAODeliverManager;
 import edu.uoc.pelp.engine.information.DAOInformationManager;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.model.dao.*;
+import edu.uoc.pelp.model.dao.UOC.SemesterDAO;
 import edu.uoc.pelp.model.dao.admin.AdministrationDAO;
 import java.io.File;
 import org.hibernate.SessionFactory;
@@ -26,7 +29,7 @@ import org.hibernate.SessionFactory;
  * Implementation of the PELP bussiness functionalities
  * @author Xavier Baró
  */
-public class PelpBussinesImpl implements PelpBussines {
+public abstract class PelpBussinesImpl implements PelpBussines {
     
     /**
      * Campus connection object
@@ -48,6 +51,31 @@ public class PelpBussinesImpl implements PelpBussines {
      */
     protected IPELPEngine _engine;
     
+    
+    /**
+     * Default constructor. If all components are instantiated the engine is started.
+     */
+    public PelpBussinesImpl() throws InvalidEngineException {
+        if(_campusConnection!=null && _sessionFactory!=null && _configObject!=null) {
+            initializeEngine();
+        }
+    }
+    
+    /**
+     * Constructor with all the components. If all components are instantiated the engine is started.
+     * @param campusConnection Connection to the campus
+     * @param sessionFactory Hibernate session factory
+     * @param configObject Configuration object
+     * @throws InvalidEngineException if there is some problem starting the engine
+     */
+    public PelpBussinesImpl(ICampusConnection campusConnection,SessionFactory sessionFactory,IPelpConfiguration configObject) throws InvalidEngineException {
+        _campusConnection=campusConnection;
+        _sessionFactory=sessionFactory;
+        _configObject=configObject;
+        if(_campusConnection!=null && _sessionFactory!=null && _configObject!=null) {
+            initializeEngine();
+        }
+    }
     
     @Override
     public void setCampusConnection(ICampusConnection campusConnection) throws InvalidCampusConnectionException {
@@ -81,13 +109,14 @@ public class PelpBussinesImpl implements PelpBussines {
                 DeliverDAO deliverDAO=new DeliverDAO(sessionFactory);
                 DeliverResultsDAO deliverResultsDAO=new DeliverResultsDAO(sessionFactory);        
                 AdministrationDAO adminDAO=new AdministrationDAO(sessionFactory);
+                SemesterDAO semesterDAO=new SemesterDAO(sessionFactory);
                 LoggingDAO logDAO=new LoggingDAO(sessionFactory);
                 StatisticsDAO statsDAO=new StatisticsDAO(sessionFactory);
 
                 // Create the managers
                 _engine.setDeliverManager(new DAODeliverManager(deliverDAO,deliverResultsDAO));
                 _engine.setActivityManager(new DAOActivityManager(activityDAO));
-                _engine.setAdministrationManager(new DAOAdministrationManager(adminDAO));
+                _engine.setAdministrationManager(new DAOAdministrationManager(adminDAO,semesterDAO));
                 _engine.setInformationManager(new DAOInformationManager(logDAO,statsDAO));
             }
         }
@@ -102,7 +131,7 @@ public class PelpBussinesImpl implements PelpBussines {
     }
 
     @Override
-    public void initializeEngine() throws InvalidEngineException {
+    public final void initializeEngine() throws InvalidEngineException {
         if(_sessionFactory==null) {
             throw new InvalidEngineException("Null session factory object found during engine initialization.");
         }
@@ -206,6 +235,92 @@ public class PelpBussinesImpl implements PelpBussines {
         // Get the resource
         throw new UnsupportedOperationException("Not supported yet.");
     } 
+
+    @Override
+    public DeliverDetail[] getUserDeliverDetails(Activity activity) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getUserDeliverDetails(activity.getSubject(),activity.getIndex());
+    }
+
+    @Override
+    public DeliverDetail addDeliver(Activity activity, DeliverFile[] files) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return addDeliver(activity.getSubject(),activity.getIndex(),files);
+    }
+    
+    @Override
+    public Resource[] getActivityResources(Activity activity) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getActivityResources(activity.getSubject(),activity.getIndex());
+    }
+    
+    @Override
+    public Activity getActivityInformation(Activity activity) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getActivityInformation(activity.getSubject(),activity.getIndex());
+    }
+
+    @Override
+    public DeliverSummary[] getAllClassroomDeliverSummary(Activity activity, int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getAllClassroomDeliverSummary(activity.getSubject(),activity.getIndex(),classIndex);
+    }
+    
+    @Override
+    public DeliverDetail[] getAllClassroomDeliverDetails(Activity activity, int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getAllClassroomDeliverDetails(activity.getSubject(),activity.getIndex(),classIndex);
+    }
+    
+    @Override
+    public DeliverSummary[] getLastClassroomDeliverSummary(Activity activity, int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getLastClassroomDeliverSummary(activity.getSubject(), activity.getIndex(), classIndex);
+    }
+    
+    @Override
+    public DeliverDetail[] getLastClassroomDeliverDetails(Activity activity, int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getLastClassroomDeliverDetails(activity.getSubject(),activity.getIndex(), classIndex);
+    }
+    
+    @Override
+    public boolean addLaboratory(String mainSubject, String laboratory) throws AuthorizationException, InvalidEngineException {
+        boolean retVal=false;
+        
+        // Check the engine
+        if(_engine==null) {
+            throw new InvalidEngineException("Uninitialized engine.");
+        }
+        try {
+            retVal=_engine.addLaboratory(mainSubject,laboratory);
+        } catch (AuthPelpException ex) {
+            throw new AuthorizationException(ex.getMessage());
+        }
+        
+        return retVal;
+    }
+
+    @Override
+    public boolean removeLaboratory(String mainSubject, String laboratory) throws AuthorizationException, InvalidEngineException {
+        boolean retVal=false;
+        
+        // Check the engine
+        if(_engine==null) {
+            throw new InvalidEngineException("Uninitialized engine.");
+        }
+        
+        try {
+            retVal=_engine.removeLaboratory(mainSubject,laboratory);
+        } catch (AuthPelpException ex) {
+            throw new AuthorizationException(ex.getMessage());
+        }
+        
+        return retVal;
+    }
+    
+    @Override
+    public abstract Subject getSubject(ISubjectID subjectID);
+    
+    @Override
+    public abstract ISubjectID getSubjectID(Subject subject);
+    
+    @Override
+    public abstract ITimePeriod getSemester(Subject subject);
+    
+    
     
     protected String getMaxCommonPath(DeliverFile[] codeFiles) {
         String commonPath=null;
@@ -239,10 +354,6 @@ public class PelpBussinesImpl implements PelpBussines {
         
         return commonPath;
     }
-
-    protected TestData getTestDataObject(Test test) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     
     protected TestData[] getTestDataArray(Test[] test) {
         TestData[] retVal=null;
@@ -254,7 +365,12 @@ public class PelpBussinesImpl implements PelpBussines {
         }
         return retVal;
     }
-   
+    
+    protected TestData getTestDataObject(Test test) {
+        
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     protected DeliverDetail getDeliverDetailObject(AnalysisResults analysisResult) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -266,4 +382,16 @@ public class PelpBussinesImpl implements PelpBussines {
     protected UserInformation getUserInformationObject(Person userInfo) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
+    
+    protected Activity getActivity(edu.uoc.pelp.engine.activity.Activity activity) throws ExecPelpException, InvalidEngineException {
+        Activity newObject=new Activity();
+        UserInformation userInfo=getUserInformation();
+        
+        newObject.setDescription(activity.getDescription(userInfo.getLanguage()));
+        newObject.setIndex((int)activity.getActivity().index);
+        newObject.setSubject(getSubject(activity.getActivity().subjectID));
+        
+        return newObject;
+    }
+    
 }

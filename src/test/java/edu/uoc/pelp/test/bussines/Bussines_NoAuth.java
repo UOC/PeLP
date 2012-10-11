@@ -18,7 +18,7 @@
 */
 package edu.uoc.pelp.test.bussines;
 
-import edu.uoc.pelp.bussines.PelpBussines;
+import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.exception.InvalidCampusConnectionException;
 import edu.uoc.pelp.bussines.exception.InvalidConfigurationException;
 import edu.uoc.pelp.bussines.exception.InvalidEngineException;
@@ -33,12 +33,12 @@ import junit.framework.Assert;
  */
 public class Bussines_NoAuth {    
     
-    private PelpBussines _bussines;   
+    private UOCPelpBussines _bussines;   
         
     public Bussines_NoAuth() {                
         try {
             // Create the bussines object using local resource
-            _bussines=new LocalPelpBussinesImpl("hibernate_test.cfg.xml");
+            _bussines=new LocalUOCPelpBussinesImpl("hibernate_test.cfg.xml");
             
             // Assign the campus connection
             _bussines.setCampusConnection(new LocalCampusConnection());

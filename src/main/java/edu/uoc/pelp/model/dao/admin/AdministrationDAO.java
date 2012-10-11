@@ -19,7 +19,10 @@
 package edu.uoc.pelp.model.dao.admin;
 
 import edu.uoc.pelp.engine.campus.Person;
+import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
 import edu.uoc.pelp.model.vo.admin.PelpAdmins;
+import edu.uoc.pelp.model.vo.admin.PelpLanguages;
+import edu.uoc.pelp.model.vo.admin.PelpMainLabSubjects;
 import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -104,7 +107,7 @@ public class AdministrationDAO implements IAdministrationDAO {
             
             // Create the low level representation
             adminData=new PelpAdmins();
-            adminData.setUserName(person._username);
+            adminData.setUserName(person.getUsername());
             adminData.setActive(active);
             adminData.setGrantAllowed(grant);
 
@@ -133,7 +136,7 @@ public class AdministrationDAO implements IAdministrationDAO {
         
         // Get the admin register
         Query query=getSession().getNamedQuery("PelpAdmins.findByUser");
-        query.setParameter("userName", person._username);
+        query.setParameter("userName", person.getUsername());
                 
         List<PelpAdmins> newObj=query.list();
         if(newObj==null || newObj.size()!=1) {
@@ -169,7 +172,7 @@ public class AdministrationDAO implements IAdministrationDAO {
             
             // Get a low-level representation
             newObj=new PelpAdmins();
-            newObj.setUserName(person._username);
+            newObj.setUserName(person.getUsername());
             newObj.setActive(active);
             newObj.setGrantAllowed(grant);
 
@@ -230,5 +233,343 @@ public class AdministrationDAO implements IAdministrationDAO {
         
         return getAdminData(person)==null;
     }
-}
 
+    @Override
+    public List<PelpLanguages> getAvailableLanguages() {
+        // Get the language registers
+        Query query=getSession().getNamedQuery("PelpLanguages.findAll");            
+        List<PelpLanguages> list=query.list();
+        
+        if(list==null) {
+            return null;
+        }
+                
+        // Return the data                
+        return list;
+    }
+
+    @Override
+    public List<PelpActiveSubjects> getActiveSubjects() {
+                
+        // Get the language registers
+        Query query=getSession().getNamedQuery("PelpActiveSubjects.findAllActive");
+                
+        return query.list();
+    }
+    
+    @Override
+    public List<PelpActiveSubjects> getActiveSubjects(String semester) {
+        // Check input parameters
+        if(semester==null) {
+            return null;
+        }   
+        // Get the language registers
+        Query query=getSession().getNamedQuery("PelpActiveSubjects.findActiveBySemester");
+        query.setParameter("semester", semester);
+                
+        return query.list();
+    }
+
+    @Override
+    public boolean addActiveSubject(String semester, String subjectCode, boolean active) {
+        // Check input parameters
+        if(semester==null || subjectCode==null) {
+            return false;
+        }
+        
+        Transaction transaction=null;
+        PelpActiveSubjects subjectsData;
+        
+        try {
+            // Start a new transaction
+            transaction=getSession().beginTransaction();
+            if (transaction == null) {
+                return false;
+            }
+            
+            // Check that this field does not exist
+            subjectsData=findActiveSubjects(semester,subjectCode);
+            if(subjectsData!=null) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                return false;
+            }
+            
+            // Create the new object
+            PelpActiveSubjects newRegister=new PelpActiveSubjects(semester,subjectCode);
+            newRegister.setActive(active);
+            
+            // Add the new administrator
+            getSession().saveOrUpdate(newRegister);
+            
+            // Commit the results
+            transaction.commit();
+            
+        } catch (RuntimeException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return false;
+        }
+        
+        return findActiveSubjects(semester,subjectCode)!=null;
+    }
+
+    @Override
+    public boolean updateActiveSubject(String semester, String subjectCode, boolean active) {
+        // Check input parameters
+        if(semester==null || subjectCode==null) {
+            return false;
+        }
+        
+        Transaction transaction=null;
+        PelpActiveSubjects subjectsData;
+        
+        try {
+            // Start a new transaction
+            transaction=getSession().beginTransaction();
+            if (transaction == null) {
+                return false;
+            }
+            
+            // Check that this field does not exist
+            subjectsData=findActiveSubjects(semester,subjectCode);
+            if(subjectsData==null) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                return false;
+            }
+            
+            // Add the new administrator
+            getSession().merge(subjectsData);
+            
+            // Commit the results
+            transaction.commit();
+            
+        } catch (RuntimeException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return false;
+        }
+        
+        return true;
+    }
+
+    @Override
+    public boolean deleteActiveSubject(String semester, String subjectCode) {
+        // Check input parameters
+        if(semester==null || subjectCode==null) {
+            return false;
+        }
+        
+        Transaction transaction=null;
+        PelpActiveSubjects subjectsData;
+        
+        try {
+            // Start a new transaction
+            transaction=getSession().beginTransaction();
+            if (transaction == null) {
+                return false;
+            }
+            
+            // Check that this field does not exist
+            subjectsData=findActiveSubjects(semester,subjectCode);
+            if(subjectsData==null) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                return false;
+            }
+            
+            // Add the new administrator
+            getSession().delete(subjectsData);
+            
+            // Commit the results
+            transaction.commit();
+            
+        } catch (RuntimeException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return false;
+        }
+        
+        return findActiveSubjects(semester,subjectCode)==null;
+    }
+
+    @Override
+    public List<PelpMainLabSubjects> getMainSubjectOfLab(String labSubjectCode) {
+        // Check input parameters
+        if(labSubjectCode==null) {
+            return null;
+        }   
+        // Get the language registers
+        Query query=getSession().getNamedQuery("PelpMainLabSubjects.findByLabSubjectCode");
+        query.setParameter("labSubjectCode", labSubjectCode);
+                
+        return query.list();
+    }
+
+    @Override
+    public List<PelpMainLabSubjects> getLabSubjectOfMain(String mainSubjectCode) {
+        // Check input parameters
+        if(mainSubjectCode==null) {
+            return null;
+        }   
+        // Get the language registers
+        Query query=getSession().getNamedQuery("PelpMainLabSubjects.findByMainSubjectCode");
+        query.setParameter("mainSubjectCode", mainSubjectCode);
+                
+        return query.list();
+    }
+
+    @Override
+    public boolean addMainLabCorrespondence(String mainSubject, String labSubject) {
+        // Check input parameters
+        if(mainSubject==null || labSubject==null) {
+            return false;
+        }
+        
+        Transaction transaction=null;
+        PelpMainLabSubjects subjectsData;
+        
+        try {
+            // Start a new transaction
+            transaction=getSession().beginTransaction();
+            if (transaction == null) {
+                return false;
+            }
+            
+            // Check that this field does not exist
+            subjectsData=findMainLabSubjects(mainSubject,labSubject);
+            if(subjectsData==null) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                return false;
+            }
+            
+            // Add the subjects relation
+            getSession().delete(subjectsData);
+            
+            // Commit the results
+            transaction.commit();
+            
+        } catch (RuntimeException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return false;
+        }
+        
+        return findMainLabSubjects(mainSubject,labSubject)!=null;
+    }
+
+    @Override
+    public boolean deleteMainLabCorrespondence(String mainSubject, String labSubject) {
+        // Check input parameters
+        if(mainSubject==null || labSubject==null) {
+            return false;
+        }
+        
+        Transaction transaction=null;
+        PelpMainLabSubjects subjectsData;
+        
+        try {
+            // Start a new transaction
+            transaction=getSession().beginTransaction();
+            if (transaction == null) {
+                return false;
+            }
+            
+            // Check that this field exists
+            subjectsData=findMainLabSubjects(mainSubject,labSubject);
+            if(subjectsData==null) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                return false;
+            }
+            
+            // Delete the subjects relation
+            getSession().delete(subjectsData);
+            
+            // Commit the results
+            transaction.commit();
+            
+        } catch (RuntimeException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return false;
+        }
+        
+        return findMainLabSubjects(mainSubject,labSubject)==null;
+    }
+    
+    @Override
+    public PelpLanguages findPelpLanguage(String languageCode) {
+        // Check the parameter
+        if(languageCode==null) {
+            return null;
+        }
+        
+        // Get the language registers
+        Query query=getSession().getNamedQuery("PelpLanguages.findByLangCode");
+        query.setParameter("userName", languageCode);
+        List<PelpLanguages> list=query.list();
+        
+        if(list==null || list.size()!=1) {
+            return null;
+        }
+                
+        return list.get(0);
+    }
+    
+    @Override
+    public PelpActiveSubjects findActiveSubjects(String semester,String subject) {
+        
+        // Check input parameters
+        if(semester==null || subject==null) {
+            return null;
+        }
+        
+        // Get the language registers
+        Query query=getSession().getNamedQuery("PelpActiveSubjects.findByPK");
+        query.setParameter("semester", semester);
+        query.setParameter("subject", subject);
+        List<PelpActiveSubjects> list=query.list();
+        
+        // Check the output list
+        if(list==null || list.size()!=1) {
+            return null;
+        }
+        
+        return list.get(0);
+    }
+    
+    @Override
+    public PelpMainLabSubjects findMainLabSubjects(String mainSubject,String labSubject) {
+        
+        // Check input parameters
+        if(mainSubject==null || labSubject==null) {
+            return null;
+        }
+        
+        // Get the language registers
+        Query query=getSession().getNamedQuery("PelpMainLabSubjects.findByPK");
+        query.setParameter("mainSubjectCode", mainSubject);
+        query.setParameter("labSubjectCode", labSubject);
+        List<PelpMainLabSubjects> list=query.list();
+        
+        // Check the output list
+        if(list==null || list.size()!=1) {
+            return null;
+        }
+        
+        return list.get(0);
+    }
+}

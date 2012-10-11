@@ -18,8 +18,13 @@
 */
 package edu.uoc.pelp.test.model.dao.admin;
 
-import edu.uoc.pelp.model.dao.admin.*;
 import edu.uoc.pelp.engine.campus.Person;
+import edu.uoc.pelp.model.dao.admin.IAdministrationDAO;
+import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
+import edu.uoc.pelp.model.vo.admin.PelpAdmins;
+import edu.uoc.pelp.model.vo.admin.PelpLanguages;
+import edu.uoc.pelp.model.vo.admin.PelpMainLabSubjects;
+import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -72,7 +77,92 @@ public class MapAdministrationDAO implements IAdministrationDAO {
             return null;
         }
         return _sessionFactory.getCurrentSession();
-    }  
+    }
+
+    @Override
+    public boolean addAdmin(Person person, boolean active, boolean grant) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public PelpAdmins getAdminData(Person person) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean updateAdmin(Person person, boolean active, boolean grant) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean delAdmin(Person person) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<PelpLanguages> getAvailableLanguages() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<PelpActiveSubjects> getActiveSubjects() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<PelpActiveSubjects> getActiveSubjects(String semester) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean addActiveSubject(String semester, String subjectCode, boolean active) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean updateActiveSubject(String semester, String subjectCode, boolean active) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean deleteActiveSubject(String semester, String subjectCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<PelpMainLabSubjects> getMainSubjectOfLab(String labSubjectCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<PelpMainLabSubjects> getLabSubjectOfMain(String mainSubjectCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean addMainLabCorrespondence(String mainSubject, String labSubject) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean deleteMainLabCorrespondence(String mainSubject, String labSubject) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public PelpLanguages findPelpLanguage(String languageCode) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public PelpActiveSubjects findActiveSubjects(String semester, String subject) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public PelpMainLabSubjects findMainLabSubjects(String mainSubject, String labSubject) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }
 

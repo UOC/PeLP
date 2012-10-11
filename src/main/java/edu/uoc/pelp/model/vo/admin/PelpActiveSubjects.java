@@ -34,8 +34,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "PelpActiveSubjects.findBySemester", query = "SELECT p FROM PelpActiveSubjects p WHERE p.pelpActiveSubjectsPK.semester = :semester"),
     @NamedQuery(name = "PelpActiveSubjects.findBySubject", query = "SELECT p FROM PelpActiveSubjects p WHERE p.pelpActiveSubjectsPK.subject = :subject"),
     @NamedQuery(name = "PelpActiveSubjects.findByActive", query = "SELECT p FROM PelpActiveSubjects p WHERE p.active = :active"),
+    @NamedQuery(name = "PelpActiveSubjects.findAllActive", query = "SELECT p FROM PelpActiveSubjects p WHERE p.active = 1"),
+    @NamedQuery(name = "PelpActiveSubjects.findActiveBySemesterSubject", query = "SELECT p FROM PelpActiveSubjects p WHERE p.pelpActiveSubjectsPK.semester = :semester AND p.pelpActiveSubjectsPK.subject = :subject AND p.active = 1"),
     @NamedQuery(name = "PelpActiveSubjects.findActiveBySemester", query = "SELECT p FROM PelpActiveSubjects p WHERE p.pelpActiveSubjectsPK.semester = :semester AND p.active = 1"),
-    @NamedQuery(name = "PelpActiveSubjects.findAllActive", query = "SELECT p FROM PelpActiveSubjects p WHERE p.active = 1")})
+    @NamedQuery(name = "PelpActiveSubjects.findByPK", query = "SELECT p FROM PelpActiveSubjects p WHERE p.pelpActiveSubjectsPK.semester = :semester AND p.pelpActiveSubjectsPK.subject = :subject")})
+
+
 public class PelpActiveSubjects implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId

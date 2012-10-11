@@ -31,22 +31,27 @@ public class Person {
     /**
      * Person given name
      */
-    public String _name;
+    private String _name;
     
     /**
      * Person full name
      */
-    public String _fullName;
+    private String _fullName;
     
     /**
      * EMail
      */
-    public String _eMail;
+    private String _eMail;
     
     /**
      * Username used in the system
      */
-    public String _username;
+    private String _username;
+    
+    /**
+     * User language selected in campus
+     */
+    private String _language;
     
     /** 
      * Default constuctor.
@@ -62,5 +67,45 @@ public class Person {
      */
     public IUserID getUserID() {
         return _userID;
+    }
+
+    public String geteMail() {
+        return _eMail;
+    }
+
+    public void seteMail(String _eMail) {
+        this._eMail = _eMail;
+    }
+
+    public String getFullName() {
+        return _fullName;
+    }
+
+    public void setFullName(String _fullName) {
+        this._fullName = _fullName;
+    }
+
+    public String getLanguage() {
+        return _language;
+    }
+
+    public void setLanguage(String _language) {
+        this._language = _language;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public void setName(String _name) {
+        this._name = _name;
+    }
+
+    public String getUsername() {
+        return _username;
+    }
+
+    public void setUsername(String _username) {
+        this._username = _username;
     }
 }

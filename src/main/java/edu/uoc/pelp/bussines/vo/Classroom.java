@@ -30,11 +30,6 @@ public class Classroom {
         
     }
     
-    public Classroom(String semester, String subjectCode, int index) {
-        this._subject=new Subject(semester,subjectCode);
-        this._index=index;
-    }
-    
     public Classroom(Subject subject, int index) {
         this._subject=subject;
         this._index=index;

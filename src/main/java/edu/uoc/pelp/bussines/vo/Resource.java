@@ -31,7 +31,7 @@ public class Resource {
     /**
      * Indicates the order of this resource when showed
      */
-    private int order;
+    private int _order;
     
     /**
      * For new resources indicates the language code {"CAT","ESP","ENG",....}
@@ -94,10 +94,10 @@ public class Resource {
     }
 
     public int getOrder() {
-        return order;
+        return _order;
     }
 
     public void setOrder(int order) {
-        this.order = order;
+        this._order = order;
     }
 }

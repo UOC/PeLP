@@ -59,6 +59,11 @@ public class DeliverFile {
      * File content for files to be uploaded to the server
      */
     private Byte[] _fileContent;
+    
+    /**
+     * File with the local path at user computer
+     */
+    private File _fileUserLocalPath;
 
     public Byte[] getFileContent() {
         return _fileContent;
@@ -114,6 +119,14 @@ public class DeliverFile {
 
     public void setRootPath(String _rootPath) {
         this._relativePath = _rootPath;
+    }
+
+    public File getFileUserLocalPath() {
+        return _fileUserLocalPath;
+    }
+
+    public void setFileUserLocalPath(File _fileUserLocalPath) {
+        this._fileUserLocalPath = _fileUserLocalPath;
     }
     
     public String getAbsolutePath() {

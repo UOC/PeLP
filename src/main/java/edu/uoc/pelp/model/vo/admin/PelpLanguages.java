@@ -9,8 +9,8 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
- * @author Xavier
+ * Class implementing the language identifiers for the platform. 
+ * @author Xavier Baró
  */
 @Entity
 @Table(name = "pelp_languages")

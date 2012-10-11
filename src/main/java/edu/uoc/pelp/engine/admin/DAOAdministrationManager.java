@@ -19,9 +19,15 @@
 package edu.uoc.pelp.engine.admin;
 
 import edu.uoc.pelp.engine.campus.Person;
+import edu.uoc.pelp.engine.campus.UOC.Semester;
+import edu.uoc.pelp.model.dao.ITimePeriodDAO;
 import edu.uoc.pelp.model.dao.admin.IAdministrationDAO;
+import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
 import edu.uoc.pelp.model.vo.admin.PelpAdmins;
-import org.hibernate.Query;
+import edu.uoc.pelp.model.vo.admin.PelpLanguages;
+import edu.uoc.pelp.model.vo.admin.PelpMainLabSubjects;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Implements a class to manage administration data.
@@ -35,11 +41,18 @@ public class DAOAdministrationManager implements IAdministrationManager {
     private IAdministrationDAO _administration;
     
     /**
+     * Semester DAO
+     */
+    private ITimePeriodDAO _timePeriodDAO;
+    
+    /**
      * Default constructor for the DAOActivityManager
      * @param adminDAO Object to access all the administration information
+     * @param semesterDAO Object to access active semesters
      */
-    public DAOAdministrationManager(IAdministrationDAO adminDAO) {
+    public DAOAdministrationManager(IAdministrationDAO adminDAO,ITimePeriodDAO semesterDAO) {
         _administration=adminDAO;
+        _timePeriodDAO=semesterDAO;        
     }
 
     @Override
@@ -91,16 +104,133 @@ public class DAOAdministrationManager implements IAdministrationManager {
 
     @Override
     public boolean addAdministrator(Person person, boolean active, boolean grant) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        // Delegate to the DAO administrator
+        return _administration.addAdmin(person, active, grant);
     }
 
     @Override
     public boolean deleteAdministrator(Person person) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return _administration.delAdmin(person);
     }
 
     @Override
     public boolean updateAdministrator(Person person, boolean active, boolean grant) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return _administration.updateAdmin(person, active, grant);
+    }
+    
+    @Override
+    public boolean isValidLanguageCode(String languageCode) {
+        // Check the parameter
+        if(languageCode==null) {
+            return false;
+        }
+        
+        // Get the language registers
+        return _administration.findPelpLanguage(languageCode)!=null;
+    }
+    
+    @Override
+    public boolean isActiveSubject(String semester, String subjectCode) {
+        // Check input parameters
+        if(semester==null || subjectCode==null) {
+            return false;
+        }
+        
+        // Check the semester
+        if(!isActiveSemester(semester)) {
+            return false;
+        }
+        
+        // Get the active subject registers
+        return _administration.findActiveSubjects(semester, subjectCode)!=null;
+    }
+    
+    @Override
+    public boolean isActiveSemester(String semester) {
+        // Check input parameters
+        if(semester==null) {
+            return false;
+        }
+        
+        Semester semesterObj=(Semester) _timePeriodDAO.find(new Semester(semester));
+        if(semesterObj==null) {
+            return false;
+        }
+        
+        return semesterObj.isActive();
+    }
+
+    @Override
+    public PelpLanguages[] getAvailableLanguages() {
+        List<PelpLanguages> list=_administration.getAvailableLanguages();
+        
+        // Build the languages array
+        PelpLanguages[] langList=new PelpLanguages[list.size()];
+        list.toArray(langList);
+        
+        return langList;
+    }
+
+    @Override
+    public List<PelpActiveSubjects> getActiveSubjects() {
+        return _administration.getActiveSubjects();
+    }
+
+    @Override
+    public List<PelpActiveSubjects> getActiveSubjects(String semester) {
+        return _administration.getActiveSubjects(semester);
+    }
+
+    @Override
+    public boolean addActiveSubject(String semester, String subjectCode, boolean active) {
+        return _administration.addActiveSubject(semester, subjectCode, active);
+    }
+
+    @Override
+    public boolean updateActiveSubject(String semester, String subjectCode, boolean active) {
+        return _administration.updateActiveSubject(semester, subjectCode, active);
+    }
+
+    @Override
+    public boolean deleteActiveSubject(String semester, String subjectCode) {
+        return _administration.deleteActiveSubject(semester, subjectCode);
+    }
+
+    @Override
+    public List<PelpMainLabSubjects> getMainSubjectOfLab(String labSubjectCode) {
+        return _administration.getMainSubjectOfLab(labSubjectCode);
+    }
+
+    @Override
+    public List<PelpMainLabSubjects> getLabSubjectOfMain(String mainSubjectCode) {
+        return _administration.getLabSubjectOfMain(mainSubjectCode);
+    }
+
+    @Override
+    public boolean addMainLabCorrespondence(String mainSubject, String labSubject) {
+        return _administration.addMainLabCorrespondence(mainSubject, labSubject);
+    }
+
+    @Override
+    public boolean deleteMainLabCorrespondence(String mainSubject, String labSubject) {
+        return _administration.deleteMainLabCorrespondence(mainSubject, labSubject);
+    }
+
+    @Override
+    public boolean addSemester(String semester, Date start, Date end) {
+        Semester semesterObj=new Semester(semester,start,end);
+        return _timePeriodDAO.save(semesterObj);
+    }
+
+    @Override
+    public boolean updateSemester(String semester, Date start, Date end) {
+        Semester semesterObj=new Semester(semester,start,end);
+        return _timePeriodDAO.update(semesterObj);
+    }
+
+    @Override
+    public boolean removeSemester(String semester) {
+        Semester semesterObj=new Semester(semester);
+        return _timePeriodDAO.delete(semesterObj);
     }
 }

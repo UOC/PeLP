@@ -25,7 +25,9 @@
     <mapping class="edu.uoc.pelp.model.vo.ActivityTest"/>
     <mapping class="edu.uoc.pelp.model.vo.TestDesc"/>
     <mapping class="edu.uoc.pelp.model.vo.Deliver"/>
-    <mapping class="edu.uoc.pelp.model.vo.DeliverFile"/>  
+    <mapping class="edu.uoc.pelp.model.vo.DeliverResult"/>
+    <mapping class="edu.uoc.pelp.model.vo.DeliverFile"/> 
+    <mapping class="edu.uoc.pelp.model.vo.DeliverTestResult"/> 
     
     <!-- Add Entity class mappings for UOC classes -->
     <mapping class="edu.uoc.pelp.model.vo.UOC.Semester"/>

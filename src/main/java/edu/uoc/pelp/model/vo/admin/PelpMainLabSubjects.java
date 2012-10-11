@@ -32,7 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "PelpMainLabSubjects.findAll", query = "SELECT p FROM PelpMainLabSubjects p"),
     @NamedQuery(name = "PelpMainLabSubjects.findByMainSubjectCode", query = "SELECT p FROM PelpMainLabSubjects p WHERE p.pelpMainLabSubjectsPK.mainSubjectCode = :mainSubjectCode"),
-    @NamedQuery(name = "PelpMainLabSubjects.findByLabSubjectCode", query = "SELECT p FROM PelpMainLabSubjects p WHERE p.pelpMainLabSubjectsPK.labSubjectCode = :labSubjectCode")})
+    @NamedQuery(name = "PelpMainLabSubjects.findByLabSubjectCode", query = "SELECT p FROM PelpMainLabSubjects p WHERE p.pelpMainLabSubjectsPK.labSubjectCode = :labSubjectCode"),
+    @NamedQuery(name = "PelpMainLabSubjects.findByPK", query = "SELECT p FROM PelpMainLabSubjects p WHERE p.pelpMainLabSubjectsPK.mainSubjectCode = :mainSubjectCode AND p.pelpMainLabSubjectsPK.labSubjectCode = :labSubjectCode")})
 public class PelpMainLabSubjects implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId

@@ -32,6 +32,12 @@ public class MultilingualText {
      * MultilingualText text
      */
     private String _text;
+    
+    
+    public MultilingualText(String language,String text) {
+        _language=language;
+        _text=text;
+    }
 
     /**
      * Get de text

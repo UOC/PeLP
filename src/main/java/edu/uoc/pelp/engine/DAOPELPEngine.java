@@ -25,6 +25,7 @@ import edu.uoc.pelp.engine.campus.ICampusConnection;
 import edu.uoc.pelp.engine.deliver.DAODeliverManager;
 import edu.uoc.pelp.engine.information.DAOInformationManager;
 import edu.uoc.pelp.model.dao.*;
+import edu.uoc.pelp.model.dao.UOC.SemesterDAO;
 import edu.uoc.pelp.model.dao.admin.AdministrationDAO;
 import org.hibernate.SessionFactory;
 
@@ -66,13 +67,14 @@ public class DAOPELPEngine extends PELPEngine {
         DeliverDAO deliverDAO=new DeliverDAO(sessionFactory);
         DeliverResultsDAO deliverResultsDAO=new DeliverResultsDAO(sessionFactory);        
         AdministrationDAO adminDAO=new AdministrationDAO(sessionFactory);
+        SemesterDAO semesterDAO=new SemesterDAO(sessionFactory);
         LoggingDAO logDAO=new LoggingDAO(sessionFactory);
         StatisticsDAO statsDAO=new StatisticsDAO(sessionFactory);
                
         // Create the managers
         _deliverManager=new DAODeliverManager(deliverDAO,deliverResultsDAO);
         _activityManager=new DAOActivityManager(activityDAO);
-        _administrationManager=new DAOAdministrationManager(adminDAO);
+        _administrationManager=new DAOAdministrationManager(adminDAO,semesterDAO);
         _informationManager=new DAOInformationManager(logDAO,statsDAO);
     }
 }

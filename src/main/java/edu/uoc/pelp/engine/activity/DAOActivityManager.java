@@ -58,6 +58,22 @@ public class DAOActivityManager implements IActivityManager {
         activity.setEnd(end);
         return _activities.add(subjectID,activity);
     }
+    
+    @Override
+    public ActivityID addActivity(ISubjectID subject, Activity activity) {
+        // Check the dates
+        if(activity.getStart()!=null && activity.getEnd()!=null) {
+            if(activity.getStart().after(activity.getEnd())) {
+                return null;
+            }
+        } 
+        
+        // Add the activity to the database
+        ActivityID newID=_activities.add(subject,activity);
+        activity.setActivityID(newID);
+        
+        return newID;
+    }
 
     @Override
     public boolean editActivity(Activity activity) {     
@@ -160,4 +176,5 @@ public class DAOActivityManager implements IActivityManager {
         
         return retList;
     }
+
 }

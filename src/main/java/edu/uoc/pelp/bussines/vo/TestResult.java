@@ -39,6 +39,11 @@ public class TestResult {
     private boolean _isPassed;
     
     /**
+     * Contains the program expected output for failed tests
+     */
+    private String _expectedOutput;
+    
+    /**
      * Contains the program output for failed tests
      */
     private String _output;

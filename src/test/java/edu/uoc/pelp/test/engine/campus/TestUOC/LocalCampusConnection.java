@@ -675,51 +675,60 @@ public class LocalCampusConnection implements ICampusConnection{
         _testAccessPersons=new Person[9];
         
         _testAccessPersons[0]=new Person(((IUserID)new UserID("000000")));
-        _testAccessPersons[0]._eMail="user0@uoc.edu";
-        _testAccessPersons[0]._fullName="Manny Jah";
-        _testAccessPersons[0]._name="Manny";
+        _testAccessPersons[0].seteMail("user0@uoc.edu");
+        _testAccessPersons[0].seteMail("Manny Jah");
+        _testAccessPersons[0].seteMail("Manny");
+        _testAccessPersons[0].setUsername("user0");
         
         _testAccessPersons[1]=new Person(((IUserID)new UserID("111111")));
-        _testAccessPersons[1]._eMail="user1@uoc.edu";
-        _testAccessPersons[1]._fullName="Barb Akew";
-        _testAccessPersons[1]._name="Barb";
+        _testAccessPersons[1].seteMail("user1@uoc.edu");
+        _testAccessPersons[1].seteMail("Barb Akew");
+        _testAccessPersons[1].seteMail("Barb");
+        _testAccessPersons[1].setUsername("user1");
         
         _testAccessPersons[2]=new Person(((IUserID)new UserID("222222")));
-        _testAccessPersons[2]._eMail="user2@uoc.edu";
-        _testAccessPersons[2]._fullName="Ann Chovey";
-        _testAccessPersons[2]._name="Ann";
+        _testAccessPersons[2].seteMail("user2@uoc.edu");
+        _testAccessPersons[2].seteMail("Ann Chovey");
+        _testAccessPersons[2].seteMail("Ann");
+        _testAccessPersons[2].setUsername("user2");
         
         _testAccessPersons[3]=new Person(((IUserID)new UserID("333333")));
-        _testAccessPersons[3]._eMail="user3@uoc.edu";
-        _testAccessPersons[3]._fullName="Hazel Nutt";
-        _testAccessPersons[3]._name="Hazel";
+        _testAccessPersons[3].seteMail("user3@uoc.edu");
+        _testAccessPersons[3].seteMail("Hazel Nutt");
+        _testAccessPersons[3].seteMail("Hazel");
+        _testAccessPersons[3].setUsername("user3");
         
         _testAccessPersons[4]=new Person(((IUserID)new UserID("444444")));
-        _testAccessPersons[4]._eMail="user4@uoc.edu";
-        _testAccessPersons[4]._fullName="Bess Twishes";
-        _testAccessPersons[4]._name="Bess";
+        _testAccessPersons[4].seteMail("user4@uoc.edu");
+        _testAccessPersons[4].seteMail("Bess Twishes");
+        _testAccessPersons[4].seteMail("Bess");
+        _testAccessPersons[4].setUsername("user4");
         
         _testAccessPersons[5]=new Person(((IUserID)new UserID("555555")));
-        _testAccessPersons[5]._eMail="user5@uoc.edu";
-        _testAccessPersons[5]._fullName="Chris Anthemum";
-        _testAccessPersons[5]._name="Chris";
+        _testAccessPersons[5].seteMail("user5@uoc.edu");
+        _testAccessPersons[5].seteMail("Chris Anthemum");
+        _testAccessPersons[5].seteMail("Chris");
+        _testAccessPersons[5].setUsername("user5");
         
         _testAccessPersons[6]=new Person(((IUserID)new UserID("666666")));
-        _testAccessPersons[6]._eMail="user6@uoc.edu";
-        _testAccessPersons[6]._fullName="Harriet Upp";
-        _testAccessPersons[6]._name="Harriet";
+        _testAccessPersons[6].seteMail("user6@uoc.edu");
+        _testAccessPersons[6].seteMail("Harriet Upp");
+        _testAccessPersons[6].seteMail("Harriet");
+        _testAccessPersons[6].setUsername("user6");
         
         _testAccessPersons[7]=new Person(((IUserID)new UserID("777777")));
-        _testAccessPersons[7]._eMail="user7@uoc.edu";
-        _testAccessPersons[7]._fullName="Theresa Green";
-        _testAccessPersons[7]._name="Theresa";
+        _testAccessPersons[7].seteMail("user7@uoc.edu");
+        _testAccessPersons[7].seteMail("Theresa Green");
+        _testAccessPersons[7].seteMail("Theresa");
+        _testAccessPersons[7].setUsername("user7");
         
         
         // User with administration privilegies
         _testAccessPersons[8]=new Person(((IUserID)new UserID("888888")));
-        _testAccessPersons[8]._eMail="admin@uoc.edu";
-        _testAccessPersons[8]._fullName="PELP admin user";
-        _testAccessPersons[8]._name="admin";
+        _testAccessPersons[8].seteMail("admin@uoc.edu");
+        _testAccessPersons[8].seteMail("PELP admin user");
+        _testAccessPersons[8].seteMail("admin");
+        _testAccessPersons[8].setUsername("admin");
         
         // Add users to the list of users
         _dummyUsers.clear();
@@ -731,6 +740,7 @@ public class LocalCampusConnection implements ICampusConnection{
         _dummyUsers.put((UserID)_testAccessPersons[5].getUserID(), _testAccessPersons[5]);
         _dummyUsers.put((UserID)_testAccessPersons[6].getUserID(), _testAccessPersons[6]);
         _dummyUsers.put((UserID)_testAccessPersons[7].getUserID(), _testAccessPersons[7]);
+        _dummyUsers.put((UserID)_testAccessPersons[8].getUserID(), _testAccessPersons[8]);
         
         // Create the semesters
         try {    
@@ -747,7 +757,7 @@ public class LocalCampusConnection implements ICampusConnection{
         }
         
         // Create subjects
-        _testAccessSubjects=new Subject[4];
+        _testAccessSubjects=new Subject[5];
         
         SubjectID sid1=new SubjectID("05.554",_dummySemesters.get("20111"));
         _testAccessSubjects[0]=new Subject(sid1);
@@ -775,12 +785,48 @@ public class LocalCampusConnection implements ICampusConnection{
         cr2.addStudent(getTestPersonByPos(6));
         _testAccessSubjects[0].addClassroom(cr1);
         _testAccessSubjects[0].addClassroom(cr2);
+        
+        
+        // Add data for bussines workflow tests
+        SubjectID sid4=new SubjectID("05.062",_dummySemesters.get("20121"));
+        _testAccessSubjects[3]=new Subject(sid4);
+        _testAccessSubjects[3].setDescription("Test Main subject");       
+        _testAccessSubjects[3].setShortName("TMS");
+        
+        SubjectID sid5=new SubjectID("05.073",_dummySemesters.get("20121"));
+        _testAccessSubjects[4]=new Subject(sid5);
+        _testAccessSubjects[4].setDescription("Test Lab subject");       
+        _testAccessSubjects[4].setShortName("TLS");
+                
+        // Add the classrooms to created subjects
+        Classroom cr3=new Classroom(new ClassroomID(sid3,1));
+        cr3.addTeacher(getTestPersonByPos(5));
+        cr3.addTeacher(getTestPersonByPos(1));
+        cr3.addStudent(getTestPersonByPos(3));
+        cr3.addStudent(getTestPersonByPos(4));
+        cr3.addStudent(getTestPersonByPos(6));
+        Classroom cr4=new Classroom(new ClassroomID(sid3,2));
+        cr4.addTeacher(getTestPersonByPos(1));
+        Classroom cr5=new Classroom(new ClassroomID(sid4,1));
+        cr5.addTeacher(getTestPersonByPos(1));
+        cr5.addStudent(getTestPersonByPos(3));
+        Classroom cr6=new Classroom(new ClassroomID(sid4,2));
+        cr6.addTeacher(getTestPersonByPos(1));
+        cr6.addTeacher(getTestPersonByPos(2));
+        cr6.addStudent(getTestPersonByPos(4));
+        cr6.addStudent(getTestPersonByPos(6));
+        _testAccessSubjects[3].addClassroom(cr3);
+        _testAccessSubjects[3].addClassroom(cr4);
+        _testAccessSubjects[4].addClassroom(cr5);
+        _testAccessSubjects[4].addClassroom(cr6);
                        
         // Add the subjects to the list of subjects
         _dummySubjects.clear();
         _dummySubjects.put((SubjectID)_testAccessSubjects[0].getID(), _testAccessSubjects[0]);
         _dummySubjects.put((SubjectID)_testAccessSubjects[1].getID(), _testAccessSubjects[1]);
         _dummySubjects.put((SubjectID)_testAccessSubjects[2].getID(), _testAccessSubjects[2]);     
+        _dummySubjects.put((SubjectID)_testAccessSubjects[3].getID(), _testAccessSubjects[3]);     
+        _dummySubjects.put((SubjectID)_testAccessSubjects[4].getID(), _testAccessSubjects[4]);     
     }
     
     /**
@@ -824,6 +870,12 @@ public class LocalCampusConnection implements ICampusConnection{
         } else if("student1".equalsIgnoreCase(profileID)) {
             // Student with an active subject with other students
             _userID=(UserID) getTestPersonByPos(3).getUserID();
+        } else if("student2".equalsIgnoreCase(profileID)) {
+            // Student with an active subject with other students
+            _userID=(UserID) getTestPersonByPos(4).getUserID();
+        } else if("student3".equalsIgnoreCase(profileID)) {
+            // Student with an active subject with other students
+            _userID=(UserID) getTestPersonByPos(6).getUserID();
         } else if("teacher1".equalsIgnoreCase(profileID)) {
             // Teacher with one student
             _userID=(UserID) getTestPersonByPos(5).getUserID();
