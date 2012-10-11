@@ -21,6 +21,11 @@ public class UserUtils {
 	public static final String APPTREN_EXPIB="GAT_EXPIB";//Campus castellano /Global Campus
 	public static final String APPTREN_EXP="GAT_EXP";//Campus catalan
 	
+	public static final String CATALAN = "ca";
+	public static final String CASTELLANO = "es";
+	public static final String INGLES = "en";
+	public static final String FRANCES = "fr";
+	
 	private static final Logger log = Logger.getLogger(UserUtils.class);
 	
     /**
@@ -106,4 +111,22 @@ public class UserUtils {
     	return aplicacionTren;
     }
 
+    /**
+     * Retorna el Idioma por defecto dependiendo del appidTREN
+     * @param appidTREN
+     * @return String (defaultIdioma)
+     * @throws Exception
+     */
+    public static String getCampusLanguage( final String appidTREN ) throws Exception{
+        String _campusIdioma= CATALAN;
+        if (APPID_UOC2000.equalsIgnoreCase(appidTREN)){
+            _campusIdioma= CASTELLANO;
+        }else if (APPID_UOC.equalsIgnoreCase(appidTREN)){
+            _campusIdioma= CATALAN;
+        }else if (APPID_GCUOC.equalsIgnoreCase(appidTREN)) {
+            _campusIdioma=INGLES;
+        }
+
+        return _campusIdioma;
+    }
 }

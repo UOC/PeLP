@@ -44,7 +44,25 @@ public class ClassroomID implements IClassroomID {
     }
 
     public int compareTo(IClassroomID t) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ClassroomID arg=(ClassroomID) t;
+        if(_subjectCode!=null) {
+            if(_subjectCode.compareTo(arg._subjectCode)!=0) {
+                return _subjectCode.compareTo(arg._subjectCode);
+            }
+        } else {
+            if(arg._subjectCode!=null) {
+                return -1;
+            }
+        }
+        if(_classIdx!=null) {
+            return _classIdx.compareTo(arg._classIdx);
+        } else {
+            if(arg._classIdx!=null) {
+                return -1;
+            }
+        }
+        
+        return 0;
     }
 
     protected void copyData(IPelpID genericID) throws PelpException {

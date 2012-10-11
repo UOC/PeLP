@@ -1,11 +1,12 @@
 package edu.uoc.pelp.engine.campus.UOC;
 
-import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
 import net.opentrends.remoteinterface.auth.Auth;
 import net.opentrends.remoteinterface.auth.SessionContext;
+import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
 
 public class Utils {
 
+	
     /**
      * Funcion que retorna la SessionContext a partir de la campus Session (s)
      * @param campusSession
@@ -21,5 +22,6 @@ public class Utils {
         }
         return sessionContext;
     }
+
 
 }
