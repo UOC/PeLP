@@ -36,23 +36,23 @@ public class ActivityPK implements Serializable {
     @Column(name = "subject",length = 6, columnDefinition="char(6)")
     private String subject;
     @Basic(optional = false)
-    @Column(name = "index")
-    private int index;
+    @Column(name = "activityIndex")
+    private int activityIndex;
 
     public ActivityPK() {
         
     }
 
-    public ActivityPK(String semester, String subject, int index) {
+    public ActivityPK(String semester, String subject, int activityIndex) {
         this.semester = semester;
         this.subject = subject;
-        this.index = index;
+        this.activityIndex = activityIndex;
     }
     
     public ActivityPK(ActivityTestPK activityTestPK) {
         this.semester=activityTestPK.getSemester();
         this.subject=activityTestPK.getSubject();
-        this.index=activityTestPK.getActivityIndex();
+        this.activityIndex=activityTestPK.getActivityIndex();
     }
 
     public String getSemester() {
@@ -71,12 +71,12 @@ public class ActivityPK implements Serializable {
         this.subject = subject;
     }
 
-    public int getIndex() {
-        return index;
+    public int getActivityIndex() {
+        return activityIndex;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
+    public void setActivityIndex(int activityIndex) {
+        this.activityIndex = activityIndex;
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ActivityPK implements Serializable {
         int hash = 0;
         hash += (semester != null ? semester.hashCode() : 0);
         hash += (subject != null ? subject.hashCode() : 0);
-        hash += (int) index;
+        hash += (int) activityIndex;
         return hash;
     }
 
@@ -101,7 +101,7 @@ public class ActivityPK implements Serializable {
         if ((this.subject == null && other.subject != null) || (this.subject != null && !this.subject.equals(other.subject))) {
             return false;
         }
-        if (this.index != other.index) {
+        if (this.activityIndex != other.activityIndex) {
             return false;
         }
         return true;
@@ -109,7 +109,7 @@ public class ActivityPK implements Serializable {
 
     @Override
     public String toString() {
-        return "edu.uoc.pelp.model.vo.ActivityPK[ semester=" + semester + ", subject=" + subject + ", index=" + index + " ]";
+        return "edu.uoc.pelp.model.vo.ActivityPK[ semester=" + semester + ", subject=" + subject + ", index=" + activityIndex + " ]";
     }
     
 }

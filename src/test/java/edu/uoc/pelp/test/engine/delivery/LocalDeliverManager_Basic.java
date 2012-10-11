@@ -19,7 +19,7 @@
 package edu.uoc.pelp.test.engine.delivery;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
-import edu.uoc.pelp.engine.activity.ActivityTestResult;
+import edu.uoc.pelp.engine.deliver.ActivityTestResult;
 import edu.uoc.pelp.engine.activity.TestID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.TestResult;

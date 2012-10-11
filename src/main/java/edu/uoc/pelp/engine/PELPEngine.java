@@ -20,6 +20,7 @@ package edu.uoc.pelp.engine;
 
 import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.activity.*;
+import edu.uoc.pelp.engine.admin.IAdministrationManager;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.BasicCodeAnalyzer;
 import edu.uoc.pelp.engine.aem.CodeProject;
@@ -30,11 +31,12 @@ import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverID;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
 import edu.uoc.pelp.engine.deliver.IDeliverManager;
-import edu.uoc.pelp.exception.AuthPelpException;
-import edu.uoc.pelp.exception.ExecPelpException;
-import edu.uoc.pelp.exception.InvalidActivityPelpException;
+import edu.uoc.pelp.engine.information.DAOInformationManager;
+import edu.uoc.pelp.engine.information.IInformationManager;
+import edu.uoc.pelp.exception.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 /**
  * This class implements the engine of the PELP system. 
@@ -56,6 +58,16 @@ public class PELPEngine implements IPELPEngine {
      * Object to access the delivers manager
      */
     protected IDeliverManager _deliverManager=null;
+    
+    /**
+     * Object to access the administration manager
+     */
+    protected IAdministrationManager _administrationManager=null;
+    
+    /**
+     * Object to access the information manager
+     */
+    protected IInformationManager _informationManager=null;
     
     /**
      * Object to access the system configuration
@@ -97,6 +109,24 @@ public class PELPEngine implements IPELPEngine {
     public void setDeliverManager(IDeliverManager manager) {
         _deliverManager=manager;
     }           
+    
+    /**
+     * Assign a new administration manager
+     * @param manager Object allowing to manage the delivers
+     */
+    @Override
+    public void setAdministrationManager(IAdministrationManager manager) {
+        _administrationManager=manager;
+    } 
+    
+    /**
+    * Assign a new information manager
+    * @param manager Object allowing to manage the platform information and statistics
+    */
+    @Override
+    public void setInformationManager(DAOInformationManager manager) {
+        _informationManager=manager;
+    }
 
     /**
      * Check if the current user is authenticated or not.
@@ -127,6 +157,7 @@ public class PELPEngine implements IPELPEngine {
      * @return List of active subjects for current user.
      * @throws AuthPelpException If no user is authenticated.
      */
+    @Override
     public Subject[] getActiveSubjects() throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
@@ -468,6 +499,165 @@ public class PELPEngine implements IPELPEngine {
         
         return false;
     }
+    
+    /**
+    * Obtain the list of all the delivers of a certain classroom for a certain activity. Only a teacher
+    * of the classroom can access to this information. Both, laboratory and main classrooms are checked.
+    * @param classroom Identifier of the classroom for which delivers are requested.
+    * @param activity Identifier of the activity delivers are requested from.
+    * @return Array of Delivers.
+    * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+    */
+    @Override
+    public Deliver[] getClassroomDelivers(IClassroomID classroom, ActivityID activity) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!_campusConnection.isRole(UserRoles.Teacher, classroom) && !_campusConnection.isRole(UserRoles.MainTeacher, classroom))  {
+            throw new AuthPelpException("Not enough rights to access this information");
+        }
+        
+        // Return the delivers
+        return _deliverManager.getClassroomDelivers(classroom, activity);
+    }
+
+    /**
+    * Obtain the last submitted deliver for each user of a certain classroom for a certain activity. Only a teacher
+    * of the classroom can access to this information. Both, laboratory and main classrooms are checked.
+    * @param classroom Identifier of the classroom for which delivers are requested.
+    * @param activity Identifier of the activity delivers are requested from.
+    * @return Array of Delivers.
+    * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+    */
+    @Override
+    public Deliver[] getClassroomLastDelivers(IClassroomID classroom, ActivityID activity) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!_campusConnection.isRole(UserRoles.Teacher, classroom) && !_campusConnection.isRole(UserRoles.MainTeacher, classroom))  {
+            throw new AuthPelpException("Not enough rights to access this information");
+        }
+                
+        // Return the delivers
+        return _deliverManager.getClassroomLastDelivers(classroom, activity);
+    }
+    
+    /**
+    * Checks if the current user is administrator of the platform. 
+    * @param subject Subject Identifier
+    * @return True if the user is an administrator or False otherwise.
+    * @throws AuthPelpException If user is not authenticated
+    */
+    @Override
+    public boolean isAdministrator() throws AuthPelpException {
+        // Check if this user is an administrator
+        return _administrationManager.isAdministrator(getUserInfo());
+    }
+    
+    @Override
+    public ActivityID addActivity(ISubjectID subject,Activity activity, TestData[] tests) throws AuthPelpException,InvalidActivityPelpException,InvalidSubjectPelpException,ExecPelpException {
+        
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!_campusConnection.isRole(UserRoles.Teacher, subject) && !_campusConnection.isRole(UserRoles.MainTeacher, subject))  {
+            throw new InvalidSubjectPelpException("Only teachers can add activities to a subject");
+        }
+        
+        // Check activity data
+        if(activity==null) {
+            throw new InvalidActivityPelpException("Null activity is detected"); 
+        }
+        if(activity.getStart()!=null && activity.getEnd()!=null) {
+            if(activity.getStart().after(activity.getEnd())) {
+                throw new InvalidActivityPelpException("Starting date cannot be after ending date.");
+            }
+        }
+        if(activity.getEnd()!=null && activity.getEnd().before(new Date())) {
+            throw new InvalidActivityPelpException("Ending date cannot be in the past.");
+        }
+        
+        // Add the new activity
+        ActivityID newID=_activityManager.addActivity(subject, activity);
+        if(newID==null) {
+            throw new ExecPelpException("Cannot add the new activity");
+        }
+        
+        // Add the tests
+        if(tests!=null) {
+            for(TestData test:tests) {
+                ActivityTest newTest=new ActivityTest(test);
+                if(_activityManager.addTest(newID, newTest)==null) {
+                    _activityManager.deleteActivity(newID);
+                    throw new ExecPelpException("Cannot add tests. Activity removed.");
+                }
+            }
+        }
+        
+        return newID;
+    }
+    
+    @Override
+    public Activity getActivity(ActivityID activityID) throws AuthPelpException, InvalidActivityPelpException, InvalidSubjectPelpException, ExecPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!_campusConnection.isRole(UserRoles.Teacher, activityID.subjectID) && !_campusConnection.isRole(UserRoles.MainTeacher, activityID.subjectID))  {
+            throw new InvalidSubjectPelpException("Only teachers can get activities from the subject");
+        }
+        
+        // Check activity identifer
+        if(activityID==null) {
+            throw new InvalidActivityPelpException("Null activity identifier is detected"); 
+        }
+        
+        // Get the activity
+        return _activityManager.getActivity(activityID);
+    }
+    
+    @Override
+    public ActivityTest[] getActivityTests(ActivityID activityID) throws AuthPelpException, InvalidActivityPelpException, InvalidSubjectPelpException, ExecPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!_campusConnection.isRole(UserRoles.Teacher, activityID.subjectID) && !_campusConnection.isRole(UserRoles.MainTeacher, activityID.subjectID))  {
+            throw new InvalidSubjectPelpException("Only teachers can get activities from the subject");
+        }
+        
+        // Check activity identifer
+        if(activityID==null) {
+            throw new InvalidActivityPelpException("Null activity identifier is detected"); 
+        }
+        
+        // Get the activity test IDs
+        TestID[] testIDs=_activityManager.getActivityTests(activityID);
+        if(testIDs==null) {
+            return null;
+        }
+        
+        // Create the output array
+        ActivityTest[] retList=new ActivityTest[testIDs.length];
+        for(int i=0;i<testIDs.length;i++) {
+            retList[i]=_activityManager.getTest(testIDs[i]);
+        }
+        
+        return retList;
+    }
 
     /**
     * Remove all the information of inputs and outputs for private tests
@@ -484,11 +674,144 @@ public class PELPEngine implements IPELPEngine {
         }
     }   
     
+    @Override
+    public String getUserLanguageCode() throws AuthPelpException {
+        Person userData=_campusConnection.getUserData();
+                
+        // Convert internal language codes to PeLP language code
+        String languageCode="";
+        //return languageCode;
+        
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean addSemester(String semester, Date start, Date end) throws AuthPelpException, InvalidTimePeriodPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!isAdministrator())  {
+            throw new AuthPelpException("Only administrators can add new semesters");
+        }
+        
+        return _administrationManager.addSemester(semester,start,end);
+    }
+
+    @Override
+    public boolean updateSemester(String semester, Date start, Date end) throws AuthPelpException, InvalidTimePeriodPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!isAdministrator())  {
+            throw new AuthPelpException("Only administrators can modify semesters");
+        }
+        
+        return _administrationManager.updateSemester(semester,start,end);
+    }
+
+    @Override
+    public boolean removeSemester(String semester) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!isAdministrator())  {
+            throw new AuthPelpException("Only administrators can delete a semester");
+        }
+        
+        return _administrationManager.removeSemester(semester);
+    }
+    
+    @Override
+    public boolean addLaboratory(String mainSubject, String laboratory) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!isAdministrator())  {
+            throw new AuthPelpException("Only administrators can delete a semester");
+        }
+        
+        return _administrationManager.addMainLabCorrespondence(mainSubject, laboratory);
+    }
+
+    @Override
+    public boolean removeLaboratory(String mainSubject, String laboratory) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!isAdministrator())  {
+            throw new AuthPelpException("Only administrators can delete a semester");
+        }
+        
+        return _administrationManager.deleteMainLabCorrespondence(mainSubject, laboratory);
+    }
+
+    @Override
+    public boolean activateSubject(String semester, String subject) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!isAdministrator())  {
+            throw new AuthPelpException("Only administrators can delete a semester");
+        }
+        
+        return _administrationManager.addActiveSubject(semester, subject, true);
+    }
+
+    @Override
+    public boolean deactivateSubject(String semester, String subject) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!isAdministrator())  {
+            throw new AuthPelpException("Only administrators can delete a semester");
+        }
+        
+        // Change active value to false
+        return _administrationManager.updateActiveSubject(semester, subject, false);
+    }
+
+    @Override
+    public boolean removeSubjectActivationRegister(String semester, String subject) throws AuthPelpException {
+        // Check user authentication
+        if(!isUserAuthenticated()) {
+            throw new AuthPelpException("User must be authenticated");
+        }
+        
+        // Check user restrictions
+        if(!isAdministrator())  {
+            throw new AuthPelpException("Only administrators can delete a semester");
+        }
+        
+        // Remove the regioster
+        return _administrationManager.deleteActiveSubject(semester, subject);
+    }
+    
     //TODO: Direct methods for service demands
     
     //TODO: Administration methods
     // Create/Update Activities(+Tests) (Check all information)
-    // Create/Update Semesters
     
     //TODO: Resources access
+
 }

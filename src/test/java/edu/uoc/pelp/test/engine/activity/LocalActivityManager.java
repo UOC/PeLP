@@ -42,6 +42,7 @@ public class LocalActivityManager implements IActivityManager {
      */
     private HashMap<TestID,ActivityTest> _tests=new HashMap<TestID,ActivityTest>();
     
+    @Override
     public ActivityID addActivity(ISubjectID subject, Date start, Date end) {
         // Get all activities of a certain subject
         ActivityID[] activities=getSubjectActivities(subject);
@@ -63,6 +64,30 @@ public class LocalActivityManager implements IActivityManager {
         return newID;
     }
 
+    @Override
+    public ActivityID addActivity(ISubjectID subject, Activity activity) {
+        // Get all activities of a certain subject
+        ActivityID[] activities=getSubjectActivities(subject);
+        
+        // Search the last identifier
+        long lastID=0;
+        for(ActivityID id:activities) {
+            if(id.index>lastID) {
+                lastID=id.index;
+            }
+        }
+        
+        // Create a new identifier
+        ActivityID newID=new ActivityID(subject,lastID+1);
+        
+        // Create the new Activity
+        activity.setActivityID(newID);
+        _activities.put(newID,new Activity(newID,activity.clone()));
+        
+        return newID;
+    }
+    
+    @Override
     public boolean editActivity(Activity activity) {
         // Check if the activity exists
         if(_activities.containsKey(activity.getActivity())) {
@@ -82,6 +107,7 @@ public class LocalActivityManager implements IActivityManager {
         return false;
     }
 
+    @Override
     public boolean deleteActivity(ActivityID activityID) {
         // Check if the activity exists
         if(_activities.containsKey(activityID)) {
@@ -93,6 +119,7 @@ public class LocalActivityManager implements IActivityManager {
         return true;
     }
 
+    @Override
     public TestID addTest(ActivityID activityID, ActivityTest test) {
         // Check the activity
         if(!_activities.containsKey(activityID)) {
@@ -122,6 +149,7 @@ public class LocalActivityManager implements IActivityManager {
         return newID;
     }
 
+    @Override
     public boolean editTest(ActivityTest test) {
         // Check if the test exists
         if(_tests.containsKey(test.getID())) {
@@ -134,6 +162,7 @@ public class LocalActivityManager implements IActivityManager {
         return false;
     }
 
+    @Override
     public boolean deleteTest(TestID testID) {
         // Check if the test exists
         if(_tests.containsKey(testID)) {
@@ -145,6 +174,7 @@ public class LocalActivityManager implements IActivityManager {
         return false;
     }
 
+    @Override
     public Activity getActivity(ActivityID activityID) {
         Activity newActivity=null;
         
@@ -159,6 +189,7 @@ public class LocalActivityManager implements IActivityManager {
         return newActivity;
     }
 
+    @Override
     public ActivityTest getTest(TestID testID) {
         ActivityTest newTest=null;
         
@@ -173,6 +204,7 @@ public class LocalActivityManager implements IActivityManager {
         return newTest;
     }
 
+    @Override
     public ActivityID[] getSubjectActivities(ISubjectID subject) {
         ArrayList<ActivityID> listIDs=new ArrayList<ActivityID>();
         
@@ -193,6 +225,7 @@ public class LocalActivityManager implements IActivityManager {
         return retList;
     }
 
+    @Override
     public ActivityID[] getSubjectActiveActivities(ISubjectID subject) {
         ArrayList<ActivityID> listIDs=new ArrayList<ActivityID>();
         
@@ -212,6 +245,7 @@ public class LocalActivityManager implements IActivityManager {
         return retList;
     }
 
+    @Override
     public TestID[] getActivityTests(ActivityID activityID) {
         ArrayList<TestID> testList=new ArrayList<TestID>();
         

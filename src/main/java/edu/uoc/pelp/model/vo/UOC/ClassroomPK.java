@@ -46,17 +46,27 @@ public class ClassroomPK implements Serializable {
     
     public ClassroomPK(SubjectPK subject, int index) {
         this.semester=subject.getSemester();
+        this.subject=subject.getSubject();
         this.index=index;
     }
     
     public ClassroomPK(String codedClassroom) {
-        int semPos=codedClassroom.indexOf("_.sem=_");
-        int subPos=codedClassroom.indexOf("_.sub=_");
-        int idxPos=codedClassroom.indexOf("_.idx=_");
-        
-        semester.split("_.");
-        if(semPos>=0 && subPos>=0 && idxPos>=0) {
-            //semester=codedClassroom.substring(index, index)
+        if(codedClassroom!=null) {
+            String[] semesterFields=codedClassroom.split("_\\.");
+            for(String field:semesterFields) {
+                if(field.startsWith("sem=_") && field.length()>4) {
+                    semester=field.substring(5).trim();
+                }
+                if(field.startsWith("sub=_") && field.length()>4) {
+                    subject=field.substring(5).trim();
+                }
+                if(field.startsWith("idx=_") && field.length()>4) {
+                    String strIdx=field.substring(5);
+                    if(!strIdx.trim().isEmpty()) {
+                        index=Integer.parseInt(strIdx);
+                    }
+                }
+            }
         }
     }
 
@@ -79,6 +89,6 @@ public class ClassroomPK implements Serializable {
     
     @Override
     public String toString() {
-        return "_.sem=_" + semester + "_.sub=_" + subject + "_.idx=_" + index; 
+        return "sem=_" + semester + "_.sub=_" + subject + "_.idx=_" + index; 
     }
 }

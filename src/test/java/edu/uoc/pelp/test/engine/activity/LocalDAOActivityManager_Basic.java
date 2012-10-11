@@ -21,8 +21,7 @@ package edu.uoc.pelp.test.engine.activity;
 import edu.uoc.pelp.engine.activity.*;
 import edu.uoc.pelp.engine.campus.UOC.Semester;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
-import edu.uoc.pelp.test.model.dao.ActivityDAO;
-import edu.uoc.pelp.test.model.dao.ActivityTestDAO;
+import edu.uoc.pelp.test.model.dao.MapActivityDAO;
 import java.util.Calendar;
 import java.util.Date;
 import org.junit.Assert;
@@ -37,7 +36,7 @@ public class LocalDAOActivityManager_Basic {
     private IActivityManager _activityManager=null;
     
     private void initActivityManager() {
-        _activityManager=(IActivityManager) new ActivityManager(new ActivityDAO(),new ActivityTestDAO());
+        _activityManager=(IActivityManager) new DAOActivityManager(new MapActivityDAO());
     }
     
     public LocalDAOActivityManager_Basic() {

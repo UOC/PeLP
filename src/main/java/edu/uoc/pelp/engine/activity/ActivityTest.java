@@ -174,7 +174,7 @@ public class ActivityTest extends TestData {
      * @param languageCode Code for desired language (CAT for Catalan, ES for Spanish, ENG for English, ...)
      * @param description Description of the test
      */
-    public void setDescription(String languageCode,String description) {
+    public final void setDescription(String languageCode,String description) {
         // Remove old descriptions
         if(_description.containsKey(languageCode)) {
             _description.remove(languageCode);

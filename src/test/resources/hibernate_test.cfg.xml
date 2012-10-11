@@ -14,13 +14,29 @@
     <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
     <!-- Echo all executed SQL to stdout -->
     <property name="show_sql">true</property>
+    <!-- Pretty print the SQL in the log and console -->
+    <property name="format_sql">true</property>
      
     <property name="hbm2ddl.auto">validate</property>
   
     <!-- Add Entity class mappings for generic classes -->
-    <mapping class="edu.uoc.pelp.model.vo.UOC.Semester"/>
     <mapping class="edu.uoc.pelp.model.vo.Activity"/>
     <mapping class="edu.uoc.pelp.model.vo.ActivityDesc"/>
+    <mapping class="edu.uoc.pelp.model.vo.ActivityTest"/>
+    <mapping class="edu.uoc.pelp.model.vo.TestDesc"/>
+    <mapping class="edu.uoc.pelp.model.vo.Deliver"/>
+    <mapping class="edu.uoc.pelp.model.vo.DeliverResult"/>
+    <mapping class="edu.uoc.pelp.model.vo.DeliverFile"/> 
+    <mapping class="edu.uoc.pelp.model.vo.DeliverTestResult"/> 
+    
+    <!-- Add Entity class mappings for UOC classes -->
+    <mapping class="edu.uoc.pelp.model.vo.UOC.Semester"/>
+    
+    <!-- Add Entity class mappings for Administration classes -->
+    <mapping class="edu.uoc.pelp.model.vo.admin.PelpActiveSubjects"/>
+    <mapping class="edu.uoc.pelp.model.vo.admin.PelpAdmins"/>
+    <mapping class="edu.uoc.pelp.model.vo.admin.PelpLanguages"/>
+    <mapping class="edu.uoc.pelp.model.vo.admin.PelpMainLabSubjects"/>
     
   </session-factory>
 </hibernate-configuration>

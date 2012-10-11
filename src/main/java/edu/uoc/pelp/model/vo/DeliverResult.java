@@ -41,7 +41,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DeliverResult.findByExecution", query = "SELECT d FROM DeliverResult d WHERE d.execution = :execution"),
     @NamedQuery(name = "DeliverResult.findByLanguage", query = "SELECT d FROM DeliverResult d WHERE d.progLanguage = :language"),
     @NamedQuery(name = "DeliverResult.findByStartDate", query = "SELECT d FROM DeliverResult d WHERE d.startDate = :startDate"),
-    @NamedQuery(name = "DeliverResult.findByEndDate", query = "SELECT d FROM DeliverResult d WHERE d.endDate = :endDate")})
+    @NamedQuery(name = "DeliverResult.findByEndDate", query = "SELECT d FROM DeliverResult d WHERE d.endDate = :endDate"),
+    @NamedQuery(name = "DeliverResult.findById", query = "SELECT d FROM DeliverResult d WHERE d.deliverResultPK.semester = :semester AND d.deliverResultPK.subject = :subject AND d.deliverResultPK.activityIndex = :activityIndex AND d.deliverResultPK.userID = :userID AND d.deliverResultPK.deliverIndex = :deliverIndex")})
 public class DeliverResult implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId

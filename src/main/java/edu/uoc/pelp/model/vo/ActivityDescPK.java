@@ -36,8 +36,8 @@ public class ActivityDescPK implements Serializable {
     @Column(name = "subject",length = 6, columnDefinition="char(6)")
     private String subject;
     @Basic(optional = false)
-    @Column(name = "index")
-    private int index;
+    @Column(name = "activityIndex")
+    private int activityIndex;
     @Basic(optional = false)
     @Column(name = "langCode",length = 15, columnDefinition="char(15)")
     private String langCode;
@@ -45,22 +45,22 @@ public class ActivityDescPK implements Serializable {
     public ActivityDescPK() {
     }
 
-    public ActivityDescPK(String semester, String subject, int index, String langCode) {
+    public ActivityDescPK(String semester, String subject, int activityIndex, String langCode) {
         this.semester = semester;
         this.subject = subject;
-        this.index = index;
+        this.activityIndex = activityIndex;
         this.langCode = langCode;
     }
     
     public ActivityDescPK(ActivityPK activityPK, String langCode) {
         this.semester = activityPK.getSemester();
         this.subject = activityPK.getSubject();
-        this.index = activityPK.getIndex();
+        this.activityIndex = activityPK.getActivityIndex();
         this.langCode = langCode;
     }
     
     public ActivityPK getActivityPK() {
-        return new ActivityPK(semester, subject, index);
+        return new ActivityPK(semester, subject, activityIndex);
     }
 
     public String getSemester() {
@@ -79,12 +79,12 @@ public class ActivityDescPK implements Serializable {
         this.subject = subject;
     }
 
-    public int getIndex() {
-        return index;
+    public int getActivityIndex() {
+        return activityIndex;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
+    public void setActivityIndex(int activityIndex) {
+        this.activityIndex = activityIndex;
     }
 
     public String getLangCode() {
@@ -100,7 +100,7 @@ public class ActivityDescPK implements Serializable {
         int hash = 0;
         hash += (semester != null ? semester.hashCode() : 0);
         hash += (subject != null ? subject.hashCode() : 0);
-        hash += (int) index;
+        hash += (int) activityIndex;
         hash += (langCode != null ? langCode.hashCode() : 0);
         return hash;
     }
@@ -118,7 +118,7 @@ public class ActivityDescPK implements Serializable {
         if ((this.subject == null && other.subject != null) || (this.subject != null && !this.subject.equals(other.subject))) {
             return false;
         }
-        if (this.index != other.index) {
+        if (this.activityIndex != other.activityIndex) {
             return false;
         }
         if ((this.langCode == null && other.langCode != null) || (this.langCode != null && !this.langCode.equals(other.langCode))) {
@@ -129,7 +129,7 @@ public class ActivityDescPK implements Serializable {
 
     @Override
     public String toString() {
-        return "edu.uoc.pelp.model.vo.ActivityDescPK[ semester=" + semester + ", subject=" + subject + ", index=" + index + ", langCode=" + langCode + " ]";
+        return "edu.uoc.pelp.model.vo.ActivityDescPK[ semester=" + semester + ", subject=" + subject + ", activityIndex=" + activityIndex + ", langCode=" + langCode + " ]";
     }
     
 }

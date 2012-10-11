@@ -20,6 +20,8 @@ package edu.uoc.pelp.model.dao;
 
 import edu.uoc.pelp.engine.activity.Activity;
 import edu.uoc.pelp.engine.activity.ActivityID;
+import edu.uoc.pelp.engine.activity.ActivityTest;
+import edu.uoc.pelp.engine.activity.TestID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import java.util.List;
 
@@ -48,6 +50,48 @@ public interface IActivityDAO {
      * @return True if the process finish successfully or Fals if any error occurred. It fails if the object does not exist.
      */
     boolean update(Activity object);
+    
+        /**
+     * Adds a new test to the given activity
+     * @param activityID Identifier of the activity
+     * @param object Object to be stored
+     * @return The identifier for new object or null if an error occurred
+     */
+    TestID add(ActivityID activityID,ActivityTest object);
+    
+    /**
+     * Deletes the given object
+     * @param id Identifier of the object to be deleted
+     * @return True if the process finish successfully or Fals if any error occurred. It fails if the object does not exist.
+     */
+    boolean delete(TestID id);
+    
+    /**
+     * Update the stored object with the new object
+     * @param object Object to be updated
+     * @return True if the process finish successfully or Fals if any error occurred. It fails if the object does not exist.
+     */
+    boolean update(ActivityTest object);
+    
+    /**
+     * Obtain the list of all tests
+     * @return List of Tests
+     */
+    List<ActivityTest> findAllTests();
+    
+    /**
+     * Obtain the list of all tests for the given activity
+     * @param activity Activity identifier
+     * @return List of Activities
+     */
+    List<ActivityTest> findAll(ActivityID activity);
+    
+    /**
+     * Find the information of an activity test
+     * @param id The identifier of the object to be searched
+     * @return Object with all the information or null if not exists.
+     */
+    ActivityTest find(TestID id);
     
     /**
      * Obtain the list of all activities
@@ -88,4 +132,11 @@ public interface IActivityDAO {
      * @return Object identifier
      */
     ActivityID getLastID(ISubjectID subjectID);
+       
+    /**
+     * Obtain the identifier of the last stored test for a certain activity
+     * @param activityID Information for the subject
+     * @return Object identifier
+     */
+    TestID getLastID(ActivityID activityID);
 }

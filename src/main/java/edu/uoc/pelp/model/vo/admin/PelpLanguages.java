@@ -9,8 +9,8 @@ import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
- * @author Xavier
+ * Class implementing the language identifiers for the platform. 
+ * @author Xavier Baró
  */
 @Entity
 @Table(name = "pelp_languages")
@@ -18,16 +18,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "PelpLanguages.findAll", query = "SELECT p FROM PelpLanguages p"),
     @NamedQuery(name = "PelpLanguages.findByLangCode", query = "SELECT p FROM PelpLanguages p WHERE p.langCode = :langCode"),
-    @NamedQuery(name = "PelpLanguages.findByDesc", query = "SELECT p FROM PelpLanguages p WHERE p.desc = :desc")})
+    @NamedQuery(name = "PelpLanguages.findByDesc", query = "SELECT p FROM PelpLanguages p WHERE p.langDesc = :langDesc")})
 public class PelpLanguages implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "langCode")
+    @Column(name = "langCode",length = 15, columnDefinition="char(15)")
     private String langCode;
     @Basic(optional = false)
-    @Column(name = "desc")
-    private String desc;
+    @Column(name = "langDesc")
+    private String langDesc;
 
     public PelpLanguages() {
     }
@@ -36,9 +36,9 @@ public class PelpLanguages implements Serializable {
         this.langCode = langCode;
     }
 
-    public PelpLanguages(String langCode, String desc) {
+    public PelpLanguages(String langCode, String langDesc) {
         this.langCode = langCode;
-        this.desc = desc;
+        this.langDesc = langDesc;
     }
 
     public String getLangCode() {
@@ -49,12 +49,12 @@ public class PelpLanguages implements Serializable {
         this.langCode = langCode;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getLangDesc() {
+        return langDesc;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setLangDesc(String langDesc) {
+        this.langDesc = langDesc;
     }
 
     @Override

@@ -30,10 +30,10 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class PelpMainLabSubjectsPK implements Serializable {
     @Basic(optional = false)
-    @Column(name = "mainSubjectCode", nullable = false, length = 6)
+    @Column(name = "mainSubjectCode", length = 6,columnDefinition="char(6)")
     private String mainSubjectCode;
     @Basic(optional = false)
-    @Column(name = "labSubjectCode", nullable = false, length = 6)
+    @Column(name = "labSubjectCode", length = 6,columnDefinition="char(6)")
     private String labSubjectCode;
 
     public PelpMainLabSubjectsPK() {

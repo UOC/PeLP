@@ -149,6 +149,24 @@ public class Semester implements IPelpID,ITimePeriod{
             return false;
         }
         final Semester other = (Semester) obj;
+        if (this._begin != other._begin && (this._begin == null || !this._begin.equals(other._begin))) {
+            // Remove nanoseconds resolution (lost from database recovery)
+            if(other._begin!=null) {
+                long diff=Math.abs(this._begin.getTime()-other._begin.getTime());
+                if(diff>=1000) {
+                    return false;
+                }
+            }
+        }
+        if (this._end != other._end && (this._end == null || !this._end.equals(other._end))) {
+            // Remove nanoseconds resolution (lost from database recovery)
+            if(other._end!=null) {
+                long diff=Math.abs(this._end.getTime()-other._end.getTime());
+                if(diff>=1000) {
+                    return false;
+                }
+            }
+        }
         if ((this._id == null) ? (other._id != null) : !this._id.equals(other._id)) {
             return false;
         }
@@ -164,6 +182,7 @@ public class Semester implements IPelpID,ITimePeriod{
         return hash;
     }
 
+    @Override
     public int compareTo(IPelpID t) {
         Semester s=(Semester)t;
         if(_begin!=null) {
@@ -200,14 +219,17 @@ public class Semester implements IPelpID,ITimePeriod{
         return _id;
     }
 
+    @Override
     public IPelpID parse(String str) {
         return new Semester(str);
     }
 
+    @Override
     public Date getInitialDate() {
         return _begin;
     }
 
+    @Override
     public Date getFinalDate() {
         return _end;
     }

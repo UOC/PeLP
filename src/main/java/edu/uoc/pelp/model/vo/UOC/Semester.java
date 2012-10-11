@@ -31,11 +31,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "semester")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Semester.findAll", query = "SELECT s FROM Semester s"),
+    @NamedQuery(name = "Semester.findAll", query = "SELECT s FROM Semester s order by s.semester asc"),
     @NamedQuery(name = "Semester.findBySemester", query = "SELECT s FROM Semester s WHERE s.semester = :semester"),
-    @NamedQuery(name = "Semester.findByStartDate", query = "SELECT s FROM Semester s WHERE s.startDate = :startDate"),
-    @NamedQuery(name = "Semester.findByEndDate", query = "SELECT s FROM Semester s WHERE s.endDate = :endDate"),
-    @NamedQuery(name = "Semester.findActive", query = "SELECT s FROM Semester s WHERE (s.startDate is null or s.startDate<=now()) and (s.endDate is null or s.endDate>=now())")})
+    @NamedQuery(name = "Semester.findByStartDate", query = "SELECT s FROM Semester s WHERE s.startDate = :startDate order by s.semester asc"),
+    @NamedQuery(name = "Semester.findByEndDate", query = "SELECT s FROM Semester s WHERE s.endDate = :endDate order by s.semester asc"),
+    @NamedQuery(name = "Semester.findActive", query = "SELECT s FROM Semester s WHERE (s.startDate is null or s.startDate<=now()) and (s.endDate is null or s.endDate>=now()) order by s.semester asc")})
 public class Semester implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -81,23 +81,33 @@ public class Semester implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (semester != null ? semester.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Semester)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        Semester other = (Semester) object;
-        if ((this.semester == null && other.semester != null) || (this.semester != null && !this.semester.equals(other.semester))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Semester other = (Semester) obj;
+        if ((this.semester == null) ? (other.semester != null) : !this.semester.equals(other.semester)) {
+            return false;
+        }
+        if (this.startDate != other.startDate && (this.startDate == null || !this.startDate.equals(other.startDate))) {
+            return false;
+        }
+        if (this.endDate != other.endDate && (this.endDate == null || !this.endDate.equals(other.endDate))) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.semester != null ? this.semester.hashCode() : 0);
+        hash = 79 * hash + (this.startDate != null ? this.startDate.hashCode() : 0);
+        hash = 79 * hash + (this.endDate != null ? this.endDate.hashCode() : 0);
+        return hash;
     }
 
     @Override
