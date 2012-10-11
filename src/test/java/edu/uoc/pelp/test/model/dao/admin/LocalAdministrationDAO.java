@@ -45,7 +45,11 @@ public class LocalAdministrationDAO extends AdministrationDAO {
         _localDAO=new LocalDAO(sessionFactory) {
             @Override
             public void clearTableData() {
-                //deleteTableData("Semester");
+                deleteTableData("PelpActiveSubjects");
+                deleteTableData("PelpAdmins");
+                deleteTableData("PelpLanguages");
+                deleteTableData("PelpMainLabSubjects");
+                deleteTableData("Semester");
             }
         };
         // Assign the session Factory to the parent object
@@ -64,7 +68,11 @@ public class LocalAdministrationDAO extends AdministrationDAO {
         _localDAO=new LocalDAO(resource) {
             @Override
             public void clearTableData() {
-                //deleteTableData("Semester");
+                deleteTableData("PelpActiveSubjects");
+                deleteTableData("PelpAdmins");
+                deleteTableData("PelpLanguages");
+                deleteTableData("PelpMainLabSubjects");
+                deleteTableData("Semester");
             }
         };
         // Assign the session Factory to the parent object
@@ -83,7 +91,11 @@ public class LocalAdministrationDAO extends AdministrationDAO {
         _localDAO=new LocalDAO(confFile) {
             @Override
             public void clearTableData() {
-                //deleteTableData("Semester");
+                deleteTableData("PelpActiveSubjects");
+                deleteTableData("PelpAdmins");
+                deleteTableData("PelpLanguages");
+                deleteTableData("PelpMainLabSubjects");
+                deleteTableData("Semester");
             }
         };
         // Assign the session Factory to the parent object
@@ -102,7 +114,11 @@ public class LocalAdministrationDAO extends AdministrationDAO {
         _localDAO=new LocalDAO(url) {
             @Override
             public void clearTableData() {
-                //deleteTableData("Semester");
+                deleteTableData("PelpActiveSubjects");
+                deleteTableData("PelpAdmins");
+                deleteTableData("PelpLanguages");
+                deleteTableData("PelpMainLabSubjects");
+                deleteTableData("Semester");
             }
         };
         // Assign the session Factory to the parent object

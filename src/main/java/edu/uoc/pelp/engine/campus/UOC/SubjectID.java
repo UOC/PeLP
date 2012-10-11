@@ -52,8 +52,16 @@ public class SubjectID implements ISubjectID {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    public void setSemester(Semester semester) {
+        _semester=semester;
+    }
+    
     public Semester getSemester() {
         return _semester;
+    }
+    
+    public void setCode(String code) {
+        _code=code;
     }
     
     public String getCode() {

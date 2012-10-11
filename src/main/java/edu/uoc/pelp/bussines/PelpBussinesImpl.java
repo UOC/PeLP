@@ -380,7 +380,22 @@ public abstract class PelpBussinesImpl implements PelpBussines {
     }
  
     protected UserInformation getUserInformationObject(Person userInfo) {
-        throw new UnsupportedOperationException("Not yet implemented");
+       
+        // Check input parameter
+        if(userInfo==null) {
+            return null;
+        }
+        
+        // Create the new object
+        UserInformation newObj=new UserInformation();
+        newObj.setLanguage(userInfo.getLanguage());
+        newObj.setUserFullName(userInfo.getFullName());
+        newObj.setUserID(userInfo.getUserID().toString());
+        newObj.setUserPhoto(userInfo.getUserPhoto());
+        newObj.setUsername(userInfo.getUsername());
+        newObj.seteMail(userInfo.geteMail());
+        
+        return newObj;
     }
     
     protected Activity getActivity(edu.uoc.pelp.engine.activity.Activity activity) throws ExecPelpException, InvalidEngineException {

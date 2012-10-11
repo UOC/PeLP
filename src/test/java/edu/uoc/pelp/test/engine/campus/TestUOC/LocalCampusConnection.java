@@ -243,7 +243,9 @@ public class LocalCampusConnection implements ICampusConnection{
         }
                
         // Get the subject
-        Subject subjectData=_dummySubjects.get((SubjectID)subject);
+        SubjectID subjectID=(SubjectID)subject;
+        subjectID.setSemester(_dummySemesters.get(subjectID.getSemester().getID()));
+        Subject subjectData=_dummySubjects.get(subjectID);
         
         // Perform custom checks for each role
         switch(role) {
@@ -676,58 +678,67 @@ public class LocalCampusConnection implements ICampusConnection{
         
         _testAccessPersons[0]=new Person(((IUserID)new UserID("000000")));
         _testAccessPersons[0].seteMail("user0@uoc.edu");
-        _testAccessPersons[0].seteMail("Manny Jah");
-        _testAccessPersons[0].seteMail("Manny");
+        _testAccessPersons[0].setFullName("Manny Jah");
+        _testAccessPersons[0].setName("Manny");
+        _testAccessPersons[0].setLanguage("CAT");        
         _testAccessPersons[0].setUsername("user0");
         
         _testAccessPersons[1]=new Person(((IUserID)new UserID("111111")));
         _testAccessPersons[1].seteMail("user1@uoc.edu");
-        _testAccessPersons[1].seteMail("Barb Akew");
-        _testAccessPersons[1].seteMail("Barb");
+        _testAccessPersons[1].setFullName("Barb Akew");
+        _testAccessPersons[1].setName("Barb");
+        _testAccessPersons[1].setLanguage("CAT");
         _testAccessPersons[1].setUsername("user1");
         
         _testAccessPersons[2]=new Person(((IUserID)new UserID("222222")));
         _testAccessPersons[2].seteMail("user2@uoc.edu");
-        _testAccessPersons[2].seteMail("Ann Chovey");
-        _testAccessPersons[2].seteMail("Ann");
+        _testAccessPersons[2].setFullName("Ann Chovey");
+        _testAccessPersons[2].setName("Ann");
+        _testAccessPersons[2].setLanguage("ESP");
         _testAccessPersons[2].setUsername("user2");
         
         _testAccessPersons[3]=new Person(((IUserID)new UserID("333333")));
         _testAccessPersons[3].seteMail("user3@uoc.edu");
-        _testAccessPersons[3].seteMail("Hazel Nutt");
-        _testAccessPersons[3].seteMail("Hazel");
+        _testAccessPersons[3].setFullName("Hazel Nutt");
+        _testAccessPersons[3].setName("Hazel");
+        _testAccessPersons[3].setLanguage("CAT");
         _testAccessPersons[3].setUsername("user3");
         
         _testAccessPersons[4]=new Person(((IUserID)new UserID("444444")));
         _testAccessPersons[4].seteMail("user4@uoc.edu");
-        _testAccessPersons[4].seteMail("Bess Twishes");
-        _testAccessPersons[4].seteMail("Bess");
+        _testAccessPersons[4].setFullName("Bess Twishes");
+        _testAccessPersons[4].setName("Bess");
+        _testAccessPersons[4].setLanguage("ESP");
         _testAccessPersons[4].setUsername("user4");
         
         _testAccessPersons[5]=new Person(((IUserID)new UserID("555555")));
         _testAccessPersons[5].seteMail("user5@uoc.edu");
-        _testAccessPersons[5].seteMail("Chris Anthemum");
-        _testAccessPersons[5].seteMail("Chris");
+        _testAccessPersons[5].setFullName("Chris Anthemum");
+        _testAccessPersons[5].setName("Chris");
+        _testAccessPersons[5].setLanguage("ENG");
         _testAccessPersons[5].setUsername("user5");
         
         _testAccessPersons[6]=new Person(((IUserID)new UserID("666666")));
         _testAccessPersons[6].seteMail("user6@uoc.edu");
-        _testAccessPersons[6].seteMail("Harriet Upp");
-        _testAccessPersons[6].seteMail("Harriet");
+        _testAccessPersons[6].setFullName("Harriet Upp");
+        _testAccessPersons[6].setName("Harriet");
+        _testAccessPersons[6].setLanguage("CAT");
         _testAccessPersons[6].setUsername("user6");
         
         _testAccessPersons[7]=new Person(((IUserID)new UserID("777777")));
         _testAccessPersons[7].seteMail("user7@uoc.edu");
-        _testAccessPersons[7].seteMail("Theresa Green");
-        _testAccessPersons[7].seteMail("Theresa");
+        _testAccessPersons[7].setFullName("Theresa Green");
+        _testAccessPersons[7].setName("Theresa");
+        _testAccessPersons[7].setLanguage("ESP");
         _testAccessPersons[7].setUsername("user7");
         
         
         // User with administration privilegies
         _testAccessPersons[8]=new Person(((IUserID)new UserID("888888")));
         _testAccessPersons[8].seteMail("admin@uoc.edu");
-        _testAccessPersons[8].seteMail("PELP admin user");
-        _testAccessPersons[8].seteMail("admin");
+        _testAccessPersons[8].setFullName("PELP admin user");
+        _testAccessPersons[8].setName("admin");
+        _testAccessPersons[8].setLanguage("ENG");
         _testAccessPersons[8].setUsername("admin");
         
         // Add users to the list of users
@@ -835,7 +846,10 @@ public class LocalCampusConnection implements ICampusConnection{
      * @return Object with all the information for given subject
      */
     private Subject getSubject(ISubjectID subjectID) {
-        return _dummySubjects.get((SubjectID)subjectID);
+        SubjectID id=(SubjectID)subjectID;
+        // Add semester data
+        id.setSemester(_dummySemesters.get(id.getSemester().getID()));
+        return _dummySubjects.get(id);
     }
     
     /**

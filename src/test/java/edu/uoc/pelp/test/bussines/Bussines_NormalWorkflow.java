@@ -173,26 +173,28 @@ public class Bussines_NormalWorkflow {
             activityDescriptions[2]=new MultilingualText("ENG","Activity 1");
             
             MultilingualText[] test1Descriptions=new MultilingualText[3];
-            activityDescriptions[0]=new MultilingualText("CAT","Activitat 1 (Test1)");
-            activityDescriptions[1]=new MultilingualText("ESP","Actividad 1 (Test1)");
-            activityDescriptions[2]=new MultilingualText("ENG","Activity 1 (Test1)");
+            test1Descriptions[0]=new MultilingualText("CAT","Activitat 1 (Test1)");
+            test1Descriptions[1]=new MultilingualText("ESP","Actividad 1 (Test1)");
+            test1Descriptions[2]=new MultilingualText("ENG","Activity 1 (Test1)");
             
             MultilingualText[] test2Descriptions=new MultilingualText[3];
-            activityDescriptions[0]=new MultilingualText("CAT","Activitat 1 (Test2)");
-            activityDescriptions[1]=new MultilingualText("ESP","Actividad 1 (Test2)");
-            activityDescriptions[2]=new MultilingualText("ENG","Activity 1 (Test2)");
+            test2Descriptions[0]=new MultilingualText("CAT","Activitat 1 (Test2)");
+            test2Descriptions[1]=new MultilingualText("ESP","Actividad 1 (Test2)");
+            test2Descriptions[2]=new MultilingualText("ENG","Activity 1 (Test2)");
             
             MultilingualText[] test3Descriptions=new MultilingualText[3];
-            activityDescriptions[0]=new MultilingualText("CAT","Activitat 1 (Test3)");
-            activityDescriptions[1]=new MultilingualText("ESP","Actividad 1 (Test3)");
-            activityDescriptions[2]=new MultilingualText("ENG","Activity 1 (Test3)");
+            test3Descriptions[0]=new MultilingualText("CAT","Activitat 1 (Test3)");
+            test3Descriptions[1]=new MultilingualText("ESP","Actividad 1 (Test3)");
+            test3Descriptions[2]=new MultilingualText("ENG","Activity 1 (Test3)");
             
             MultilingualText[] test4Descriptions=new MultilingualText[3];
-            activityDescriptions[0]=new MultilingualText("CAT","Activitat 1 (Test4)");
-            activityDescriptions[1]=new MultilingualText("ESP","Actividad 1 (Test4)");
-            activityDescriptions[2]=new MultilingualText("ENG","Activity 1 (Test4)");
+            test4Descriptions[0]=new MultilingualText("CAT","Activitat 1 (Test4)");
+            test4Descriptions[1]=new MultilingualText("ESP","Actividad 1 (Test4)");
+            test4Descriptions[2]=new MultilingualText("ENG","Activity 1 (Test4)");
             
             Activity activiy1=_bussines.addActivity(_testMainSubject, null, null, 3, "JAVA", activityDescriptions);
+            
+            Assert.fail("Add activity test and their descriptions. Need activityTest objects");
             
         } catch (AuthorizationException ex) {
             Assert.fail(ex.getMessage());

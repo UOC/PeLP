@@ -39,6 +39,11 @@ public class Person {
     private String _fullName;
     
     /**
+     * User Photo
+     */
+    private String _userPhoto;
+    
+    /**
      * EMail
      */
     private String _eMail;
@@ -108,4 +113,14 @@ public class Person {
     public void setUsername(String _username) {
         this._username = _username;
     }
+
+    public String getUserPhoto() {
+        return _userPhoto;
+    }
+
+    public void setUserPhoto(String _userPhoto) {
+        this._userPhoto = _userPhoto;
+    }
+    
+    
 }

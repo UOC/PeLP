@@ -434,7 +434,6 @@ public class AdministrationDAO implements IAdministrationDAO {
         }
         
         Transaction transaction=null;
-        PelpMainLabSubjects subjectsData;
         
         try {
             // Start a new transaction
@@ -444,16 +443,18 @@ public class AdministrationDAO implements IAdministrationDAO {
             }
             
             // Check that this field does not exist
-            subjectsData=findMainLabSubjects(mainSubject,labSubject);
-            if(subjectsData==null) {
+            if(findMainLabSubjects(mainSubject,labSubject)!=null) {
                 if (transaction != null) {
                     transaction.rollback();
                 }
                 return false;
             }
+
+            // Creat the new object
+            PelpMainLabSubjects newObj=new PelpMainLabSubjects(mainSubject,labSubject);
             
             // Add the subjects relation
-            getSession().delete(subjectsData);
+            getSession().saveOrUpdate(newObj);
             
             // Commit the results
             transaction.commit();
