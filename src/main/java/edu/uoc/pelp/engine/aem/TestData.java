@@ -244,7 +244,7 @@ public class TestData {
      * Set the input string, that will be passed to the program. If a non null string is gived, any existent input file will be set to null.
      * @param str String with the input data
      */
-    public void getInputStr(String str) {
+    public void setInputStr(String str) {
         _inputStr=str;
         if(_inputStr!=null) {
             _inputFile=null;

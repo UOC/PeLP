@@ -37,6 +37,13 @@ public interface IActivityManager {
     ActivityID addActivity(ISubjectID subject, Date start, Date end);
     
     /**
+     * Adds a new activity to a certain subject
+     * @param subject Subject identifier.
+     * @param activity Activity object without activity identifier
+     */
+    ActivityID addActivity(ISubjectID subject, Activity activity);
+    
+    /**
      * Modify the information of a certain activity
      * @param activity Activity with new information. The ActivityID cannot be modifyed, the rest of the information is updated.
      * @return True if the new information has been correctly modified or False if any error occurred.

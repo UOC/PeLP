@@ -19,10 +19,14 @@
 package edu.uoc.pelp.model.dao;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
+import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.engine.campus.IUserID;
 import edu.uoc.pelp.engine.deliver.Deliver;
+import edu.uoc.pelp.engine.deliver.DeliverFile;
+import edu.uoc.pelp.engine.deliver.DeliverFileID;
 import edu.uoc.pelp.engine.deliver.DeliverID;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -52,6 +56,36 @@ public interface IDeliverDAO {
      * @return True if the process finish successfully or Fals if any error occurred. It fails if the object does not exist.
      */
     boolean update(Deliver object);
+    
+    /**
+     * Updates the root path for a deliver
+     * @param deliverID Deliver identifier
+     * @param newPath New root path
+     * @return True if the process finish successfully or Fals if any error occurred.
+     */
+    boolean updateRootPath(DeliverID deliverID,File newPath);
+    
+    /**
+     * Adds a new file to the given deliver
+     * @param deliver Deliver identifier
+     * @param object Object to be stored
+     * @return The identifier for new object or null if an error occurred
+     */
+    DeliverFileID add(DeliverID deliver,DeliverFile object);
+    
+    /**
+     * Deletes the given object
+     * @param id Identifier of the object to be deleted
+     * @return True if the process finish successfully or Fals if any error occurred. It fails if the object does not exist.
+     */
+    boolean delete(DeliverFileID id);
+    
+    /**
+     * Update the stored object with the new object
+     * @param object Object to be updated
+     * @return True if the process finish successfully or False if any error occurred. It fails if the object does not exist.
+     */
+    boolean update(DeliverFile object);    
     
     /**
      * Obtain the list of all delivers
@@ -133,10 +167,56 @@ public interface IDeliverDAO {
     Deliver find(DeliverID id);
     
     /**
+     * Obtain the list of all delivers files
+     * @return List of Deliver files
+     */
+    List<DeliverFile> findAllFiles();
+    
+    /**
+     * Obtain the list of all files for the given deliver
+     * @param deliver Deliver identifier
+     * @return List of Deliver files
+     */
+    List<DeliverFile> findAll(DeliverID deliver);
+       
+    /**
+     * Find the information of a deliver file
+     * @param id The identifier of the object to be searched
+     * @return Object with all the information or null if not exists.
+     */
+    DeliverFile find(DeliverFileID id);
+    
+    /**
      * Obtain the identifier of the last stored deliver for a certain activity and user
      * @param activity Information for the activity
      * @param user Information for the user
      * @return Object identifier
      */
     DeliverID getLastID(ActivityID activity,IUserID user);
+    
+    /**
+     * Obtain the identifier of the last stored deliver file for a certain deliver
+     * @param deliver Information for the deliver
+     * @return Object identifier
+     */
+    DeliverFileID getLastID(DeliverID deliver);
+
+    /**
+    * Obtain the list of all the delivers of a certain classroom for a certain activity. Only a teacher
+    * of the classroom can access to this information. Both, laboratory and main classrooms are checked.
+    * @param classroom Identifier of the classroom for which delivers are requested.
+    * @param activity Identifier of the activity delivers are requested from.
+    * @return Array of Delivers.
+    * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+    */
+    public List<Deliver> findAllClassroom(IClassroomID classroom, ActivityID activity);
+
+    /**
+    * Obtain the last submitted deliver for each user of a certain classroom for a certain activity. 
+    * @param classroom Identifier of the classroom for which delivers are requested.
+    * @param activity Identifier of the activity delivers are requested from.
+    * @return Array of Delivers.
+    * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+    */
+    public List<Deliver> findLastClassroom(IClassroomID classroom, ActivityID activity);
 }

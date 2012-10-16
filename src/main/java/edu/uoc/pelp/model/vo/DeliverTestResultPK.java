@@ -30,16 +30,16 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class DeliverTestResultPK implements Serializable {
     @Basic(optional = false)
-    @Column(name = "semester")
+    @Column(name = "semester",length = 5, columnDefinition="char(5)")
     private String semester;
     @Basic(optional = false)
-    @Column(name = "subject")
+    @Column(name = "subject",length = 6, columnDefinition="char(6)")
     private String subject;
     @Basic(optional = false)
     @Column(name = "activityIndex")
     private int activityIndex;
     @Basic(optional = false)
-    @Column(name = "userID")
+    @Column(name = "userID",length = 25, columnDefinition="char(25)")
     private String userID;
     @Basic(optional = false)
     @Column(name = "deliverIndex")
@@ -71,6 +71,14 @@ public class DeliverTestResultPK implements Serializable {
     
     public DeliverPK getDeliverPK() {
         return new DeliverPK(semester,subject,activityIndex,userID,deliverIndex);
+    }
+    
+    public ActivityPK getActivityPK() {
+        return new ActivityPK(semester,subject,activityIndex);
+    }
+    
+    public ActivityTestPK getActivityTestPK() {
+        return new ActivityTestPK(semester,subject,activityIndex,testIndex);
     }
 
     public String getSemester() {

@@ -18,7 +18,6 @@
 */
 package edu.uoc.pelp.engine.deliver;
 
-import edu.uoc.pelp.engine.activity.ActivityTestResult;
 import edu.uoc.pelp.engine.activity.TestID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.BuildResult;
@@ -36,7 +35,7 @@ public class DeliverResults {
     private DeliverID _deliverID=null;
     
     /**
-     * Results the analysis process
+     * Results of the analysis process
      */
     private AnalysisResults _analysisResult=null;
         
@@ -51,12 +50,21 @@ public class DeliverResults {
     }
         
     /**
-     * Return the list of results for each test over a given deliver.
-     * @param deliver Object identifying a deliver
+     * Return the list of results of this deliver for each test.
      * @return Array of results, ordered by test id
      */
-    public TestResult[] getResults(DeliverID deliver) {
-        return _analysisResult.getResults();
+    public ActivityTestResult[] getResults() {
+        TestResult[] resultArray=_analysisResult.getResults();
+        ActivityTestResult[] testResults=new ActivityTestResult[resultArray.length];
+        for(int i=0;i<testResults.length;i++) {
+            if(resultArray[i] instanceof ActivityTestResult) {
+                testResults[i]=(ActivityTestResult)resultArray[i];
+            } else {
+                TestID newID=new TestID(_deliverID.activity,i+1);
+                testResults[i]=new ActivityTestResult(newID,resultArray[i]);
+            }
+        }
+        return testResults;
     }
     
     /**

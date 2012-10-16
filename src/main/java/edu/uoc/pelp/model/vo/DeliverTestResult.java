@@ -19,7 +19,6 @@
 package edu.uoc.pelp.model.vo;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -39,7 +38,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DeliverTestResult.findByDeliverIndex", query = "SELECT d FROM DeliverTestResult d WHERE d.deliverTestResultPK.deliverIndex = :deliverIndex"),
     @NamedQuery(name = "DeliverTestResult.findByTestIndex", query = "SELECT d FROM DeliverTestResult d WHERE d.deliverTestResultPK.testIndex = :testIndex"),
     @NamedQuery(name = "DeliverTestResult.findByPassed", query = "SELECT d FROM DeliverTestResult d WHERE d.passed = :passed"),
-    @NamedQuery(name = "DeliverTestResult.findByElapsedTime", query = "SELECT d FROM DeliverTestResult d WHERE d.elapsedTime = :elapsedTime")})
+    @NamedQuery(name = "DeliverTestResult.findByElapsedTime", query = "SELECT d FROM DeliverTestResult d WHERE d.elapsedTime = :elapsedTime"),
+    @NamedQuery(name = "DeliverTestResult.findByDeliverID", query = "SELECT d FROM DeliverTestResult d WHERE d.deliverTestResultPK.semester = :semester AND d.deliverTestResultPK.subject = :subject AND d.deliverTestResultPK.activityIndex = :activityIndex AND d.deliverTestResultPK.userID = :userID AND d.deliverTestResultPK.deliverIndex = :deliverIndex ORDER BY d.deliverTestResultPK.testIndex ASC"),
+    @NamedQuery(name = "DeliverTestResult.findById", query = "SELECT d FROM DeliverTestResult d WHERE d.deliverTestResultPK.semester = :semester AND d.deliverTestResultPK.subject = :subject AND d.deliverTestResultPK.activityIndex = :activityIndex AND d.deliverTestResultPK.userID = :userID AND d.deliverTestResultPK.deliverIndex = :deliverIndex AND d.deliverTestResultPK.testIndex = :testIndex")})
 public class DeliverTestResult implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -51,7 +52,7 @@ public class DeliverTestResult implements Serializable {
     @Column(name = "programOutput")
     private String programOutput;
     @Column(name = "elapsedTime")
-    private BigInteger elapsedTime;
+    private Long elapsedTime;
 
     public DeliverTestResult() {
     }
@@ -93,11 +94,11 @@ public class DeliverTestResult implements Serializable {
         this.programOutput = programOutput;
     }
 
-    public BigInteger getElapsedTime() {
+    public Long getElapsedTime() {
         return elapsedTime;
     }
 
-    public void setElapsedTime(BigInteger elapsedTime) {
+    public void setElapsedTime(Long elapsedTime) {
         this.elapsedTime = elapsedTime;
     }
 

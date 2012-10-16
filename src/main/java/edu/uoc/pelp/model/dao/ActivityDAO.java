@@ -20,11 +20,10 @@ package edu.uoc.pelp.model.dao;
 
 import edu.uoc.pelp.engine.activity.Activity;
 import edu.uoc.pelp.engine.activity.ActivityID;
+import edu.uoc.pelp.engine.activity.ActivityTest;
+import edu.uoc.pelp.engine.activity.TestID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
-import edu.uoc.pelp.model.vo.ActivityDesc;
-import edu.uoc.pelp.model.vo.ActivityDescPK;
-import edu.uoc.pelp.model.vo.ActivityPK;
-import edu.uoc.pelp.model.vo.ObjectFactory;
+import edu.uoc.pelp.model.vo.*;
 import edu.uoc.pelp.model.vo.UOC.SubjectPK;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +39,22 @@ import org.hibernate.Transaction;
 public class ActivityDAO implements IActivityDAO {
     
     protected SessionFactory _sessionFactory = null;
+    
+    /**
+     * Dafault constructor for compatibility or Spring session factory assignment
+     */
+    public ActivityDAO() {
+        super();
+    }
+    
+    /**
+     * Dafault constructor with session factory assignment
+     * @param sessionFactory Session factory of DAO access to the database
+     */
+    public ActivityDAO(SessionFactory sessionFactory) {
+        super();
+        _sessionFactory=sessionFactory;
+    }
     
     /**
      * Gets the session factory object
@@ -86,6 +101,178 @@ public class ActivityDAO implements IActivityDAO {
             
             // Add the final register
             retList.add(ObjectFactory.getActivityObj(register,descArray));
+        }
+        return retList;
+    }
+    
+    /**
+     * Get the list of descriptions for the given activity
+     * @param key Activity primary key
+     * @return List of activity description keys
+     */
+    private List<ActivityDesc> getActivityDescriptions(ActivityPK key) {
+        // Check the input object
+        if(key==null) {
+            return null;
+        }
+                
+        // Get the descriptions
+        Query q=getSession().getNamedQuery("ActivityDesc.findByActivity");
+        q.setParameter("semester", key.getSemester());
+        q.setParameter("subject", key.getSubject());
+        q.setParameter("activityIndex", key.getActivityIndex());
+
+        // Get the list of descriptions
+        List<ActivityDesc> list=q.list();
+        
+        return list;
+    }
+    
+    /**
+     * Delete all the descriptions for a certain activity
+     * @param key Activity primary key
+     * @return True if the operation ends successfully or Fals in case of error.
+     */
+    private boolean deleteDescriptions(ActivityPK key) {
+        // Check the input object
+        if(key==null) {
+            return false;
+        }
+                
+        // Get the list of descriptions
+        List<ActivityDesc> descList=getActivityDescriptions(key);
+        
+        // Remove all descriptions
+        for(ActivityDesc desc:descList) {
+            getSession().delete(desc);
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Get the descriptions for the given activity in the given language
+     * @param key Activity description primary key
+     * @return Description or null if it is not defined
+     */
+    private String getActivityDescription(ActivityDescPK key) {
+        String desc=null;
+        
+        // Check the input object
+        if(key==null) {
+            return null;
+        }
+                
+        // Get the descriptions
+        Query q=getSession().getNamedQuery("ActivityDesc.findByPK");
+        q.setParameter("semester", key.getSemester());
+        q.setParameter("subject", key.getSubject());
+        q.setParameter("activityIndex", key.getActivityIndex());
+        q.setParameter("langCode",key.getLangCode());
+
+        // Get the list of descriptions
+        List<ActivityDesc> list=q.list();
+        if(list!=null && list.size()>0) {
+            desc=list.get(0).getDescription();
+        }
+        
+        return desc;
+    }
+    
+    /**
+     * Get the list of descriptions for the given activity test
+     * @param key Activity test primary key
+     * @return List of activity test description keys
+     */
+    private List<TestDesc> getActivityTestDescriptions(ActivityTestPK key) {
+        // Check the input object
+        if(key==null) {
+            return null;
+        }
+                
+        // Get the descriptions
+        Query q=getSession().getNamedQuery("TestDesc.findByTestID");
+        q.setParameter("semester", key.getSemester());
+        q.setParameter("subject", key.getSubject());
+        q.setParameter("activityIndex", key.getActivityIndex());
+        q.setParameter("testIndex", key.getTestIndex());
+
+        // Get the list of descriptions
+        List<TestDesc> list=q.list();
+        
+        return list;
+    }
+    
+    /**
+     * Delete all the descriptions for a certain activity test
+     * @param key Activity test primary key
+     * @return True if the operation ends successfully or Fals in case of error.
+     */
+    private boolean deleteTestDescriptions(ActivityTestPK key) {
+        // Check the input object
+        if(key==null) {
+            return false;
+        }
+                
+        // Get the list of descriptions
+        List<TestDesc> descList=getActivityTestDescriptions(key);
+        
+        // Remove all descriptions
+        for(TestDesc desc:descList) {
+            getSession().delete(desc);
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Get the descriptions for the given activity test in the given language
+     * @param key Activity test description primary key
+     * @return Description or null if it is not defined
+     */
+    private String getActivityTestDescription(TestDescPK key) {
+        String desc=null;
+        
+        // Check the input object
+        if(key==null) {
+            return null;
+        }
+                
+        // Get the descriptions
+        Query q=getSession().getNamedQuery("TestDesc.findByID");
+        q.setParameter("semester", key.getSemester());
+        q.setParameter("subject", key.getSubject());
+        q.setParameter("activityIndex", key.getActivityIndex());
+        q.setParameter("testIndex", key.getTestIndex());
+        q.setParameter("langCode",key.getLangCode());
+
+        // Get the list of descriptions
+        List<TestDesc> list=q.list();
+        if(list!=null && list.size()>0) {
+            desc=list.get(0).getDescription();
+        }
+        
+        return desc;
+    }
+    
+    /**
+     * Get a list of Activity test objects from a list of low level objects, adding the correspondant descriptions
+     * @param list List of low level objects
+     * @return List of high level objects
+     */
+    protected List<ActivityTest> getActivityTestList(List<edu.uoc.pelp.model.vo.ActivityTest> list) {
+        List<ActivityTest> retList=new ArrayList<ActivityTest>();
+        for(edu.uoc.pelp.model.vo.ActivityTest register:list) {
+            // Get the list of descriptions
+            List<TestDesc> descList=getActivityTestDescriptions(register.getActivityTestPK());
+            TestDesc[] descArray=null;
+            if(descList!=null) {
+                descArray=new TestDesc[descList.size()];
+                descList.toArray(descArray);
+            }
+            
+            // Add the final register
+            retList.add(ObjectFactory.getActivityTestObj(register,descArray));
         }
         return retList;
     }
@@ -400,78 +587,174 @@ public class ActivityDAO implements IActivityDAO {
         return lastID;
     }
 
-    /**
-     * Get the list of descriptions for the given activity
-     * @param key Activity primary key
-     * @return List of activity description keys
-     */
-    private List<ActivityDesc> getActivityDescriptions(ActivityPK key) {
+    @Override
+    public TestID add(ActivityID activityID, ActivityTest object) {
         // Check the input object
-        if(key==null) {
+        if(object==null || activityID==null) {
             return null;
         }
-                
-        // Get the descriptions
-        Query q=getSession().getNamedQuery("ActivityDesc.findByActivity");
-        q.setParameter("semester", key.getSemester());
-        q.setParameter("subject", key.getSubject());
-        q.setParameter("activityIndex", key.getActivityIndex());
-
-        // Get the list of descriptions
-        List<ActivityDesc> list=q.list();
         
-        return list;
-    }
-    
-    /**
-     * Delete all the descriptions for a certain activity
-     * @param key Activity primary key
-     * @return True if the operation ends successfully or Fals in case of error.
-     */
-    private boolean deleteDescriptions(ActivityPK key) {
-        // Check the input object
-        if(key==null) {
-            return false;
-        }
-                
-        // Get the list of descriptions
-        List<ActivityDesc> descList=getActivityDescriptions(key);
+        Transaction transaction=null;
+        TestID newID;
         
-        // Remove all descriptions
-        for(ActivityDesc desc:descList) {
-            getSession().delete(desc);
-        }
+        try {
+            // Start a new transaction
+            transaction=getSession().beginTransaction();
+            if (transaction == null) {
+                return null;
+            }
+            
+            // Get the id of the last deliver
+            TestID lastID=getLastID(activityID);
         
-        return true;
-    }
-    
-    /**
-     * Get the descriptions for the given activity in the given language
-     * @param key Activity description primary key
-     * @return Description or null if it is not defined
-     */
-    private String getActivityDescription(ActivityDescPK key) {
-        String desc=null;
+            // Create the new id
+            if(lastID!=null) {
+                newID=new TestID(lastID);
+                newID.index++;
+            } else {
+                newID=new TestID(activityID,1);
+            }
         
-        // Check the input object
-        if(key==null) {
+            // Get the object
+            edu.uoc.pelp.model.vo.ActivityTest newObj=ObjectFactory.getActivityTestReg(object);
+        
+            // Add a new object from given object, to break the reference
+            ActivityTestPK key=ObjectFactory.getActivityTestPK(newID);
+            if(key==null) {
+                return null;
+            }
+        
+            // Add the new object
+            newObj.setActivityTestPK(key);            
+            getSession().saveOrUpdate(newObj);
+                    
+            // Add the descriptions for current object
+            for(String lang:object.getLanguageCodes()) {
+                String desc=object.getDescription(lang);
+                if(desc!=null) {
+                    TestDescPK descPK=new TestDescPK(key,lang);
+                    getSession().saveOrUpdate(new TestDesc(descPK,desc));
+                }
+            }
+            
+            // Commit the results
+            transaction.commit();
+            
+        } catch (RuntimeException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             return null;
         }
-                
-        // Get the descriptions
-        Query q=getSession().getNamedQuery("ActivityDesc.findByPK");
-        q.setParameter("semester", key.getSemester());
-        q.setParameter("subject", key.getSubject());
-        q.setParameter("activityIndex", key.getActivityIndex());
-        q.setParameter("langCode",key.getLangCode());
+        
+        return newID;
+    }
 
-        // Get the list of descriptions
-        List<ActivityDesc> list=q.list();
-        if(list!=null && list.size()>0) {
-            desc=list.get(0).getDescription();
+    @Override
+    public boolean delete(TestID id) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean update(ActivityTest object) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<ActivityTest> findAllTests() {
+        
+        // Get the activity test registers
+        Query query=getSession().getNamedQuery("ActivityTest.findAll");        
+        List<edu.uoc.pelp.model.vo.ActivityTest> list=query.list();
+        
+        // Return the results
+        return getActivityTestList(list);
+    }
+
+    @Override
+    public List<ActivityTest> findAll(ActivityID activity) {
+        // Check the input object
+        if(activity==null) {
+            return null;
         }
         
-        return desc;
+        // Get the key
+        ActivityPK key=ObjectFactory.getActivityPK(activity);
+        
+        // Get the activity register
+        Query query=getSession().getNamedQuery("ActivityTest.findByActivityID");
+        query.setParameter("semester", key.getSemester());
+        query.setParameter("subject", key.getSubject());
+        query.setParameter("activityIndex", key.getActivityIndex());
+        
+        List<edu.uoc.pelp.model.vo.ActivityTest> list=query.list();
+        
+        // Return the results
+        return getActivityTestList(list);
+    }
+
+    @Override
+    public ActivityTest find(TestID id) {
+        // Check the input object
+        if(id==null) {
+            return null;
+        }
+        
+        // Get the key
+        ActivityTestPK key=ObjectFactory.getActivityTestPK(id);
+        
+        // Get the activity test register
+        Query query=getSession().getNamedQuery("ActivityTest.findById");
+        query.setParameter("semester", key.getSemester());
+        query.setParameter("subject", key.getSubject());
+        query.setParameter("activityIndex", key.getActivityIndex());
+        query.setParameter("testIndex", key.getTestIndex());
+  
+        List<edu.uoc.pelp.model.vo.ActivityTest> newObj=query.list();
+        if(newObj==null || newObj.size()!=1) {
+            return null;
+        }
+        edu.uoc.pelp.model.vo.ActivityTest activityTestReg=newObj.get(0);
+                
+        // Get the list of descriptions
+        List<TestDesc> descList=getActivityTestDescriptions(key);
+        TestDesc[] descArray=null;
+        if(descList!=null) {
+            descArray=new TestDesc[descList.size()];
+            descList.toArray(descArray);
+        }
+
+        // Add the final register
+        return ObjectFactory.getActivityTestObj(activityTestReg,descArray);
+    }
+
+    @Override
+    public TestID getLastID(ActivityID activityID) {
+        // Check the input object
+        if(activityID==null) {
+            return null;
+        }
+        ActivityPK activityPK=ObjectFactory.getActivityPK(activityID);
+        if(activityPK==null) {
+            return null;
+        }
+        
+        // Search the last identifier
+        Query q=getSession().getNamedQuery("ActivityTest.findLast");
+        q.setParameter("semester", activityPK.getSemester());
+        q.setParameter("subject", activityPK.getSubject());
+        q.setParameter("activityIndex", activityPK.getActivityIndex());
+        List<edu.uoc.pelp.model.vo.ActivityTest> lastAct=q.list();
+       
+        TestID lastID=null;
+        if(lastAct!=null) {
+            if(lastAct.size()>0) {
+                lastID=ObjectFactory.getActivityTestID(lastAct.get(0).getActivityTestPK());
+            }
+        }
+        
+        // Return last id
+        return lastID;
     }
 }
 

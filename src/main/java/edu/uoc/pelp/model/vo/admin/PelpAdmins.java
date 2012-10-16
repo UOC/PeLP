@@ -31,30 +31,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "PelpAdmins.findAll", query = "SELECT p FROM PelpAdmins p"),
-    @NamedQuery(name = "PelpAdmins.findByUser", query = "SELECT p FROM PelpAdmins p WHERE p.user = :user"),
+    @NamedQuery(name = "PelpAdmins.findByUser", query = "SELECT p FROM PelpAdmins p WHERE p.userName = :userName"),
     @NamedQuery(name = "PelpAdmins.findByActive", query = "SELECT p FROM PelpAdmins p WHERE p.active = :active")})
 public class PelpAdmins implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
-    @Column(name = "user", nullable = false, length = 25)
-    private String user;
+    @Column(name = "userName", length = 25,columnDefinition="char(25)")
+    private String userName;
     @Column(name = "active")
     private Boolean active;
+    @Column(name = "grantAllowed")
+    private Boolean grantAllowed;
 
     public PelpAdmins() {
     }
 
-    public PelpAdmins(String user) {
-        this.user = user;
+    public PelpAdmins(String userName) {
+        this.userName = userName;
     }
 
-    public String getUser() {
-        return user;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Boolean getActive() {
@@ -65,10 +67,19 @@ public class PelpAdmins implements Serializable {
         this.active = active;
     }
 
+    public Boolean getGrantAllowed() {
+        return grantAllowed;
+    }
+
+    public void setGrantAllowed(Boolean grantAllowed) {
+        this.grantAllowed = grantAllowed;
+    }
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (user != null ? user.hashCode() : 0);
+        hash += (userName != null ? userName.hashCode() : 0);
         return hash;
     }
 
@@ -79,7 +90,7 @@ public class PelpAdmins implements Serializable {
             return false;
         }
         PelpAdmins other = (PelpAdmins) object;
-        if ((this.user == null && other.user != null) || (this.user != null && !this.user.equals(other.user))) {
+        if ((this.userName == null && other.userName != null) || (this.userName != null && !this.userName.equals(other.userName))) {
             return false;
         }
         return true;
@@ -87,7 +98,7 @@ public class PelpAdmins implements Serializable {
 
     @Override
     public String toString() {
-        return "edu.uoc.pelp.model.vo.PelpAdmins[ user=" + user + " ]";
+        return "edu.uoc.pelp.model.vo.PelpAdmins[ userName=" + userName + " ]";
     }
     
 }

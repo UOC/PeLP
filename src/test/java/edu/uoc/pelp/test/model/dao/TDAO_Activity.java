@@ -34,7 +34,7 @@ import org.junit.Test;
  */
 public class TDAO_Activity {
     
-    private LocalActivityDAO _activityDAO=new LocalActivityDAO(); 
+    private LocalActivityDAO _activityDAO=new LocalActivityDAO("hibernate_test.cfg.xml"); 
     
     @Test 
     public void testAddActivities() {

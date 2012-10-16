@@ -19,10 +19,12 @@
 package edu.uoc.pelp.engine.aem;
 
 import edu.uoc.pelp.conf.IPelpConfiguration;
+import edu.uoc.pelp.engine.activity.ActivityTest;
 import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.CompilerAEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.LanguageAEMPelpException;
 import edu.uoc.pelp.engine.aem.exception.PathAEMPelpException;
+import edu.uoc.pelp.engine.deliver.ActivityTestResult;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import java.io.*;
@@ -297,8 +299,17 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
         }
         Long endTime=new Long(System.currentTimeMillis());
                         
-        // Store the results
-        TestResult result=new TestResult(); 
+        // Store the results, preserving activity information
+        TestResult result;
+        if(test instanceof ActivityTest) {
+            ActivityTestResult newResult=new ActivityTestResult();
+            ActivityTest actTest=(ActivityTest)test;
+            newResult.setTestID(actTest.getID());
+            result=newResult;
+        } else {
+            result=new TestResult();
+        }
+        
         result.setElapsedTime(endTime-startTime);
         
         // Compare the output and exepcted output
@@ -544,6 +555,7 @@ public abstract class BasicCodeAnalyzer implements ICodeAnalyzer {
                
         // Call internal building method
         BuildResult buildResult=build(project);
+        buildResult.setLanguage(getLanguageID());
         AnalysisResults result=new AnalysisResults(buildResult);
         
         // Test the code

@@ -36,6 +36,22 @@ import org.hibernate.Transaction;
 public class SemesterDAO implements ITimePeriodDAO {
     
     protected SessionFactory _sessionFactory = null;
+
+    /**
+     * Dafault constructor for compatibility or Spring session factory assignment
+     */
+    public SemesterDAO() {
+        super();
+    }
+    
+    /**
+     * Dafault constructor with session factory assignment
+     * @param sessionFactory Session factory of DAO access to the database
+     */
+    public SemesterDAO(SessionFactory sessionFactory) {
+        super();
+        _sessionFactory=sessionFactory;
+    }
     
     /**
      * Gets the session factory object

@@ -65,6 +65,29 @@ public class LocalActivityManager implements IActivityManager {
     }
 
     @Override
+    public ActivityID addActivity(ISubjectID subject, Activity activity) {
+        // Get all activities of a certain subject
+        ActivityID[] activities=getSubjectActivities(subject);
+        
+        // Search the last identifier
+        long lastID=0;
+        for(ActivityID id:activities) {
+            if(id.index>lastID) {
+                lastID=id.index;
+            }
+        }
+        
+        // Create a new identifier
+        ActivityID newID=new ActivityID(subject,lastID+1);
+        
+        // Create the new Activity
+        activity.setActivityID(newID);
+        _activities.put(newID,new Activity(newID,activity.clone()));
+        
+        return newID;
+    }
+    
+    @Override
     public boolean editActivity(Activity activity) {
         // Check if the activity exists
         if(_activities.containsKey(activity.getActivity())) {

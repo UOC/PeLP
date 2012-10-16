@@ -43,6 +43,7 @@ public class SubjectID implements ISubjectID {
         _semester=semester;
     }
     
+    @Override
     public boolean isValid() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -51,14 +52,23 @@ public class SubjectID implements ISubjectID {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    public void setSemester(Semester semester) {
+        _semester=semester;
+    }
+    
     public Semester getSemester() {
         return _semester;
+    }
+    
+    public void setCode(String code) {
+        _code=code;
     }
     
     public String getCode() {
         return _code;
     }
 
+    @Override
     public int compareTo(IPelpID arg0) {
         SubjectID arg=(SubjectID)arg0;
         if(_semester.compareTo(arg._semester)!=0) {
@@ -107,6 +117,7 @@ public class SubjectID implements ISubjectID {
         return _semester + "__" + _code;
     }
 
+    @Override
     public IPelpID parse(String str) {
         if(str==null) {
             return null;

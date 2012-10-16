@@ -36,6 +36,9 @@ import edu.uoc.pelp.test.engine.campus.TestUOC.LocalCampusConnection;
 import edu.uoc.pelp.test.engine.delivery.LocalDeliverManager;
 import edu.uoc.pelp.test.resource.CodeSamples;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -55,7 +58,8 @@ import org.junit.runners.Suite;
                      edu.uoc.pelp.test.engine.activity.LocalDAOActivityManager_Basic.class,
                      edu.uoc.pelp.test.engine.Engine_InfoRetrival.class,
                      edu.uoc.pelp.test.model.dao.UOC.TDAO_Semester.class,
-                     edu.uoc.pelp.test.model.dao.TDAO_Activity.class}
+                     edu.uoc.pelp.test.model.dao.TDAO_Activity.class,
+                     edu.uoc.pelp.test.model.dao.TDAO_Deliver.class}
         )
 public class TestPeLP {
     
@@ -160,13 +164,21 @@ public class TestPeLP {
     }
     
     public static File createTemporalFolder(String path) {
+        return createTemporalFolder(path,null);
+    }
+    public static File createTemporalFolder(String path,File rootPath) {
         // Remove extra separators
         if(path.charAt(0)==File.separatorChar) {
             path.substring(1);
         }
         
         // Create a temporal folder
-        File tmpPath=new File(System.getProperty("java.io.tmpdir")+ "PELP" + File.separator + path);  
+        File tmpPath;
+        if(rootPath==null) {
+            tmpPath=new File(System.getProperty("java.io.tmpdir")+ "PELP" + File.separator + path);  
+        } else {
+            tmpPath=new File(rootPath.getAbsolutePath() + File.separator + path);  
+        }
         if(!tmpPath.exists()) {
             Assert.assertTrue("Create temporal path",tmpPath.mkdirs());
         }
@@ -174,6 +186,54 @@ public class TestPeLP {
         tmpPath.deleteOnExit();
         
         return tmpPath;
+    }
+    
+    public static File createTempFile(File filePath,File rootPath) {
+        File fullPath;
+        
+        try {
+            if(filePath==null || rootPath==null) {
+                return null;
+            }            
+            fullPath=new File(rootPath.getAbsolutePath() + File.separator + filePath.getPath());
+            if(!fullPath.getParentFile().exists()) {
+                if(!fullPath.getParentFile().mkdirs()) {
+                    return null;
+                }
+            }
+            fullPath.createNewFile();
+            fullPath.deleteOnExit();
+        } catch (IOException ex) {
+            fullPath=null;
+        }
+        
+        return fullPath;
+    }
+    
+    public static boolean createFile(File rootPath,String fileName,String content) {
+        try {
+            File file=new File(rootPath.getAbsolutePath() + File.separator + fileName);
+            PrintWriter writer=new PrintWriter(file);
+            writer.print(content);
+            writer.close();
+        } catch (FileNotFoundException ex) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public static boolean deleteFilePath(File rootPath) {
+        
+        if(!rootPath.isDirectory()) {
+            return rootPath.delete();
+        }
+        
+        boolean retVal=true;
+        for(File f:rootPath.listFiles()) {
+            retVal&=deleteFilePath(f);
+        }
+        return retVal;
     }
     
     @BeforeClass

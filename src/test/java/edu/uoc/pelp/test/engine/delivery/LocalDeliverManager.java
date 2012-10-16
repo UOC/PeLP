@@ -20,6 +20,7 @@ package edu.uoc.pelp.test.engine.delivery;
 
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
+import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.IUserID;
 import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverID;
@@ -284,5 +285,15 @@ public class LocalDeliverManager implements IDeliverManager {
         }
         
         return true;
+    }
+
+    @Override
+    public Deliver[] getClassroomDelivers(IClassroomID classroom, ActivityID activity) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Deliver[] getClassroomLastDelivers(IClassroomID classroom, ActivityID activity) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -39,12 +39,31 @@ public class ClassroomID implements IClassroomID {
         _classIdx=classIdx;
     }
     
+    @Override
     public boolean isValid() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public int compareTo(IClassroomID t) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ClassroomID arg=(ClassroomID) t;
+        if(_subjectCode!=null) {
+            if(_subjectCode.compareTo(arg._subjectCode)!=0) {
+                return _subjectCode.compareTo(arg._subjectCode);
+            }
+        } else {
+            if(arg._subjectCode!=null) {
+                return -1;
+            }
+        }
+        if(_classIdx!=null) {
+            return _classIdx.compareTo(arg._classIdx);
+        } else {
+            if(arg._classIdx!=null) {
+                return -1;
+            }
+        }
+        
+        return 0;
     }
 
     protected void copyData(IPelpID genericID) throws PelpException {
@@ -98,6 +117,7 @@ public class ClassroomID implements IClassroomID {
         return hash;
     }
 
+    @Override
     public int compareTo(IPelpID id) {
         ClassroomID arg=(ClassroomID)id;
         if(_subjectCode!=null) {
@@ -120,6 +140,7 @@ public class ClassroomID implements IClassroomID {
         return 0;
     }
 
+    @Override
     public IPelpID parse(String str) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

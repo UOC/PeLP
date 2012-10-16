@@ -36,7 +36,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "TestDesc.findByActivityIndex", query = "SELECT t FROM TestDesc t WHERE t.testDescPK.activityIndex = :activityIndex"),
     @NamedQuery(name = "TestDesc.findByTestIndex", query = "SELECT t FROM TestDesc t WHERE t.testDescPK.testIndex = :testIndex"),
     @NamedQuery(name = "TestDesc.findByLangCode", query = "SELECT t FROM TestDesc t WHERE t.testDescPK.langCode = :langCode"),
-    @NamedQuery(name = "TestDesc.findByActivityDesc", query = "SELECT t FROM TestDesc t WHERE t.activityDesc = :activityDesc")})
+    @NamedQuery(name = "TestDesc.findByActivityDesc", query = "SELECT t FROM TestDesc t WHERE t.activityDesc = :activityDesc"),
+    @NamedQuery(name = "TestDesc.findByTestID", query = "SELECT t FROM TestDesc t WHERE t.testDescPK.semester = :semester AND t.testDescPK.subject = :subject AND t.testDescPK.activityIndex = :activityIndex AND t.testDescPK.testIndex = :testIndex"),
+    @NamedQuery(name = "TestDesc.findByID", query = "SELECT t FROM TestDesc t WHERE t.testDescPK.semester = :semester AND t.testDescPK.subject = :subject AND t.testDescPK.activityIndex = :activityIndex AND t.testDescPK.testIndex = :testIndex AND t.testDescPK.langCode = :langCode")})
 public class TestDesc implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId

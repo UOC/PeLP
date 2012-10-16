@@ -20,11 +20,12 @@ package edu.uoc.pelp.test.model.dao.UOC;
 
 import edu.uoc.pelp.engine.campus.ITimePeriod;
 import edu.uoc.pelp.model.dao.UOC.SemesterDAO;
+import edu.uoc.pelp.test.model.dao.LocalDAO;
+import java.io.File;
+import java.net.URL;
 import java.util.List;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
 
 /**
  * Implements the DAO object for the Semester class
@@ -32,78 +33,112 @@ import org.hibernate.cfg.AnnotationConfiguration;
  */
 public class LocalSemesterDAO extends SemesterDAO {
     
-    private static Session _session=null;
+    private LocalDAO _localDAO=null;
+    
+    /**
+     * Creates a new LocalSemesterDAO object from given Hibernate SessionFactory
+     * @param sessionFactory SessionFactory object
+     */
+    public LocalSemesterDAO(SessionFactory sessionFactory) {
+        // Call parent constructor
+        super();
         
-    private static SessionFactory buildSessionFactory() {
-        try {
-            // Assign the new session Factory using the local configuration
-            return new AnnotationConfiguration().configure("hibernate_test.cfg.xml").buildSessionFactory();
-        } catch (Throwable ex) {
-            throw new ExceptionInInitializerError(ex);
-        }
+        // Create object to access local database
+        _localDAO=new LocalDAO(sessionFactory) {
+            @Override
+            public void clearTableData() {
+                deleteTableData("Semester");
+            }
+        };
+        // Assign the session Factory to the parent object
+        _sessionFactory=_localDAO.getSessionFactory();
     }
     
-    protected void closeSession() {
-        if(_session!=null) {
-            _session.flush();
-            _session.close();
-            _session=null;
-        }
+    /**
+     * Creates a new LocalSemesterDAO object from given Hibernate configuration resource
+     * @param resource Resource with configuration for Hibernate Database Connection
+     */
+    public LocalSemesterDAO(String resource) {
+        // Call parent constructor
+        super();
+        
+        // Create object to access local database
+        _localDAO=new LocalDAO(resource) {
+            @Override
+            public void clearTableData() {
+                deleteTableData("Semester");
+            }
+        };
+        // Assign the session Factory to the parent object
+        _sessionFactory=_localDAO.getSessionFactory();
+    }
+    
+    /**
+     * Creates a new LocalSemesterDAO object from given Hibernate configuration file
+     * @param confFile File with configuration for Hibernate Database Connection
+     */
+    public LocalSemesterDAO(File confFile) {
+        // Call parent constructor
+        super();
+        
+        // Create object to access local database
+        _localDAO=new LocalDAO(confFile) {
+            @Override
+            public void clearTableData() {
+                deleteTableData("Semester");
+            }
+        };
+        // Assign the session Factory to the parent object
+        _sessionFactory=_localDAO.getSessionFactory();
+    }
+    
+    /**
+     * Creates a new LocalSemesterDAO object from given Hibernate configuration url
+     * @param url URL with configuration for Hibernate Database Connection
+     */
+    public LocalSemesterDAO(URL url) {
+        // Call parent constructor
+        super();
+        
+        // Create object to access local database
+        _localDAO=new LocalDAO(url) {
+            @Override
+            public void clearTableData() {
+                deleteTableData("Semester");
+            }
+        };
+        // Assign the session Factory to the parent object
+        _sessionFactory=_localDAO.getSessionFactory();
     }
     
     @Override
     protected Session getSession() {     
-        // Close open sessions
-        if(_session==null) {
-            _session=_sessionFactory.openSession();
+        if(_localDAO==null) {
+            return null;
         }
-        return _session;
+        return _localDAO.getSession();
     }
         
     /**
      * Remove all the data in this table of the database
      */
     public void clearTableData() {
-        boolean createdNewSession=false;
-        
-        // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
-        
-        // Perform action
-        Query q = getSession().createQuery("delete from Semester");      
-        q.executeUpdate();
-        
-        // Close new created session
-        if(createdNewSession) {
-            closeSession();
-        }
-    }
-    
-    /**
-     * Default constructor. Creates an ObjectFactory using local hibernate configuration file
-     */
-    public LocalSemesterDAO() {
-        setSessionFactory(buildSessionFactory());        
+        _localDAO.clearTableData();
     }
 
     @Override
     public boolean delete(ITimePeriod object) {
         boolean retVal;
-        boolean createdNewSession=false;
         
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
                 
         // Perform action
         retVal=super.delete(object);
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -113,19 +148,16 @@ public class LocalSemesterDAO extends SemesterDAO {
     @Override
     public ITimePeriod find(ITimePeriod object) {
         ITimePeriod retVal;
-        boolean createdNewSession=false;
         
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
                
         // Perform action
         retVal=super.find(object);
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -135,19 +167,16 @@ public class LocalSemesterDAO extends SemesterDAO {
     @Override
     public List<ITimePeriod> findActive() {
         List<ITimePeriod> retVal;
-        boolean createdNewSession=false;
         
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
         
         // Perform action
         retVal=super.findActive();
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -157,19 +186,16 @@ public class LocalSemesterDAO extends SemesterDAO {
     @Override
     public List<ITimePeriod> findAll() {
         List<ITimePeriod> retVal;
-        boolean createdNewSession=false;
         
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
         
         // Perform action
         retVal=super.findAll();
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -179,19 +205,16 @@ public class LocalSemesterDAO extends SemesterDAO {
     @Override
     public boolean save(ITimePeriod object) {
         boolean retVal;
-        boolean createdNewSession=false;
         
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
                        
         // Perform action
         retVal=super.save(object);
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
@@ -201,29 +224,19 @@ public class LocalSemesterDAO extends SemesterDAO {
     @Override
     public boolean update(ITimePeriod object) {
         boolean retVal;
-        boolean createdNewSession=false;
         
         // Check current session status
-        if(_session==null) {
-            createdNewSession=true;
-        }
-        
-        // Close open sessions
-        if(_session!=null) {
-            _session.close();
-        }
+        boolean createdNewSession=!_localDAO.hasOpenSession();
                 
         // Perform action
         retVal=super.update(object);
         
         // Close new created session
         if(createdNewSession) {
-            closeSession();
+            _localDAO.closeSession();
         }
         
         //Return parent method returned value
         return retVal;
     }
-    
-    
 }
