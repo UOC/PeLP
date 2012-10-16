@@ -488,8 +488,16 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         DeliverDetail deliverDetail=new DeliverDetail(deliverSummary);
         
         // Add deliver files
-        
+        edu.uoc.pelp.engine.deliver.DeliverFile[] files=deliver.getFiles();
+        if(files!=null) {
+            deliverDetail.setDeliverFiles(getDeliverFileList(deliver.getRootPath(),files));
+        }
         // Add test information
+        ActivityTestResult[] tests = deliverResult.getResults();
+        if(tests!=null) {
+            deliverDetail.setTestResults(getTestResultList(tests));
+        }
+        
         
         return deliverDetail;
     }
@@ -596,16 +604,6 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         
         return newObj;
     }
-
-    private DeliverFile[] getDeliverFileArray(edu.uoc.pelp.engine.deliver.DeliverFile[] files) {
-        
-       //Check input parameters
-        if(files==null) {
-            return null;
-        }
-        
-        return null;
-    }
     
     protected Activity[] getActivityList(edu.uoc.pelp.engine.activity.Activity[] activityList) throws ExecPelpException, InvalidEngineException {
         // Check parameters
@@ -636,4 +634,74 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         
         return retList;
     }
+    
+    protected DeliverFile[] getDeliverFileList(File rootPath,edu.uoc.pelp.engine.deliver.DeliverFile[] files) {
+        DeliverFile[] retList;
+        if(files==null) {
+            return null;
+        }
+        retList=new DeliverFile[files.length];
+        for(int i=0;i<files.length;i++) {
+            retList[i]=getDeliverFile(rootPath,files[i]);
+        }
+        
+        return retList;
+    }
+    
+    protected DeliverFile getDeliverFile(File rootPath,edu.uoc.pelp.engine.deliver.DeliverFile object) {
+        
+        // Create the output file
+        DeliverFile newFile=new DeliverFile(rootPath,object.getRelativePath());
+        
+        newFile.setIndex((int)object.getID().index);
+        switch(object.getType()) {
+            case Code:
+                newFile.setIsCode(true);
+                newFile.setIsMain(object.isMainFile());
+                break;
+            case Report:
+                newFile.setIsReport(true);
+                break;
+        }
+
+        return newFile;
+                
+
+    }
+
+    protected TestResult getTestResult(ActivityTestResult test) throws AuthPelpException {
+        
+        // Create the new object
+        TestResult newResult=new TestResult();
+        
+        newResult.setIndex((int)test.getTestID().index);
+        newResult.setElapsedTime(test.getElapsedTime());
+        newResult.setIsPassed(test.isPassed());
+        ActivityTest testInfo=_engine.getTestInformation(test.getTestID());
+        newResult.setIsPublic(testInfo.isPublic());
+        if(testInfo.getExpectedOutputFile()!=null) {
+            newResult.setExpectedOutput("<file content>");
+        }
+        if(testInfo.getExpectedOutputStr()!=null) {
+            newResult.setExpectedOutput(testInfo.getExpectedOutputStr());
+        }
+        newResult.setOutput(test.getOutput());
+        
+        return newResult;
+    }
+    
+    protected TestResult[] getTestResultList(ActivityTestResult[] tests) throws AuthPelpException {
+        TestResult[] retList;
+        if(tests==null) {
+            return null;
+        }
+        retList=new TestResult[tests.length];
+        for(int i=0;i<tests.length;i++) {
+            retList[i]=getTestResult(tests[i]);
+        }
+        
+        return retList;
+    }
+    
+    
 }

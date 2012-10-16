@@ -92,4 +92,12 @@ public class TestResult {
     public void setOutput(String _output) {
         this._output = _output;
     }
+
+    public String getExpectedOutput() {
+        return _expectedOutput;
+    }
+
+    public void setExpectedOutput(String _expectedOutput) {
+        this._expectedOutput = _expectedOutput;
+    }
 }

@@ -138,8 +138,8 @@ public class Bussines_NormalWorkflow {
         addDeliversStudent3();
         
         // The teacher from the main classroom can see all the delivers
-        //_campusConnection.setProfile("teacher1");
-        //checkDelivers1();
+        _campusConnection.setProfile("teacher1");
+        checkDelivers1();
                 
         // The teacher from the laboratory only the delivers from students 2 and 3
         _campusConnection.setProfile("teacher2");

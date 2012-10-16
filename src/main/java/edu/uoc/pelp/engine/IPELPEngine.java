@@ -26,10 +26,7 @@ import edu.uoc.pelp.engine.aem.CodeProject;
 import edu.uoc.pelp.engine.aem.TestData;
 import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
 import edu.uoc.pelp.engine.campus.*;
-import edu.uoc.pelp.engine.deliver.Deliver;
-import edu.uoc.pelp.engine.deliver.DeliverID;
-import edu.uoc.pelp.engine.deliver.DeliverResults;
-import edu.uoc.pelp.engine.deliver.IDeliverManager;
+import edu.uoc.pelp.engine.deliver.*;
 import edu.uoc.pelp.engine.information.DAOInformationManager;
 import edu.uoc.pelp.exception.*;
 import java.util.Date;
@@ -163,7 +160,7 @@ public interface IPELPEngine {
 	 * @return Object with the results of the deliver analysis
 	 * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
 	 */
-	public DeliverResults getDeliverResults(DeliverID deliver) throws AuthPelpException;
+	public DeliverResults getDeliverResults(DeliverID deliver) throws AuthPelpException;        
         
         /**
 	 * Obtain the information of a certain deliver. Only the owner of the deliver and the teachers of the

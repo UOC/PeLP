@@ -385,7 +385,7 @@ public class PELPEngine implements IPELPEngine {
         
         return results;
     }
-    
+     
     /**
      * Obain the test information. Only teachers can access to private tests information.
      * @param testID Identifier for the test
@@ -401,16 +401,19 @@ public class PELPEngine implements IPELPEngine {
         }
         
         // Check user restrictions
-        if(!isStudent(testID.activity.subjectID) && !isTeacher(testID.activity.subjectID) && !isLabTeacher(testID.activity.subjectID)) {
-            
-            throw new AuthPelpException("Not enough rights to access this information");
+        boolean userIsTeacher=false;
+        if(!isStudent(testID.activity.subjectID)) {
+            userIsTeacher=true;
+            if(!isTeacher(testID.activity.subjectID) && !isLabTeacher(testID.activity.subjectID)) {
+                throw new AuthPelpException("Not enough rights to access this information");
+            }
         }
         
         // Get the test information
         ActivityTest test=_activityManager.getTest(testID);
         
         // If the user is not a teacher, replace private tests with tests
-        if(!test.isPublic() && !isTeacher(testID.activity.subjectID)) {
+        if(!test.isPublic() && !userIsTeacher) {
             test=new ActivityTest(testID);
             test.setPublic(false);
             test.setTestID(testID);
@@ -512,7 +515,10 @@ public class PELPEngine implements IPELPEngine {
         }
         
         // Return the results
-        return _deliverManager.getResults(deliverID);
+        DeliverResults results=_deliverManager.getResults(deliverID);
+        removePrivateResultInformation(results);
+        
+        return results;
     }
     
     /**
