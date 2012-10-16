@@ -1,9 +1,27 @@
-package edu.uoc.pelp.bussines;
+/*
+	Copyright 2011-2012 Fundació per a la Universitat Oberta de Catalunya
+
+	This file is part of PeLP (Programming eLearning Plaform).
+
+    PeLP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    PeLP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/package edu.uoc.pelp.bussines;
 
 import edu.uoc.pelp.bussines.exception.*;
 import edu.uoc.pelp.bussines.vo.*;
 import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.campus.ICampusConnection;
+import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.engine.campus.ITimePeriod;
 import edu.uoc.pelp.exception.ExecPelpException;
@@ -107,7 +125,7 @@ public interface PelpBussines {
     * @throws AuthorizationException if user is not a teacher of this subject
     * @throws ExecPelpException if there is a problem during the process.
     */
-    public Activity addActivity(Subject subject, Date start, Date end, Integer maxDelivers,String progLangCode, MultilingualText[] activityDescriptions) throws AuthorizationException,InvalidEngineException,ExecPelpException;
+    public Activity addActivity(Subject subject, Date start, Date end, Integer maxDelivers,String progLangCode, MultilingualTextArray activityDescriptions) throws AuthorizationException,InvalidEngineException,ExecPelpException;
 
     /**
     * Add a new activity to the given subject
@@ -117,13 +135,13 @@ public interface PelpBussines {
     * @param maxDelivers Maximum allowed delivers per user to this activity
     * @param activityDescriptions Activity descriptions in multiple languages
     * @param activityTests Tests to be passed to the delivers
-    * @param testDescriptions Test descriptions in multiple languages
+    * @param testDescriptions Test descriptions in multiple languages. An array for each test
     * @return New created activity of null if it is not created correctly
     * @throws InvalidEngineException if the engine is not properly initialized
     * @throws AuthorizationException if user is not a teacher of this subject
     * @throws ExecPelpException if there is a problem during the process.
     */
-    public Activity addActivity(Subject subject, Date start, Date end, Integer maxDelivers, String progLangCode, MultilingualText[] activityDescriptions, Test[] activityTests, MultilingualText[] testDescriptions) throws AuthorizationException,InvalidEngineException,ExecPelpException;
+    public Activity addActivity(Subject subject, Date start, Date end, Integer maxDelivers, String progLangCode, MultilingualTextArray activityDescriptions, Test[] activityTests, MultilingualTextArray[] testDescriptions) throws AuthorizationException,InvalidEngineException,ExecPelpException;
     
     /**
      * Add a new deliver for a certain activity
@@ -150,95 +168,147 @@ public interface PelpBussines {
 
     /**
      * Get a detailed information for last deliver of each user in a given classroom
-     * @param subject Subject object
+     * @param subject Subject object for the activity
      * @param activityIndex Activity Index
+     * @param subject Subject object for classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverDetail[] getLastClassroomDeliverDetails(Subject subject,int activityIndex,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
+    public DeliverDetail[] getLastClassroomDeliverDetails(Subject activitySubject, int activityIndex, Subject subject,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
   
     /**
      * Get a detailed information for last deliver of each user in a given classroom
      * @param activity Activity object
-     * @param classIndex Classroom index
+     * @param classroom Classroom object
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverDetail[] getLastClassroomDeliverDetails(Activity activity,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
+    public DeliverDetail[] getLastClassroomDeliverDetails(Activity activity,Classroom classroom) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
 
-        /**
-     * Get a summarized information for last deliver of each user in a given classroom
-     * @param subject Subject object
-     * @param activityIndex Activity Index
+    /**
+     * Get a detailed information for last deliver of each user in a given classroom
+     * @param activity Activity object
+     * @param subject Subject object for classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverSummary[] getLastClassroomDeliverSummary(Subject subject,int activityIndex,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+    public DeliverDetail[] getLastClassroomDeliverDetails(Activity activity,Subject subject, int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
 
     /**
      * Get a summarized information for last deliver of each user in a given classroom
-     * @param activity Activity object
+     * @param activitySubject Subject object for the activity
+     * @param activityIndex Activity Index
+     * @param subject Subject object for the classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverSummary[] getLastClassroomDeliverSummary(Activity activity,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+    public DeliverSummary[] getLastClassroomDeliverSummary(Subject activitySubject, int activityIndex, Subject subject,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+
+    /**
+     * Get a summarized information for last deliver of each user in a given classroom
+     * @param activity Activity object
+     * @param classroom Classroom object
+     * @return Array of Object with summary information of the delivers
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user is not a teacher of this classroom
+     */
+    public DeliverSummary[] getLastClassroomDeliverSummary(Activity activity,Classroom classroom) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+
+    /**
+     * Get a summarized information for last deliver of each user in a given classroom
+     * @param activity Activity object
+     * @param subject Subject object for the classroom
+     * @param classIndex Classroom index
+     * @return Array of Object with summary information of the delivers
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user is not a teacher of this classroom
+     */
+    public DeliverSummary[] getLastClassroomDeliverSummary(Activity activity,Subject subject,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
 
         /**
      * Get a detailed information for all delivers in a given classroom
-     * @param subject Subject object
+     * @param activitySubject Subject object for the activity
      * @param activityIndex Activity Index
+     * @param subject Subject object for the classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverDetail[] getAllClassroomDeliverDetails(Subject subject,int activityIndex,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
+    public DeliverDetail[] getAllClassroomDeliverDetails(Subject activitySubject, int activityIndex, Subject subject,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
 
     /**
      * Get a detailed information for all delivers in a given classroom
      * @param activity Activity object
+     * @param subject Subject object for the classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverDetail[] getAllClassroomDeliverDetails(Activity activity,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
+    public DeliverDetail[] getAllClassroomDeliverDetails(Activity activity,Subject subject,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
 
-        /**
+    /**
+     * Get a detailed information for all delivers in a given classroom
+     * @param activity Activity object
+     * @param classroom Classroom object
+     * @return Array of Object with summary information of the delivers
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user is not a teacher of this classroom
+     */
+    public DeliverDetail[] getAllClassroomDeliverDetails(Activity activity,Classroom classroom) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
+
+    /**
      * Get a summarized information for all delivers in a given classroom
-     * @param subject Subject object
+     * @param activitySubject Subject object for the activity
      * @param activityIndex Activity Index
+     * @param subject Subject object for the classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverSummary[] getAllClassroomDeliverSummary(Subject subject,int activityIndex,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+    public DeliverSummary[] getAllClassroomDeliverSummary(Subject activitySubject, int activityIndex, Subject subject,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
 
     /**
      * Get a summarized information for all delivers in a given classroom
      * @param activity Activity object
+     * @param classroom Classroom object
+     * @return Array of Object with summary information of the delivers
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user is not a teacher of this classroom
+     */
+    public DeliverSummary[] getAllClassroomDeliverSummary(Activity activity,Classroom classroom) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+
+    /**
+     * Get a summarized information for all delivers in a given classroom
+     * @param activity Activity object
+     * @param subject Subject object for the classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverSummary[] getAllClassroomDeliverSummary(Activity activity,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+    public DeliverSummary[] getAllClassroomDeliverSummary(Activity activity,Subject subject,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
 
         /**
      * Get the information for a given activity
@@ -404,8 +474,7 @@ public interface PelpBussines {
      * @throws AuthorizationException if user is not an administrator
      */
     public boolean removeLaboratory(String mainSubject,String laboratory) throws AuthorizationException,InvalidEngineException;
-
-
+    
     /**
      * Get a subject object from with identifier information from a generic identifier. 
      * @param subjectID Identifier object
@@ -426,5 +495,20 @@ public interface PelpBussines {
      * @return Time period object
      */
     public ITimePeriod getSemester(Subject subject);
+    
+    /**
+     * Get a classroom object from with identifier information from a generic identifier. 
+     * @param classroomID Identifier object
+     * @return Classroom object
+     */
+    public Classroom getClassroom(IClassroomID classroomID);
+    
+    /**
+     * Get a generic classroom identifier from a classroom object. 
+     * @param classroom Classroom object
+     * @return Classroom object identifier
+     */
+    public IClassroomID getClassroomID(Classroom classroom);
+    
 }
 

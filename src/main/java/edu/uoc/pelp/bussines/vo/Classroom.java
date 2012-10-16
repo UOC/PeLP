@@ -26,13 +26,14 @@ public class Classroom {
     private Subject _subject;
     private int _index;
     
-    public Classroom() {
-        
-    }
-    
     public Classroom(Subject subject, int index) {
         this._subject=subject;
         this._index=index;
+    }
+    
+    public Classroom(Classroom object) {
+        this._subject=object._subject;
+        this._index=object._index;
     }
 
     public int getIndex() {
@@ -50,4 +51,32 @@ public class Classroom {
     public void setSubject(Subject _subject) {
         this._subject = _subject;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Classroom other = (Classroom) obj;
+        if (this._subject != other._subject && (this._subject == null || !this._subject.equals(other._subject))) {
+            return false;
+        }
+        if (this._index != other._index) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + (this._subject != null ? this._subject.hashCode() : 0);
+        hash = 11 * hash + this._index;
+        return hash;
+    }
+    
+    
 }

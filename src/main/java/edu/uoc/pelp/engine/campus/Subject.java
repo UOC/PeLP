@@ -316,6 +316,7 @@ public class Subject implements Comparable<Subject> {
         _mainTeachers=null;
     }
 
+    @Override
     public int compareTo(Subject t) {
         if(t==null) {
             return -1;

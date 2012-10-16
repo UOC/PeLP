@@ -1,24 +1,47 @@
+/*
+	Copyright 2011-2012 Fundació per a la Universitat Oberta de Catalunya
+
+	This file is part of PeLP (Programming eLearning Plaform).
+
+    PeLP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    PeLP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package edu.uoc.pelp.bussines;
 
 import edu.uoc.pelp.bussines.exception.*;
+import edu.uoc.pelp.bussines.vo.Classroom;
+import edu.uoc.pelp.bussines.vo.Subject;
 import edu.uoc.pelp.bussines.vo.*;
 import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.DAOPELPEngine;
 import edu.uoc.pelp.engine.IPELPEngine;
+import edu.uoc.pelp.engine.activity.ActivityTest;
 import edu.uoc.pelp.engine.activity.DAOActivityManager;
 import edu.uoc.pelp.engine.admin.DAOAdministrationManager;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.aem.CodeProject;
-import edu.uoc.pelp.engine.aem.TestData;
 import edu.uoc.pelp.engine.aem.exception.AEMPelpException;
-import edu.uoc.pelp.engine.campus.ICampusConnection;
-import edu.uoc.pelp.engine.campus.ISubjectID;
-import edu.uoc.pelp.engine.campus.ITimePeriod;
-import edu.uoc.pelp.engine.campus.Person;
+import edu.uoc.pelp.engine.campus.*;
+import edu.uoc.pelp.engine.deliver.ActivityTestResult;
 import edu.uoc.pelp.engine.deliver.DAODeliverManager;
+import edu.uoc.pelp.engine.deliver.Deliver;
+import edu.uoc.pelp.engine.deliver.DeliverFile.FileType;
+import edu.uoc.pelp.engine.deliver.DeliverResults;
 import edu.uoc.pelp.engine.information.DAOInformationManager;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
+import edu.uoc.pelp.exception.InvalidActivityPelpException;
+import edu.uoc.pelp.exception.InvalidSubjectPelpException;
 import edu.uoc.pelp.model.dao.*;
 import edu.uoc.pelp.model.dao.UOC.SemesterDAO;
 import edu.uoc.pelp.model.dao.admin.AdministrationDAO;
@@ -152,7 +175,7 @@ public abstract class PelpBussinesImpl implements PelpBussines {
     }
 
     @Override
-    public DeliverDetail compileCode(String code, String programmingLanguage, Test[] tests) throws InvalidEngineException, AuthorizationException, AEMPelpException {
+    public DeliverDetail compileCode(String code, String programmingLanguage, Test[] tests) throws InvalidEngineException, AuthorizationException, AEMPelpException, ExecPelpException {
        // Check the engine
         if(_engine==null) {
             throw new InvalidEngineException("Uninitialized engine.");
@@ -162,7 +185,7 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         CodeProject project = new CodeProject(programmingLanguage, code);
         
         // Build test high level objects
-        TestData[] givenTests=getTestDataArray(tests);
+        ActivityTest[] givenTests=getTestDataArray(tests,null);
         
         // Analyze the project
         AnalysisResults result=_engine.analyzeCode(project, givenTests);
@@ -196,7 +219,7 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         }
         
         // Build test high level objects
-        TestData[] givenTests=getTestDataArray(tests);
+        ActivityTest[] givenTests=getTestDataArray(tests,null);
         
         // Analyze the project
         AnalysisResults result=_engine.analyzeCode(project, givenTests);
@@ -257,23 +280,43 @@ public abstract class PelpBussinesImpl implements PelpBussines {
     }
 
     @Override
-    public DeliverSummary[] getAllClassroomDeliverSummary(Activity activity, int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
-        return getAllClassroomDeliverSummary(activity.getSubject(),activity.getIndex(),classIndex);
+    public DeliverSummary[] getAllClassroomDeliverSummary(Activity activity, Classroom classroom) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getAllClassroomDeliverSummary(activity.getSubject(),activity.getIndex(),classroom.getSubject(),classroom.getIndex());
     }
     
     @Override
-    public DeliverDetail[] getAllClassroomDeliverDetails(Activity activity, int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
-        return getAllClassroomDeliverDetails(activity.getSubject(),activity.getIndex(),classIndex);
+    public DeliverSummary[] getAllClassroomDeliverSummary(Activity activity, Subject subject,int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getAllClassroomDeliverSummary(activity.getSubject(),activity.getIndex(),subject,classIndex);
     }
     
     @Override
-    public DeliverSummary[] getLastClassroomDeliverSummary(Activity activity, int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
-        return getLastClassroomDeliverSummary(activity.getSubject(), activity.getIndex(), classIndex);
+    public DeliverDetail[] getAllClassroomDeliverDetails(Activity activity, Classroom classroom) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getAllClassroomDeliverDetails(activity.getSubject(),activity.getIndex(),classroom.getSubject(),classroom.getIndex());
     }
     
     @Override
-    public DeliverDetail[] getLastClassroomDeliverDetails(Activity activity, int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
-        return getLastClassroomDeliverDetails(activity.getSubject(),activity.getIndex(), classIndex);
+    public DeliverDetail[] getAllClassroomDeliverDetails(Activity activity, Subject subject,int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getAllClassroomDeliverDetails(activity.getSubject(),activity.getIndex(),subject,classIndex);
+    }
+    
+    @Override
+    public DeliverSummary[] getLastClassroomDeliverSummary(Activity activity, Classroom classroom) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getLastClassroomDeliverSummary(activity.getSubject(), activity.getIndex(), classroom.getSubject(),classroom.getIndex());
+    }
+    
+    @Override
+    public DeliverDetail[] getLastClassroomDeliverDetails(Activity activity, Classroom classroom) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getLastClassroomDeliverDetails(activity.getSubject(),activity.getIndex(), classroom.getSubject(),classroom.getIndex());
+    }
+    
+    @Override
+    public DeliverSummary[] getLastClassroomDeliverSummary(Activity activity, Subject subject,int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getLastClassroomDeliverSummary(activity.getSubject(), activity.getIndex(), subject, classIndex);
+    }
+    
+    @Override
+    public DeliverDetail[] getLastClassroomDeliverDetails(Activity activity, Subject subject,int classIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        return getLastClassroomDeliverDetails(activity.getSubject(),activity.getIndex(), subject,classIndex);
     }
     
     @Override
@@ -320,7 +363,11 @@ public abstract class PelpBussinesImpl implements PelpBussines {
     @Override
     public abstract ITimePeriod getSemester(Subject subject);
     
+    @Override
+    public abstract Classroom getClassroom(IClassroomID classroomID);
     
+    @Override
+    public abstract IClassroomID getClassroomID(Classroom classroom);
     
     protected String getMaxCommonPath(DeliverFile[] codeFiles) {
         String commonPath=null;
@@ -355,28 +402,143 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         return commonPath;
     }
     
-    protected TestData[] getTestDataArray(Test[] test) {
-        TestData[] retVal=null;
-        if(test!=null) {
-            retVal=new TestData[test.length];
-            for(int i=0;i<test.length;i++) {
-                retVal[i]=getTestDataObject(test[i]);
+    protected ActivityTest[] getTestDataArray(Test[] tests,MultilingualTextArray[] testDescriptions) throws ExecPelpException {
+        // Check the parameters
+        if(tests==null) {
+            return null;
+        }
+        if(tests!=null && testDescriptions!=null) {
+            if(tests.length!=testDescriptions.length) {
+                throw new ExecPelpException("The array of tests and the array of their descriptiona must be of the same length");
             }
         }
+        
+        // Create the high level test objects
+        ActivityTest[] retVal=new ActivityTest[tests.length];
+        for(int i=0;i<tests.length;i++) {
+            if(testDescriptions!=null) {
+                retVal[i]=getTestDataObject(tests[i],testDescriptions[i]);
+            } else {
+                retVal[i]=getTestDataObject(tests[i],null);
+            }
+        }
+        
         return retVal;
     }
     
-    protected TestData getTestDataObject(Test test) {
+    protected ActivityTest getTestDataObject(Test test,MultilingualTextArray descriptions) {
+        // Check the parameters
+        if(test==null) {
+            return null;
+        }
+        ActivityTest newTest=new ActivityTest();
+        if(test.getExpectedOutput()!=null) {
+            newTest.setExpectedOutputStr(test.getExpectedOutput());
+        }
+        if(test.getExpectedOutputFilePath()!=null) {
+            newTest.setExpectedOutputFile(new File(test.getExpectedOutputFilePath()));
+        }
+        if(test.getInputText()!=null) {
+            newTest.setInputStr(test.getInputText());
+        }
+        if(test.getInputFilePath()!=null) {
+            newTest.setInputFile(new File(test.getInputFilePath()));
+        }
+        if(test.getMaxExpectedTime()>0) {
+            newTest.setMaxTime((long)test.getMaxExpectedTime());
+        }
+        newTest.setPublic(test.isPublic());
         
-        throw new UnsupportedOperationException("Not supported yet.");
+        // Add the descriptions
+        if(descriptions!=null) {
+            for(MultilingualText desc:descriptions.getArray()) {
+                newTest.setDescription(desc.getLanguage(), desc.getText());
+            }
+        }
+        
+        return newTest;
     }
     
     protected DeliverDetail getDeliverDetailObject(AnalysisResults analysisResult) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        DeliverSummary deliverSummary= getDeliverSummaryObject(analysisResult);
+        if(deliverSummary==null) {
+            return null;
+        }
+        
+        DeliverDetail deliverDetail=new DeliverDetail(deliverSummary);
+        
+        // Add deliver files
+        
+        // Add test information
+        
+        return deliverDetail;
     }
  
     protected DeliverSummary getDeliverSummaryObject(AnalysisResults analysisResult) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    protected DeliverDetail getDeliverDetailObject(Deliver deliver,DeliverResults deliverResult) throws AuthPelpException, InvalidActivityPelpException, InvalidSubjectPelpException, ExecPelpException, InvalidEngineException {
+                
+        DeliverSummary deliverSummary= getDeliverSummaryObject(deliver,deliverResult);
+        if(deliverSummary==null) {
+            return null;
+        }
+        
+        DeliverDetail deliverDetail=new DeliverDetail(deliverSummary);
+        
+        // Add deliver files
+        
+        // Add test information
+        
+        return deliverDetail;
+    }
+        
+    protected DeliverSummary getDeliverSummaryObject(Deliver deliver,DeliverResults deliverResult) throws AuthPelpException, ExecPelpException, InvalidEngineException {
+        // Check the parameters
+        if(deliver==null || deliverResult==null) {
+            return null;
+        }
+        
+        // Create the new object
+        DeliverSummary result=new DeliverSummary();
+        result.setUser(getUserInformation());
+        result.setDeliverIndex((int)deliverResult.getDeliverID().index);
+        result.setProgrammingLanguage(deliverResult.getBuildResults().getLanguage());
+        result.setCompileOK(deliverResult.getBuildResults().isCorrect());
+        result.setCompileMessage(deliverResult.getBuildResults().getMessge());
+        
+        // Get the deliver details
+        result.setSubmissionDate(deliver.getCreationDate());
+          
+        // Get the maximum test
+        result.setMaxDelivers(_engine.getActivityMaxDelivers(deliverResult.getDeliverID().activity));
+        
+        // Get test information
+        int numPublic=0;
+        int numPrivate=0;
+        int passedPublic=0;
+        int passedPrivate=0;
+        for(ActivityTestResult testResult:deliverResult.getResults()) {
+            ActivityTest testInfo=_engine.getTestInformation(testResult.getTestID());
+            if(testInfo.isPublic()) {
+                numPublic++;
+                if(testResult.isPassed()) {
+                    passedPublic++;
+                }
+            } else {
+                numPrivate++;
+                if(testResult.isPassed()) {
+                    passedPrivate++;
+                }
+            }
+        }
+        result.setPassedPrivateTests(passedPrivate);
+        result.setPassedPublicTests(passedPublic);
+        result.setTotalPrivateTests(numPrivate);
+        result.setTotalPublicTests(numPublic);
+        
+        return result;
     }
  
     protected UserInformation getUserInformationObject(Person userInfo) {
@@ -409,4 +571,69 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         return newObject;
     }
     
+    
+    
+    protected edu.uoc.pelp.engine.deliver.DeliverFile getDeliverFile(DeliverFile file) throws ExecPelpException {
+        // Check the parameters
+        if(file==null) {
+            return null;
+        }
+        
+        // Get the type of input file
+        FileType type=null;
+        if(file.isIsCode()) {
+            type=FileType.Code;
+        } else if(file.isIsReport()) {
+            type=FileType.Report;
+        }
+        
+        if(type==null) {
+            throw new ExecPelpException("Unrecognized file type");
+        }
+        // Creat the new file
+        edu.uoc.pelp.engine.deliver.DeliverFile newObj=new edu.uoc.pelp.engine.deliver.DeliverFile(new File(file.getRelativePath()),type);
+        newObj.setMainProperty(file.isIsMain());
+        
+        return newObj;
+    }
+
+    private DeliverFile[] getDeliverFileArray(edu.uoc.pelp.engine.deliver.DeliverFile[] files) {
+        
+       //Check input parameters
+        if(files==null) {
+            return null;
+        }
+        
+        return null;
+    }
+    
+    protected Activity[] getActivityList(edu.uoc.pelp.engine.activity.Activity[] activityList) throws ExecPelpException, InvalidEngineException {
+        // Check parameters
+        if(activityList==null) {
+            return null;
+        }
+        
+        // Create the return object
+        Activity[] retList=new Activity[activityList.length];
+        for(int i=0;i<activityList.length;i++) {
+            retList[i]=getActivity(activityList[i]);
+        }
+        
+        return retList;
+    }
+        
+    protected Classroom[] getClassroomList(edu.uoc.pelp.engine.campus.Classroom[] classList) {
+        // Check parameters
+        if(classList==null) {
+            return null;
+        }
+        
+        // Create the return object
+        Classroom[] retList=new Classroom[classList.length];
+        for(int i=0;i<classList.length;i++) {
+            retList[i]=getClassroom(classList[i].getClassroomID());
+        }
+        
+        return retList;
+    }
 }

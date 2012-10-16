@@ -22,6 +22,7 @@ import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.IUserID;
+import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.model.dao.IDeliverDAO;
 import edu.uoc.pelp.model.dao.IDeliverResultDAO;
 import java.io.File;
@@ -103,7 +104,7 @@ public class DAODeliverManager implements IDeliverManager {
     }
     
     @Override
-    public DeliverID addDeliver(IUserID user, ActivityID activity, Deliver deliver) {
+    public DeliverID addDeliver(IUserID user, ActivityID activity, Deliver deliver) throws ExecPelpException {
         
         //Check that the deliver has files
         if(deliver.getFiles().length==0) {
@@ -112,13 +113,18 @@ public class DAODeliverManager implements IDeliverManager {
         
         // Add the new deliver
         DeliverID newID=_delivers.add(user, activity, deliver);
+        deliver.setID(newID);
         
         // Move the files to the destination folder
         if(newID!=null) {
+            // Check final destination
+            if(getDeliverPath(newID).exists()) {
+                throw new ExecPelpException("Destination path already exists. Deliver cannot be created.");
+            }
             // Move the files
             if(deliver.moveFiles(getDeliverPath(newID))) {
                 // Update the deliver information
-                _delivers.update(deliver);
+                _delivers.updateRootPath(newID, getDeliverPath(newID));
             } else {
                 // Remove remaining original files
                 for(File f:deliver.getRootPath().listFiles()) {

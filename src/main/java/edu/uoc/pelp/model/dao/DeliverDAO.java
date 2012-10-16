@@ -29,6 +29,7 @@ import edu.uoc.pelp.model.vo.*;
 import edu.uoc.pelp.model.vo.UOC.ClassroomPK;
 import edu.uoc.pelp.model.vo.UOC.SubjectPK;
 import edu.uoc.pelp.model.vo.UOC.UserPK;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -766,7 +767,7 @@ public class DeliverDAO implements IDeliverDAO {
         }
         
         // Get the activity register
-        Query query=getSession().getNamedQuery("Deliver.findBySubjectUserID");
+        Query query=getSession().getNamedQuery("Deliver.findByActivityUserID");
         query.setParameter("semester", activityPK.getSemester());
         query.setParameter("subject", activityPK.getSubject());
         query.setParameter("activityIndex", activityPK.getActivityIndex());
@@ -914,6 +915,58 @@ public class DeliverDAO implements IDeliverDAO {
         
         // Return last id
         return lastID;
+    }
+
+    @Override
+    public boolean updateRootPath(DeliverID deliverID, File newPath) {
+        // Check input parameters
+        if(deliverID==null || newPath==null) {
+            return false;
+        }
+        
+        Transaction transaction=null;
+        try {
+            // Start a new transaction
+            transaction=getSession().beginTransaction();
+            if (transaction == null) {
+                return false;
+            }
+            
+            // Find current register
+            DeliverPK key=ObjectFactory.getDeliverPK(deliverID);
+
+            // Get the deliver register
+            Query query=getSession().getNamedQuery("Deliver.findById");
+            query.setParameter("semester", key.getSemester());
+            query.setParameter("subject", key.getSubject());
+            query.setParameter("activityIndex", key.getActivityIndex());
+            query.setParameter("userID", key.getUserID());
+            query.setParameter("deliverIndex", key.getDeliverIndex());
+
+            List<edu.uoc.pelp.model.vo.Deliver> newObj=query.list();
+            if(newObj==null || newObj.size()!=1) {
+                return false;
+            }
+            edu.uoc.pelp.model.vo.Deliver deliverReg=newObj.get(0);
+            
+            // Change the value
+            deliverReg.setRootPath(newPath.getAbsolutePath());
+            
+            // Update register
+            getSession().merge(deliverReg);
+            
+            // Commit the results
+            transaction.commit(); 
+            
+        } catch (RuntimeException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            return false;
+        }
+        
+        return true;
+        
     }
 
     

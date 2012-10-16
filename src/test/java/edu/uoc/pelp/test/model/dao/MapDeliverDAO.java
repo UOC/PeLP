@@ -34,6 +34,7 @@ import edu.uoc.pelp.model.vo.ObjectFactory;
 import edu.uoc.pelp.model.vo.UOC.ClassroomPK;
 import edu.uoc.pelp.model.vo.UOC.SubjectPK;
 import edu.uoc.pelp.model.vo.UOC.UserPK;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -700,5 +701,23 @@ public class MapDeliverDAO implements IDeliverDAO {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    @Override
+    public boolean updateRootPath(DeliverID deliverID,File newPath) {
+        // Check the input object
+        if(deliverID==null || newPath==null) {
+            return false;
+        }
+                
+        // Get the key
+        DeliverPK key=ObjectFactory.getDeliverPK(deliverID);
+                
+        // Get the deliver register
+        edu.uoc.pelp.model.vo.Deliver deliverReg=_deliver.get(key);
+        
+        // Change the value
+        deliverReg.setRootPath(newPath.getAbsolutePath());
+               
+        return true;
+    }
 }
 

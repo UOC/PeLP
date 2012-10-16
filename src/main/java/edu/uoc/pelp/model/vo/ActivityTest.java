@@ -41,7 +41,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "ActivityTest.findByFileInput", query = "SELECT a FROM ActivityTest a WHERE a.fileInput = :fileInput"),
     @NamedQuery(name = "ActivityTest.findByFileOutput", query = "SELECT a FROM ActivityTest a WHERE a.fileOutput = :fileOutput"),
     @NamedQuery(name = "ActivityTest.findById", query = "SELECT a FROM ActivityTest a WHERE a.activityTestPK.semester = :semester AND a.activityTestPK.subject = :subject AND a.activityTestPK.activityIndex = :activityIndex AND a.activityTestPK.testIndex = :testIndex"),
-    @NamedQuery(name = "ActivityTest.findByActivityID", query = "SELECT a FROM ActivityTest a WHERE a.activityTestPK.semester = :semester AND a.activityTestPK.subject = :subject AND a.activityTestPK.activityIndex = :activityIndex")})
+    @NamedQuery(name = "ActivityTest.findByActivityID", query = "SELECT a FROM ActivityTest a WHERE a.activityTestPK.semester = :semester AND a.activityTestPK.subject = :subject AND a.activityTestPK.activityIndex = :activityIndex"),
+    @NamedQuery(name = "ActivityTest.findLast", query = "SELECT a FROM ActivityTest a WHERE a.activityTestPK.semester = :semester AND a.activityTestPK.subject = :subject AND a.activityTestPK.activityIndex = :activityIndex ORDER BY a.activityTestPK.testIndex desc limit 1")})
 public class ActivityTest implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId

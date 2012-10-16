@@ -16,45 +16,34 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package edu.uoc.pelp.bussines.vo;
+package edu.uoc.pelp.bussines.UOC.vo;
+
+import edu.uoc.pelp.bussines.vo.Classroom;
 
 /**
- * Detailed information for a user deliver
+ * Subject information for UOC classrooms
  * @author Xavier Baró
  */
-public class DeliverDetail extends DeliverSummary {
-    /**
-     * Deliver files
-     */
-    private DeliverFile[] _deliverFiles;  
-    
-    /**
-     * Tests results
-     */
-    private TestResult[] _testResults;
-
-    /**
-     * Default constructor from parent object
-     */
-    public DeliverDetail(DeliverSummary deliverSummary) {
-        super(deliverSummary);
-    }
-
-    public DeliverFile[] getDeliverFiles() {
-        return _deliverFiles;
-    }
-
-    public void setDeliverFiles(DeliverFile[] _deliverFiles) {
-        this._deliverFiles = _deliverFiles;
-    }
-
-    public TestResult[] getTestResults() {
-        return _testResults;
-    }
-
-    public void setTestResults(TestResult[] _testResults) {
-        this._testResults = _testResults;
+public class UOCClassroom extends Classroom {
+        
+    public UOCClassroom(String semester, String subject, int index) {
+        super(new UOCSubject(semester,subject),index);
     }
     
+    public UOCClassroom(UOCSubject subject, int index) {
+        super(subject,index);
+    }
+    
+    public UOCClassroom(Classroom parentObject) {
+        super(parentObject);
+    }
+
+    @Override
+    public UOCSubject getSubject() {
+        if(super.getSubject() instanceof UOCSubject) {
+            return (UOCSubject)super.getSubject();
+        }
+        return new UOCSubject(super.getSubject());
+    }
     
 }

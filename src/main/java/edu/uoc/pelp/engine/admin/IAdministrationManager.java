@@ -18,6 +18,7 @@
 */
 package edu.uoc.pelp.engine.admin;
 
+import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.engine.campus.Person;
 import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
 import edu.uoc.pelp.model.vo.admin.PelpLanguages;
@@ -190,5 +191,19 @@ public interface IAdministrationManager {
     * @return True if the semester has been correctly deleted or false otherwise
     */
     public boolean removeSemester(String semester);
+    
+    /**
+     * Get the laboratories for a certain subject
+     * @param subjectID Generic subject identifier
+     * @return Array of laboratory subject identifiers
+     */
+    public ISubjectID[] getLabSubjectOfMain(ISubjectID subjectID);
+    
+    /**
+     * Get the main subjects for a certain laboratory
+     * @param subjectID Generic subject identifier
+     * @return Array of subject identifiers
+     */
+    public ISubjectID[] getMainSubjectOfLab(ISubjectID subjectID);
     
 }

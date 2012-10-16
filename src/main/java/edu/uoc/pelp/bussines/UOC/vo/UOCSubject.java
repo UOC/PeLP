@@ -18,40 +18,114 @@
 */
 package edu.uoc.pelp.bussines.UOC.vo;
 
-import edu.uoc.pelp.bussines.vo.*;
+import edu.uoc.pelp.bussines.vo.Subject;
 
 /**
- * Subject information
+ * Subject information for UOC subjects
  * @author Xavier Baró
  */
 public class UOCSubject extends Subject {
-    // Semester 
-    private String _semester;
-    private String _subjectCode;
-    
-    public UOCSubject() {
-        super();
-    }
-    
+        
     public UOCSubject(String semester, String subject) {
-        super();
-        this._semester=semester;
-        this._subjectCode=subject;
+        super(getStrSubjectID(semester,subject));
     }
     
-    public String getSemester() {
-        return _semester;
+    public UOCSubject(Subject parentObject) {
+        super(parentObject);
     }
 
-    public void setSemester(String _semester) {
-        this._semester = _semester;
+    public String getSemesterCode() {
+        return getSemesterFromID(getSubjectID());
+    }
+
+    public void setSemesterCode(String semesterCode) {
+        setSubjectID(getStrSubjectID(semesterCode,getSubjectCode()));
+    }
+
+    @Override
+    public void setSubjectID(String subjectID) {
+        super.setSubjectID(subjectID);
     }
 
     public String getSubjectCode() {
-        return _subjectCode;
+        return getSubjectFromID(getSubjectID());
     }
 
     public void setSubjectCode(String subjectCode) {
-        this._subjectCode = subjectCode;
+        setSubjectID(getStrSubjectID(getSemesterCode(),subjectCode));
     }
+    
+    private static String getSubjectFromID(String subjectID) {
+        if(subjectID==null) {
+            return null;
+        }
+        
+        int pos=subjectID.indexOf("__");
+        if(pos<0) {
+            return null;
+        }
+
+        String ret=subjectID.substring(pos+2);
+        if(ret.length()==0) {
+            return null;
+        }
+        
+        return ret;
+    }
+    
+    private static String getSemesterFromID(String subjectID) {
+        if(subjectID==null) {
+            return null;
+        }
+        
+        int pos=subjectID.indexOf("__");
+        if(pos<0) {
+            return null;
+        }
+        
+        String ret=subjectID.substring(0,pos);
+        if(ret.length()==0) {
+            return null;
+        }
+        
+        return ret;
+    }
+    
+    private static String getStrSubjectID(String semester,String subject) {
+        if(semester==null) {
+            semester="";
+        }
+        if(subject==null) {
+            subject="";
+        }
+        return semester + "__" + subject;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final UOCSubject other = (UOCSubject) obj;
+        if ((this.getSubjectCode() == null) ? (other.getSubjectCode() != null) : !this.getSubjectCode().equals(other.getSubjectCode())) {
+            return false;
+        }
+        if ((this.getSemesterCode() == null) ? (other.getSemesterCode() != null) : !this.getSemesterCode().equals(other.getSemesterCode())) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + (this.getSubjectCode() != null ? this.getSubjectCode().hashCode() : 0);
+        hash = 71 * hash + (this.getSemesterCode() != null ? this.getSemesterCode().hashCode() : 0);
+        return hash;
+    }
+    
+    
 }

@@ -720,8 +720,8 @@ public class ObjectFactory {
         if(object.getMaxTime()!=null) {
             testData.setMaxTime(object.getMaxTime());
         }
-        object.setStrInput(object.getStrInput());
-        object.setStrOutput(object.getStrOutput());
+        testData.setInputStr(object.getStrInput());
+        testData.setExpectedOutputStr(object.getStrOutput());
         if(object.getFileInput()!=null) {
             testData.setInputFile(new File(object.getFileInput()));
         }

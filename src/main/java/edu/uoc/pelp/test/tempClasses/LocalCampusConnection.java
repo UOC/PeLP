@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-package edu.uoc.pelp.test.engine.campus.TestUOC;
+package edu.uoc.pelp.test.tempClasses;
 
 import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
 import edu.uoc.pelp.engine.campus.UOC.Semester;
@@ -876,20 +876,6 @@ public class LocalCampusConnection implements ICampusConnection{
      * @return Object with all the information for given classroom
      */
     private Classroom getClassroom(IClassroomID classroomID) {
-        
-        if(classroomID==null) {
-            return null;
-        }
-        
-        // Add semester data
-        if(classroomID instanceof ClassroomID) {
-            SubjectID sub=((ClassroomID)classroomID).getSubject();
-            if(sub!=null) {
-                sub.setSemester(_dummySemesters.get(sub.getSemester().getID()));
-            }
-        }
-        
-        // Search classroom
         if(_dummySubjects!=null) {
             for(Subject s:_dummySubjects.values()) {
                 if(s.getClassrooms()!=null) {

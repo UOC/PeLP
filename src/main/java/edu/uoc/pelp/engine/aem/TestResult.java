@@ -28,7 +28,7 @@ public class TestResult {
      * Indicates if the test is correctly passed or not
      */
     protected boolean _passed=false;
-    
+       
     /**
      * In case of test fail, stores the output of the program to this test
      */

@@ -52,7 +52,32 @@ public class Test {
      * Full path with the expected output for this test
      */
     private String _expectedOutputFilePath;
-
+    
+    /** 
+     * Test description
+     */
+    private String _description;
+    
+    /** 
+     * Default constructor
+     */
+    public Test() {
+        
+    }
+    
+    /** 
+     * Default constructor with string input and expected output
+     * @param input Input to the program
+     * @param expectedOutput Expected output
+     * @param isPublic Indicates if the test is public or private
+     */
+    public Test(String input,String expectedOutput,boolean isPublic) {
+        _inputText=input;
+        _expectedOutput=expectedOutput;
+        _public=isPublic;
+    }
+    
+    
     public String getExpectedOutput() {
         return _expectedOutput;
     }
@@ -100,4 +125,14 @@ public class Test {
     public void setPublic(boolean _public) {
         this._public = _public;
     }
+
+    public String getDescription() {
+        return _description;
+    }
+
+    public void setDescription(String _description) {
+        this._description = _description;
+    }
+    
+    
 }

@@ -21,7 +21,6 @@ package edu.uoc.pelp.test.bussines;
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussinesImpl;
 import edu.uoc.pelp.bussines.exception.InvalidEngineException;
 import edu.uoc.pelp.bussines.exception.InvalidSessionFactoryException;
-import edu.uoc.pelp.engine.DAOPELPEngine;
 import edu.uoc.pelp.engine.activity.DAOActivityManager;
 import edu.uoc.pelp.engine.admin.DAOAdministrationManager;
 import edu.uoc.pelp.engine.deliver.DAODeliverManager;

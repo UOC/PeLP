@@ -1,7 +1,27 @@
+/*
+	Copyright 2011-2012 Fundació per a la Universitat Oberta de Catalunya
+
+	This file is part of PeLP (Programming eLearning Plaform).
+
+    PeLP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    PeLP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 package edu.uoc.pelp.bussines.UOC;
 
 import edu.uoc.pelp.bussines.PelpBussines;
 import edu.uoc.pelp.bussines.UOC.exception.InvalidSessionException;
+import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
+import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.exception.AuthorizationException;
 import edu.uoc.pelp.bussines.exception.InvalidEngineException;
 import edu.uoc.pelp.bussines.vo.*;
@@ -133,54 +153,58 @@ public interface UOCPelpBussines extends PelpBussines {
     /**
      * Get a summarized information for all delivers in a given classroom
      * @param semester Semester code
-     * @param subject Subject code
+     * @param activitySubject Subject code for activity
      * @param activityIndex Activity Index
+     * @param subject Subject code for classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverSummary[] getAllClassroomDeliverSummary(String semester,String subject,int activityIndex,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+    public DeliverSummary[] getAllClassroomDeliverSummary(String semester, String activitySubject, int activityIndex, String subject, int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
 
     /**
      * Get a detailed information for all delivers in a given classroom
      * @param semester Semester code
-     * @param subject Subject code
+     * @param activitySubject Subject code for activity
      * @param activityIndex Activity Index
+     * @param subject Subject code for classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverDetail[] getAllClassroomDeliverDetails(String semester,String subject,int activityIndex,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
+    public DeliverDetail[] getAllClassroomDeliverDetails(String semester, String activitySubject, int activityIndex, String subject, int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
     
     /**
      * Get a summarized information for last deliver of each user in a given classroom
      * @param semester Semester code
-     * @param subject Subject code
+     * @param activitySubject Subject code for activity
      * @param activityIndex Activity Index
+     * @param subject Subject code for classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverSummary[] getLastClassroomDeliverSummary(String semester,String subject,int activityIndex,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+    public DeliverSummary[] getLastClassroomDeliverSummary(String semester, String activitySubject, int activityIndex, String subject, int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
     
     /**
      * Get a detailed information for last deliver of each user in a given classroom
      * @param semester Semester code
-     * @param subject Subject code
+     * @param activitySubject Subject code for activity
      * @param activityIndex Activity Index
+     * @param subject Subject code for classroom
      * @param classIndex Classroom index
      * @return Array of Object with summary information of the delivers
      * @throws ExecPelpException if some error accurs during process execution
      * @throws InvalidEngineException if the engine is not properly initialized
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
-    public DeliverDetail[] getLastClassroomDeliverDetails(String semester,String subject,int activityIndex,int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
+    public DeliverDetail[] getLastClassroomDeliverDetails(String semester, String activitySubject, int activityIndex, String subject, int classIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
           
     /**
     * Add a new activity to the given subject
@@ -197,7 +221,7 @@ public interface UOCPelpBussines extends PelpBussines {
     * @throws AuthorizationException if user is not a teacher of this subject
     * @throws ExecPelpException if there is a problem during the process.
     */
-    public Activity addActivity(String semester, String subject, Date start, Date end, Integer maxDelivers, String progLangCode,  MultilingualText[] activityDescriptions, Test[] activityTests, MultilingualText[] testDescriptions)  throws ExecPelpException,InvalidEngineException,AuthorizationException;
+    public Activity addActivity(String semester, String subject, Date start, Date end, Integer maxDelivers, String progLangCode,  MultilingualTextArray activityDescriptions, Test[] activityTests, MultilingualTextArray[] testDescriptions)  throws ExecPelpException,InvalidEngineException,AuthorizationException;
 
     /**
     * Add a new activity to the given subject without tests
@@ -212,7 +236,7 @@ public interface UOCPelpBussines extends PelpBussines {
     * @throws AuthorizationException if user is not a teacher of this subject
     * @throws ExecPelpException if there is a problem during the process.
     */
-    public Activity addActivity(String semester, String subject, Date start, Date end, Integer maxDelivers, String progLangCode, MultilingualText[] activityDescriptions) throws AuthorizationException,InvalidEngineException,ExecPelpException;
+    public Activity addActivity(String semester, String subject, Date start, Date end, Integer maxDelivers, String progLangCode, MultilingualTextArray activityDescriptions) throws AuthorizationException,InvalidEngineException,ExecPelpException;
     
     /**
      * Activate a subject in the platform. If it exists an activation register for this subject, it sets it as active, if not, it creates a new one
@@ -277,4 +301,24 @@ public interface UOCPelpBussines extends PelpBussines {
      */
     public boolean removeSemester(String semester) throws AuthorizationException,InvalidEngineException;
     
+    /**
+     * Get the list of subjects for current user, that are currently active in PeLP
+     * @return List of subjects objects
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user is not authenticated
+     */
+    @Override
+    public UOCSubject[] getUserSubjects() throws ExecPelpException,InvalidEngineException,AuthorizationException;
+
+    /**
+     * Get the list of available classrooms for a given subject
+     * @param subject Subject object
+     * @return List of classrooms objects
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user has no access to this subject
+     */
+    public UOCClassroom[] getUserClassrooms(UOCSubject subject) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+
 }

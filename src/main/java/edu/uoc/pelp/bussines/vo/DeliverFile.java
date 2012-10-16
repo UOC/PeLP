@@ -64,6 +64,16 @@ public class DeliverFile {
      * File with the local path at user computer
      */
     private File _fileUserLocalPath;
+    
+    public DeliverFile(File rootPath,File relativePath) {
+        _rootPath=rootPath.getPath();
+        _relativePath=relativePath.getPath();
+    }
+    
+    public DeliverFile(String rootPath,String relativePath) {
+        _rootPath=rootPath;
+        _relativePath=relativePath;
+    }
 
     public Byte[] getFileContent() {
         return _fileContent;

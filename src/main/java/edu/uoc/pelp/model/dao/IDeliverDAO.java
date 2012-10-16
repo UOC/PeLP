@@ -26,6 +26,7 @@ import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverFile;
 import edu.uoc.pelp.engine.deliver.DeliverFileID;
 import edu.uoc.pelp.engine.deliver.DeliverID;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -55,6 +56,14 @@ public interface IDeliverDAO {
      * @return True if the process finish successfully or Fals if any error occurred. It fails if the object does not exist.
      */
     boolean update(Deliver object);
+    
+    /**
+     * Updates the root path for a deliver
+     * @param deliverID Deliver identifier
+     * @param newPath New root path
+     * @return True if the process finish successfully or Fals if any error occurred.
+     */
+    boolean updateRootPath(DeliverID deliverID,File newPath);
     
     /**
      * Adds a new file to the given deliver

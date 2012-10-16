@@ -22,8 +22,13 @@ package edu.uoc.pelp.bussines.vo;
  * Subject information. This class should be extended using custom subject details
  * @author Xavier Baró
  */
-public abstract class Subject {
-
+public class Subject {
+    
+    /**
+     * Subject identifier
+     */
+    protected String _subjectID;
+    
     /**
      * Short description for the subject
      */
@@ -33,9 +38,23 @@ public abstract class Subject {
      * Full description of the subject
      */
     protected String _description;
-
-    public Subject() {
-        
+    
+    /**
+     * Default constructor with identifier
+     * @param subjectID Subject identifier
+     */
+    public Subject(String subjectID) {
+        _subjectID=subjectID;
+    }
+    
+    /**
+     * Default copy constructor
+     * @param Object to be copied
+     */
+    public Subject(Subject object) {
+        _subjectID=object._subjectID;
+        _shortName=object._shortName;
+        _description=object._description;
     }
     
     public String getDescription() {
@@ -53,4 +72,12 @@ public abstract class Subject {
     public void setShortName(String _shortName) {
         this._shortName = _shortName;
     }
+
+    public String getSubjectID() {
+        return _subjectID;
+    }
+
+    public void setSubjectID(String subjectID) {
+        this._subjectID = subjectID;
+    }    
 }

@@ -18,8 +18,10 @@
 */
 package edu.uoc.pelp.engine.admin;
 
+import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.engine.campus.Person;
 import edu.uoc.pelp.engine.campus.UOC.Semester;
+import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import edu.uoc.pelp.model.dao.ITimePeriodDAO;
 import edu.uoc.pelp.model.dao.admin.IAdministrationDAO;
 import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
@@ -232,5 +234,41 @@ public class DAOAdministrationManager implements IAdministrationManager {
     public boolean removeSemester(String semester) {
         Semester semesterObj=new Semester(semester);
         return _timePeriodDAO.delete(semesterObj);
+    }
+
+    @Override
+    public ISubjectID[] getLabSubjectOfMain(ISubjectID subjectID) {
+        ISubjectID[] retArray=new ISubjectID[0];
+        if(subjectID instanceof SubjectID) {
+            SubjectID mainSubject=(SubjectID)subjectID;
+            List<PelpMainLabSubjects> labList = getLabSubjectOfMain(mainSubject.getCode());
+            if(labList!=null) {
+                // Use the semester from main subject
+                Semester semester=mainSubject.getSemester();
+                retArray=new ISubjectID[labList.size()];
+                for(int i=0;i<labList.size();i++) {
+                    retArray[i]=new SubjectID(labList.get(i).getPelpMainLabSubjectsPK().getLabSubjectCode(),semester);
+                }
+            }
+        }
+        return retArray;
+    }
+    
+    @Override
+    public ISubjectID[] getMainSubjectOfLab(ISubjectID subjectID) {
+        ISubjectID[] retArray=new ISubjectID[0];
+        if(subjectID instanceof SubjectID) {
+            SubjectID labSubject=(SubjectID)subjectID;
+            List<PelpMainLabSubjects> mainList = getMainSubjectOfLab(labSubject.getCode());
+            if(mainList!=null) {
+                // Use the semester from main subject
+                Semester semester=labSubject.getSemester();
+                retArray=new ISubjectID[mainList.size()];
+                for(int i=0;i<mainList.size();i++) {
+                    retArray[i]=new SubjectID(mainList.get(i).getPelpMainLabSubjectsPK().getMainSubjectCode(),semester);
+                }
+            }
+        }
+        return retArray;
     }
 }

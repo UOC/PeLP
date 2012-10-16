@@ -29,7 +29,6 @@ import edu.uoc.pelp.model.dao.DeliverDAO;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -526,6 +525,25 @@ public class LocalDeliverDAO extends DeliverDAO {
         
         // Perform action
         retVal=super.getLastID(deliver);
+        
+        // Close new created session
+        if(createdNewSession) {
+            _localDAO.closeSession();
+        }
+        
+        //Return parent method returned value
+        return retVal;
+    }
+    
+    @Override
+    public boolean updateRootPath(DeliverID deliverID,File newPath) {
+        boolean retVal;
+        
+        // Check current session status
+        boolean createdNewSession=!_localDAO.hasOpenSession();
+               
+        // Perform action
+        retVal=super.updateRootPath(deliverID,newPath);
         
         // Close new created session
         if(createdNewSession) {

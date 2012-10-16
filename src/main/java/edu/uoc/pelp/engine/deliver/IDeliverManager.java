@@ -22,6 +22,7 @@ import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.aem.AnalysisResults;
 import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.IUserID;
+import edu.uoc.pelp.exception.ExecPelpException;
 import java.io.File;
 
 /**
@@ -34,9 +35,10 @@ public interface IDeliverManager {
      * @param user User identifier
      * @param activity Activity identifier
      * @param deliver Deliver object with all information.
-     * @return Deliver identifyer.
+     * @return Deliver identifier.
+     * @throws ExecPelpException if any error occurs during the deliver addition
      */
-    DeliverID addDeliver(IUserID user, ActivityID activity, Deliver deliver);
+    DeliverID addDeliver(IUserID user, ActivityID activity, Deliver deliver) throws ExecPelpException;
     
     /**
      * Modifies the information of a certain delivery.

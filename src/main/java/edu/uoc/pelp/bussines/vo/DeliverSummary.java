@@ -80,6 +80,32 @@ public class DeliverSummary {
      */
     private String _programmingLanguage;
 
+    /**
+     * Default constructor
+     */
+    public DeliverSummary() {
+        
+    }
+    
+    /**
+     * Default copy constructor
+     * @param object Object to be copied
+     */
+    public DeliverSummary(DeliverSummary object) {
+        _user=object._user;
+        _submissionDate=object._submissionDate;
+        _deliverIndex=object._deliverIndex;
+        _maxDelivers=object._maxDelivers;
+        _compileOK=object._compileOK;
+        _compileMessage=object._compileMessage;
+        _totalPublicTests=object._totalPublicTests;
+        _totalPrivateTests=object._totalPrivateTests;
+        _passedPublicTests=object._passedPublicTests;
+        _passedPrivateTests=object._passedPrivateTests;
+        _programmingLanguage=object._programmingLanguage;
+    }
+    
+    
     public String getCompileMessage() {
         return _compileMessage;
     }

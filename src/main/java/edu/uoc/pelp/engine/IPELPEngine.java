@@ -127,6 +127,14 @@ public interface IPELPEngine {
 			ActivityID activity) throws AuthPelpException;
         
         /**
+	 * Obtain the list of delivers fror the current user for a certain activity.
+	 * @param activity Identifier of the activity delivers are requested from.
+	 * @return Array of Delivers.
+	 * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+	 */
+	public Deliver[] getUserActivityDelivers(ActivityID activity) throws AuthPelpException;
+        
+        /**
 	 * Obtain the list of all the delivers of a certain classroom for a certain activity. Only a teacher
 	 * of the classroom can access to this information. Both, laboratory and main classrooms are checked.
 	 * @param classroom Identifier of the classroom for which delivers are requested.
@@ -156,7 +164,33 @@ public interface IPELPEngine {
 	 * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
 	 */
 	public DeliverResults getDeliverResults(DeliverID deliver) throws AuthPelpException;
-
+        
+        /**
+	 * Obtain the information of a certain deliver. Only the owner of the deliver and the teachers of the
+	 * related subject can access this information.
+	 * @param deliver Deliver identifier
+	 * @return Object with the deliver data
+	 * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+	 */
+	public Deliver getDeliver(DeliverID deliver) throws AuthPelpException;
+        
+        /**
+	 * Obtain the information of a activity tests. Only teachers can access the full information for the test. In
+         * case of students, the information for private tests cannot be obtained. Other users cannot acces this information.
+	 * @param activityID Activity identifier
+	 * @return Object with the deliver data
+	 * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+	 */
+        public ActivityTest[] getTestInfo(ActivityID activityID) throws AuthPelpException;
+        
+        /** 
+         * Get the maximum number of delivers for a certain activity. Only teachers and students can access this information
+         * @param activityID Activity identifier
+         * @return Number of delivers
+         * @throws AuthPelpException If no user is authenticated or does not have enough rights to obtain this information.
+         */
+        public int getActivityMaxDelivers(ActivityID activityID) throws AuthPelpException;
+        
 	/**
 	 * Obain the test information. Only teachers can access to private tests information.
 	 * @param testID Identifier for the test
@@ -193,6 +227,13 @@ public interface IPELPEngine {
 	 * @throws AuthPelpException If user is not authenticated
 	 */
 	public boolean isTeacher(ISubjectID subject) throws AuthPelpException;
+        
+        /**
+	 * Checks if the current user is teacher (Teacher of MainTeacher) of any laboratory of the given subject. 
+	 * @param subject Subject Identifier
+	 * @throws AuthPelpException If user is not authenticated
+	 */
+	public boolean isLabTeacher(ISubjectID subject) throws AuthPelpException;
 
 	/**
 	 * Checks if the current user is student of the given subject. 
@@ -282,7 +323,7 @@ public interface IPELPEngine {
         */
         public boolean removeSemester(String semester) throws AuthPelpException;
         
-            /**
+    /**
      * Adds a laboratory subject to a certain main subject. This relation does not depends on the semester. If it exists, does nothing.
      * @param mainSubject Main subject code
      * @param labSubject Laboratory subject code

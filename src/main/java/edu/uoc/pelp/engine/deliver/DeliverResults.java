@@ -60,7 +60,8 @@ public class DeliverResults {
             if(resultArray[i] instanceof ActivityTestResult) {
                 testResults[i]=(ActivityTestResult)resultArray[i];
             } else {
-                return null;
+                TestID newID=new TestID(_deliverID.activity,i+1);
+                testResults[i]=new ActivityTestResult(newID,resultArray[i]);
             }
         }
         return testResults;

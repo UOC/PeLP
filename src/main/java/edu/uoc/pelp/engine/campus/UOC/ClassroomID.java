@@ -39,6 +39,7 @@ public class ClassroomID implements IClassroomID {
         _classIdx=classIdx;
     }
     
+    @Override
     public boolean isValid() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -116,6 +117,7 @@ public class ClassroomID implements IClassroomID {
         return hash;
     }
 
+    @Override
     public int compareTo(IPelpID id) {
         ClassroomID arg=(ClassroomID)id;
         if(_subjectCode!=null) {
@@ -138,6 +140,7 @@ public class ClassroomID implements IClassroomID {
         return 0;
     }
 
+    @Override
     public IPelpID parse(String str) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
