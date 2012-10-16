@@ -87,7 +87,7 @@ public class LocalCampusConnection implements ICampusConnection{
     private Person[] _testAccessPersons=null;
     
     public LocalCampusConnection() {
-        setProfile("teacher2");
+        setProfile("student1");
     }
         
     public boolean isUserAuthenticated() {
