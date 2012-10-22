@@ -18,15 +18,16 @@
 */
 package edu.uoc.pelp.actions;
 
+import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.Result;
+import org.apache.struts2.convention.annotation.ResultPath;
+
 import com.opensymphony.xwork2.ActionSupport;
+
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
-import edu.uoc.pelp.engine.campus.Classroom;
-import org.apache.struts2.convention.annotation.Namespace;
-import org.apache.struts2.convention.annotation.Result;
-import org.apache.struts2.convention.annotation.ResultPath;
 
 /**
  * @author jsanchezramos
@@ -39,22 +40,27 @@ public class TeacherAction extends ActionSupport {
 
 	private static final long serialVersionUID = 1L;
 
-	private UOCPelpBussines bussines;
+	private UOCPelpBussines bUOC;
 
 	private UOCSubject[] listSubjects;
 	private UOCClassroom[] listClassroms;
 	private Activity[] listActivity;
 
-        private String s_semester;
 	private String s_assign;
 	private String s_aula;
 	private String s_activ;
 
     @Override
-	public String execute() throws Exception {		
-		listSubjects = bussines.getUserSubjects();
-		listClassroms = bussines.getUserClassrooms(new UOCSubject(s_semester,s_assign));
-		listActivity = bussines.getSubjectActivities(new UOCSubject(s_semester,s_assign));
+	public String execute() throws Exception {	
+		listSubjects = bUOC.getUserSubjects();
+		if(s_assign!=null){
+			String[] infoAssing = s_assign.split("_");
+			listClassroms = bUOC.getUserClassrooms(new UOCSubject(infoAssing[0],infoAssing[2]));
+		}
+		if(s_aula!=null && s_aula.length()>0 && s_assign != null){
+			String[] infoAssing = s_assign.split("_");
+			listActivity = bUOC.getSubjectActivities(new UOCSubject(infoAssing[0],infoAssing[2]));
+		}
 		return SUCCESS;
 	}
 
@@ -66,13 +72,7 @@ public class TeacherAction extends ActionSupport {
 		this.listSubjects = listSubjects;
 	}
 
-	public UOCPelpBussines getBussines() {
-		return bussines;
-	}
 
-	public void setBussines(UOCPelpBussines bussines) {
-		this.bussines = bussines;
-	}
 
 	public String getS_assign() {
 		return s_assign;
@@ -112,6 +112,14 @@ public class TeacherAction extends ActionSupport {
 
 	public void setListActivity(Activity[] listActivity) {
 		this.listActivity = listActivity;
+	}
+
+	public UOCPelpBussines getbUOC() {
+		return bUOC;
+	}
+
+	public void setbUOC(UOCPelpBussines bUOC) {
+		this.bUOC = bUOC;
 	}
 
 }

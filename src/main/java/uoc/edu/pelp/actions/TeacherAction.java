@@ -1,5 +1,7 @@
 package uoc.edu.pelp.actions;
 
+import java.util.Map;
+
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
@@ -8,15 +10,15 @@ import uoc.edu.pelp.bussines.UocBussinesImpl;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-import edu.uoc.pelp.engine.activity.Activity;
+import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.engine.campus.Classroom;
-import edu.uoc.pelp.engine.campus.Subject;
+import edu.uoc.pelp.engine.deliver.Deliver;
 
 /**
  * @author jsanchezramos
  */
 
-@Namespace("/")
+@Namespace("/viejo")
 @ResultPath(value = "/")
 @Result(name = "success", location = "jsp/teacher.jsp")
 public class TeacherAction extends ActionSupport {
@@ -25,9 +27,10 @@ public class TeacherAction extends ActionSupport {
 
 	private UocBussinesImpl bUOC;
 
-	private Subject[] listSubjects;
+	private UOCSubject[] listSubjects;
 	private Classroom[] listClassroms;
-	private Activity[] listActivity;
+	private Map<String, String> listActivity;
+	private Deliver[] listDelivers;
 
 	private String s_assign;
 	private String s_aula;
@@ -37,14 +40,16 @@ public class TeacherAction extends ActionSupport {
 		listSubjects = bUOC.getSubjects();
 		listClassroms = bUOC.getClassroomSubjects(s_assign);
 		listActivity = bUOC.getActivitiClassroom(s_aula);
+		listDelivers = bUOC.getDelivers(s_activ);
+		
 		return SUCCESS;
 	}
 
-	public Subject[] getListSubjects() {
+	public UOCSubject[] getListSubjects() {
 		return listSubjects;
 	}
 
-	public void setListSubjects(Subject[] listSubjects) {
+	public void setListSubjects(UOCSubject[] listSubjects) {
 		this.listSubjects = listSubjects;
 	}
 
@@ -88,12 +93,20 @@ public class TeacherAction extends ActionSupport {
 		this.s_activ = s_activ;
 	}
 
-	public Activity[] getListActivity() {
+	public Map<String, String> getListActivity() {
 		return listActivity;
 	}
 
-	public void setListActivity(Activity[] listActivity) {
+	public void setListActivity(Map<String, String> listActivity) {
 		this.listActivity = listActivity;
+	}
+
+	public Deliver[] getListDelivers() {
+		return listDelivers;
+	}
+
+	public void setListDelivers(Deliver[] listDelivers) {
+		this.listDelivers = listDelivers;
 	}
 
 }

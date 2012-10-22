@@ -41,6 +41,7 @@ public class PCPelpConfiguration implements IPelpConfiguration {
      */
     private static HashMap<String,File> _tempPath=new HashMap<String,File>() {
         {
+        	put("73-32-64.uoc.es",new File("/temp/pelp"));
             put("XBARO-W7",new File("D:\\TempPELP\\Temp"));
         }
     };
@@ -50,6 +51,7 @@ public class PCPelpConfiguration implements IPelpConfiguration {
      */
     private static HashMap<String,File> _deliveryPath=new HashMap<String,File>() {
         {
+        	put("73-32-64.uoc.es",new File("/temp/pelp"));
             put("XBARO-W7",new File("D:\\TempPELP\\Delivers"));
         }
     };
@@ -59,6 +61,7 @@ public class PCPelpConfiguration implements IPelpConfiguration {
      */
     private static HashMap<String,File> _CCompiler=new HashMap<String,File>() {
         {
+        	put("73-32-64.uoc.es",new File("D:\\MinGW\\bin\\gcc.exe"));
             put("XBARO-W7",new File("D:\\MinGW\\bin\\gcc.exe"));
         }
     };
@@ -71,6 +74,7 @@ public class PCPelpConfiguration implements IPelpConfiguration {
             ISubjectID[] ids={new SubjectID("05.554",new Semester("20111")),
                               new SubjectID("05.554",new Semester("20112")),
                               new SubjectID("05.555",new Semester("20112"))};
+            put("73-32-64.uoc.es",ids);
             put("XBARO-W7",ids);
         }
     };
@@ -80,6 +84,7 @@ public class PCPelpConfiguration implements IPelpConfiguration {
      */
     private static HashMap<String,String> _configDesc=new HashMap<String,String>() {
         {
+        	put("73-32-64.uoc.es","Laptop with MAC OSX (64bits)");
             put("XBARO-W7","Laptop with Windows 7 (64bits)");
         }
     };

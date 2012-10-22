@@ -79,7 +79,7 @@ public class LocalCampusConnection implements ICampusConnection{
     
     public LocalCampusConnection() {
 
-        setProfile("student1");
+        setProfile("teacher2");
 
         createDummyData();
 

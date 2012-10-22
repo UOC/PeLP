@@ -7,14 +7,6 @@
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<!-- service objects -->
-	<bean id="pelpService" class="uoc.edu.pelp.services.PelpServiceImpl">
-		<property name="objPelpBussines" ref="pelpBussines" />
-	</bean>
-
-	<!-- business objects -->
-	<bean id="pelpBussines" class="uoc.edu.pelp.bussines.PelpBussinesImpl">
-	</bean>
 
 	<!-- objects test inject to pelpEnigne -->
 
@@ -23,43 +15,31 @@
 			value="11e7592afee1c0b7674ba1324d21376bde966b2106ffd8417a2c1006e96b01fd409238675dd043873d4e4c3beb98238461c559093ae38a0aa2325d697dde8e18" />
 	</bean>
 	<!-- TEMPORAL -->
-	<bean id="lcct" class="edu.uoc.pelp.test.LocalCampusConnection">
+	<bean id="lcct" class="edu.uoc.pelp.test.tempClasses.LocalCampusConnection">
 	</bean>
 	<!-- FIN TEMPORAL -->
 
-	<bean id="lamt" class="edu.uoc.pelp.test.LocalActivityManager">
+	<bean id="pcpct" class="edu.uoc.pelp.test.tempClasses.PCPelpConfiguration">
 	</bean>
 
-	<bean id="ldmt" class="edu.uoc.pelp.test.LocalDeliverManager">
+	<bean id="bUOC" class="edu.uoc.pelp.bussines.UOC.UOCPelpBussinesImpl">
+		<constructor-arg ref="lcct" />
+		<constructor-arg ref="sessionFactory" />
+		<constructor-arg ref="pcpct" />
 	</bean>
 
-	<bean id="pcpct" class="edu.uoc.pelp.test.PCPelpConfiguration">
-	</bean>
+	<!-- service objects -->
 
-	<bean id="engine" class="edu.uoc.pelp.engine.PELPEngine">
+	<bean id="pelpService" class="edu.uoc.pelp.services.PelpServiceImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="campusConnection" ref="lcct" />
-		<property name="activityManager" ref="lamt" />
-		<property name="deliverManager" ref="ldmt" />
-		<property name="systemConfiguration" ref="pcpct" />
+		<property name="configuration" ref="pcpct" />
+		<property name="bussines" ref="bUOC" />
 	</bean>
-
-	<bean id="bUOC" class="uoc.edu.pelp.bussines.UocBussinesImpl">
-		<property name="engine" ref="engine" />
-	</bean>
-
-	<!-- DAO objects -->
-	
-<!-- 	<bean id="exampleDAO" class="uoc.edu.pelp.model.dao.ExampleDAOImpl"> -->
-<!-- 		<property name="sessionFactory" ref="sessionFactory" /> -->
-<!-- 	</bean> -->
-<!-- 	<bean id="semesterDAO" class="edu.uoc.pelp.model.dao.UOC.SemesterJPA"> -->
-<!-- 		<property name="sessionFactory" ref="sessionFactory" /> -->
-<!-- 	</bean> -->
-
 
 	<!-- ACTIONS -->
 
-	<bean id="teacherSpringAction" class="uoc.edu.pelp.actions.TeacherAction">
+	<bean id="teacherSpringAction" class="edu.uoc.pelp.actions.TeacherAction">
 		<property name="bUOC" ref="bUOC" />
 	</bean>
 
@@ -73,8 +53,21 @@
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
 		<property name="packagesToScan">
 			<list>
-				<value>edu.uoc.pelp.model.vo</value>
 				<value>edu.uoc.pelp.model.vo.UOC</value>
+			</list>
+		</property>
+		<property name="annotatedClasses">
+			<list>
+				<value>edu.uoc.pelp.model.vo.Activity</value>
+				<value>edu.uoc.pelp.model.vo.ActivityPK</value>
+				<value>edu.uoc.pelp.model.vo.ActivityDesc</value>
+				<value>edu.uoc.pelp.model.vo.ActivityDescPK</value>
+				<value>edu.uoc.pelp.model.vo.ActivityTest</value>
+				<value>edu.uoc.pelp.model.vo.ActivityTestPK</value>
+				<value>edu.uoc.pelp.model.vo.DeliverFile</value>
+				<value>edu.uoc.pelp.model.vo.admin.PelpMainLabSubjects</value>
+				<value>edu.uoc.pelp.model.vo.DeliverPK</value>
+				<value>edu.uoc.pelp.model.vo.DeliverFile</value>
 			</list>
 		</property>
 	</bean>
@@ -83,6 +76,15 @@
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<!-- DAOS -->
+	
+	<bean id="dActivity" class="edu.uoc.pelp.model.dao.ActivityDAO">
+		<constructor-arg ref="sessionFactory" />
+	</bean>
+	<bean id="dAdministrationDAO" class="edu.uoc.pelp.model.dao.admin.AdministrationDAO">
+		<constructor-arg ref="sessionFactory" />
 	</bean>
 
 	<!-- So classes/functions with @Transactional get a hibernate txn -->

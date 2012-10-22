@@ -3,7 +3,7 @@
     <service name="pelpServices">
         <description>Ejemplo de Servicio Web</description>
         <parameter name="ServiceObjectSupplier" locked="false">org.apache.axis2.extensions.spring.receivers.SpringServletContextObjectSupplier</parameter>
-        <parameter name="SpringBeanName" locked="false">pelpBussines</parameter>        
+        <parameter name="SpringBeanName" locked="false">pelpService</parameter>        
         <operation name="setDeliver">
             <messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver" />
         </operation>

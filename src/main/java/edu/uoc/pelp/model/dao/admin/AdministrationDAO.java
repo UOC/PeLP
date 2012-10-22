@@ -405,12 +405,14 @@ public class AdministrationDAO implements IAdministrationDAO {
         // Check input parameters
         if(labSubjectCode==null) {
             return null;
-        }   
+        }  
+        getSession().beginTransaction();
         // Get the language registers
         Query query=getSession().getNamedQuery("PelpMainLabSubjects.findByLabSubjectCode");
         query.setParameter("labSubjectCode", labSubjectCode);
-                
-        return query.list();
+        List<PelpMainLabSubjects> listMain = query.list(); 
+        getSession().close();
+        return listMain;
     }
 
     @Override
@@ -572,5 +574,11 @@ public class AdministrationDAO implements IAdministrationDAO {
         }
         
         return list.get(0);
+    }
+  
+    @Override
+    protected void finalize() throws Throwable {
+    	getSession().close();
+    	super.finalize();
     }
 }

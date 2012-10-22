@@ -1,9 +1,9 @@
 package uoc.edu.pelp.bussines;
 
-import edu.uoc.pelp.engine.campus.Subject;
+import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 
 public interface UocBussines {
 
-	public abstract Subject[] getSubjects() throws Exception;
+	public abstract UOCSubject[] getSubjects() throws Exception;
 
 }
