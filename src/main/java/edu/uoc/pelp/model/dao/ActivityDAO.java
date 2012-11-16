@@ -116,7 +116,7 @@ public class ActivityDAO implements IActivityDAO {
             return null;
         }
           
-        
+        getSession().beginTransaction();
         // Get the descriptions
         Query q=getSession().getNamedQuery("ActivityDesc.findByActivity");
         q.setParameter("semester", key.getSemester());
@@ -125,7 +125,7 @@ public class ActivityDAO implements IActivityDAO {
 
         // Get the list of descriptions
         List<ActivityDesc> list=q.list();
-        getSession().beginTransaction().commit();
+        getSession().close();
         return list;
     }
     
@@ -163,7 +163,7 @@ public class ActivityDAO implements IActivityDAO {
         if(key==null) {
             return null;
         }
-                
+        getSession().beginTransaction();        
         // Get the descriptions
         Query q=getSession().getNamedQuery("ActivityDesc.findByPK");
         q.setParameter("semester", key.getSemester());
@@ -176,7 +176,7 @@ public class ActivityDAO implements IActivityDAO {
         if(list!=null && list.size()>0) {
             desc=list.get(0).getDescription();
         }
-        
+        getSession().close();
         return desc;
     }
     
@@ -190,7 +190,8 @@ public class ActivityDAO implements IActivityDAO {
         if(key==null) {
             return null;
         }
-                
+        
+        getSession().beginTransaction();
         // Get the descriptions
         Query q=getSession().getNamedQuery("TestDesc.findByTestID");
         q.setParameter("semester", key.getSemester());
@@ -200,7 +201,7 @@ public class ActivityDAO implements IActivityDAO {
 
         // Get the list of descriptions
         List<TestDesc> list=q.list();
-        
+        getSession().close();
         return list;
     }
     
@@ -238,7 +239,7 @@ public class ActivityDAO implements IActivityDAO {
         if(key==null) {
             return null;
         }
-                
+        getSession().beginTransaction();       
         // Get the descriptions
         Query q=getSession().getNamedQuery("TestDesc.findByID");
         q.setParameter("semester", key.getSemester());
@@ -252,7 +253,7 @@ public class ActivityDAO implements IActivityDAO {
         if(list!=null && list.size()>0) {
             desc=list.get(0).getDescription();
         }
-        
+        getSession().close();
         return desc;
     }
     
@@ -495,6 +496,7 @@ public class ActivityDAO implements IActivityDAO {
         // Get the key
         ActivityPK key=ObjectFactory.getActivityPK(object);
         
+        getSession().beginTransaction();
         // Get the activity register
         Query query=getSession().getNamedQuery("Activity.findActivity");
         query.setParameter("semester", key.getSemester());
@@ -513,7 +515,7 @@ public class ActivityDAO implements IActivityDAO {
             descArray=new ActivityDesc[descList.size()];
             descList.toArray(descArray);
         }
-
+        getSession().close();
         // Add the final register
         return ObjectFactory.getActivityObj(activityReg,descArray);
     }

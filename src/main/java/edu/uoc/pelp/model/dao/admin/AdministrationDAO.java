@@ -422,10 +422,12 @@ public class AdministrationDAO implements IAdministrationDAO {
             return null;
         }   
         // Get the language registers
+        getSession().beginTransaction();
         Query query=getSession().getNamedQuery("PelpMainLabSubjects.findByMainSubjectCode");
         query.setParameter("mainSubjectCode", mainSubjectCode);
-                
-        return query.list();
+        List<PelpMainLabSubjects> listMain = query.list();
+        getSession().close();
+        return listMain;
     }
 
     @Override

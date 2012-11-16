@@ -61,21 +61,30 @@
 
 			</div>
 
-			<form action="/" method="POST" class="form_filters" id="form_filters">
+			<form action="" method="POST" class="form_filters" id="form_filters">
 				<fieldset>
-					<select name="s_assign" id="s_assign" disabled="disabled" >
-						<option value="0">Assignatura</option>
-						<option value="1">05.592 Arquitectures de computadors avançades</option>
+					 <select name="s_assign" id="s_assign">
+					 	<option value="">Assignatura</option>
+						<s:iterator value="listSubjects" >
+							<s:if test="%{s_assign == SubjectID}"> <option selected="selected" value="<s:property value="SubjectID" />"><s:property value="Description"/></option></s:if> 
+							<s:else> <option value="<s:property value="SubjectID" />"><s:property value="Description"/></option> </s:else> 
+						</s:iterator> 
 					</select>
-					<select name="s_aula" id="s_aula" disabled="disabled" >
-						<option value="0">Aula</option>
-						<option value="1">05.592 Arquitectures de computadors avançades aula 1 - Francesc Guim Bernat, Ivan Rodero Castro</option>
+					<select name="s_aula" id="s_aula">
+						<option value="">Aula</option>
+						<s:iterator value="listClassroms">
+							<s:if test="%{s_aula == index}"><option selected="selected" value="<s:property value="index" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:if>
+							<s:else><option value="<s:property value="index" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:else>
+						</s:iterator>
 					</select>
-					<select name="s_activ" id="s_activ" disabled="disabled" >
-						<option value="0">Activitats</option>
-						<option value="1">Activitat 7: Lorem ipsum dolor sit amet consectuer</option>
+					<select name="s_activ" id="s_activ">
+						<option value="">Activitats</option>
+						<s:iterator value="listActivity" status="statsa">
+							<s:if test="%{s_activ == index}"><option selected="selected" value="<s:property value="index" />"><s:property value="description" /></option></s:if>
+							<s:else><option value="<s:property value="index" />"><s:property value="description" /></option></s:else>
+						</s:iterator>
 					</select>
-					<input type="submit" id="send_filters" name="send_filters" value="Enviar" class="btn"  />
+					<input type="submit" id="send_filters" name="send_filters" value="Enviar" class="btn"/>
 				</fieldset>
 			</form>
 
@@ -99,8 +108,11 @@
 	<div id="main">
 
 		<!-- form_envios -->
-		<form action="/" method="POST" id="form_envios">
-
+<!-- 		<form action="/" method="POST" id="form_envios"> -->
+		<s:form theme="simple" method="POST" enctype="multipart/form-data" action="deliveries">
+		<s:hidden name="s_assign"></s:hidden>
+		<s:hidden name="s_activ"></s:hidden>
+		<s:hidden name="s_aula"></s:hidden>
 		<!-- tabs -->
 		<ul class="tabs">  
 			<li><a href="#tab_1">Gestor de ficheros</a></li>  
@@ -115,38 +127,39 @@
 
 				<fieldset class="fs">
 					<label for="search_file" class="hlabel">Adjuntar archivo</label>
-					<input type="file" id="search_file" name="search_file" />
-					<input type="submit" id="adj_file" name="adj_file" value="Adjuntar" class="btn" />
+					<s:file name="upload" label="Adjuntar"></s:file>
+<!-- 					<input type="submit" id="adj_file" name="adj_file" value="Adjuntar" class="btn" /> -->
+					<s:submit id="adj_file" value="Adjuntar" class="btn"></s:submit>
 				</fieldset>
 
 				<table id="tEnvios">
 					<thead>
 						<tr>
-							<th><input type="checkbox" name="chk_del_all" id="chk_all" value="0" /> <label for="chk_all">Archivos Subidos</label></th>
+							<th><s:checkbox name="matrizFile" key="matrizFile" id="chk_all" fieldValue="deleteAll"/><label for="chk_all">Archivos Subidos</label></th>
 							<th>Código</th>
 							<th>Memoria</th>
 							<th>F. Principal</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr id="frow_1">
-							<td><input type="checkbox" name="chk_del" id="chk_del_1" value="1" /> <label for="chk_del_1">Lorem ipsum dolor sit amet</label></td>
-							<td class="opt"><input type="checkbox" name="chk_code" id="chk_code_1" value="c1" /> <label for="chk_code_1"><span class="hidden">Código</span></label></td>
-							<td class="opt"><input type="checkbox" name="chk_memo" id="chk_memo_1" value="m1" /> <label for="chk_memo_1"><span class="hidden">Memoria</span></label></td>
-							<td class="opt"><input type="checkbox" name="chk_file" id="chk_file_1" value="f1" /> <label for="chk_file_1"><span class="hidden">Fichero Principal</span></label></td>
+
+					<s:iterator status="stat" value="(fileDim).{ #this }" >
+						<tr id="frow_<s:property value='#stat.count'/>">
+							<td>
+							<s:checkbox name="matrizFile" key="matrizFile"  id="chk_del_%{#stat.count}" /> <label for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label></td>
+<%-- 							<input type="checkbox" name="chk_del" id="chk_del_<s:property value='#stat.count'/>" value="<s:property value='#stat.count'/>" /> <label for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label></td> --%>
+							<td class="opt">
+											<s:set name="codeName" value="matrizFile[#stat.index][4]"/>
+											<s:checkbox name="matrizFile" key="matrizFile" id="chk_code_%{#stat.count}"  fieldValue="c%{#codeName}"/>
+											<label for="chk_code_<s:property value='#stat.count'/>"><span class="hidden">Código</span></label></td>
+							<td class="opt">
+											<s:checkbox name="matrizFile" key="matrizFile" id="chk_memo_%{#stat.count}"  fieldValue="m%{#codeName}"/>
+											<label for="chk_memo_<s:property value='#stat.count'/>"><span class="hidden">Memoria</span></label></td>
+							<td class="opt">
+											<s:checkbox name="matrizFile" key="matrizFile" id="chk_file_%{#stat.count}"  fieldValue="f%{#codeName}"/>
+											<label for="chk_file_<s:property value='#stat.count'/>"><span class="hidden">Fichero Principal</span></label></td>
 						</tr>
-						<tr id="frow_2">
-							<td><input type="checkbox" name="chk_del" id="chk_del_2" value="2" /> <label for="chk_del_2">Cras egestas elementum augue</label></td>
-							<td class="opt"><input type="checkbox" name="chk_code" id="chk_code_2" value="c2" /> <label for="chk_code_2"><span class="hidden">Código</span></label></td>
-							<td class="opt"><input type="checkbox" name="chk_memo" id="chk_memo_2" value="m2" /> <label for="chk_memo_2"><span class="hidden">Memoria</span></label></td>
-							<td class="opt"><input type="checkbox" name="chk_file" id="chk_file_2" value="f2" /> <label for="chk_file_2"><span class="hidden">Fichero Principal</span></label></td>
-						</tr>
-						<tr id="frow_3">
-							<td><input type="checkbox" name="chk_del" id="chk_del_3" value="3" /> <label for="chk_del_3">Quisque sollicitudin risus vestibulum augue vehicula ornare</label></td>
-							<td class="opt"><input type="checkbox" name="chk_code" id="chk_code_3" value="c3" /> <label for="chk_code_3"><span class="hidden">Código</span></label></td>
-							<td class="opt"><input type="checkbox" name="chk_memo" id="chk_memo_3" value="m3" /> <label for="chk_memo_3"><span class="hidden">Memoria</span></label></td>
-							<td class="opt"><input type="checkbox" name="chk_file" id="chk_file_3" value="f3" /> <label for="chk_file_3"><span class="hidden">Fichero Principal</span></label></td>
-						</tr>
+					</s:iterator>
 					</tbody>
 				</table>
 
@@ -193,7 +206,8 @@
 			<input type="checkbox" name="chk_entrega" id="chk_entrega" value="1" /> <label for="chk_entrega">Enviar como entrega de actividad</label>
 		</fieldset>
 
-		</form>
+<!-- 		</form> -->
+	</s:form>
 		<!--/form_envios -->
 
 		<h3>Mensajes</h3>
