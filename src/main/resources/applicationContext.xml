@@ -42,6 +42,10 @@
 	<bean id="teacherSpringAction" class="edu.uoc.pelp.actions.TeacherAction">
 		<property name="bUOC" ref="bUOC" />
 	</bean>
+	
+	<bean id="deliversSpringAction" class="edu.uoc.pelp.actions.DeliveriesAction">
+		<property name="bUOC" ref="bUOC" />
+	</bean>
 
 	<!-- post-processors for all standard config annotations -->
 	<bean
@@ -64,10 +68,7 @@
 				<value>edu.uoc.pelp.model.vo.ActivityDescPK</value>
 				<value>edu.uoc.pelp.model.vo.ActivityTest</value>
 				<value>edu.uoc.pelp.model.vo.ActivityTestPK</value>
-				<value>edu.uoc.pelp.model.vo.DeliverFile</value>
 				<value>edu.uoc.pelp.model.vo.admin.PelpMainLabSubjects</value>
-				<value>edu.uoc.pelp.model.vo.DeliverPK</value>
-				<value>edu.uoc.pelp.model.vo.DeliverFile</value>
 			</list>
 		</property>
 	</bean>
