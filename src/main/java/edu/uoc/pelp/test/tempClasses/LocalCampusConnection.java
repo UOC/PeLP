@@ -79,7 +79,7 @@ public class LocalCampusConnection implements ICampusConnection{
     
     public LocalCampusConnection() {
 
-        setProfile("teacher2");
+        setProfile("student1");
 
         createDummyData();
 
@@ -341,14 +341,16 @@ public class LocalCampusConnection implements ICampusConnection{
                 break;
             case Teacher:
                 retVal=false;
-                if(classroomData.getTeachers()!=null) {
+                if(classroomData!= null && classroomData.getTeachers()!=null) {
                     retVal=classroomData.getTeachers().containsKey(userID);
                 }
                 break;
             case MainTeacher:
                 retVal=false;
-                if(classroomData.getSubjectRef()!=null && classroomData.getSubjectRef().getMainTeachers()!=null) {
-                    retVal=classroomData.getSubjectRef().getMainTeachers().containsKey(userID);
+                if(classroomData!= null){
+	                if(classroomData.getSubjectRef()!=null && classroomData.getSubjectRef().getMainTeachers()!=null) {
+	                    retVal=classroomData.getSubjectRef().getMainTeachers().containsKey(userID);
+	                }
                 }
                 break;  
         }            
@@ -843,6 +845,7 @@ public class LocalCampusConnection implements ICampusConnection{
         Classroom cr5=new Classroom(new ClassroomID(sid5,1));
         cr5.addTeacher(getTestPersonByPos(1));
         cr5.addStudent(getTestPersonByPos(3));
+        cr5.addStudent(getTestPersonByPos(4));
         Classroom cr6=new Classroom(new ClassroomID(sid5,2));
         cr6.addTeacher(getTestPersonByPos(1));
         cr6.addTeacher(getTestPersonByPos(2));

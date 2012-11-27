@@ -468,7 +468,7 @@ public class DeliverDAO implements IDeliverDAO {
         if(object==null) {
             return null;
         }
-        
+        getSession().beginTransaction();
         // Get the key
         DeliverPK key=ObjectFactory.getDeliverPK(object);
         
@@ -580,7 +580,7 @@ public class DeliverDAO implements IDeliverDAO {
         if(userPK==null) {
             return null;
         }
-        
+        getSession().beginTransaction();
         // Search the last identifier
         Query q=getSession().getNamedQuery("Deliver.findLast");
         q.setParameter("semester", activityPK.getSemester());

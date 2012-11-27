@@ -17,6 +17,7 @@
 	<script type="text/javascript">window.jQuery || document.write("<script type='text/javascript' src='<s:property value="contextPath"/>/js/jquery-1.7.2.min.js'>\x3C/script>")</script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.customforminput.min.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.placeholder.min.js"></script>
+	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.tablesorter.min.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/pelp.js"></script>
 </head>
 <body>
@@ -146,10 +147,13 @@
 					<s:iterator status="stat" value="(fileDim).{ #this }" >
 						<tr id="frow_<s:property value='#stat.count'/>">
 							<td>
-							<s:checkbox name="matrizFile" key="matrizFile"  id="chk_del_%{#stat.count}" /> <label for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label></td>
-<%-- 							<input type="checkbox" name="chk_del" id="chk_del_<s:property value='#stat.count'/>" value="<s:property value='#stat.count'/>" /> <label for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label></td> --%>
+								<s:set name="codeName" value="matrizFile[#stat.index][4]"/>
+<%-- 							<s:checkbox name="chk_del" value="%{#stat.count}" key="matrizFile"  id="chk_del_%{#stat.count}" /> <label for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label></td> --%>
+								<input type="checkbox" name="chk_del" id="chk_del_<s:property value='#stat.count'/>" value="<s:property value='#stat.count'/>" /> 
+								<label id="chk_del_title<s:property value='#stat.count'/>"  for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label>
+								<input type="hidden" id="chk_del_title_hash<s:property value='#stat.count'/>"  value="<s:property value='%{#codeName}'/>"/>
+							</td>
 							<td class="opt">
-											<s:set name="codeName" value="matrizFile[#stat.index][4]"/>
 											<s:checkbox name="matrizFile" key="matrizFile" id="chk_code_%{#stat.count}"  fieldValue="c%{#codeName}"/>
 											<label for="chk_code_<s:property value='#stat.count'/>"><span class="hidden">Código</span></label></td>
 							<td class="opt">
@@ -213,15 +217,7 @@
 		<h3>Mensajes</h3>
 
 		<div class="messages">
-			<p>
-			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum varius erat quis turpis dictum egestas. Quisque congue nulla eu dolor suscipit luctus feugiat mi laoreet. Nam aliquam sodales orci, in porta velit hendrerit ut. Ut urna tortor, sagittis sit amet rhoncus in, tincidunt ac est. Nullam non arcu ipsum. Ut id purus mauris, a volutpat metus. Donec ut ante nisi, at hendrerit dui. Fusce nisl mi, hendrerit nec tincidunt eget, vehicula at turpis. Pellentesque vitae massa nec ligula blandit ultricies. Fusce adipiscing molestie diam ut porttitor.
-			</p>
-			<p>
-			Vestibulum lorem quam, mattis eget convallis non, feugiat eget nunc. Suspendisse potenti. Aenean eget lobortis enim. Nunc porttitor nibh et nibh sollicitudin sed porttitor ligula varius. Quisque tincidunt, tortor in pretium cursus, nibh ipsum tempor dui, id vulputate lacus mauris non urna. Suspendisse vulputate dignissim porta. Sed sed diam vel quam vestibulum sodales. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Pellentesque sed sapien nisl, ac tincidunt neque. Mauris imperdiet tristique auctor. Donec sed vestibulum magna. Etiam lacinia sagittis est ac scelerisque.
-			</p>
-			<p>
-			Suspendisse in orci ligula. Sed tincidunt, odio eget tristique tincidunt, enim est sollicitudin libero, in tempus metus orci eu eros. Mauris iaculis vehicula felis quis eleifend. Cras sodales accumsan lectus id dapibus. Integer fermentum velit ut sapien tempus a commodo eros bibendum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec erat libero, vehicula a suscipit nec, varius in felis. Quisque bibendum nunc commodo odio convallis pretium. Vestibulum imperdiet elit eget nibh gravida eget euismod neque ultrices. Nunc pellentesque semper erat.
-			</p>
+			<p> <s:property value="resulMessage"/> </p>
 		</div>
 
 	</div>

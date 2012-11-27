@@ -21,6 +21,7 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.exception.AuthorizationException;
 import edu.uoc.pelp.bussines.vo.Activity;
+import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverFile;
 import edu.uoc.pelp.exception.PelpException;
 
@@ -53,6 +54,9 @@ public class DeliveriesAction extends ActionSupport {
 	private String s_assign;
 	private String s_aula;
 	private String s_activ;
+	
+	private String auxInfo;
+	private String resulMessage;
 
 	private static Logger log = Logger.getLogger(DeliveriesAction.class);
 
@@ -65,6 +69,24 @@ public class DeliveriesAction extends ActionSupport {
 		return SUCCESS;
 	}
 
+	public void delete() throws Exception {
+		if(auxInfo!= null){
+			String ruta = PelpConfiguracionBO.getSingletonConfiguration().get(PelpConfiguracionBO.TEMP_PATH);
+			File directorioPracticas = new File(ruta);
+			File[] ficheros = directorioPracticas.listFiles();
+			if (ficheros != null && ficheros.length > 0) {
+				fileDim = ficheros.length;
+				for (int i = 0; i < ficheros.length; i++) {
+					File file = ficheros[i];
+					String nameFileHas = auxInfo.replaceAll("-", "");
+					if(nameFileHas.equals(String.valueOf(file.getName().hashCode()))){
+						log.info("DELETE FILE: "+file.getName()+" - FILE HASH"+nameFileHas);
+						file.delete();
+					}
+				}
+			}
+		}
+	}
 	private void crearDeliverFile() throws Exception{
 		if(matrizFile!= null){
 			String ruta = PelpConfiguracionBO.getSingletonConfiguration().get(PelpConfiguracionBO.TEMP_PATH);
@@ -77,27 +99,36 @@ public class DeliveriesAction extends ActionSupport {
 				for (int i = 0; i < ficheros.length; i++) {
 					File file = ficheros[i];
 					log.info("NOMBRE DEL FICHERO "+file.getName());
-	                files[i]=new DeliverFile(file,new File(file.getName()));
+	                files[i]=new DeliverFile(new File(ruta),new File(file.getName()));
+	                
 	                Boolean isFile = false;
 					for (int j = 0; j < matrizFile.length; j++) {
-						
-						if(matrizFile[j][0].equals("m"+String.valueOf(file.getName().hashCode()))){
+						String nameFileHas = matrizFile[j][0].replaceAll("-", "");
+						String nameFileFolder = String.valueOf(file.getName().hashCode()).replaceAll("-","");
+						if(nameFileHas.equals("m"+nameFileFolder)){
 							isFile = true;
 							files[i].setIsReport(true);
-						}else if(matrizFile[j][0].equals("c"+String.valueOf(file.getName().hashCode()))){
+						}if(nameFileHas.equals("c"+nameFileFolder)){
 							isFile = true;
 							log.warn("ENTRA CODIGO");
 							files[i].setIsCode(true);
-						}else if(matrizFile[j][0].equals("f"+String.valueOf(file.getName().hashCode()))){
+						}if(nameFileHas.equals("f"+nameFileFolder)){
 							isFile = true;
 							log.warn("ENTRA F PRINCIPAL");
 							files[i].setIsMain(true);
 						}
 					}
 					if(isFile){
-						String[] infoAssing = s_assign.split("_");
-						Activity objActivity = bUOC.getActivityInformation(new UOCSubject(infoAssing[0], infoAssing[2]), Integer.parseInt(s_activ));
-						bUOC.addDeliver(objActivity, files);
+						Activity objActivity = new Activity();
+						for (int j = 0; j < listActivity.length; j++) {
+							if(listActivity[j].getIndex() == Integer.parseInt(s_activ)){
+								objActivity = listActivity[j];
+							}
+						}
+						
+						DeliverDetail objDetail = bUOC.addDeliver(objActivity, files);
+						resulMessage = objDetail.getCompileMessage();
+						if(resulMessage.length()==0)resulMessage = "OK";
 					}
 				}
 			}
@@ -119,14 +150,15 @@ public class DeliveriesAction extends ActionSupport {
 					for (int i = 0; i < ficheros.length; i++) {
 						File file = ficheros[i];
 						log.info("NOMBRE DEL FICHERO "+file.getName());
-						//DeliverFile objDeliver = new DeliverFile(file,edu.uoc.pelp.engine.deliver.DeliverFile.FileType.Code);
-						//listDeliversFile.add(objDeliver);
 						matrizFile[i][0] = file.getName();
 						matrizFile[i][1] = "true";
 						matrizFile[i][2] = "true";
 						matrizFile[i][3] = "true";
 						matrizFile[i][4] = 	String.valueOf(file.getName().hashCode());
 					}
+				}else{
+					matrizFile = null;
+					fileDim = 0;
 				}
 			}
 		}catch (Exception e) {
@@ -295,6 +327,22 @@ public class DeliveriesAction extends ActionSupport {
 
 	public void setFileDim(int fileDim) {
 		this.fileDim = fileDim;
+	}
+
+	public String getAuxInfo() {
+		return auxInfo;
+	}
+
+	public void setAuxInfo(String auxInfo) {
+		this.auxInfo = auxInfo;
+	}
+
+	public String getResulMessage() {
+		return resulMessage;
+	}
+
+	public void setResulMessage(String resulMessage) {
+		this.resulMessage = resulMessage;
 	}
 
 
