@@ -10,8 +10,6 @@ import java.util.Properties;
 
 import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.campus.ISubjectID;
-import edu.uoc.pelp.engine.campus.UOC.Semester;
-import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import edu.uoc.pelp.servlets.InitServlet;
 
 /**
@@ -36,12 +34,6 @@ public class PelpConfiguracionBO extends HashMap<String, String> implements IPel
 	public static final String URL_WS_MATRICULA = 			"urlSoapMatriculaService";
 	public static final String URL_WS_EXPEDIENTE = 			"urlSoapExpedientService";
 	public static final String URL_WS_CUA_MAIL = 			"urlSoapCUAMail";
-	
-	public static final String TEMP_PATH = 					"tempPath";
-	public static final String DELIVERY_PATH = 				"deliveryPath";
-	public static final String COMPILER_PATH = 				"compilerPath";
-	
-	public static final String ACTIVE_SUBJECTS = 			"activeSubjects";
 	
 
 
@@ -100,32 +92,31 @@ public class PelpConfiguracionBO extends HashMap<String, String> implements IPel
 	}
 
 
+	@Override
 	public File getTempPath() {
-		return new File( get(TEMP_PATH) );
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
+	@Override
 	public File getDeliveryPath() {
-		return new File( get(DELIVERY_PATH) );
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
+	@Override
 	public File getCompiler(String languageID) {
-		return new File( get(COMPILER_PATH) );
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 
+	@Override
 	public ISubjectID[] getActiveSubjects() {
-		String[] ids = get(ACTIVE_SUBJECTS).split(";");
-		SubjectID[] subjectIds = new SubjectID[ids.length];
-		for (int i = 0; i < ids.length; i++) {
-			// TODO falta definir el semestre ?
-			Semester semester = new Semester("");
-			SubjectID subjectId = new SubjectID(ids[i], semester);
-			subjectIds[i] = subjectId;
- 		}
-		return subjectIds;
+		// TODO Auto-generated method stub
+		return null;
 	}
-
 
 }

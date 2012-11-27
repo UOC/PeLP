@@ -337,7 +337,7 @@ public class CampusConnection implements ICampusConnection{
 			}
 		} catch (Exception e) {			
 			e.printStackTrace();
-			throw new AuthPelpException("Error to recover equvalents subjects");
+			throw new AuthPelpException("Error to recover equivalent subjects");
 		}
 		
 		SubjectID[] SubjectArray = new SubjectID[lista.size()];
@@ -369,17 +369,26 @@ public class CampusConnection implements ICampusConnection{
 
 	@Override
 	public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
+		Classroom classroom = new Classroom(classroomID);
+		
+		Subject subject = new Subject(subjectID);
+		classroom.setSubjectRef(subject)SubjectRef(subject);
+		
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public Person getUserData(IUserID userID) throws AuthPelpException {
+		if( userID == null ) {
+			userID = getUserID();
+		}
+		
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public Person getUserData() throws AuthPelpException {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return getUserData( null ); 
 	}
 
 
