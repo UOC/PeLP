@@ -57,6 +57,8 @@ public class DeliveriesAction extends ActionSupport {
 	
 	private String auxInfo;
 	private String resulMessage;
+	private String finalDeliver;
+	
 
 	private static Logger log = Logger.getLogger(DeliveriesAction.class);
 
@@ -343,6 +345,14 @@ public class DeliveriesAction extends ActionSupport {
 
 	public void setResulMessage(String resulMessage) {
 		this.resulMessage = resulMessage;
+	}
+
+	public String getFinalDeliver() {
+		return finalDeliver;
+	}
+
+	public void setFinalDeliver(String finalDeliver) {
+		this.finalDeliver = finalDeliver;
 	}
 
 

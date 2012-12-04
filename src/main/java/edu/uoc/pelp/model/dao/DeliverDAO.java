@@ -765,7 +765,7 @@ public class DeliverDAO implements IDeliverDAO {
         if(activityPK==null) {
             return null;
         }
-        
+        getSession().beginTransaction();
         // Get the activity register
         Query query=getSession().getNamedQuery("Deliver.findByActivityUserID");
         query.setParameter("semester", activityPK.getSemester());
@@ -773,7 +773,7 @@ public class DeliverDAO implements IDeliverDAO {
         query.setParameter("activityIndex", activityPK.getActivityIndex());
         query.setParameter("userID", userPK.getIdp());
         List<edu.uoc.pelp.model.vo.Deliver> list=query.list();
-        
+        getSession().close();
         // Return the results
         return getDeliverIDList(list);
     }

@@ -28,6 +28,7 @@ import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
+import edu.uoc.pelp.bussines.vo.DeliverSummary;
 
 /**
  * @author jsanchezramos
@@ -45,6 +46,7 @@ public class TeacherAction extends ActionSupport {
 	private UOCSubject[] listSubjects;
 	private UOCClassroom[] listClassroms;
 	private Activity[] listActivity;
+	private DeliverSummary[] listDelivers;
 
 	private String s_assign;
 	private String s_aula;
@@ -60,6 +62,16 @@ public class TeacherAction extends ActionSupport {
 		if(s_aula!=null && s_aula.length()>0 && s_assign != null){
 			String[] infoAssing = s_assign.split("_");
 			listActivity = bUOC.getSubjectActivities(new UOCSubject(infoAssing[0],infoAssing[2]));
+		}
+		if(s_aula!=null && s_aula.length()>0 && s_assign != null && s_activ!= null && s_activ.length()>0){
+			Activity objActivity = new Activity();
+			for (int j = 0; j < listActivity.length; j++) {
+				if(listActivity[j].getIndex() == Integer.parseInt(s_activ)){
+					objActivity = listActivity[j];
+				}
+			}
+			String[] infoAssing = s_assign.split("_");
+			bUOC.getLastClassroomDeliverSummary(objActivity, new UOCSubject(infoAssing[0],infoAssing[2]), objActivity.getIndex());
 		}
 		return SUCCESS;
 	}
@@ -120,6 +132,14 @@ public class TeacherAction extends ActionSupport {
 
 	public void setbUOC(UOCPelpBussines bUOC) {
 		this.bUOC = bUOC;
+	}
+
+	public DeliverSummary[] getListDelivers() {
+		return listDelivers;
+	}
+
+	public void setListDelivers(DeliverSummary[] listDelivers) {
+		this.listDelivers = listDelivers;
 	}
 
 }

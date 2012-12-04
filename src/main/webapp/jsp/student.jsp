@@ -118,104 +118,110 @@
 					<th>Tests públicos</th>
 					<th>Tests privados</th>
 				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><a href="#" class="toggle collapsed" rel="a1_e3"><span class="lbl">Entrega 3</span></a></td>
-					<td>01/07/12</td>
-					<td>12</td>
-					<td><span class="ko"><span class="invisible">ko</span></span></td>
-					<td><div class="tests"><span class="ko">15</span></div></td>
-					<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td>
-				</tr>
-				<tr class="expand-child">
-					<td colspan="6">
+				</thead>
+				<tbody>
+				<s:iterator value="listDelivers" status="pos">
+					<tr> 
+						<td><a href="#" class="toggle collapsed" rel="a1_e<s:property value="#pos.index"/>"><span class="lbl">Entrega <s:property value="DeliverIndex"/></span></a></td>
+						<td> <s:property value="SubmissionDate"/> </td>
+						<td><s:set name="totalTest" value="TotalPublicTests+TotalPrivateTests"/><s:property value="#totalTest"/></td>
+						<td><s:if test="CompileOK"><span class="ok"><span class="invisible">ok</span></span></s:if><s:else><span class="ko"><span class="invisible">ko</span></span></s:else></td>
+						<td><div class="tests"><span class="ko"><s:property value="TotalPublicTests"/></span><span class="ok"><s:property value="PassedPublicTests"/></span></div></td>
+						<td><div class="tests"><span class="ko"><s:property value="TotalPrivateTests"/></span> <span class="ok"><s:property value="PassedPrivateTests"/></span></div></td>
+					</tr>
+					<tr class="expand-child">
+						<td colspan="6">
+	
+							<div id="a1_e<s:property value="#pos.index"/>" class="files_tests">
+								<table class="tlevel_2">
+									<thead>
+										<tr>
+											<th>Ficheros</th>
+											<th>Código</th>
+											<th>Memoria</th>
+											<th>F. Principal</th>
+										</tr>
+									</thead>
+									<tbody>
+									<s:iterator value="DeliverFiles">
+										<tr>
+											<td><a href="#">Lorem ipsum dolor sit amet</a></td>
+											<td><span class="check" title="Código"></span></td>
+											<td></td>
+											<td></td>
+										</tr>
+									</s:iterator>
+<!-- 										<tr> -->
+<!-- 											<td><a href="#">Cras egestas elementum augue</a></td> -->
+<%-- 											<td><span class="check" title="Código"></span></td> --%>
+<%-- 											<td><span class="check" title="Memoria"></span></td> --%>
+<!-- 											<td></td> -->
+<!-- 										</tr> -->
+<!-- 										<tr> -->
+<!-- 											<td><a href="#">Cras egestas elementum augue</a></td> -->
+<%-- 											<td><span class="check" title="Código"></span></td> --%>
+<!-- 											<td></td> -->
+<%-- 											<td><span class="check" title="F. Principal"></span></td> --%>
+<!-- 										</tr> -->
+									</tbody>
+								</table>
+								<div class="heading"><span>Tests Públicos</span></div>
+								<ul>
+								<s:iterator value="TestResults">
+									<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
+								</s:iterator>	
+<%-- 									<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
+<%-- 									<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
+								</ul>
+							</div>
+	
+						</td>
+					</tr>
+				</s:iterator>
+<!-- 				<tr> -->
+<%-- 					<td><a href="#" class="toggle collapsed" rel="a1_e2"><span class="lbl">Entrega 2</span></a></td> --%>
+<!-- 					<td>01/07/12</td> -->
+<!-- 					<td>12</td> -->
+<%-- 					<td><span class="ok"><span class="invisible">ok</span></span></td> --%>
+<%-- 					<td><div class="tests"><span class="ok">15</span></div></td> --%>
+<%-- 					<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td> --%>
+<!-- 				</tr> -->
+<!-- 				<tr class="expand-child"> -->
+<!-- 					<td colspan="6"> -->
 
-						<div id="a1_e3" class="files_tests">
-							<table class="tlevel_2">
-								<thead>
-									<tr>
-										<th>Ficheros</th>
-										<th>Código</th>
-										<th>Memoria</th>
-										<th>F. Principal</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td><a href="#">Lorem ipsum dolor sit amet</a></td>
-										<td><span class="check" title="Código"></span></td>
-										<td></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td><a href="#">Cras egestas elementum augue</a></td>
-										<td><span class="check" title="Código"></span></td>
-										<td><span class="check" title="Memoria"></span></td>
-										<td></td>
-									</tr>
-									<tr>
-										<td><a href="#">Cras egestas elementum augue</a></td>
-										<td><span class="check" title="Código"></span></td>
-										<td></td>
-										<td><span class="check" title="F. Principal"></span></td>
-									</tr>
-								</tbody>
-							</table>
-							<div class="heading"><span>Tests Públicos</span></div>
-							<ul>
-								<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
-								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-							</ul>
-						</div>
+<!-- 						<div id="a1_e2" class="files_tests"> -->
+<%-- 							<div class="heading"><span>Tests Públicos</span></div> --%>
+<!-- 							<ul> -->
+<%-- 								<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li> --%>
+<%-- 								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
+<%-- 								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
+<!-- 							</ul> -->
+<!-- 						</div> -->
 
-					</td>
-				</tr>
-				<tr>
-					<td><a href="#" class="toggle collapsed" rel="a1_e2"><span class="lbl">Entrega 2</span></a></td>
-					<td>01/07/12</td>
-					<td>12</td>
-					<td><span class="ok"><span class="invisible">ok</span></span></td>
-					<td><div class="tests"><span class="ok">15</span></div></td>
-					<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td>
-				</tr>
-				<tr class="expand-child">
-					<td colspan="6">
+<!-- 					</td> -->
+<!-- 				</tr> -->
+<!-- 				<tr> -->
+<%-- 					<td><a href="#" class="toggle collapsed" rel="a1_e1"><span class="lbl">Entrega 1</span></a></td> --%>
+<!-- 					<td>01/07/12</td> -->
+<!-- 					<td>12</td> -->
+<%-- 					<td><span class="ok"><span class="invisible">ok</span></span></td> --%>
+<%-- 					<td><div class="tests"><span class="ok">15</span></div></td> --%>
+<%-- 					<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td> --%>
+<!-- 				</tr> -->
+<!-- 				<tr class="expand-child"> -->
+<!-- 					<td colspan="6"> -->
 
-						<div id="a1_e2" class="files_tests">
-							<div class="heading"><span>Tests Públicos</span></div>
-							<ul>
-								<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
-								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-							</ul>
-						</div>
+<!-- 						<div id="a1_e1" class="files_tests"> -->
+<%-- 							<div class="heading"><span>Tests Públicos</span></div> --%>
+<!-- 							<ul> -->
+<%-- 								<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li> --%>
+<%-- 								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
+<%-- 								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
+<!-- 							</ul> -->
+<!-- 						</div> -->
 
-					</td>
-				</tr>
-				<tr>
-					<td><a href="#" class="toggle collapsed" rel="a1_e1"><span class="lbl">Entrega 1</span></a></td>
-					<td>01/07/12</td>
-					<td>12</td>
-					<td><span class="ok"><span class="invisible">ok</span></span></td>
-					<td><div class="tests"><span class="ok">15</span></div></td>
-					<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td>
-				</tr>
-				<tr class="expand-child">
-					<td colspan="6">
-
-						<div id="a1_e1" class="files_tests">
-							<div class="heading"><span>Tests Públicos</span></div>
-							<ul>
-								<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
-								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-							</ul>
-						</div>
-
-					</td>
-				</tr>
+<!-- 					</td> -->
+<!-- 				</tr> -->
 			</tbody>
 		</table>
 		<!-- /tAlumno -->

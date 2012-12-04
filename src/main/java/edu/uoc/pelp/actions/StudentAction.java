@@ -21,6 +21,8 @@ package edu.uoc.pelp.actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
+import org.campusproject.components.AuthenticationAdminComponent;
+import org.osid.OsidContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -28,6 +30,8 @@ import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
+import edu.uoc.pelp.bussines.vo.DeliverDetail;
+
 
 /**
  * @author jsanchezramos
@@ -45,6 +49,7 @@ public class StudentAction extends ActionSupport {
 	private UOCSubject[] listSubjects;
 	private UOCClassroom[] listClassroms;
 	private Activity[] listActivity;
+	private DeliverDetail[] listDelivers;
 
 	private String s_assign;
 	private String s_aula;
@@ -68,14 +73,9 @@ public class StudentAction extends ActionSupport {
 					objActivity = listActivity[j];
 				}
 			}
-			UOCClassroom objClassroom = null;
-			for (int j = 0; j < listClassroms.length; j++) {
-				if(listClassroms[j].getIndex() == Integer.parseInt(s_aula)){
-					objClassroom = listClassroms[j];
-				}
-			}
-
-			bUOC.getLastClassroomDeliverDetails(objActivity, objClassroom);
+			String[] infoAssing = s_assign.split("_");
+			listDelivers = bUOC.getUserDeliverDetails(new UOCSubject(infoAssing[0],infoAssing[2]), objActivity.getIndex());
+						
 		}
 		return SUCCESS;
 	}
@@ -136,6 +136,14 @@ public class StudentAction extends ActionSupport {
 
 	public void setbUOC(UOCPelpBussines bUOC) {
 		this.bUOC = bUOC;
+	}
+
+	public DeliverDetail[] getListDelivers() {
+		return listDelivers;
+	}
+
+	public void setListDelivers(DeliverDetail[] listDelivers) {
+		this.listDelivers = listDelivers;
 	}
 
 }

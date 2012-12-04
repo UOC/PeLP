@@ -79,7 +79,8 @@
 					<select name="s_activ" id="s_activ">
 						<option value="">Activitats</option>
 						<s:iterator value="listActivity" status="statsa">
-							<option value="<s:property value="key" />"><s:property value="value" /></option>
+							<s:if test="%{s_activ == index}"><option selected="selected" value="<s:property value="index" />"><s:property value="description" /></option></s:if>
+							<s:else><option value="<s:property value="index" />"><s:property value="description" /></option></s:else>
 						</s:iterator>
 					</select>
 					<input type="submit" id="send_filters" name="send_filters" value="Enviar" class="btn"/>

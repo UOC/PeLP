@@ -18,12 +18,6 @@
 */
 package edu.uoc.pelp.test.tempClasses;
 
-import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
-import edu.uoc.pelp.engine.campus.UOC.Semester;
-import edu.uoc.pelp.engine.campus.UOC.SubjectID;
-import edu.uoc.pelp.engine.campus.UOC.UserID;
-import edu.uoc.pelp.engine.campus.*;
-import edu.uoc.pelp.exception.AuthPelpException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +26,21 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import edu.uoc.pelp.engine.campus.Classroom;
+import edu.uoc.pelp.engine.campus.ICampusConnection;
+import edu.uoc.pelp.engine.campus.IClassroomID;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.engine.campus.ITimePeriod;
+import edu.uoc.pelp.engine.campus.IUserID;
+import edu.uoc.pelp.engine.campus.Person;
+import edu.uoc.pelp.engine.campus.Subject;
+import edu.uoc.pelp.engine.campus.UserRoles;
+import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
+import edu.uoc.pelp.engine.campus.UOC.Semester;
+import edu.uoc.pelp.engine.campus.UOC.SubjectID;
+import edu.uoc.pelp.engine.campus.UOC.UserID;
+import edu.uoc.pelp.exception.AuthPelpException;
 
 /**
  * Implements a dummy class simulating the campus access for the 
@@ -79,7 +88,8 @@ public class LocalCampusConnection implements ICampusConnection{
     
     public LocalCampusConnection() {
 
-        setProfile("student1");
+        //setProfile("student1");
+    	setProfile("teacher1");
 
         createDummyData();
 
@@ -796,7 +806,7 @@ public class LocalCampusConnection implements ICampusConnection{
         
         SubjectID sid1=new SubjectID("05.554",_dummySemesters.get("20111"));
         _testAccessSubjects[0]=new Subject(sid1);
-        _testAccessSubjects[0].addMainTeacher(getTestPersonByPos(1));
+        _testAccessSubjects[0].addMainTeacher(getTestPersonByPos(5));
         _testAccessSubjects[0].setDescription("Introduction to Java Programming");       
         _testAccessSubjects[0].setShortName("IJP");
                              
@@ -847,7 +857,7 @@ public class LocalCampusConnection implements ICampusConnection{
         cr5.addStudent(getTestPersonByPos(3));
         cr5.addStudent(getTestPersonByPos(4));
         Classroom cr6=new Classroom(new ClassroomID(sid5,2));
-        cr6.addTeacher(getTestPersonByPos(1));
+        cr6.addTeacher(getTestPersonByPos(5));
         cr6.addTeacher(getTestPersonByPos(2));
         cr6.addStudent(getTestPersonByPos(4));
         cr6.addStudent(getTestPersonByPos(6));
