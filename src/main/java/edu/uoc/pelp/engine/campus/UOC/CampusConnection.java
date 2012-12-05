@@ -37,6 +37,8 @@ import edu.uoc.pelp.engine.campus.Subject;
 import edu.uoc.pelp.engine.campus.UserRoles;
 import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
 import edu.uoc.pelp.exception.AuthPelpException;
+import edu.uoc.pelp.model.dao.admin.AdministrationDAO;
+import edu.uoc.pelp.model.vo.admin.PelpMainLabSubjects;
 import edu.uoc.serveis.gat.dadesacademiques.model.AnyAcademicVO;
 import edu.uoc.serveis.gat.dadesacademiques.model.AssignaturaReduidaVO;
 import edu.uoc.serveis.gat.dadesacademiques.model.AssignaturaRelacionadaVO;
@@ -47,7 +49,11 @@ import edu.uoc.serveis.gat.expedient.service.ExpedientService;
 import edu.uoc.serveis.gat.matricula.model.AssignaturaMatriculadaDocenciaVO;
 import edu.uoc.serveis.gat.matricula.service.MatriculaService;
 import edu.uoc.serveis.gat.rac.model.AulaVO;
+import edu.uoc.serveis.gat.rac.model.ConsultorAulaVO;
+import edu.uoc.serveis.gat.rac.model.EstudiantAulaVO;
 import edu.uoc.serveis.gat.rac.service.RacService;
+import edu.uoc.serveis.tercers.tercer.model.TercerVO;
+import edu.uoc.serveis.tercers.tercer.service.TercerService;
 
 /**
  * Implements the campus access for the Universitat Oberta de Catalunya (UOC).
@@ -122,17 +128,17 @@ public class CampusConnection implements ICampusConnection{
 
 		if( userRole == null || userRole.compareTo(UserRoles.Student) == 0 ){
 			if( asignaturasMatriculadas == null ){
-				asignaturasMatriculadas = getListaAsignaturasMatriculadas( null );
+				asignaturasMatriculadas = getListaAsignaturasMatriculadas( null, null );
 			}
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.Teacher) == 0 ){
 			if( asignaturasConsultor == null ){
-				asignaturasConsultor = getListaAsignaturasConsultor( null );
+				asignaturasConsultor = getListaAsignaturasConsultor( null, null );
 			}
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.MainTeacher) == 0 ){
 			if( asignaturasPRA == null ){
-				asignaturasPRA = getListaAsignaturasPRA( timePeriod );
+				asignaturasPRA = getListaAsignaturasPRA( timePeriod, null );
 			}
 		}
 
@@ -184,29 +190,33 @@ public class CampusConnection implements ICampusConnection{
 
 	@Override
 	public IClassroomID[] getUserClassrooms(UserRoles userRole, ISubjectID subjectID) throws AuthPelpException {
+		return getUserClassrooms(userRole, subjectID, (UserID)getUserID());
+	}
+
+	public IClassroomID[] getUserClassrooms(UserRoles userRole, ISubjectID subjectID, UserID user) throws AuthPelpException {
 		ArrayList<ClassroomID> classrooms = new ArrayList<ClassroomID>();
 
 
 		if( userRole == null || userRole.compareTo(UserRoles.Student) == 0 ){
 			if( asignaturasMatriculadas == null ){
-				asignaturasMatriculadas = getListaAsignaturasMatriculadas( null );
+				asignaturasMatriculadas = getListaAsignaturasMatriculadas( null, user );
 			}
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.Teacher) == 0 ){
 			if( asignaturasConsultor == null ){
-				asignaturasConsultor = getListaAsignaturasConsultor( null );
+				asignaturasConsultor = getListaAsignaturasConsultor( null, user );
 			}
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.MainTeacher) == 0 ){
 			if( asignaturasPRA == null ){
-				asignaturasPRA = getListaAsignaturasPRA( null );
+				asignaturasPRA = getListaAsignaturasPRA( null, user );
 			}
 		}
 		try {
 
 			ITimePeriod[] semestres = getActivePeriods();
 			boolean todasLasAsignaturas = (subjectID == null);
-			SubjectID subject = new SubjectID("XXX", new Semester("XXX"));
+			SubjectID subject = new SubjectID("", new Semester(""));
 			if( !todasLasAsignaturas ) {
 				subject = (SubjectID) subjectID;
 			} 
@@ -246,7 +256,7 @@ public class CampusConnection implements ICampusConnection{
 					}
 				}
 			}
-			
+
 		} catch (Exception e) {
 			log.error("Error al obtener el listado de aulas");
 			e.printStackTrace();
@@ -262,25 +272,49 @@ public class CampusConnection implements ICampusConnection{
 	}
 
 	@Override
-	public boolean isRole(UserRoles role, ISubjectID subject, IUserID user) {
-		
-		throw new UnsupportedOperationException("Not supported yet.");
+	public boolean isRole(UserRoles role, ISubjectID subject, IUserID user) throws AuthPelpException {
+		boolean isRole = false;
+		SubjectID subjectID = (SubjectID) subject;		
+		ITimePeriod periodo = subjectID.getSemester();
+		UserID userID = (UserID) user;
+
+		if( role.compareTo(UserRoles.Student) == 0 ){
+			ArrayList<AssignaturaMatriculadaDocenciaVO> asignaturasMatriculadas = getListaAsignaturasMatriculadas( periodo, userID );
+			for (AssignaturaMatriculadaDocenciaVO asignaturaMatriculada : asignaturasMatriculadas) {
+				if( asignaturaMatriculada.getAssignatura().getCodAssignatura() == subjectID.getCode() ){
+					isRole = true;
+				}
+			}
+
+		} else if( role.compareTo(UserRoles.Teacher) == 0 ){
+			ArrayList<AulaVO> asignaturasConsultor = getListaAsignaturasConsultor( periodo, userID );
+			for (AulaVO aulaVO : asignaturasConsultor) {
+				if( aulaVO.getAssignatura().getCodAssignatura() == subjectID.getCode() ){
+					isRole = true;
+				}
+			}
+		} else if( role.compareTo(UserRoles.MainTeacher) == 0 ){
+			ArrayList<AssignaturaReduidaVO> asignaturasPRA = getListaAsignaturasPRA( periodo, userID );
+			for (AssignaturaReduidaVO asignatura : asignaturasPRA) {
+				if( asignatura.getCodAssignatura() == subjectID.getCode()){
+					isRole = true;
+				}
+			}
+		}
+
+		return isRole;	
 	}
 
 	@Override
 	public boolean isRole(UserRoles role, ISubjectID subject) throws AuthPelpException {
-		return isRole(role,subject,getUserID());
+		return isRole(role, subject, getUserID());
 	}
 
 	@Override
 	public boolean isRole(UserRoles role, IClassroomID classroom, IUserID user) throws AuthPelpException {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 
-	@Override
-	public boolean isRole(UserRoles role, IClassroomID classroom) throws AuthPelpException {
 		boolean encontrado = false;
-		IClassroomID[] classrooms = getUserClassrooms(role, null);
+		IClassroomID[] classrooms = getUserClassrooms(role, null, (UserID)user);
 		for (IClassroomID iclassroomID : classrooms) {
 			ClassroomID classroomID = (ClassroomID) iclassroomID;
 			if( classroomID.compareTo(classroom) == 0){
@@ -292,24 +326,117 @@ public class CampusConnection implements ICampusConnection{
 	}
 
 	@Override
-	public IUserID[] getRolePersons(UserRoles role, ISubjectID subject) throws AuthPelpException {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public boolean isRole(UserRoles role, IClassroomID classroom) throws AuthPelpException {
+		return isRole(role, classroom, getUserID());
 	}
 
 	@Override
-	public IUserID[] getRolePersons(UserRoles role, IClassroomID classroom) throws AuthPelpException {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public IUserID[] getRolePersons(UserRoles userRole, ISubjectID subject) throws AuthPelpException {
+
+		List<IUserID> personas = new ArrayList<IUserID>();
+		try {
+			SubjectID subjectID = (SubjectID) subject;
+			ITimePeriod periodo = subjectID.getSemester();
+			Semester semestre = (Semester) periodo;
+
+			if( userRole.compareTo(UserRoles.Student) == 0 ){
+				RacService rac = WsLibBO.getRacServiceInstance();
+				EstudiantAulaVO[]  estudiantes = rac.getEstudiantsByAnyAssignaturaMask(semestre.getID(), subjectID.getCode(), "");
+				for (EstudiantAulaVO estudiante : estudiantes) {
+					UserID userID = new UserID( String.valueOf( estudiante.getTercer().getIdp() ) );
+					personas.add(userID);
+				}
+			}
+
+			if( userRole.compareTo(UserRoles.Teacher) == 0 ){
+				RacService rac = WsLibBO.getRacServiceInstance();
+				AulaVO[] aulas = rac.getAulesByAssignaturaAny(semestre.getID(), subjectID.getCode() );
+				for (AulaVO aulaVO : aulas) {
+					ConsultorAulaVO[]  consultores = aulaVO.getConsultors();
+					for (ConsultorAulaVO consultorAulaVO : consultores) {
+						UserID userID = new UserID( String.valueOf( consultorAulaVO.getTercer().getIdp() ) );
+						personas.add(userID);
+					}
+				}
+			}
+
+			if( userRole.compareTo(UserRoles.MainTeacher) == 0 ){
+				// TODO: obtener el listado de PRAs de una asignatura
+				// Ni los servicios de GAT ni OKI permiten obtener estos datos sin tener el domainId del aula
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AuthPelpException("No se han podido obtener los usuarios de la asignatura");
+		}
+
+		return personas.toArray( new IUserID[personas.size()] );
+	}
+
+	@Override
+	public IUserID[] getRolePersons(UserRoles role, IClassroomID classroomID) throws AuthPelpException {
+
+		List<IUserID> personas = new ArrayList<IUserID>();
+		try {
+			ClassroomID classroom = (ClassroomID) classroomID;
+			SubjectID subjectID = (SubjectID) classroom.getSubject();
+			ITimePeriod periodo = subjectID.getSemester();
+			Semester semestre = (Semester) periodo;
+
+			if( role.compareTo(UserRoles.Student) == 0 ){
+				RacService rac = WsLibBO.getRacServiceInstance();
+				EstudiantAulaVO[]  estudiantes = rac.getEstudiantsByAula(semestre.getID(), subjectID.getCode(), classroom.getClassIdx());
+				for (EstudiantAulaVO estudiante : estudiantes) {
+					UserID userID = new UserID( String.valueOf( estudiante.getTercer().getIdp() ) );
+					personas.add(userID);
+				}
+			}
+
+			if( role.compareTo(UserRoles.Teacher) == 0 ){
+				RacService rac = WsLibBO.getRacServiceInstance();
+				AulaVO[] aulas = rac.getAulesByAssignaturaAny(semestre.getID(), subjectID.getCode() );
+				for (AulaVO aulaVO : aulas) {
+					if(aulaVO.getNumAula() == classroom.getClassIdx() ){
+						ConsultorAulaVO[]  consultores = aulaVO.getConsultors();					
+						for (ConsultorAulaVO consultorAulaVO : consultores) {
+							UserID userID = new UserID( String.valueOf( consultorAulaVO.getTercer().getIdp() ) );
+							personas.add(userID);
+						}
+					}
+				}
+			}
+
+			if( role.compareTo(UserRoles.MainTeacher) == 0 ){
+				// TODO: obtener el listado de PRAs de una aula
+				// Ni los servicios de GAT ni OKI permiten obtener estos datos sin tener el domainId del aula
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AuthPelpException("No se han podido obtener los usuarios de la asignatura");
+		}
+
+		return personas.toArray( new IUserID[personas.size()] );
 	}
 
 	@Override
 	public boolean hasLabSubjects(ISubjectID subject) throws AuthPelpException {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return getLabSubjects(subject).length > 0;
 	}
 
 	@Override
 	public ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException {
-		//TODO: Una solucio es utilitzar la taula PELP_MainLabSubjects, amb les correspondencies
-		throw new UnsupportedOperationException("Not supported yet.");
+		AdministrationDAO dao = new AdministrationDAO();
+		SubjectID subjectID = (SubjectID) subject;
+		List<PelpMainLabSubjects> lista = dao.getLabSubjectOfMain(subjectID.getCode());
+		ArrayList<SubjectID> subjects = new ArrayList<SubjectID>();
+		for (PelpMainLabSubjects pelpMainLabSubject : lista) {
+			String code = pelpMainLabSubject.getPelpMainLabSubjectsPK().getLabSubjectCode();
+			subjects.add( new SubjectID(code, subjectID.getSemester()) );			
+		}		
+		SubjectID[] subs = new SubjectID[subjects.size()];
+		return subs;
 	}
 
 	@Override
@@ -337,9 +464,9 @@ public class CampusConnection implements ICampusConnection{
 			}
 		} catch (Exception e) {			
 			e.printStackTrace();
-			throw new AuthPelpException("Error to recover equvalents subjects");
+			throw new AuthPelpException("Error to recover equivalent subjects");
 		}
-		
+
 		SubjectID[] SubjectArray = new SubjectID[lista.size()];
 		return lista.toArray(SubjectArray);
 
@@ -358,8 +485,62 @@ public class CampusConnection implements ICampusConnection{
 			SubjectID subjectID = (SubjectID) isubjectID;
 			AssignaturaVO asignatura = dades.getAssignaturaByCodi( subjectID.getCode() );
 			subject = new Subject( subjectID );
-			subject.setDescription(asignatura.getDescLlarga()[0].getValor());
-			subject.setShortName(asignatura.getDescripcio()[0].getValor());
+
+			// Descripciones
+			getUserID();
+			String idioma = UserUtils.getCampusLanguage(appIdTREN);
+			subject.setDescription( Utils.getLanguageTitle(asignatura.getDescLlarga(), idioma) );
+			subject.setShortName( Utils.getLanguageTitle(asignatura.getDescLlarga(), idioma) );
+
+			RacService rac = WsLibBO.getRacServiceInstance();
+
+			AulaVO[] aulas = rac.getAulesByAssignaturaAny(subjectID.getCode(), subjectID.getSemester().getID());
+			// Aulas
+			for (AulaVO aula : aulas) {
+				// Se añaden las aulas
+				Classroom classroom = new Classroom(new ClassroomID(subjectID, aula.getNumAula().intValue()));
+				subject.addClassroom(classroom);
+				// Se añaden los consultores de todas las aulas
+				ConsultorAulaVO[] consultores = aula.getConsultors();
+				// Consultores
+				for (ConsultorAulaVO consultorAulaVO : consultores) {
+					Person teacher = new Person(new UserID( String.valueOf( consultorAulaVO.getTercer().getIdp())));
+					subject.addTeacher(teacher);	
+				}
+			}
+
+
+			// Asignaturas equivalentes
+			ISubjectID[] equivalentSubjects = getEquivalentSubjects(subjectID);
+			for (ISubjectID iSubjectID2 : equivalentSubjects) {
+				subject.addEquivalentSubject( iSubjectID2 );	
+			}
+			// PRA
+			// TODO falta obtener el PRA
+			//subject.addMainTeacher(teacher);
+
+
+			// Laboratorio
+			boolean isLab = false;
+
+			AdministrationDAO dao = new AdministrationDAO();
+			List<PelpMainLabSubjects> lista = dao.getMainSubjectOfLab(subjectID.getCode());
+			for (PelpMainLabSubjects pelpMainLabSubject : lista) {
+				isLab = true;
+				String code = pelpMainLabSubject.getPelpMainLabSubjectsPK().getLabSubjectCode();
+				subject.setParent( new SubjectID(code, subjectID.getSemester()) );
+			}		
+
+			subject.setLabFlag(isLab);
+
+
+			ISubjectID[] labSubjects = getLabSubjects(subjectID);
+			for (ISubjectID iSubjectID2 : labSubjects) {
+				subject.addLaboratory(iSubjectID2);
+			}
+
+
+
 		} catch (Exception e) {			
 			e.printStackTrace();
 			throw new AuthPelpException("Error to recover subject data");
@@ -368,18 +549,77 @@ public class CampusConnection implements ICampusConnection{
 	}
 
 	@Override
-	public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public Classroom getClassroomData(IClassroomID iclassroomID) throws AuthPelpException {
+
+		Classroom classroom;
+		try {
+			ClassroomID classroomID = (ClassroomID) iclassroomID;
+			classroom = new Classroom(classroomID);
+
+			RacService rac = WsLibBO.getRacServiceInstance();		
+			AulaVO[] aulas = rac.getAulesByAssignaturaAny(classroomID.getSubject().getCode(), classroomID.getSubject().getSemester().getID());
+			// Aulas
+			for (AulaVO aula : aulas) {
+				if(aula.getNumAula() == classroomID.getClassIdx() ){
+					ConsultorAulaVO[] consultores = aula.getConsultors();
+					// Consultores
+					for (ConsultorAulaVO consultorAulaVO : consultores) {
+						Person teacher = new Person(new UserID( String.valueOf( consultorAulaVO.getTercer().getIdp())));
+						classroom.addTeacher(teacher);
+					}
+				}
+			}
+
+			Subject subject = new Subject(classroomID.getSubject());
+			classroom.setSubjectRef(subject);		
+
+			EstudiantAulaVO[] estudiantes = rac.getEstudiantsByAula(classroomID.getSubject().getSemester().getID(), classroomID.getSubject().getCode(), classroomID.getClassIdx());
+			for (EstudiantAulaVO estudiante : estudiantes) {
+				Person student = new Person(new UserID( String.valueOf( estudiante.getTercer().getIdp())));
+				classroom.addStudent(student);
+			}
+
+		}  catch (Exception e) {
+			e.printStackTrace();
+			throw new AuthPelpException("Error to recover classroom data");
+		}
+
+		return classroom;
 	}
+
 
 	@Override
 	public Person getUserData(IUserID userID) throws AuthPelpException {
-		throw new UnsupportedOperationException("Not supported yet.");
+		if( userID == null ) {
+			userID = getUserID();
+		}
+		Person person;
+		try {
+			person = new Person(userID);
+
+			UserID user = (UserID) userID;
+			TercerService tercerService = WsLibBO.getTercerServiceInstance();
+			TercerVO tercer = tercerService.getTercer(Integer.valueOf(user.idp));
+			person.setName( tercer.getNombre() );
+			String fullname = tercer.getNombre();
+			if( tercer.getPrimerApellido() != null ) fullname += tercer.getPrimerApellido();
+			if( tercer.getSegundoApellido() != null ) fullname += tercer.getSegundoApellido();
+			person.setFullName( fullname );
+			person.setLanguage( UserUtils.getCampusLanguage(appIdTREN) );
+			String login = tercer.getEmail().substring(0, tercer.getEmail().indexOf("@"));
+			person.setUserPhoto( "http://cv.uoc.edu/UOC/mc-icons/fotos/" + login + ".jpg" );
+
+		}  catch (Exception e) {
+			e.printStackTrace();
+			throw new AuthPelpException("No se ha podido recuperar la informacion del usuario");
+		}
+
+		return person;
 	}
 
 	@Override
 	public Person getUserData() throws AuthPelpException {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return getUserData( null ); 
 	}
 
 
@@ -409,8 +649,8 @@ public class CampusConnection implements ICampusConnection{
 	public ITimePeriod[] getActivePeriods() {
 		return getPeriods();
 	}
-	
-	private ArrayList<AssignaturaMatriculadaDocenciaVO> getListaAsignaturasMatriculadas(ITimePeriod timePeriod) throws AuthPelpException {
+
+	private ArrayList<AssignaturaMatriculadaDocenciaVO> getListaAsignaturasMatriculadas(ITimePeriod timePeriod, UserID userID) throws AuthPelpException {
 
 		asignaturasMatriculadas = new ArrayList<AssignaturaMatriculadaDocenciaVO>();
 
@@ -446,14 +686,14 @@ public class CampusConnection implements ICampusConnection{
 			}
 
 		} catch (Exception e) {
-			log.error("Error al obtener el listado de asignaturas del usuario.");
+			log.error("Error al obtener el listado de asignaturas del estudiante");
 			e.printStackTrace();
-			throw new AuthPelpException("Error al obtener el listado de asignaturas del usuario.");            
+			throw new AuthPelpException("Error al obtener el listado de asignaturas del estudiante.");            
 		}
 		return asignaturasMatriculadas;
 	}
 
-	private ArrayList<AulaVO> getListaAsignaturasConsultor(ITimePeriod timePeriod) throws AuthPelpException {
+	private ArrayList<AulaVO> getListaAsignaturasConsultor(ITimePeriod timePeriod, UserID userID) throws AuthPelpException {
 
 		asignaturasConsultor = new ArrayList<AulaVO>();
 		try {
@@ -488,7 +728,7 @@ public class CampusConnection implements ICampusConnection{
 		return asignaturasConsultor;
 	}
 
-	private ArrayList<AssignaturaReduidaVO> getListaAsignaturasPRA(ITimePeriod timePeriod) throws AuthPelpException {
+	private ArrayList<AssignaturaReduidaVO> getListaAsignaturasPRA(ITimePeriod timePeriod, UserID userID) throws AuthPelpException {
 
 		asignaturasPRA = new ArrayList<AssignaturaReduidaVO>();
 		try {

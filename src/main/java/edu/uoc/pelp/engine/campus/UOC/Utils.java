@@ -1,27 +1,30 @@
 package edu.uoc.pelp.engine.campus.UOC;
 
-import net.opentrends.remoteinterface.auth.Auth;
-import net.opentrends.remoteinterface.auth.SessionContext;
-import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
+import edu.uoc.serveis.gat.dadesacademiques.model.DescripcioVO;
 
 public class Utils {
 
-	
-    /**
-     * Funcion que retorna la SessionContext a partir de la campus Session (s)
-     * @param campusSession
-     * @return SessionContext
-     * @throws Exception
-     */
-    public static SessionContext getSessionContext( final String campusSession) throws Exception {
-        Auth authService = WsLibBO.getAuthServiceInstance();
-        
-        final SessionContext sessionContext = authService.getContextBySessionId(campusSession);
-        if ( sessionContext == null ) {
-            throw new Exception("Error al obtener la SessionContext de la sesion: " + campusSession);
-        }
-        return sessionContext;
-    }
 
+	public static String getLanguageTitle(DescripcioVO[] descripciones, String idioma) throws Exception{
+		String textTraduit = null;
+		if (descripciones!= null){
+			if (descripciones.length>0){
 
+				for(int z = 0; z < descripciones.length; z++){
+					String valor = descripciones[z].getValor();
+					String codIndicador = descripciones[z].getLang();
+					if(codIndicador!=null){
+						if(codIndicador.equals(idioma)){
+
+							if(valor!=null){
+								textTraduit = valor;
+							}
+						}
+					}
+
+				}
+			}
+		}
+		return textTraduit;
+	}
 }

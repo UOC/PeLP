@@ -8,6 +8,7 @@ import edu.uoc.serveis.gat.dadesacademiques.service.DadesAcademiquesService;
 import edu.uoc.serveis.gat.expedient.service.ExpedientService;
 import edu.uoc.serveis.gat.matricula.service.MatriculaService;
 import edu.uoc.serveis.gat.rac.service.RacService;
+import edu.uoc.serveis.tercers.tercer.service.TercerService;
 
 import uoc.edu.pelp.bussines.PelpConfiguracionBO;
 
@@ -72,5 +73,11 @@ public class WsLibBO {
 		return ws;
 	}
 
-
+	public static TercerService getTercerServiceInstance() throws Exception {
+		if (log.isInfoEnabled()) {
+			log.info("getTercerServiceInstance(): " + PelpConfiguracionBO.URL_WS_TERCER);
+		}
+		TercerService ws = ClientTercerService.create( getUrlWS( PelpConfiguracionBO.URL_WS_TERCER));
+		return ws;
+	}
 }

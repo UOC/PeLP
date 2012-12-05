@@ -35,13 +35,14 @@ public class PelpConfiguracionBO extends HashMap<String, String> implements IPel
 	public static final String URL_WS_DADES_ACADEMIQUES = 	"urlSoapDadesAcademiquesService";
 	public static final String URL_WS_MATRICULA = 			"urlSoapMatriculaService";
 	public static final String URL_WS_EXPEDIENTE = 			"urlSoapExpedientService";
-	public static final String URL_WS_CUA_MAIL = 			"urlSoapCUAMail";
+	public static final String URL_WS_TERCER = 				"urlSoapTercerService";
 	
 	public static final String TEMP_PATH = 					"tempPath";
 	public static final String DELIVERY_PATH = 				"deliveryPath";
 	public static final String COMPILER_PATH = 				"compilerPath";
 	
 	public static final String ACTIVE_SUBJECTS = 			"activeSubjects";
+	
 	
 
 

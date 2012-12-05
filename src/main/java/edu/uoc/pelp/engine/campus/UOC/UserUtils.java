@@ -10,10 +10,6 @@ import edu.uoc.pelp.engine.campus.UOC.ws.WsLibBO;
 
 public class UserUtils {
 
-    private String AplicacioTren;
-    private String AppIdTREN;
-    private String appId;
-    
 	public static final String APPID_UOC="UOC";//Campus catalan
 	public static final String APPID_UOC2000="UOC2000";//Campus castellano
 	public static final String APPID_GCUOC="GCUOC";//Global campus
