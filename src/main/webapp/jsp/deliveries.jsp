@@ -174,7 +174,7 @@
 			<div id="tab_2" class="tab_content">
 				<fieldset class="fs">
 					<label for="txt_text" class="hlabel">Añadir texto:</label>
-					<textarea id="txt_text"></textarea>
+					<s:textarea name="codePlain" id="txt_text" />
 				</fieldset>
 			</div> 
 
@@ -186,28 +186,33 @@
 		<fieldset class="fs bdotted">
 			<label class="hlabel">Input. <span>Canviar format: <a href="#" id="in" class="commut text">Adjuntar com arxiu</a></span></label>
 			<div class="in_file">
-				<input type="file" id="file_in" name="file_in" />
-				<input type="button" id="adj_in" name="adj_in" value="Adjuntar" class="btn" />
+				<s:file name="testFile" id="file_in" label="file_in"></s:file>
+<!-- 				<input type="file" id="file_in" name="file_in" /> -->
+<!-- 				<input type="button" id="adj_in" name="adj_in" value="Adjuntar" class="btn" /> -->
 			</div>
 			<div class="in_text">
-				<input type="text" id="txt_in" name="txt_in" value="" placeholder="Introduir text" />
+				<s:textfield name="testPlain" id="txt_in"/>
+<!-- 				<input type="text" id="txt_in" name="txt_in" value="" placeholder="Introduir text" /> -->
 			</div>
 		</fieldset>
 
 		<fieldset class="fs bsolid">
 			<label class="hlabel">Output. <span>Canviar format: <a href="#" id="out" class="commut file">Introduir com a text</a></span></label>
 			<div class="out_file">
-				<input type="file" id="file_out" name="file_out" />
-				<input type="button" id="adj_out" name="adj_out" value="Adjuntar" class="btn" />
+				<s:file name="testFileOut" id="file_out" label="file_out"></s:file>
+<!-- 				<input type="file" id="file_out" name="file_out" /> -->
+<!-- 				<input type="button" id="adj_out" name="adj_out" value="Adjuntar" class="btn" /> -->
 			</div>
 			<div class="out_text">
-				<input type="text" id="txt_out" name="txt_out" value="" placeholder="Introduir text"/>
+				<s:textfield name="testPlainOut" id="txt_out"/>
+<!-- 				<input type="text" id="txt_out" name="txt_out" value="" placeholder="Introduir text"/> -->
 			</div>
 		</fieldset>
 
 		<fieldset class="fs fs_send">
 			<input type="submit" id="btn_send" name="btn_send" value="Enviar" class="btn btnsend" />
-			<input type="checkbox" name="chk_entrega" id="chk_entrega" value="1" /> <label for="chk_entrega">Enviar como entrega de actividad</label>
+			<s:checkbox name="finalDeliver" id="chk_entrega" value="0"/>
+<!-- 			<input type="checkbox" name="chk_entrega" id="chk_entrega" value="1" /> --> <label for="chk_entrega">Enviar como entrega de actividad</label> 
 		</fieldset>
 
 <!-- 		</form> -->
