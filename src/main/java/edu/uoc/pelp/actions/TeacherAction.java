@@ -84,8 +84,6 @@ public class TeacherAction extends ActionSupport {
 		this.listSubjects = listSubjects;
 	}
 
-
-
 	public String getS_assign() {
 		return s_assign;
 	}
