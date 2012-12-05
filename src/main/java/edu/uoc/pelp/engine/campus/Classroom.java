@@ -167,4 +167,9 @@ public class Classroom implements Comparable<Classroom> {
         }
         return _classroomID.compareTo(id);
     }
+
+	@Override
+	public String toString() {
+		return "Classroom [_classroomID=" + _classroomID + "]";
+	}
 }

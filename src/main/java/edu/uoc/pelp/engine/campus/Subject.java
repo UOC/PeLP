@@ -331,4 +331,9 @@ public class Subject implements Comparable<Subject> {
         }
         return _id.compareTo(id);
     }
+
+	@Override
+	public String toString() {
+		return "Subject [_id=" + _id + "]";
+	}
 }
