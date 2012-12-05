@@ -380,7 +380,7 @@ public class DeliverResultsDAO implements IDeliverResultDAO {
         if(id==null) {
             return null;
         }
-        
+        getSession().beginTransaction();
         // Get the key
         DeliverPK key=ObjectFactory.getDeliverPK(id);
         

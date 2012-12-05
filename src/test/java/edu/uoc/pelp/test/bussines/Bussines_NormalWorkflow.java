@@ -18,20 +18,34 @@
 */
 package edu.uoc.pelp.test.bussines;
 
+import java.io.File;
+
+import junit.framework.Assert;
+
+import org.junit.Test;
+
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
-import edu.uoc.pelp.bussines.exception.*;
-import edu.uoc.pelp.bussines.vo.*;
+import edu.uoc.pelp.bussines.exception.AuthorizationException;
+import edu.uoc.pelp.bussines.exception.InvalidCampusConnectionException;
+import edu.uoc.pelp.bussines.exception.InvalidConfigurationException;
+import edu.uoc.pelp.bussines.exception.InvalidEngineException;
+import edu.uoc.pelp.bussines.exception.InvalidSessionFactoryException;
+import edu.uoc.pelp.bussines.vo.Activity;
+import edu.uoc.pelp.bussines.vo.Classroom;
+import edu.uoc.pelp.bussines.vo.DeliverDetail;
+import edu.uoc.pelp.bussines.vo.DeliverFile;
+import edu.uoc.pelp.bussines.vo.DeliverSummary;
+import edu.uoc.pelp.bussines.vo.MultilingualText;
+import edu.uoc.pelp.bussines.vo.MultilingualTextArray;
+import edu.uoc.pelp.bussines.vo.Subject;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidTimePeriodPelpException;
 import edu.uoc.pelp.test.TestPeLP;
 import edu.uoc.pelp.test.conf.PCPelpConfiguration;
 import edu.uoc.pelp.test.engine.campus.TestUOC.LocalCampusConnection;
-import java.io.File;
-import junit.framework.Assert;
-import org.junit.Test;
 
 /**
  * Perform tests over the bussines class with a user wich is administrator
@@ -458,8 +472,6 @@ public class Bussines_NormalWorkflow {
                 }
             }
             Assert.assertEquals("Select the user Subject", subject,userSubject);
-            
-            
             
             // Select the classroom (GUI)
             UOCClassroom[] userClassrooms= _bussines.getUserClassrooms(userSubject);

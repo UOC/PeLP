@@ -200,6 +200,7 @@ public class DAODeliverManager implements IDeliverManager {
     @Override
     public DeliverID[] getUserDelivers(IUserID user, ActivityID activity) {
         
+    	
         List<DeliverID> listIDs=_delivers.findAllKey(activity, user);
                 
         // Create the output array

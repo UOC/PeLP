@@ -21,6 +21,8 @@ package edu.uoc.pelp.actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
+import org.campusproject.components.AuthenticationAdminComponent;
+import org.osid.OsidContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -28,7 +30,8 @@ import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
-import edu.uoc.pelp.bussines.vo.DeliverSummary;
+import edu.uoc.pelp.bussines.vo.DeliverDetail;
+
 
 /**
  * @author jsanchezramos
@@ -36,8 +39,8 @@ import edu.uoc.pelp.bussines.vo.DeliverSummary;
 
 @Namespace("/")
 @ResultPath(value = "/")
-@Result(name = "success", location = "jsp/teacher.jsp")
-public class TeacherAction extends ActionSupport {
+@Result(name = "success", location = "jsp/student.jsp")
+public class StudentAction extends ActionSupport {
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,7 +49,7 @@ public class TeacherAction extends ActionSupport {
 	private UOCSubject[] listSubjects;
 	private UOCClassroom[] listClassroms;
 	private Activity[] listActivity;
-	private DeliverSummary[] listDelivers;
+	private DeliverDetail[] listDelivers;
 
 	private String s_assign;
 	private String s_aula;
@@ -71,7 +74,8 @@ public class TeacherAction extends ActionSupport {
 				}
 			}
 			String[] infoAssing = s_assign.split("_");
-			bUOC.getLastClassroomDeliverSummary(objActivity, new UOCSubject(infoAssing[0],infoAssing[2]), objActivity.getIndex());
+			listDelivers = bUOC.getUserDeliverDetails(new UOCSubject(infoAssing[0],infoAssing[2]), objActivity.getIndex());
+						
 		}
 		return SUCCESS;
 	}
@@ -134,11 +138,11 @@ public class TeacherAction extends ActionSupport {
 		this.bUOC = bUOC;
 	}
 
-	public DeliverSummary[] getListDelivers() {
+	public DeliverDetail[] getListDelivers() {
 		return listDelivers;
 	}
 
-	public void setListDelivers(DeliverSummary[] listDelivers) {
+	public void setListDelivers(DeliverDetail[] listDelivers) {
 		this.listDelivers = listDelivers;
 	}
 

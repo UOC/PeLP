@@ -114,6 +114,14 @@ j(document).ready(function(){
     j('#lnk_del').click(function(ev) {
     	j("input[name='chk_del'][type='checkbox']").each(function(i){
     		if(j(this).is(':checked')){
+    			callback="";
+    			j.ajax({
+    				  url: "deliveries!delete.html",
+    				  dataType: 'json',
+    				  data: "auxInfo="+j('#chk_del_title_hash'+j(this).val()).val(),
+    				  success: callback,
+    				  type: "POST"
+    				});
     			j('#frow_'+j(this).val()).remove();
     		}
     	});
@@ -163,5 +171,8 @@ j(document).ready(function(){
 		j(this).toggleClass('active');
 		j(this).siblings('h3').removeClass('active');
 	});
+	
+	
+	
 
 });

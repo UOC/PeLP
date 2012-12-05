@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="
-    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
-    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+http://www.springframework.org/schema/tx/spring-tx-2.5.xsd/spring-spring-tx-2.5.xsd-3.1.2.RELEASE.xsd
+http://www.springframework.org/schema/util
+http://www.springframework.org/schema/util/spring-util-2.5.xsd"> 
 
 
 	<!-- objects test inject to pelpEnigne -->
@@ -57,18 +60,9 @@
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
 		<property name="packagesToScan">
 			<list>
-				<value>edu.uoc.pelp.model.vo.UOC</value>
-			</list>
-		</property>
-		<property name="annotatedClasses">
-			<list>
-				<value>edu.uoc.pelp.model.vo.Activity</value>
-				<value>edu.uoc.pelp.model.vo.ActivityPK</value>
-				<value>edu.uoc.pelp.model.vo.ActivityDesc</value>
-				<value>edu.uoc.pelp.model.vo.ActivityDescPK</value>
-				<value>edu.uoc.pelp.model.vo.ActivityTest</value>
-				<value>edu.uoc.pelp.model.vo.ActivityTestPK</value>
-				<value>edu.uoc.pelp.model.vo.admin.PelpMainLabSubjects</value>
+				<value>edu.uoc.pelp.model.vo</value>
+                <value>edu.uoc.pelp.model.vo.UOC</value>
+                <value>edu.uoc.pelp.model.vo.admin</value>
 			</list>
 		</property>
 	</bean>
@@ -89,6 +83,6 @@
 	</bean>
 
 	<!-- So classes/functions with @Transactional get a hibernate txn -->
-	<tx:annotation-driven />
+<!-- 	<tx:annotation-driven /> -->
 </beans>
 

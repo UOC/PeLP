@@ -548,7 +548,7 @@ public class ActivityDAO implements IActivityDAO {
         if(subject==null) {
             return null;
         }
-        
+        getSession().beginTransaction();   
         // Get the key
         SubjectPK key=ObjectFactory.getSubjectPK(subject);
         
@@ -557,8 +557,14 @@ public class ActivityDAO implements IActivityDAO {
         query.setParameter("semester", key.getSemester());
         query.setParameter("subject", key.getSubject());
         
-        List<edu.uoc.pelp.model.vo.Activity> list=query.list();
+        List<edu.uoc.pelp.model.vo.Activity> list = new ArrayList<edu.uoc.pelp.model.vo.Activity>(); 
         
+        
+        if(query.list().size()!=0){
+        	list=query.list();
+        }
+        
+        getSession().close();
         // Return the results
         return getActivityList(list);
     }
