@@ -505,7 +505,7 @@ public class CampusConnection implements ICampusConnection{
 				// Consultores
 				for (ConsultorAulaVO consultorAulaVO : consultores) {
 					Person teacher = new Person(new UserID( String.valueOf( consultorAulaVO.getTercer().getIdp())));
-					subject.addTeacher(teacher);	
+					subject.addMainTeacher(teacher);	
 				}
 			}
 
@@ -515,11 +515,9 @@ public class CampusConnection implements ICampusConnection{
 			for (ISubjectID iSubjectID2 : equivalentSubjects) {
 				subject.addEquivalentSubject( iSubjectID2 );	
 			}
-			// PRA
-			// TODO falta obtener el PRA
-			//subject.addMainTeacher(teacher);
 
-
+		
+			
 			// Laboratorio
 			boolean isLab = false;
 
