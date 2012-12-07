@@ -45,6 +45,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<version>3.5.6-Final</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-spring-plugin</artifactId>
 			<version>2.2.1.1</version>
@@ -69,6 +74,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-json-plugin</artifactId>
+			<version>2.2.1.1</version>
+		</dependency>
+
 
 		<dependency>
 			<!-- This artifact is already loaded by JBoss 4.2.3 -->
@@ -176,6 +187,33 @@
 		</dependency>
 
 		<dependency>
+
+			<groupId>org.campusproject</groupId>
+			<artifactId>CampusComponentsJava</artifactId>
+			<version>1.4.0</version> 
+			<type>jar</type>
+			<classifier>config-uoc</classifier>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.campusproject</groupId>
+			<artifactId>CampusComponentsJava</artifactId>
+			<version>1.4.0</version> 
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>OKI</groupId>
+			<artifactId>OkiOSID</artifactId>
+			<version>2.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+
+	<dependency>
 		    <groupId>edu.uoc.serveis.tercers.tercer-ws</groupId>
 		    <artifactId>tercer-ws-client</artifactId>
 		    <version>1.1.0</version>
@@ -218,6 +256,7 @@
 	  		<type>jar</type>
 	  		<scope>compile</scope>
 	  	</dependency>
+
 	</dependencies>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uoc.edu</groupId>
@@ -272,12 +311,13 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- web.xml parameters-->
+				<!-- web.xml parameters -->
 				<configFilePath>${basedir}/src/main/resources/pelpConfig.properties</configFilePath>
-			
+
 				<!--deploy parameters -->
 				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
-				<jbossdeployhome>D:/jmangas/opt/jboss-4.2.3.GA/server/default/deploy</jbossdeployhome>
+				
+				<jbossdeployhome>/Users/juanfrasr/servidor/pelpserver/server/default/deploy</jbossdeployhome>
 			</properties>
 			<build>
 				<plugins>
@@ -313,7 +353,7 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- web.xml parameters-->
+				<!-- web.xml parameters -->
 				<configFilePath>/srv/PeLP/pelpConfig.properties</configFilePath>
 			</properties>
 			<build>
