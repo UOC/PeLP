@@ -15,7 +15,7 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 	<bean id="lcctj" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection">
 		<constructor-arg type="java.lang.String"
-			value="11e7592afee1c0b7674ba1324d21376bde966b2106ffd8417a2c1006e96b01fd409238675dd043873d4e4c3beb98238461c559093ae38a0aa2325d697dde8e18" />
+			value="2161e9c05ed2802077dcd1393d9fd7b92ee8ab9956e1f8ac0a0bf0ea095f2141607348473df72348ad90ac931b1793aac1e149198ae92a7cb2042d823d769edc" />
 	</bean>
 	<!-- TEMPORAL -->
 	<bean id="lcct" class="edu.uoc.pelp.test.tempClasses.LocalCampusConnection">
@@ -26,7 +26,7 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	</bean>
 
 	<bean id="bUOC" class="edu.uoc.pelp.bussines.UOC.UOCPelpBussinesImpl">
-		<constructor-arg ref="lcct" />
+		<constructor-arg ref="lcctj" />
 		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="pcpct" />
 	</bean>
@@ -42,11 +42,11 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 	<!-- ACTIONS -->
 
-	<bean id="teacherSpringAction" class="edu.uoc.pelp.actions.TeacherAction">
+	<bean id="teacherSpringAction" class="edu.uoc.pelp.actions.TeacherAction" scope="request">
 		<property name="bUOC" ref="bUOC" />
 	</bean>
 	
-	<bean id="deliversSpringAction" class="edu.uoc.pelp.actions.DeliveriesAction">
+	<bean id="deliversSpringAction" class="edu.uoc.pelp.actions.DeliveriesAction" scope="request">
 		<property name="bUOC" ref="bUOC" />
 	</bean>
 

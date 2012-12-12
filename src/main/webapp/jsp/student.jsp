@@ -95,8 +95,8 @@
 	<div id="menu-container">
 		<div id="menu">
 			<ul class="menu">
-				<li><a href="#">Entorno programación</a></li>
-				<li class="active"><a href="#">Entregas</a></li>
+				<li><a href="deliveries.html">Entorno programación</a></li>
+				<li class="active"><a href="">Entregas</a></li>
 			</ul>
 		</div>
 	</div>

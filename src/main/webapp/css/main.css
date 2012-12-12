@@ -961,7 +961,8 @@ span.tmp{display:block;}
 
 #user .profile img{
 	float:left;
-	border:1px solid #676767
+	border:1px solid #676767;
+	width: 50px;
 }
 
 

@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
+import org.osid.OsidException;
 
 import uoc.edu.pelp.bussines.PelpConfiguracionBO;
 
@@ -24,6 +26,7 @@ import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverFile;
 import edu.uoc.pelp.bussines.vo.Test;
+import edu.uoc.pelp.engine.campus.UOC.OKIUtils;
 import edu.uoc.pelp.exception.PelpException;
 
 /**
@@ -32,7 +35,12 @@ import edu.uoc.pelp.exception.PelpException;
 
 @Namespace("/")
 @ResultPath(value = "/")
-@Result(name = "success", location = "jsp/deliveries.jsp")
+@Results({
+    @Result(name="index", type="redirectAction", params = {"actionName" , "deliveries"}),
+    @Result(name = "success", location = "jsp/deliveries.jsp")
+}) 
+
+
 public class DeliveriesAction extends ActionSupport {
 
 	private static final long serialVersionUID = 1L;
@@ -64,16 +72,35 @@ public class DeliveriesAction extends ActionSupport {
 	private String resulMessage;
 	private Boolean finalDeliver;
 	private String codePlain;
+	
+	private String username;
+	private String password;
+	private String imageURL;
+	private String fullName;
 
 	private static Logger log = Logger.getLogger(DeliveriesAction.class);
 
 	public String execute() throws Exception {
-		this.menuTop();
+
+		if(bUOC.getUserInformation()!= null){
+			this.menuTop();
+			imageURL = bUOC.getUserInformation().getUserPhoto();
+			fullName = bUOC.getUserInformation().getUserFullName();
+		}else{
+			imageURL= null;
+		}
+		
 		this.fileupload();
 		this.crearDeliverFile();
 		this.listFile();
 
 		return SUCCESS;
+	}
+	
+	public String auth() throws Exception, OsidException{
+		//bUOC.setCampusSession(OKIUtils.authUser(username, password));
+		bUOC.setCampusSession("holahola");
+		return "index";
 	}
 
 	public void delete() throws Exception {
@@ -465,6 +492,38 @@ public class DeliveriesAction extends ActionSupport {
 
 	public void setTestPlainOut(String testPlainOut) {
 		this.testPlainOut = testPlainOut;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 }

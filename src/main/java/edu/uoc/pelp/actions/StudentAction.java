@@ -21,8 +21,6 @@ package edu.uoc.pelp.actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
-import org.campusproject.components.AuthenticationAdminComponent;
-import org.osid.OsidContext;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -56,7 +54,7 @@ public class StudentAction extends ActionSupport {
 	private String s_activ;
 
     @Override
-	public String execute() throws Exception {	
+	public String execute() throws Exception {
 		listSubjects = bUOC.getUserSubjects();
 		if(s_assign!=null){
 			String[] infoAssing = s_assign.split("_");

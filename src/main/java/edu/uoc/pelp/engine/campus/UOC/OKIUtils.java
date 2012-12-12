@@ -20,17 +20,17 @@ public class OKIUtils {
 	private static final String REMOTE_IP =   "127.0.0.1";
 	private static final String AUTORIZATION_KEY =   "uocPHP_mblog";
 	
-	public AuthenticationAdminComponent getAuthenticationAdminComponent( String username, String password) throws Exception, OsidException{
+	private static AuthenticationAdminComponent getAuthenticationAdminComponent( String username, String password) throws Exception, OsidException{
 		
 		AuthenticationAdminComponent authNAdmin;
 		try {
-			OsidContext osidContext = getOsidContext(username, password);
+			OsidContext osidContext = getOsidContext(username, password);			
 			authNAdmin = new AuthenticationAdminComponent(osidContext);
-		
-		} catch (Exception e) {
+			
+		} catch (OsidException e) {
 			e.printStackTrace();
 			throw e;
-		} catch (OsidException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}
@@ -75,6 +75,25 @@ public class OKIUtils {
 		osidContext.assignContext("username", username);
 		osidContext.assignContext("password", password);
 		return osidContext;
+	}
+	
+	public static String authUser(String username,String password){
+		String sessionCampus=null;
+		AuthenticationAdminComponent authObj;
+		try {
+			authObj = getAuthenticationAdminComponent(username, password);
+			authObj.authenticateUser(authObj.getUserPasswordType());
+			if(authObj.isUserAuthenticated()){
+				sessionCampus = authObj.getSessionId().toString();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} catch (OsidException e) {
+			e.printStackTrace();
+		}
+		
+		return sessionCampus;
+		
 	}
 	
 	public static IUserID[] getTeachers(String sesion){

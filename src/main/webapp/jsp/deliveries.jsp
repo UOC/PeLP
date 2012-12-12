@@ -51,17 +51,28 @@
 		<div id="top">
 
 			<div id="user">
-
-				<form action="/" method="POST" class="form_login" id="form_login">
-					<fieldset>
-						<input type="text" id="username" name="username" placeholder="Nom d'usuari"  />
-						<input type="password" id="password" name="password" placeholder="Contrasenya"  />
-						<input type="submit" id="login" name="login" value="Accedir" class="btn" />
-					</fieldset>
-				</form>
-
+				<s:if test="%{imageURL == null}">
+					<s:form  action="deliveries!auth.html" cssClass="form_login" id="form_login" theme="simple">
+		<!-- 				<form action="/" method="POST" class="form_login" id="form_login"> -->
+							<fieldset>
+							<s:textfield name="username" id="username"></s:textfield>
+							<s:password name="password" id="password"></s:password>
+		<!-- 						<input type="text" id="username" name="username" placeholder="Nom d'usuari"  /> -->
+		<!-- 						<input type="password" id="password" name="password" placeholder="Contrasenya"  /> -->
+		<!-- 						<input type="submit" id="login" name="login" value="Accedir" class="btn" /> -->
+								<s:submit id="login" value="Accedir" cssClass="btn"></s:submit>
+							</fieldset>
+		<!-- 				</form> -->
+					</s:form>
+				</s:if>
+				<s:else>
+					<div class="profile"> 
+							<img src="<s:property value='imageURL'/>" alt="Profile Photo" />
+							<h2><s:property value="fullName"/></h2>
+							<a href="javascript:void(0);" id="logout" class="btn">Salir</a>
+						</div>
+				</s:else>
 			</div>
-
 			<form action="" method="POST" class="form_filters" id="form_filters">
 				<fieldset>
 					 <select name="s_assign" id="s_assign">
@@ -97,8 +108,8 @@
 	<div id="menu-container">
 		<div id="menu">
 			<ul class="menu">
-				<li class="active"><a href="#">Entorno programación</a></li>
-				<li><a href="#">Entregas</a></li>
+				<li class="active"><a href="">Entorno programación</a></li>
+				<li><a href="student.html">Entregas</a></li>
 				<li class="disabled"><a href="javascript:void(0);">Entregas</a></li>
 			</ul>
 		</div>
