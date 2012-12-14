@@ -130,12 +130,12 @@ public class CampusConnection implements ICampusConnection{
 
 		if( userRole == null || userRole.compareTo(UserRoles.Student) == 0 ){
 			if( asignaturasMatriculadas == null ){
-				asignaturasMatriculadas = getListaAsignaturasMatriculadas( null, null );
+				asignaturasMatriculadas = getListaAsignaturasMatriculadas( timePeriod, null );
 			}
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.Teacher) == 0 ){
 			if( asignaturasConsultor == null ){
-				asignaturasConsultor = getListaAsignaturasConsultor( null, null );
+				asignaturasConsultor = getListaAsignaturasConsultor( timePeriod, null );
 			}
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.MainTeacher) == 0 ){
