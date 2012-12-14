@@ -63,6 +63,7 @@ public class CampusConnection implements ICampusConnection{
 
 	private String sesion;
 	private UserID userID;
+	private String username;
 
 	private String aplicacioTren;
 	private String appIdTREN;
@@ -104,7 +105,8 @@ public class CampusConnection implements ICampusConnection{
 					throw new Exception("Error al obtener la SessionContext de la sesion: " + sesion);
 				}
 				userID = new UserID( String.valueOf(sessionContext.getIdp()) );
-
+				username = sessionContext.getUserLogin();
+				
 				appId = UserUtils.getAppId(sessionContext);
 				aplicacioTren = UserUtils.getAplicacioTren(appId);
 				appIdTREN = UserUtils.getAplicacioTren(appId);
@@ -600,13 +602,14 @@ public class CampusConnection implements ICampusConnection{
 			TercerVO tercer = tercerService.getTercer(Integer.valueOf(user.idp));
 			person.setName( tercer.getNombre() );
 			String fullname = tercer.getNombre();
-			if( tercer.getPrimerApellido() != null ) fullname += tercer.getPrimerApellido();
-			if( tercer.getSegundoApellido() != null ) fullname += tercer.getSegundoApellido();
+			if( tercer.getPrimerApellido() != null ) fullname += " " + tercer.getPrimerApellido();
+			if( tercer.getSegundoApellido() != null ) fullname += " " + tercer.getSegundoApellido();
 			person.setFullName( fullname );
-			person.setLanguage( UserUtils.getCampusLanguage(appIdTREN) );
-			String login = tercer.getEmail().substring(0, tercer.getEmail().indexOf("@"));
-			person.setUserPhoto( "http://cv.uoc.edu/UOC/mc-icons/fotos/" + login + ".jpg" );
-
+			person.setLanguage( UserUtils.getCampusLanguage(appIdTREN) );			
+			person.setUserPhoto( "http://cv.uoc.edu/UOC/mc-icons/fotos/" + username + ".jpg" );
+			person.setUsername( username );
+			person.seteMail( username + "@uoc.edu");
+			
 		}  catch (Exception e) {
 			e.printStackTrace();
 			throw new AuthPelpException("No se ha podido recuperar la informacion del usuario");
@@ -760,5 +763,13 @@ public class CampusConnection implements ICampusConnection{
 		}
 
 		return asignaturasPRA;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }
