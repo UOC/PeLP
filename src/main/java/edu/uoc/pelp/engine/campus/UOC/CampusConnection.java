@@ -68,6 +68,8 @@ public class CampusConnection implements ICampusConnection{
 	private String aplicacioTren;
 	private String appIdTREN;
 	private String appId;
+	
+	private AdministrationDAO dao;
 
 	private ArrayList<AssignaturaMatriculadaDocenciaVO> asignaturasMatriculadas;
 	private ArrayList<AulaVO> asignaturasConsultor;
@@ -429,7 +431,7 @@ public class CampusConnection implements ICampusConnection{
 
 	@Override
 	public ISubjectID[] getLabSubjects(ISubjectID subject) throws AuthPelpException {
-		AdministrationDAO dao = new AdministrationDAO();
+		
 		SubjectID subjectID = (SubjectID) subject;
 		List<PelpMainLabSubjects> lista = dao.getLabSubjectOfMain(subjectID.getCode());
 		ArrayList<SubjectID> subjects = new ArrayList<SubjectID>();
@@ -518,12 +520,12 @@ public class CampusConnection implements ICampusConnection{
 				subject.addEquivalentSubject( iSubjectID2 );	
 			}
 
-		
+		/*
 			
 			// Laboratorio
 			boolean isLab = false;
 
-			AdministrationDAO dao = new AdministrationDAO();
+			
 			List<PelpMainLabSubjects> lista = dao.getMainSubjectOfLab(subjectID.getCode());
 			for (PelpMainLabSubjects pelpMainLabSubject : lista) {
 				isLab = true;
@@ -538,7 +540,7 @@ public class CampusConnection implements ICampusConnection{
 			for (ISubjectID iSubjectID2 : labSubjects) {
 				subject.addLaboratory(iSubjectID2);
 			}
-
+*/
 
 
 		} catch (Exception e) {			
@@ -771,5 +773,13 @@ public class CampusConnection implements ICampusConnection{
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public AdministrationDAO getDao() {
+		return dao;
+	}
+
+	public void setDao(AdministrationDAO dao) {
+		this.dao = dao;
 	}
 }

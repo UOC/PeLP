@@ -2,6 +2,7 @@ package edu.uoc.pelp.engine.campus.UOC;
 
 import org.springframework.web.client.RestTemplate;
 
+import uoc.edu.pelp.bussines.PelpConfiguracionBO;
 import edu.uoc.serveis.gat.dadesacademiques.model.DescripcioVO;
 
 public class Utils {
@@ -30,9 +31,10 @@ public class Utils {
 		return textTraduit;
 	}
 
-	public static String authUserForCampus(String username,String password){
+	public static String authUserForCampus(String username,String password) throws Exception{
+		String ruta = PelpConfiguracionBO.getSingletonConfiguration().get(PelpConfiguracionBO.AUTH_URL);
 		RestTemplate restTemplate = new RestTemplate();
-		String result = restTemplate.getForObject("http://cv-pre.uoc.edu/webapps/CampusAuth/CampusAuthServlet?login={username}&password={password}", String.class, username, password);
+		String result = restTemplate.getForObject(ruta, String.class, username, password);
 		
 		int init = result.indexOf("<session>");
 		int fin = result.indexOf("</session>");
