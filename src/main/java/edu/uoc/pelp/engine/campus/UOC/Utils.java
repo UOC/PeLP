@@ -1,5 +1,7 @@
 package edu.uoc.pelp.engine.campus.UOC;
 
+import org.springframework.web.client.RestTemplate;
+
 import edu.uoc.serveis.gat.dadesacademiques.model.DescripcioVO;
 
 public class Utils {
@@ -27,4 +29,18 @@ public class Utils {
 		}
 		return textTraduit;
 	}
+	
+	// https://cv.uoc.edu/webapps/CampusAuth/CampusAuthServlet?login=jsanchezramos&password=trelele
+	public static String authUserForCampus(String username,String password){
+		
+		RestTemplate restTemplate = new RestTemplate();
+		String result = restTemplate.getForObject("https://cv.uoc.edu/webapps/CampusAuth/CampusAuthServlet?login={username}&password={password}", String.class, username, password);
+		
+		int init = result.indexOf("<session>");
+		int fin = result.indexOf("</session>");
+		String contentSession = result.substring(init+9,fin);
+		
+		return contentSession;
+	}
+	
 }

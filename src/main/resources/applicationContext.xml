@@ -13,19 +13,19 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 	<!-- objects test inject to pelpEnigne -->
 
-	<bean id="lcctj" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection">
+	<bean id="lcctj" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection" scope="session">
 		<constructor-arg type="java.lang.String"
-			value="2161e9c05ed2802077dcd1393d9fd7b92ee8ab9956e1f8ac0a0bf0ea095f2141607348473df72348ad90ac931b1793aac1e149198ae92a7cb2042d823d769edc" />
+			value="6191b9661e160042373c71e53da95783ae5e8bf9b635086fea0b5eb59a411bda0da38a8ade973c66d513cc97b3433b871b3f9cefa910af4a260ed4a6da04ee8" />
 	</bean>
 	<!-- TEMPORAL -->
 	<bean id="lcct" class="edu.uoc.pelp.test.tempClasses.LocalCampusConnection">
 	</bean>
 	<!-- FIN TEMPORAL -->
 
-	<bean id="pcpct" class="edu.uoc.pelp.test.tempClasses.PCPelpConfiguration">
+	<bean id="pcpct" class="edu.uoc.pelp.test.tempClasses.PCPelpConfiguration" scope="singleton">
 	</bean>
 
-	<bean id="bUOC" class="edu.uoc.pelp.bussines.UOC.UOCPelpBussinesImpl">
+	<bean id="bUOC" class="edu.uoc.pelp.bussines.UOC.UOCPelpBussinesImpl" scope="session">
 		<constructor-arg ref="lcctj" />
 		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="pcpct" />
@@ -33,11 +33,11 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 	<!-- service objects -->
 
-	<bean id="pelpService" class="edu.uoc.pelp.services.PelpServiceImpl">
+	<bean id="pelpService" class="edu.uoc.pelp.services.PelpServiceImpl" scope="singleton">
 		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="campusConnection" ref="lcct" />
+<!-- 		<property name="campusConnection" ref="lcct" /> -->
 		<property name="configuration" ref="pcpct" />
-		<property name="bussines" ref="bUOC" />
+<!-- 		<property name="bussines" ref="bUOC" /> -->
 	</bean>
 
 	<!-- ACTIONS -->
@@ -56,7 +56,7 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 	<!-- The singleton hibernate session factory -->
 	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" scope="singleton">
 		<property name="configLocation" value="classpath:hibernate.cfg.xml" />
 		<property name="packagesToScan">
 			<list>
@@ -69,16 +69,16 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
 	<!-- Spring's hibernate transaction manager -->
 	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager" >
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 	
 	<!-- DAOS -->
 	
-	<bean id="dActivity" class="edu.uoc.pelp.model.dao.ActivityDAO">
+	<bean id="dActivity" class="edu.uoc.pelp.model.dao.ActivityDAO" >
 		<constructor-arg ref="sessionFactory" />
 	</bean>
-	<bean id="dAdministrationDAO" class="edu.uoc.pelp.model.dao.admin.AdministrationDAO">
+	<bean id="dAdministrationDAO" class="edu.uoc.pelp.model.dao.admin.AdministrationDAO" >
 		<constructor-arg ref="sessionFactory" />
 	</bean>
 

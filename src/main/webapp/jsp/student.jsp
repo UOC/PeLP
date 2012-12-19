@@ -51,13 +51,27 @@
 		<div id="top">
 
 			<div id="user">
-
-				<div class="profile">
-					<img src="img/user.png" alt="Profile Photo" />
-					<h2>Joan Miralles Subirat</h2>
-					<a href="javascript:void(0);" id="logout" class="btn">Salir</a>
-				</div>
-
+				<s:if test="%{imageURL == null}">
+					<s:form  action="student!auth.html" cssClass="form_login" id="form_login" theme="simple">
+		<!-- 				<form action="/" method="POST" class="form_login" id="form_login"> -->
+							<fieldset>
+							<s:textfield name="username" id="username" label="username"></s:textfield>
+							<s:password name="password" id="password" label="password"></s:password>
+		<!-- 						<input type="text" id="username" name="username" placeholder="Nom d'usuari"  /> -->
+		<!-- 						<input type="password" id="password" name="password" placeholder="Contrasenya"  /> -->
+		<!-- 						<input type="submit" id="login" name="login" value="Accedir" class="btn" /> -->
+								<s:submit id="login" value="Accedir" cssClass="btn"></s:submit>
+							</fieldset>
+		<!-- 				</form> -->
+					</s:form>
+				</s:if>
+				<s:else>
+					<div class="profile"> 
+							<img src="<s:property value='imageURL'/>" alt="Profile Photo" />
+							<h2><s:property value="fullName"/></h2>
+							<a href="javascript:void(0);" id="logout" class="btn">Salir</a>
+						</div>
+				</s:else>
 			</div>
 
 			<form action="" method="POST" class="form_filters" id="form_filters">

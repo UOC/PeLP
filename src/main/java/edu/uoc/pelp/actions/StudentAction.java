@@ -21,6 +21,8 @@ package edu.uoc.pelp.actions;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
+import org.osid.OsidException;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -29,6 +31,7 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
+import edu.uoc.pelp.engine.campus.UOC.Utils;
 
 
 /**
@@ -37,7 +40,10 @@ import edu.uoc.pelp.bussines.vo.DeliverDetail;
 
 @Namespace("/")
 @ResultPath(value = "/")
-@Result(name = "success", location = "jsp/student.jsp")
+@Results({
+    @Result(name="index", type="redirectAction", params = {"actionName" , "student"}),
+    @Result(name = "success", location = "jsp/student.jsp")
+}) 
 public class StudentAction extends ActionSupport {
 
 	private static final long serialVersionUID = 1L;
@@ -52,31 +58,50 @@ public class StudentAction extends ActionSupport {
 	private String s_assign;
 	private String s_aula;
 	private String s_activ;
+	
+	private String username;
+	private String password;
+	private String imageURL;
+	private String fullName;
 
     @Override
 	public String execute() throws Exception {
-		listSubjects = bUOC.getUserSubjects();
-		if(s_assign!=null){
-			String[] infoAssing = s_assign.split("_");
-			listClassroms = bUOC.getUserClassrooms(new UOCSubject(infoAssing[0],infoAssing[2]));
+    	
+    	if(bUOC.getUserInformation()!= null){
+    		listSubjects = bUOC.getUserSubjects();
+    		if(s_assign!=null){
+    			String[] infoAssing = s_assign.split("_");
+    			listClassroms = bUOC.getUserClassrooms(new UOCSubject(infoAssing[0],infoAssing[2]));
+    		}
+    		if(s_aula!=null && s_aula.length()>0 && s_assign != null){
+    			String[] infoAssing = s_assign.split("_");
+    			listActivity = bUOC.getSubjectActivities(new UOCSubject(infoAssing[0],infoAssing[2]));
+    		}
+    		if(s_aula!=null && s_aula.length()>0 && s_assign != null && s_activ!= null && s_activ.length()>0){
+    			Activity objActivity = new Activity();
+    			for (int j = 0; j < listActivity.length; j++) {
+    				if(listActivity[j].getIndex() == Integer.parseInt(s_activ)){
+    					objActivity = listActivity[j];
+    				}
+    			}
+    			String[] infoAssing = s_assign.split("_");
+    			listDelivers = bUOC.getUserDeliverDetails(new UOCSubject(infoAssing[0],infoAssing[2]), objActivity.getIndex());
+    						
+    		}
+			imageURL = bUOC.getUserInformation().getUserPhoto();
+			fullName = bUOC.getUserInformation().getUserFullName();
+		}else{
+			imageURL= null;
 		}
-		if(s_aula!=null && s_aula.length()>0 && s_assign != null){
-			String[] infoAssing = s_assign.split("_");
-			listActivity = bUOC.getSubjectActivities(new UOCSubject(infoAssing[0],infoAssing[2]));
-		}
-		if(s_aula!=null && s_aula.length()>0 && s_assign != null && s_activ!= null && s_activ.length()>0){
-			Activity objActivity = new Activity();
-			for (int j = 0; j < listActivity.length; j++) {
-				if(listActivity[j].getIndex() == Integer.parseInt(s_activ)){
-					objActivity = listActivity[j];
-				}
-			}
-			String[] infoAssing = s_assign.split("_");
-			listDelivers = bUOC.getUserDeliverDetails(new UOCSubject(infoAssing[0],infoAssing[2]), objActivity.getIndex());
-						
-		}
+    	
 		return SUCCESS;
 	}
+    
+    public String auth() throws Exception, OsidException{
+		bUOC.setCampusSession(Utils.authUserForCampus(username, password));
+		return "index";
+	}
+    
 
 	public UOCSubject[] getListSubjects() {
 		return listSubjects;
@@ -142,6 +167,38 @@ public class StudentAction extends ActionSupport {
 
 	public void setListDelivers(DeliverDetail[] listDelivers) {
 		this.listDelivers = listDelivers;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 }
