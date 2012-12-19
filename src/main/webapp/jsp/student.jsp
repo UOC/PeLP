@@ -120,8 +120,6 @@
 	<!-- main -->
 	<div id="main">
 
-		<h4><span>Inicio: 20/06/2012</span> <span>Final: 10/07/2012</span></h4>
-
 		<!-- tAlumno -->
 		<table id="tAlumno" class="tlevel_1">
 			<thead>

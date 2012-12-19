@@ -131,19 +131,13 @@ public class CampusConnection implements ICampusConnection{
 		ArrayList<SubjectID> subjects = new ArrayList<SubjectID>();
 
 		if( userRole == null || userRole.compareTo(UserRoles.Student) == 0 ){
-			
 				asignaturasMatriculadas = getListaAsignaturasMatriculadas( timePeriod, null );
-			
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.Teacher) == 0 ){
-			
 				asignaturasConsultor = getListaAsignaturasConsultor( timePeriod, null );
-			
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.MainTeacher) == 0 ){
-			
 				asignaturasPRA = getListaAsignaturasPRA( timePeriod, null );
-			
 		}
 
 		ITimePeriod[] semestres;
@@ -202,19 +196,13 @@ public class CampusConnection implements ICampusConnection{
 
 
 		if( userRole == null || userRole.compareTo(UserRoles.Student) == 0 ){
-			if( asignaturasMatriculadas == null ){
-				asignaturasMatriculadas = getListaAsignaturasMatriculadas( null, user );
-			}
+			asignaturasMatriculadas = getListaAsignaturasMatriculadas( null, user );
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.Teacher) == 0 ){
-			if( asignaturasConsultor == null ){
-				asignaturasConsultor = getListaAsignaturasConsultor( null, user );
-			}
+			asignaturasConsultor = getListaAsignaturasConsultor( null, user );
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.MainTeacher) == 0 ){
-			if( asignaturasPRA == null ){
-				asignaturasPRA = getListaAsignaturasPRA( null, user );
-			}
+			asignaturasPRA = getListaAsignaturasPRA( null, user );
 		}
 		try {
 
@@ -284,24 +272,28 @@ public class CampusConnection implements ICampusConnection{
 
 		if( role.compareTo(UserRoles.Student) == 0 ){
 			ArrayList<AssignaturaMatriculadaDocenciaVO> asignaturasMatriculadas = getListaAsignaturasMatriculadas( periodo, userID );
-			for (AssignaturaMatriculadaDocenciaVO asignaturaMatriculada : asignaturasMatriculadas) {
-				if( asignaturaMatriculada.getAssignatura().getCodAssignatura() == subjectID.getCode() ){
+			SEARCH: for (AssignaturaMatriculadaDocenciaVO asignaturaMatriculada : asignaturasMatriculadas) {
+				if( asignaturaMatriculada.getAssignatura().getCodAssignatura().equalsIgnoreCase( subjectID.getCode() ) ){
 					isRole = true;
+					break SEARCH;
 				}
 			}
 
 		} else if( role.compareTo(UserRoles.Teacher) == 0 ){
 			ArrayList<AulaVO> asignaturasConsultor = getListaAsignaturasConsultor( periodo, userID );
-			for (AulaVO aulaVO : asignaturasConsultor) {
-				if( aulaVO.getAssignatura().getCodAssignatura() == subjectID.getCode() ){
+			SEARCH: for (AulaVO aulaVO : asignaturasConsultor) {
+				if( aulaVO.getAssignatura().getCodAssignatura().equalsIgnoreCase( subjectID.getCode() ) ){
 					isRole = true;
+					break SEARCH;
 				}
 			}
+		
 		} else if( role.compareTo(UserRoles.MainTeacher) == 0 ){
 			ArrayList<AssignaturaReduidaVO> asignaturasPRA = getListaAsignaturasPRA( periodo, userID );
-			for (AssignaturaReduidaVO asignatura : asignaturasPRA) {
-				if( asignatura.getCodAssignatura() == subjectID.getCode()){
+			SEARCH: for (AssignaturaReduidaVO asignatura : asignaturasPRA) {
+				if( asignatura.getCodAssignatura().equalsIgnoreCase( subjectID.getCode() ) ){
 					isRole = true;
+					break SEARCH;
 				}
 			}
 		}
@@ -400,7 +392,7 @@ public class CampusConnection implements ICampusConnection{
 				RacService rac = WsLibBO.getRacServiceInstance();
 				AulaVO[] aulas = rac.getAulesByAssignaturaAny(semestre.getID(), subjectID.getCode() );
 				for (AulaVO aulaVO : aulas) {
-					if(aulaVO.getNumAula() == classroom.getClassIdx() ){
+					if(aulaVO.getNumAula().intValue() == classroom.getClassIdx().intValue() ){
 						ConsultorAulaVO[]  consultores = aulaVO.getConsultors();					
 						for (ConsultorAulaVO consultorAulaVO : consultores) {
 							UserID userID = new UserID( String.valueOf( consultorAulaVO.getTercer().getIdp() ) );
@@ -562,7 +554,7 @@ public class CampusConnection implements ICampusConnection{
 			AulaVO[] aulas = rac.getAulesByAssignaturaAny(classroomID.getSubject().getCode(), classroomID.getSubject().getSemester().getID());
 			// Aulas
 			for (AulaVO aula : aulas) {
-				if(aula.getNumAula() == classroomID.getClassIdx() ){
+				if(aula.getNumAula().intValue() == classroomID.getClassIdx().intValue() ){
 					ConsultorAulaVO[] consultores = aula.getConsultors();
 					// Consultores
 					for (ConsultorAulaVO consultorAulaVO : consultores) {
