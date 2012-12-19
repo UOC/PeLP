@@ -29,18 +29,16 @@ public class Utils {
 		}
 		return textTraduit;
 	}
-	
-	// https://cv.uoc.edu/webapps/CampusAuth/CampusAuthServlet?login=jsanchezramos&password=trelele
+
 	public static String authUserForCampus(String username,String password){
-		
 		RestTemplate restTemplate = new RestTemplate();
-		String result = restTemplate.getForObject("https://cv.uoc.edu/webapps/CampusAuth/CampusAuthServlet?login={username}&password={password}", String.class, username, password);
+		String result = restTemplate.getForObject("http://cv-pre.uoc.edu/webapps/CampusAuth/CampusAuthServlet?login={username}&password={password}", String.class, username, password);
 		
 		int init = result.indexOf("<session>");
 		int fin = result.indexOf("</session>");
-		String contentSession = result.substring(init+9,fin);
 		
+		String contentSession = "";
+		if(init!=-1&&fin!=-1)contentSession = result.substring(init+9,fin);
 		return contentSession;
 	}
-	
 }

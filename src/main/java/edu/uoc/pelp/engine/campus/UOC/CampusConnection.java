@@ -129,19 +129,19 @@ public class CampusConnection implements ICampusConnection{
 		ArrayList<SubjectID> subjects = new ArrayList<SubjectID>();
 
 		if( userRole == null || userRole.compareTo(UserRoles.Student) == 0 ){
-			if( asignaturasMatriculadas == null ){
+			
 				asignaturasMatriculadas = getListaAsignaturasMatriculadas( timePeriod, null );
-			}
+			
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.Teacher) == 0 ){
-			if( asignaturasConsultor == null ){
+			
 				asignaturasConsultor = getListaAsignaturasConsultor( timePeriod, null );
-			}
+			
 		} 
 		if(  userRole == null || userRole.compareTo(UserRoles.MainTeacher) == 0 ){
-			if( asignaturasPRA == null ){
+			
 				asignaturasPRA = getListaAsignaturasPRA( timePeriod, null );
-			}
+			
 		}
 
 		ITimePeriod[] semestres;

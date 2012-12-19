@@ -28,8 +28,8 @@
 
 	<!-- accessibility -->
 	<div id="accessibility">
-		<a href="#main" accesskey="s" title="Accés directe al contingut">Accés directe al contingut</a> | 
-		<a href="#menu" accesskey="n" title="Accés directe al menú de navegació">Accés directe al menú de navegació</a> 
+		<a href="#main" accesskey="s" title="<s:text name='pelp.acces'></s:text>"> <s:text name="pelp.acces"></s:text> </a> | 
+		<a href="#menu" accesskey="n" title="<s:text name='pelp.acces.nav'></s:text>"> <s:text name="pelp.acces.nav"></s:text> </a> 
 	</div>
 	<!-- /accessibility -->
 
@@ -38,7 +38,7 @@
 		<div id="head">
 			<div id="pelp">
 				<h1><a href="#" title="Inicio Pelp"><img src="img/logo_pelp.png" alt="Pelp" /></a></h1>
-				<h2>Plataforma on-line per l’aprenentatge de llenguatges de programació</h2>
+				<h2><s:text name="pelp.title"></s:text></h2>
 			</div>
 			<div id="uoc">
 				<a href="http://www.uoc.edu" title="UOC"><img src="img/logo_uoc.png" alt="UOC" /></a>

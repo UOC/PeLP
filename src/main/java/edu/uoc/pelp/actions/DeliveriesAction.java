@@ -40,7 +40,6 @@ import edu.uoc.pelp.exception.PelpException;
     @Result(name = "success", location = "jsp/deliveries.jsp")
 }) 
 
-
 public class DeliveriesAction extends ActionSupport {
 
 	private static final long serialVersionUID = 1L;
