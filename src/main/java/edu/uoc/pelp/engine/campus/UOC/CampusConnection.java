@@ -486,7 +486,7 @@ public class CampusConnection implements ICampusConnection{
 			getUserID();
 			String idioma = UserUtils.getCampusLanguage(appIdTREN);
 			subject.setDescription( Utils.getLanguageTitle(asignatura.getDescLlarga(), idioma) );
-			subject.setShortName( Utils.getLanguageTitle(asignatura.getDescLlarga(), idioma) );
+			subject.setShortName( Utils.getLanguageTitle(asignatura.getDescripcio(), idioma) );
 
 			RacService rac = WsLibBO.getRacServiceInstance();
 
