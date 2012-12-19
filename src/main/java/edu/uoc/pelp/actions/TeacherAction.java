@@ -15,12 +15,14 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 package edu.uoc.pelp.actions;
 
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
+import org.apache.struts2.convention.annotation.Results;
+import org.osid.OsidException;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -29,6 +31,7 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
+import edu.uoc.pelp.engine.campus.UOC.Utils;
 
 /**
  * @author jsanchezramos
@@ -36,7 +39,11 @@ import edu.uoc.pelp.bussines.vo.DeliverSummary;
 
 @Namespace("/")
 @ResultPath(value = "/")
-@Result(name = "success", location = "jsp/teacher.jsp")
+@Results({
+    @Result(name="index", type="redirectAction", params = {"actionName" , "teacher"}),
+    @Result(name="student", type="redirectAction", params = {"actionName" , "student"}),
+    @Result(name = "success", location = "jsp/teacher.jsp")
+}) 
 public class TeacherAction extends ActionSupport {
 
 	private static final long serialVersionUID = 1L;
@@ -52,28 +59,50 @@ public class TeacherAction extends ActionSupport {
 	private String s_aula;
 	private String s_activ;
 
-    @Override
-	public String execute() throws Exception {	
-		listSubjects = bUOC.getUserSubjects();
-		if(s_assign!=null){
-			String[] infoAssing = s_assign.split("_");
-			listClassroms = bUOC.getUserClassrooms(new UOCSubject(infoAssing[0],infoAssing[2]));
-		}
-		if(s_aula!=null && s_aula.length()>0 && s_assign != null){
-			String[] infoAssing = s_assign.split("_");
-			listActivity = bUOC.getSubjectActivities(new UOCSubject(infoAssing[0],infoAssing[2]));
-		}
-		if(s_aula!=null && s_aula.length()>0 && s_assign != null && s_activ!= null && s_activ.length()>0){
-			Activity objActivity = new Activity();
-			for (int j = 0; j < listActivity.length; j++) {
-				if(listActivity[j].getIndex() == Integer.parseInt(s_activ)){
-					objActivity = listActivity[j];
-				}
+	private String username;
+	private String password;
+	private String imageURL;
+	private String fullName;
+
+	@Override
+	public String execute() throws Exception {
+		if (bUOC.getUserInformation() != null) {
+			listSubjects = bUOC.getUserSubjects();
+			if (s_assign != null) {
+				String[] infoAssing = s_assign.split("_");
+				listClassroms = bUOC.getUserClassrooms(new UOCSubject(
+						infoAssing[0], infoAssing[2]));
 			}
-			String[] infoAssing = s_assign.split("_");
-			bUOC.getLastClassroomDeliverSummary(objActivity, new UOCSubject(infoAssing[0],infoAssing[2]), objActivity.getIndex());
+			if (s_aula != null && s_aula.length() > 0 && s_assign != null) {
+				String[] infoAssing = s_assign.split("_");
+				listActivity = bUOC.getSubjectActivities(new UOCSubject(
+						infoAssing[0], infoAssing[2]));
+			}
+			if (s_aula != null && s_aula.length() > 0 && s_assign != null
+					&& s_activ != null && s_activ.length() > 0) {
+				Activity objActivity = new Activity();
+				for (int j = 0; j < listActivity.length; j++) {
+					if (listActivity[j].getIndex() == Integer.parseInt(s_activ)) {
+						objActivity = listActivity[j];
+					}
+				}
+				String[] infoAssing = s_assign.split("_");
+				bUOC.getLastClassroomDeliverSummary(objActivity,
+						new UOCSubject(infoAssing[0], infoAssing[2]),
+						objActivity.getIndex());
+			}
+			imageURL = bUOC.getUserInformation().getUserPhoto();
+			fullName = bUOC.getUserInformation().getUserFullName();
+		} else {
+			imageURL = null;
+
 		}
 		return SUCCESS;
+	}
+
+	public String auth() throws Exception, OsidException {
+		bUOC.setCampusSession(Utils.authUserForCampus(username, password));
+		return "index";
 	}
 
 	public UOCSubject[] getListSubjects() {
@@ -138,6 +167,38 @@ public class TeacherAction extends ActionSupport {
 
 	public void setListDelivers(DeliverSummary[] listDelivers) {
 		this.listDelivers = listDelivers;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 }

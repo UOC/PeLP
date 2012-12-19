@@ -82,6 +82,7 @@ public class DeliveriesAction extends ActionSupport {
 	public String execute() throws Exception {
 
 		if(bUOC.getUserInformation()!= null){
+			this.rutaFile();
 			this.menuTop();
 			imageURL = bUOC.getUserInformation().getUserPhoto();
 			fullName = bUOC.getUserInformation().getUserFullName();
@@ -103,8 +104,7 @@ public class DeliveriesAction extends ActionSupport {
 
 	public void delete() throws Exception {
 		if (auxInfo != null) {
-			String ruta = PelpConfiguracionBO.getSingletonConfiguration().get(
-					PelpConfiguracionBO.TEMP_PATH);
+			String ruta = this.rutaFile();
 			File directorioPracticas = new File(ruta);
 			File[] ficheros = directorioPracticas.listFiles();
 			if (ficheros != null && ficheros.length > 0) {
@@ -126,8 +126,7 @@ public class DeliveriesAction extends ActionSupport {
 
 	private void crearDeliverFile() throws Exception {
 		if (matrizFile != null) {
-			String ruta = PelpConfiguracionBO.getSingletonConfiguration().get(
-					PelpConfiguracionBO.TEMP_PATH);
+			String ruta = this.rutaFile();
 			File directorioPracticas = new File(ruta);
 			File[] ficheros = directorioPracticas.listFiles();
 			if (ficheros != null && ficheros.length > 0 || codePlain != null) {
@@ -233,8 +232,7 @@ public class DeliveriesAction extends ActionSupport {
 					&& (s_assign != null && s_assign.length() > 0) && (s_activ != null && s_activ
 					.length() > 0))
 					|| (finalDeliver != null && finalDeliver != true)) {
-				String ruta = PelpConfiguracionBO.getSingletonConfiguration()
-						.get(PelpConfiguracionBO.TEMP_PATH);
+				String ruta = this.rutaFile();
 				File directorioPracticas = new File(ruta);
 				File[] ficheros = directorioPracticas.listFiles();
 				if (ficheros != null && ficheros.length > 0) {
@@ -262,9 +260,24 @@ public class DeliveriesAction extends ActionSupport {
 		}
 	}
 
-	private void fileupload() throws Exception {
+	private String rutaFile() throws Exception{
 		String ruta = PelpConfiguracionBO.getSingletonConfiguration().get(
 				PelpConfiguracionBO.TEMP_PATH);
+		
+		String fullRuta = ruta; 
+		if(bUOC.getUserInformation()!=null)fullRuta +="/"+ bUOC.getUserInformation().getUserID()+"/";		
+				
+		if(s_assign!=null&&s_aula!=null&&s_activ!=null){
+			fullRuta += s_assign+"/"+s_aula+"/"+s_activ+"/";	
+		}
+		
+		return fullRuta;
+		
+		
+	}
+	private void fileupload() throws Exception {
+		String ruta = this.rutaFile();
+		
 		if (uploads != null && !uploads.isEmpty()) {
 			try {
 				File destFile = new File(ruta, uploadFileNames.get(0));
@@ -297,8 +310,7 @@ public class DeliveriesAction extends ActionSupport {
 	private void cleanFile() {
 		try {
 			synchronized (this) {
-				String ruta = PelpConfiguracionBO.getSingletonConfiguration()
-						.get(PelpConfiguracionBO.TEMP_PATH);
+				String ruta = this.rutaFile();
 				File directorioPracticas = new File(ruta);
 				File[] ficheros = directorioPracticas.listFiles();
 

@@ -7,7 +7,7 @@
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="ca"> <!--<![endif]-->
 <head>
 	<meta charset="utf-8" />
-	<title>Pelp Entregas (vista profesor)</title>
+	<title><s:text name="pelp.web.teacher"></s:text></title>
 	<meta name="description" content="Plataforma on-line per l’aprenentatge de llenguatges de programació" />
 	<meta name="keywords" content="" />
 	<meta name="robots" content="index, follow" /> 
@@ -37,7 +37,7 @@
 	<div id="head-container">
 		<div id="head">
 			<div id="pelp">
-				<h1><a href="#" title="Inicio Pelp"><img src="img/logo_pelp.png" alt="Pelp" /></a></h1>
+				<h1><a href="teacher.html" title="<s:text name='pelp.init'></s:text>"><img src="img/logo_pelp.png" alt="Pelp" /></a></h1>
 				<h2><s:text name="pelp.title"></s:text></h2>
 			</div>
 			<div id="uoc">
@@ -52,32 +52,46 @@
 		<div id="top">
 
 			<div id="user">
-
-				<div class="profile">
-					<img src="img/user.png" alt="Profile Photo" />
-					<h2>Joan Miralles Subirat</h2>
-					<a href="javascript:void(0);" id="logout" class="btn">Salir</a>
-				</div>
-
+				<s:if test="%{imageURL == null}">
+					<s:form  action="teacher!auth.html" cssClass="form_login" id="form_login" theme="simple">
+		<!-- 				<form action="/" method="POST" class="form_login" id="form_login"> -->
+							<fieldset>
+							<s:textfield name="username" id="username" label="username"></s:textfield>
+							<s:password name="password" id="password" label="password"></s:password>
+		<!-- 						<input type="text" id="username" name="username" placeholder="Nom d'usuari"  /> -->
+		<!-- 						<input type="password" id="password" name="password" placeholder="Contrasenya"  /> -->
+		<!-- 						<input type="submit" id="login" name="login" value="Accedir" class="btn" /> -->
+								<s:submit id="login" value="Accedir" cssClass="btn"></s:submit>
+							</fieldset>
+		<!-- 				</form> -->
+					</s:form>
+				</s:if>
+				<s:else>
+					<div class="profile"> 
+							<img src="<s:property value='imageURL'/>" alt="Profile Photo" />
+							<h2><s:property value="fullName"/></h2>
+							<a href="javascript:void(0);" id="logout" class="btn"><s:text name="pelp.exit"></s:text></a>
+						</div>
+				</s:else>
 			</div>
 			<form action="" method="POST" class="form_filters" id="form_filters">
 				<fieldset>
 					 <select name="s_assign" id="s_assign">
-					 	<option value="">Assignatura</option>
+					 	<option value=""><s:text name="pelp.assigment"></s:text> </option>
 						<s:iterator value="listSubjects" >
 							<s:if test="%{s_assign == SubjectID}"> <option selected="selected" value="<s:property value="SubjectID" />"><s:property value="Description"/></option></s:if> 
 							<s:else> <option value="<s:property value="SubjectID" />"><s:property value="Description"/></option> </s:else> 
 						</s:iterator> 
 					</select>
 					<select name="s_aula" id="s_aula">
-						<option value="">Aula</option>
+						<option value=""><s:text name="pelp.classroom"></s:text> </option>
 						<s:iterator value="listClassroms">
 							<s:if test="%{s_aula == index}"><option selected="selected" value="<s:property value="index" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:if>
 							<s:else><option value="<s:property value="index" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:else>
 						</s:iterator>
 					</select>
 					<select name="s_activ" id="s_activ">
-						<option value="">Activitats</option>
+						<option value=""><s:text name="pelp.activiti"></s:text> </option>
 						<s:iterator value="listActivity" status="statsa">
 							<s:if test="%{s_activ == index}"><option selected="selected" value="<s:property value="index" />"><s:property value="description" /></option></s:if>
 							<s:else><option value="<s:property value="index" />"><s:property value="description" /></option></s:else>
@@ -94,8 +108,8 @@
 	<div id="menu-container">
 		<div id="menu">
 			<ul class="menu">
-				<li><a href="#">Entorno programación</a></li>
-				<li class="active"><a href="#">Entregas</a></li>
+<!-- 				<li><a href="#">Entorno programación</a></li> -->
+				<li class="active"><a href="teacher.html"><s:text name="pelp.delivers"></s:text> </a></li>
 			</ul>
 		</div>
 	</div>
@@ -110,12 +124,12 @@
 		<table id="tProfesor" class="tablesorter tlevel_1">
 			<thead class="thead">
 				<tr>
-					<th>Alumno</th>
-					<th>Fecha</th>
-					<th>Intentos</th>
-					<th>Compilación</th>
-					<th>Tests públicos</th>
-					<th>Tests privados</th>
+					<th><s:text name="pelp.deliver"></s:text> </th>
+					<th><s:text name="pelp.date"></s:text> </th>
+					<th><s:text name="pelp.replis"></s:text> </th>
+					<th><s:text name="pelp.compile"></s:text> </th>
+					<th><s:text name="pelp.test.public"></s:text> </th>
+					<th><s:text name="pelp.test.private"></s:text> </th>
 				</tr>
 			</thead>
 			<tbody>

@@ -42,6 +42,7 @@ import edu.uoc.pelp.engine.campus.UOC.Utils;
 @ResultPath(value = "/")
 @Results({
     @Result(name="index", type="redirectAction", params = {"actionName" , "student"}),
+    @Result(name="teacher", type="redirectAction", params = {"actionName" , "teacher"}),
     @Result(name = "success", location = "jsp/student.jsp")
 }) 
 public class StudentAction extends ActionSupport {
@@ -70,14 +71,14 @@ public class StudentAction extends ActionSupport {
     	if(bUOC.getUserInformation()!= null){
     		listSubjects = bUOC.getUserSubjects();
     		if(s_assign!=null){
+    			
     			String[] infoAssing = s_assign.split("_");
+    			
     			if(bUOC.isTeacher(new UOCSubject(infoAssing[0],infoAssing[2]))){
-    				System.out.println("ERES PROFESSOR");
-    			}else{
-    				System.out.println("NO ERES PROFESSOR");
+    				return "teacher";
     			}
-    				
-    			listClassroms = bUOC.getUserClassrooms(new UOCSubject(infoAssing[0],infoAssing[2]));
+    			
+     			listClassroms = bUOC.getUserClassrooms(new UOCSubject(infoAssing[0],infoAssing[2]));
     		}
     		if(s_aula!=null && s_aula.length()>0 && s_assign != null){
     			String[] infoAssing = s_assign.split("_");
