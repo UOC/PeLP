@@ -71,6 +71,12 @@ public class StudentAction extends ActionSupport {
     		listSubjects = bUOC.getUserSubjects();
     		if(s_assign!=null){
     			String[] infoAssing = s_assign.split("_");
+    			if(bUOC.isTeacher(new UOCSubject(infoAssing[0],infoAssing[2]))){
+    				System.out.println("ERES PROFESSOR");
+    			}else{
+    				System.out.println("NO ERES PROFESSOR");
+    			}
+    				
     			listClassroms = bUOC.getUserClassrooms(new UOCSubject(infoAssing[0],infoAssing[2]));
     		}
     		if(s_aula!=null && s_aula.length()>0 && s_assign != null){
@@ -85,8 +91,8 @@ public class StudentAction extends ActionSupport {
     				}
     			}
     			String[] infoAssing = s_assign.split("_");
+    			
     			listDelivers = bUOC.getUserDeliverDetails(new UOCSubject(infoAssing[0],infoAssing[2]), objActivity.getIndex());
-    						
     		}
 			imageURL = bUOC.getUserInformation().getUserPhoto();
 			fullName = bUOC.getUserInformation().getUserFullName();

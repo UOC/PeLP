@@ -25,6 +25,8 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.exception.AuthorizationException;
 import edu.uoc.pelp.bussines.exception.InvalidEngineException;
 import edu.uoc.pelp.bussines.vo.*;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidTimePeriodPelpException;
 import java.util.Date;
@@ -320,5 +322,9 @@ public interface UOCPelpBussines extends PelpBussines {
      * @throws AuthorizationException if user has no access to this subject
      */
     public UOCClassroom[] getUserClassrooms(UOCSubject subject) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+    
+    public Boolean isTeacher(UOCSubject subject) throws AuthPelpException;
+    
+    public Boolean isStudent(UOCSubject subject) throws AuthPelpException;
 
 }

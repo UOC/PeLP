@@ -1,5 +1,10 @@
 package edu.uoc.pelp.bussines.UOC;
 
+import java.io.File;
+import java.util.Date;
+
+import org.hibernate.SessionFactory;
+
 import edu.uoc.pelp.bussines.PelpBussinesImpl;
 import edu.uoc.pelp.bussines.UOC.exception.InvalidSessionException;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
@@ -7,7 +12,16 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.exception.AuthorizationException;
 import edu.uoc.pelp.bussines.exception.InvalidCampusConnectionException;
 import edu.uoc.pelp.bussines.exception.InvalidEngineException;
-import edu.uoc.pelp.bussines.vo.*;
+import edu.uoc.pelp.bussines.vo.Activity;
+import edu.uoc.pelp.bussines.vo.Classroom;
+import edu.uoc.pelp.bussines.vo.DeliverDetail;
+import edu.uoc.pelp.bussines.vo.DeliverFile;
+import edu.uoc.pelp.bussines.vo.DeliverSummary;
+import edu.uoc.pelp.bussines.vo.MultilingualText;
+import edu.uoc.pelp.bussines.vo.MultilingualTextArray;
+import edu.uoc.pelp.bussines.vo.Resource;
+import edu.uoc.pelp.bussines.vo.Subject;
+import edu.uoc.pelp.bussines.vo.Test;
 import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.activity.ActivityID;
 import edu.uoc.pelp.engine.activity.ActivityTest;
@@ -21,10 +35,11 @@ import edu.uoc.pelp.engine.campus.UOC.Semester;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
-import edu.uoc.pelp.exception.*;
-import java.io.File;
-import java.util.Date;
-import org.hibernate.SessionFactory;
+import edu.uoc.pelp.exception.AuthPelpException;
+import edu.uoc.pelp.exception.ExecPelpException;
+import edu.uoc.pelp.exception.InvalidActivityPelpException;
+import edu.uoc.pelp.exception.InvalidSubjectPelpException;
+import edu.uoc.pelp.exception.InvalidTimePeriodPelpException;
 
 /**
  * Implementation of the UOC Bussines class
@@ -901,5 +916,15 @@ public class UOCPelpBussinesImpl extends PelpBussinesImpl implements UOCPelpBuss
         }
         
         return retList;
+    }
+    public Boolean isTeacher(UOCSubject subject) throws AuthPelpException{
+    	
+    	SubjectID subjectID=(SubjectID) getSubjectID(subject);
+    	return _engine.isTeacher(subjectID);
+    	 
+    }
+    public Boolean isStudent(UOCSubject subject) throws AuthPelpException{
+    	SubjectID subjectID=(SubjectID) getSubjectID(subject);
+    	return _engine.isStudent(subjectID);
     }
 }

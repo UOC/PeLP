@@ -7,7 +7,7 @@
 <!--[if (gt IE 9)|!(IE)]><!--> <html lang="ca"> <!--<![endif]-->
 <head>
 	<meta charset="utf-8" />
-	<title>Pelp Entregas (vista alumno)</title>
+	<title><s:text name="pelp.list.student"></s:text> </title>
 	<meta name="description" content="Plataforma on-line per lâaprenentatge de llenguatges de programaciÃ³" />
 	<meta name="keywords" content="" />
 	<meta name="robots" content="index, follow" /> 
@@ -27,8 +27,8 @@
 
 	<!-- accessibility -->
 	<div id="accessibility">
-		<a href="#main" accesskey="s" title="Accés directe al contingut">Accés directe al contingut</a> | 
-		<a href="#menu" accesskey="n" title="Accés directe al menú de navegació">Accés directe al menú de navegació</a> 
+		<a href="#main" accesskey="s" title="<s:text name='pelp.acces'></s:text>"> <s:text name="pelp.acces"></s:text> </a> | 
+		<a href="#menu" accesskey="n" title="<s:text name='pelp.acces.nav'></s:text>"> <s:text name="pelp.acces.nav"></s:text> </a> 
 	</div>
 	<!-- /accessibility -->
 
@@ -37,7 +37,7 @@
 		<div id="head">
 			<div id="pelp">
 				<h1><a href="#" title="Inicio Pelp"><img src="img/logo_pelp.png" alt="Pelp" /></a></h1>
-				<h2>Plataforma on-line per l’aprenentatge de llenguatges de programació</h2>
+				<h2><s:text name="pelp.title"></s:text></h2>
 			</div>
 			<div id="uoc">
 				<a href="http://www.uoc.edu" title="UOC"><img src="img/logo_uoc.png" alt="UOC" /></a>
@@ -69,7 +69,7 @@
 					<div class="profile"> 
 							<img src="<s:property value='imageURL'/>" alt="Profile Photo" />
 							<h2><s:property value="fullName"/></h2>
-							<a href="javascript:void(0);" id="logout" class="btn">Salir</a>
+							<a href="javascript:void(0);" id="logout" class="btn"><s:text name="pelp.exit"></s:text></a>
 						</div>
 				</s:else>
 			</div>
@@ -109,8 +109,9 @@
 	<div id="menu-container">
 		<div id="menu">
 			<ul class="menu">
-				<li><a href="deliveries.html">Entorno programación</a></li>
-				<li class="active"><a href="">Entregas</a></li>
+				<li><a href="deliveries.html"><s:text name="pelp.prog"></s:text> </a></li>
+				<li class="active"><a href="student.html"><s:text name="pelp.delivers"></s:text> </a></li>
+<!-- 				<li class="disabled"><a href="javascript:void(0);">Entregas</a></li> -->
 			</ul>
 		</div>
 	</div>
@@ -123,21 +124,21 @@
 		<table id="tAlumno" class="tlevel_1">
 			<thead>
 				<tr>
-					<th>Entrega</th>
-					<th>Fecha</th>
-					<th>Intentos</th>
-					<th>Compilación</th>
-					<th>Tests públicos</th>
-					<th>Tests privados</th>
+					<th><s:text name="pelp.deliver"></s:text> </th>
+					<th><s:text name="pelp.date"></s:text> </th>
+					<th><s:text name="pelp.replis"></s:text> </th>
+					<th><s:text name="pelp.compile"></s:text> </th>
+					<th><s:text name="pelp.test.public"></s:text> </th>
+					<th><s:text name="pelp.test.private"></s:text> </th>
 				</tr>
 				</thead>
 				<tbody>
 				<s:iterator value="listDelivers" status="pos">
 					<tr> 
-						<td><a href="#" class="toggle collapsed" rel="a1_e<s:property value="#pos.index"/>"><span class="lbl">Entrega <s:property value="DeliverIndex"/></span></a></td>
+						<td><a href="#" class="toggle collapsed" rel="a1_e<s:property value="#pos.index"/>"><span class="lbl"><s:text name="pelp.deliver"></s:text> <s:property value="DeliverIndex"/></span></a></td>
 						<td> <s:property value="SubmissionDate"/> </td>
 						<td><s:set name="totalTest" value="TotalPublicTests+TotalPrivateTests"/><s:property value="#totalTest"/></td>
-						<td><s:if test="CompileOK"><span class="ok"><span class="invisible">ok</span></span></s:if><s:else><span class="ko"><span class="invisible">ko</span></span></s:else></td>
+						<td><s:if test="CompileOK"><span class="ok"><span class="invisible"><s:text name="ok"></s:text> </span></span></s:if><s:else><span class="ko"><span class="invisible"><s:text name="ko"></s:text> </span></span></s:else></td>
 						<td><div class="tests"><span class="ko"><s:property value="TotalPublicTests"/></span><span class="ok"><s:property value="PassedPublicTests"/></span></div></td>
 						<td><div class="tests"><span class="ko"><s:property value="TotalPrivateTests"/></span> <span class="ok"><s:property value="PassedPrivateTests"/></span></div></td>
 					</tr>
@@ -148,10 +149,10 @@
 								<table class="tlevel_2">
 									<thead>
 										<tr>
-											<th>Ficheros</th>
-											<th>Código</th>
-											<th>Memoria</th>
-											<th>F. Principal</th>
+											<th><s:text name="pelp.file.title"></s:text> </th>
+											<th><s:text name="pelp.code"></s:text> </th>
+											<th><s:text name="pelp.memori"></s:text> </th>
+											<th><s:text name="pelp.f.principal"></s:text> </th>
 										</tr>
 									</thead>
 									<tbody>
@@ -177,7 +178,7 @@
 <!-- 										</tr> -->
 									</tbody>
 								</table>
-								<div class="heading"><span>Tests Públicos</span></div>
+								<div class="heading"><span><s:text name="pelp.test.public"></s:text> </span></div>
 								<ul>
 								<s:iterator value="TestResults">
 									<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
@@ -243,6 +244,5 @@
 
 </div>
 <!-- /container -->
-
 </body>
 </html>
