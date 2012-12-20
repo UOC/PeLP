@@ -10,6 +10,7 @@ public class Utils {
 
 	public static String getLanguageTitle(DescripcioVO[] descripciones, String idioma) throws Exception{
 		String textTraduit = null;
+		String textAlternativo = null;
 		if (descripciones!= null){
 			if (descripciones.length>0){
 
@@ -19,18 +20,23 @@ public class Utils {
 					if(codIndicador!=null){
 						if(codIndicador.equals(idioma)){
 
-							if(valor!=null){
+							if(valor != null){
 								textTraduit = valor;
 							}
 						}
 					}
-
+					if( valor != null ){
+						textAlternativo = valor;
+					}
 				}
-			}
+			}			
 		}
+		if( textTraduit == null ) textTraduit = textAlternativo;
 		return textTraduit;
 	}
 
+	
+    
 	public static String authUserForCampus(String username,String password) throws Exception{
 		String ruta = PelpConfiguracionBO.getSingletonConfiguration().get(PelpConfiguracionBO.AUTH_URL);
 		RestTemplate restTemplate = new RestTemplate();
