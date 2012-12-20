@@ -27,7 +27,6 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	
 	<bean id="pcpct" class="uoc.edu.pelp.bussines.PelpConfiguracionBO" scope="singleton">
 	</bean>
-	
 
 	<bean id="bUOC" class="edu.uoc.pelp.bussines.UOC.UOCPelpBussinesImpl" scope="session">
 		<constructor-arg ref="lcct" />
