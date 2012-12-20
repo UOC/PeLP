@@ -222,8 +222,9 @@
 
 		<fieldset class="fs fs_send">
 			<input type="submit" id="btn_send" name="btn_send" value="Enviar" class="btn btnsend" />
-			<s:checkbox name="finalDeliver" id="chk_entrega" value="0"/>
-<!-- 			<input type="checkbox" name="chk_entrega" id="chk_entrega" value="1" /> --> <label for="chk_entrega"><s:text name="pelp.send.activity"></s:text> </label> 
+			<s:if test="%{s_activ!=null}"><s:checkbox name="finalDeliver" id="chk_entrega" value="0"/>
+<!-- 			<input type="checkbox" name="chk_entrega" id="chk_entrega" value="1" /> --> <label for="chk_entrega"><s:text name="pelp.send.activity"></s:text> </label>
+			</s:if> 
 		</fieldset>
 
 <!-- 		</form> -->

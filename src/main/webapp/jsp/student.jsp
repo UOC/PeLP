@@ -77,21 +77,21 @@
 			<form action="" method="POST" class="form_filters" id="form_filters">
 				<fieldset>
 					 <select name="s_assign" id="s_assign">
-					 	<option value="">Assignatura</option>
+					 	<option value=""><s:text name="pelp.assigment"></s:text> </option>
 						<s:iterator value="listSubjects" >
 							<s:if test="%{s_assign == SubjectID}"> <option selected="selected" value="<s:property value="SubjectID" />"><s:property value="Description"/></option></s:if> 
 							<s:else> <option value="<s:property value="SubjectID" />"><s:property value="Description"/></option> </s:else> 
 						</s:iterator> 
 					</select>
 					<select name="s_aula" id="s_aula">
-						<option value="">Aula</option>
+						<option value=""><s:text name="pelp.classroom"></s:text> </option>
 						<s:iterator value="listClassroms">
 							<s:if test="%{s_aula == index}"><option selected="selected" value="<s:property value="index" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:if>
 							<s:else><option value="<s:property value="index" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:else>
 						</s:iterator>
 					</select>
 					<select name="s_activ" id="s_activ">
-						<option value="">Activitats</option>
+						<option value=""><s:text name="pelp.activiti"></s:text> </option>
 						<s:iterator value="listActivity" status="statsa">
 							<s:if test="%{s_activ == index}"><option selected="selected" value="<s:property value="index" />"><s:property value="description" /></option></s:if>
 							<s:else><option value="<s:property value="index" />"><s:property value="description" /></option></s:else>
