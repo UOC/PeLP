@@ -219,7 +219,8 @@ public class CampusConnection implements ICampusConnection{
 				// asignaturas matriculadas estudiante
 				for (AssignaturaMatriculadaDocenciaVO assignaturaMatriculadaDocencia : asignaturasMatriculadas) {
 					if( todasLasAsignaturas || assignaturaMatriculadaDocencia.getAssignatura().getCodAssignatura().equalsIgnoreCase( subject.getCode() ) ){
-						classroom = new ClassroomID(subject, assignaturaMatriculadaDocencia.getNumAula() );
+						SubjectID subjectAux = new SubjectID(assignaturaMatriculadaDocencia.getAssignatura().getCodAssignatura(), new Semester(assignaturaMatriculadaDocencia.getAnyAcademic()));
+						classroom = new ClassroomID(subjectAux, assignaturaMatriculadaDocencia.getNumAula() );
 						classrooms.add(classroom);
 					}
 				}
