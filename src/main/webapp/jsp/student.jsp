@@ -8,7 +8,7 @@
 <head>
 	<meta charset="utf-8" />
 	<title><s:text name="pelp.list.student"></s:text> </title>
-	<meta name="description" content="Plataforma on-line per lâaprenentatge de llenguatges de programaciÃ³" />
+	<meta name="description" content="Plataforma on-line per lâaprenentatge de llenguatges de programació" />
 	<meta name="keywords" content="" />
 	<meta name="robots" content="index, follow" /> 
 	<link rel="stylesheet" type="text/css" href="css/main.css" media="all" />
@@ -69,7 +69,7 @@
 					<div class="profile"> 
 							<img src="<s:property value='imageURL'/>" alt="Profile Photo" />
 							<h2><s:property value="fullName"/></h2>
-							<a href="javascript:void(0);" id="logout" class="btn"><s:text name="pelp.exit"></s:text></a>
+							<a href="student!logout.html" id="logout" class="btn"><s:text name="pelp.exit"></s:text></a>
 						</div>
 				</s:else>
 			</div>
@@ -86,8 +86,8 @@
 					<select name="s_aula" id="s_aula">
 						<option value=""><s:text name="pelp.classroom"></s:text> </option>
 						<s:iterator value="listClassroms">
-							<s:if test="%{s_aula == index}"><option selected="selected" value="<s:property value="index" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:if>
-							<s:else><option value="<s:property value="index" />">AULA HACK <s:property value="ClassroomID.ClassIdx" /></option></s:else>
+							<s:if test="%{s_aula == index}"><option selected="selected" value="<s:property value="index" />"><s:text name="pelp.classroom"></s:text> <s:property value="Index" /></option></s:if>
+							<s:else><option value="<s:property value="index" />"><s:text name="pelp.classroom"></s:text> <s:property value="Index" /></option></s:else>
 						</s:iterator>
 					</select>
 					<select name="s_activ" id="s_activ">

@@ -18,6 +18,8 @@
  */
 package edu.uoc.pelp.actions;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
@@ -104,6 +106,11 @@ public class TeacherAction extends ActionSupport {
 		bUOC.setCampusSession(Utils.authUserForCampus(username, password));
 		return "index";
 	}
+	@PreDestroy
+    public String logout(){
+    	bUOC.logout();
+    	return "index";
+    }
 
 	public UOCSubject[] getListSubjects() {
 		return listSubjects;

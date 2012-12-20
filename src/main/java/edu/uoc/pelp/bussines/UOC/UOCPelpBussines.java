@@ -326,5 +326,7 @@ public interface UOCPelpBussines extends PelpBussines {
     public Boolean isTeacher(UOCSubject subject) throws AuthPelpException;
     
     public Boolean isStudent(UOCSubject subject) throws AuthPelpException;
+    
+    public void logout();
 
 }
