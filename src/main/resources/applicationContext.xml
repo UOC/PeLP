@@ -18,7 +18,7 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 			value="6191b9661e160042373c71e53da95783ae5e8bf9b635086fea0b5eb59a411bda0da38a8ade973c66d513cc97b3433b871b3f9cefa910af4a260ed4a6da04ee8" />
 	</bean>
 	<!-- TEMPORAL -->
-	<bean id="lcct" class="uoc.edu.pelp.bussines.LocalCampusConnection" scope="session">
+	<bean id="lcct" class="edu.uoc.pelp.test.tempClasses.LocalCampusConnection" scope="session">
 	</bean>
 	<!-- FIN TEMPORAL -->
 

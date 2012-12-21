@@ -293,7 +293,7 @@
 				<!--deploy parameters -->
 				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
 				
-				<jbossdeployhome>D:\jmangas\opt\jboss-4.2.3.GA\server\default\deploy</jbossdeployhome>
+				<jbossdeployhome>/Users/juanfrasr/servidor/pelpserver/server/default/deploy</jbossdeployhome>
 			</properties>
 			<build>
 				<plugins>
@@ -330,7 +330,7 @@
 			</activation>
 			<properties>
 				<!-- web.xml parameters -->
-				<configFilePath>/srv/PeLP/pelpConfig.properties</configFilePath>
+				<configFilePath>/srv/pelpConfig.properties</configFilePath>
 			</properties>
 			<build>
 				<plugins>
@@ -362,7 +362,7 @@
 										<echo message="Copiando war..." />
 										<sleep seconds="2" />
 										<scp file="${basedir}/target/pelp.war"
-											todir="${server.user}@corrector.uoc.es:/srv/PeLP/deployments/"
+											todir="${server.user}@corrector.uoc.es:/srv/pelpserver/server/default/deploy/"
 											port="36963" trust="true" />
 										<echo message="Finalizado" />
 									</tasks>

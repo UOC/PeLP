@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Xavier Baró
  */
 @Entity
-@Table(name = "deliverfile")
+@Table(name = "deliverFile")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "DeliverFile.findAll", query = "SELECT d FROM DeliverFile d"),

@@ -82,7 +82,7 @@ public class DeliveriesAction extends ActionSupport {
 	private static Logger log = Logger.getLogger(DeliveriesAction.class);
 
 	public String execute() throws Exception {
-
+		
 		if(bUOC.getUserInformation()!= null){
 			this.rutaFile();
 			this.menuTop();
@@ -191,9 +191,7 @@ public class DeliveriesAction extends ActionSupport {
 					}
 
 				}
-				if (!finalDeliver
-						&& (matrizFile.length > 1 || (codePlain != null && codePlain
-								.length() > 5))) {
+				if (( finalDeliver != null && !finalDeliver) && (matrizFile.length > 1 || (codePlain != null && codePlain.length() > 5))) {
 
 					Test[] tests  = new Test[1];
 
@@ -221,24 +219,16 @@ public class DeliveriesAction extends ActionSupport {
 					} else if (files != null) {
 						DeliverDetail objDetail = bUOC.compileCode(files,
 								"JAVA", tests, ruta);
-						resulMessage = objDetail.getCompileMessage();
+						resulMessage = objDetail.getCompileMessage(); // FIXME Flata implementar la part de la engine diu not  support yet.
 					}
-					
-
-					// FIXME Flata implementar la part de la engine diu not  support yet.
-					
 
 				}
 			}
 		}
 	}
 
-	private void listFile() {
-		try {
-			if (((s_aula != null && s_aula.length() > 0)
-					&& (s_assign != null && s_assign.length() > 0) && (s_activ != null && s_activ
-					.length() > 0))
-					|| (finalDeliver != null && finalDeliver != true)) {
+	private void listFile() throws Exception {
+		
 				String ruta = this.rutaFile();
 				File directorioPracticas = new File(ruta);
 				File[] ficheros = directorioPracticas.listFiles();
@@ -261,10 +251,8 @@ public class DeliveriesAction extends ActionSupport {
 					matrizFile = null;
 					fileDim = 0;
 				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			
+		
 	}
 
 	private String rutaFile() throws Exception{
