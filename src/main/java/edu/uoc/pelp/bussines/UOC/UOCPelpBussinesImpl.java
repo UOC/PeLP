@@ -927,4 +927,9 @@ public class UOCPelpBussinesImpl extends PelpBussinesImpl implements UOCPelpBuss
     	SubjectID subjectID=(SubjectID) getSubjectID(subject);
     	return _engine.isStudent(subjectID);
     }
+    public void logout(){
+    	_campusConnection = null;
+    	_engine.setCampusConnection(new CampusConnection(""));
+    	System.out.println("logout");
+    }
 }

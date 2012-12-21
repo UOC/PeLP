@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -101,6 +103,11 @@ public class DeliveriesAction extends ActionSupport {
 		bUOC.setCampusSession(Utils.authUserForCampus(username, password));
 		return "index";
 	}
+	@PreDestroy
+    public String logout(){
+    	bUOC.logout();
+    	return "index";
+    }
 
 	public void delete() throws Exception {
 		if (auxInfo != null) {
