@@ -69,6 +69,8 @@ public class CampusConnection implements ICampusConnection{
 	private String appIdTREN;
 	private String appId;
 	
+	ArrayList<Semester> semestres =  new ArrayList<Semester>();
+	
 	private AdministrationDAO dao;
 
 	private ArrayList<AssignaturaMatriculadaDocenciaVO> asignaturasMatriculadas;
@@ -193,7 +195,10 @@ public class CampusConnection implements ICampusConnection{
 
 	public IClassroomID[] getUserClassrooms(UserRoles userRole, ISubjectID subjectID, UserID user) throws AuthPelpException {
 		ArrayList<ClassroomID> classrooms = new ArrayList<ClassroomID>();
-
+		SubjectID subjectid;
+		if( subjectID != null ){
+			subjectid = (SubjectID) subjectID;
+		}
 
 		if( userRole == null || userRole.compareTo(UserRoles.Student) == 0 ){
 			asignaturasMatriculadas = getListaAsignaturasMatriculadas( null, user );
@@ -206,12 +211,17 @@ public class CampusConnection implements ICampusConnection{
 		}
 		try {
 
-			ITimePeriod[] semestres = getActivePeriods();
+			ITimePeriod[] semestres;
 			boolean todasLasAsignaturas = (subjectID == null);
 			SubjectID subject = new SubjectID("", new Semester(""));
-			if( !todasLasAsignaturas ) {
+			if( todasLasAsignaturas ) {
 				subject = (SubjectID) subjectID;
-			} 
+				semestres = getActivePeriods();
+			} else {
+				semestres = new ITimePeriod[1];
+				subjectid = (SubjectID) subjectID;
+				semestres[0] = subjectid.getSemester();
+			}
 			for (ITimePeriod iTimePeriod : semestres) {
 				Semester semester = (Semester) iTimePeriod;
 				ClassroomID classroom;
@@ -624,21 +634,23 @@ public class CampusConnection implements ICampusConnection{
 	public ITimePeriod[] getPeriods() {
 		String MODUL = "NOTESAVAL0";
 		AnyAcademicVO[] anysAcademics;
-		ArrayList<Semester> semestres =  new ArrayList<Semester>();
-		try {
-			DadesAcademiquesService dades = WsLibBO.getDadesAcademiquesServiceInstance();
-			anysAcademics = dades.getAnysAcademicsCalendari(appIdTREN, aplicacioTren, MODUL);
-			for (AnyAcademicVO anyAcademic : anysAcademics) {
-				semestres.add( new Semester(anyAcademic.getAnyAcademic(), anyAcademic.getDataInici(), anyAcademic.getDataFinal()) );			
+		
+		if( semestres == null ){
+			try {
+				DadesAcademiquesService dades = WsLibBO.getDadesAcademiquesServiceInstance();
+				anysAcademics = dades.getAnysAcademicsCalendari(appIdTREN, aplicacioTren, MODUL);
+				for (AnyAcademicVO anyAcademic : anysAcademics) {
+					semestres.add( new Semester(anyAcademic.getAnyAcademic(), anyAcademic.getDataInici(), anyAcademic.getDataFinal()) );			
+				}
+			}  catch (Exception e) {
+				log.error("Error al obtener la lista de calendarios abiertos");
+				e.printStackTrace();			
 			}
-		}  catch (Exception e) {
-			log.error("Error al obtener la lista de calendarios abiertos");
-			e.printStackTrace();			
 		}
-
 		Semester[] sems = new Semester[ semestres.size() ];
-		semestres.toArray(sems);
-		return sems;
+		
+		
+		return semestres.toArray(sems);
 	}
 
 	@Override

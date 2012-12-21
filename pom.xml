@@ -231,31 +231,7 @@
 		</dependency>
 
 
-		<!-- OKI -->
-	  	<dependency>
-	  		<groupId>org.campusproject</groupId>
-	  		<artifactId>CampusComponentsJava</artifactId>
-	  		<version>1.4.0</version>
-	  		<type>jar</type>
-	  		<classifier>config-uoc</classifier>
-	  		<scope>compile</scope>
-	  	</dependency>
-
-	  	<dependency>
-	  		<groupId>org.campusproject</groupId>
-	  		<artifactId>CampusComponentsJava</artifactId>
-	  		<version>1.4.0</version>
-	  		<type>jar</type>
-	  		<scope>compile</scope>
-	  	</dependency>
-
-        <dependency>
-	  		<groupId>OKI</groupId>
-	  		<artifactId>OkiOSID</artifactId>
-	  		<version>2.0</version>
-	  		<type>jar</type>
-	  		<scope>compile</scope>
-	  	</dependency>
+		
 
 	</dependencies>
 	<modelVersion>4.0.0</modelVersion>
