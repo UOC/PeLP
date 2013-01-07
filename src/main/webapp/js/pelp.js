@@ -3,9 +3,11 @@ var j=jQuery.noConflict();
 j(document).ready(function(){
 
 	/* Expand Collapse Rows Funcionality */
-	var tSpeed = 300;							// transition speed (milliseconds)
+	var tSpeed = 300;							// transition speed
+												// (milliseconds)
 	var tEffect = 'easeInOutExpo';				// transition effect
-	var orow = null;							// link row opened (for accordeon rows)
+	var orow = null;							// link row opened (for
+												// accordeon rows)
 
 	jQuery.fn.expandCollapseRow = function (id) {
 		var elm = j("#" + id);
@@ -172,7 +174,60 @@ j(document).ready(function(){
 		j(this).siblings('h3').removeClass('active');
 	});
 	
+	/* ajax calls */
 	
+	j('.ajax-tab').each(function(ind, elem){
+		var thisTab = j(this);
+		thisTab.click(function(event){
+			var href = thisTab.attr('href');
+			var whichTab = jQuery.deparam( href )['?activeTab'];
+			var modifiedHref = jQuery.param.querystring( href, 'ajaxCall=true' );
+			jQuery.ajax({
+				url: modifiedHref,
+				beforeSend: doBeforeChangeTab,
+				success: function(data, textStatus, jqXHR){
+					doChangeTab(data, textStatus, jqXHR, whichTab);
+				},
+				error: doErrorChangingTab,
+				complete: doCompleteChangeTab
+			});
+			event.preventDefault();
+		});
+	});
 	
 
 });
+
+function doBeforeChangeTab(jqXHR, settings){
+	//alert('ajax call issued');
+}
+
+function doChangeTab(data, textStatus, jqXHR, whichTabIsActive){
+
+	//alert('about to replace contents');
+
+    var jqObj = jQuery(data);
+    var theirMain = jqObj.find("#main");
+	j('#main').html(theirMain);
+	
+	j('.ajax-tab').each(function(ind, e){
+		var thisTab = j(this);
+		var thisHref = thisTab.attr('href');
+		var ind = thisHref.indexOf(whichTabIsActive);
+		if (ind != -1){
+			thisTab.parent().addClass('active');
+		} else {
+			thisTab.parent().removeClass('active');
+		}
+	});
+	
+}
+
+function doCompleteChangeTab(jqXHR, textStatus) {
+	//alert('ajax call completed.');	
+}
+
+function doErrorChangingTab(jqXHR, textStatus, errorThrown) {
+	//alert('error! ' + textStatus);
+}
+
