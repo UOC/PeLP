@@ -33,7 +33,6 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
-import edu.uoc.pelp.engine.campus.UOC.Utils;
 
 
 /**
@@ -112,7 +111,8 @@ public class StudentAction extends ActionSupport {
     	return "index";
     }
     public String auth() throws Exception, OsidException{
-		bUOC.setCampusSession(Utils.authUserForCampus(username, password));
+    	// FIXME
+		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
 		return "index";
 	}
     
