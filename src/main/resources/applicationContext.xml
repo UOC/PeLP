@@ -56,6 +56,10 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	<bean id="studentSpringAction" class="edu.uoc.pelp.actions.StudentAction" scope="request">
 		<property name="bUOC" ref="bUOC" />
 	</bean>
+	
+	<bean id="pelpSpringAction" class="edu.uoc.pelp.actions.HomeAction" scope="request">
+		<property name="bUOC" ref="bUOC" />
+	</bean>
 
 	<!-- post-processors for all standard config annotations -->
 	<bean
