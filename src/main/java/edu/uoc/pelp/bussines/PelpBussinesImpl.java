@@ -459,7 +459,7 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         return newTest;
     }
     
-    protected DeliverDetail getDeliverDetailObject(AnalysisResults analysisResult) {
+    protected DeliverDetail getDeliverDetailObject(AnalysisResults analysisResult) throws ExecPelpException, InvalidEngineException {
         DeliverSummary deliverSummary= getDeliverSummaryObject(analysisResult);
         if(deliverSummary==null) {
             return null;
@@ -467,15 +467,54 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         
         DeliverDetail deliverDetail=new DeliverDetail(deliverSummary);
         
-        // Add deliver files
-        
+        // No files are provided
+        deliverDetail.setDeliverFiles(null);
+                
         // Add test information
-        
+        edu.uoc.pelp.engine.aem.TestResult[] tests = analysisResult.getResults();
+        if(tests!=null) {
+            deliverDetail.setTestResults(getTestResultList(tests));
+        }
         return deliverDetail;
     }
  
-    protected DeliverSummary getDeliverSummaryObject(AnalysisResults analysisResult) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    protected DeliverSummary getDeliverSummaryObject(AnalysisResults analysisResult) throws ExecPelpException, InvalidEngineException {
+        
+        // Check the parameters
+        if(analysisResult==null) {
+            return null;
+        }
+        
+        // Create the new object
+        DeliverSummary result=new DeliverSummary();
+        result.setUser(getUserInformation());
+        result.setDeliverIndex(-1);
+        result.setProgrammingLanguage(analysisResult.getBuildResult().getLanguage());
+        result.setCompileOK(analysisResult.getBuildResult().isCorrect());
+        result.setCompileMessage(analysisResult.getBuildResult().getMessge());
+        
+        // Get the deliver details
+        result.setSubmissionDate(analysisResult.getBuildResult().getStartTime());
+          
+        // Get the maximum test
+        result.setMaxDelivers(-1);
+        
+        // Get test information        
+        int passed=0;
+        for(edu.uoc.pelp.engine.aem.TestResult testResult:analysisResult.getResults()) {                
+            if(testResult.isPassed()) {
+                passed++;
+            }            
+        }
+        
+        // No private tests
+        result.setPassedPrivateTests(0);        
+        result.setTotalPrivateTests(0);
+        
+        result.setPassedPublicTests(passed);
+        result.setTotalPublicTests(analysisResult.getResults().length);
+        
+        return result;
     }
     
     protected DeliverDetail getDeliverDetailObject(Deliver deliver,DeliverResults deliverResult) throws AuthPelpException, InvalidActivityPelpException, InvalidSubjectPelpException, ExecPelpException, InvalidEngineException {
@@ -691,6 +730,34 @@ public abstract class PelpBussinesImpl implements PelpBussines {
     }
     
     protected TestResult[] getTestResultList(ActivityTestResult[] tests) throws AuthPelpException {
+        TestResult[] retList;
+        if(tests==null) {
+            return null;
+        }
+        retList=new TestResult[tests.length];
+        for(int i=0;i<tests.length;i++) {
+            retList[i]=getTestResult(tests[i]);
+        }
+        
+        return retList;
+    }
+    
+    protected TestResult getTestResult(edu.uoc.pelp.engine.aem.TestResult test) {
+        
+        // Create the new object
+        TestResult newResult=new TestResult();
+        
+        newResult.setIndex(-1);
+        newResult.setElapsedTime(test.getElapsedTime());
+        newResult.setIsPassed(test.isPassed());        
+        newResult.setIsPublic(true);        
+        newResult.setExpectedOutput("<information not provided>");        
+        newResult.setOutput(test.getOutput());
+        
+        return newResult;
+    }
+    
+    protected TestResult[] getTestResultList(edu.uoc.pelp.engine.aem.TestResult[] tests) {
         TestResult[] retList;
         if(tests==null) {
             return null;
