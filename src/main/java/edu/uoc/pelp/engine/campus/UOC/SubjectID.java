@@ -49,27 +49,8 @@ public class SubjectID implements ISubjectID {
     }
 
     public int compareTo(ISubjectID t) {
-        SubjectID arg = (SubjectID) t;
-        if(_code != null) {
-            if(_code.compareTo(arg._code)!= 0) {
-                return _code.compareTo(arg._code);
-            }
-        } else {
-            if(arg._code != null) {
-                return -1;
-            }
-        }
-        if(_semester!=null) {
-            return _semester.compareTo(arg._semester);
-        } else {
-            if(arg._semester!=null) {
-                return -1;
-            }
-        }
-        
-        return 0;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
-    
     
     public void setSemester(Semester semester) {
         _semester=semester;

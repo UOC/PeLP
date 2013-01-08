@@ -13,7 +13,8 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	<!-- objects test inject to pelpEnigne -->
 
 	<bean id="lcctj" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection" scope="session">
-		<property name="dao" ref="dAdministrationDAO" />
+		<!-- <property name="dao" ref="dAdministrationDAO" /> -->
+		<property name="credentials" ref="propertiesUOCApi"/>
 		<constructor-arg type="java.lang.String"
 			value="6191b9661e160042373c71e53da95783ae5e8bf9b635086fea0b5eb59a411bda0da38a8ade973c66d513cc97b3433b871b3f9cefa910af4a260ed4a6da04ee8" />
 	</bean>
@@ -29,11 +30,28 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	</bean>
 
 	<bean id="bUOC" class="edu.uoc.pelp.bussines.UOC.UOCPelpBussinesImpl" scope="session">
-		<constructor-arg ref="lcct" />
+		<constructor-arg ref="lcctj" />
 		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="pcpct" />
 	</bean>
-
+    
+    <!--========== UOC Api Properties ==========-->
+    <util:properties id="propertiesUOCApi" location="classpath:UOCApi.properties"/>
+    <!--========== /UOC Api Properties ==========-->
+    
+    <bean id="campusConnection" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection">
+        <property name="credentials" ref="propertiesUOCApi"/>
+    </bean>
+  
+    <!--========== Filters ==========-->
+    <!--
+    <bean id="loginFilterBean" class="edu.uoc.pelp.servlets.UOC.LoginFilter">
+        <property name="bussines" ref="bUOC" />
+        <property name="credentials" ref="propertiesUOCApi"/>
+    </bean>
+    -->
+    <!--========== /Filters ==========-->
+ 
 	<!-- service objects -->
 
 	<bean id="pelpService" class="edu.uoc.pelp.services.PelpServiceImpl" scope="singleton">

@@ -28,7 +28,6 @@ import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverFile;
 import edu.uoc.pelp.bussines.vo.Test;
-import edu.uoc.pelp.engine.campus.UOC.Utils;
 import edu.uoc.pelp.exception.PelpException;
 
 /**
@@ -100,7 +99,8 @@ public class DeliveriesAction extends ActionSupport {
 	}
 	
 	public String auth() throws Exception, OsidException{
-		bUOC.setCampusSession(Utils.authUserForCampus(username, password));
+		// FIXME
+		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
 		return "index";
 	}
 	@PreDestroy
