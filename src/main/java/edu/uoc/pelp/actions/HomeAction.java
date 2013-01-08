@@ -29,7 +29,7 @@ import edu.uoc.pelp.bussines.vo.DeliverSummary;
 @Results({
 		@Result(name = "success", location = "jsp/pelp.jsp"),
 		@Result(name = "programming-environment", location = "jsp/deliveries.jsp") })
-public class PelpAction extends ActionSupport {
+public class HomeAction extends ActionSupport {
 
 	/**
 	 * 

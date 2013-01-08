@@ -121,26 +121,26 @@
 	<div id="menu-container">
 		<div id="menu">
 			<ul class="menu">
-				<s:if test="%{activeTab != @edu.uoc.pelp.actions.PelpAction@TAB_DELIVERIES}">
+				<s:if test="%{activeTab != @edu.uoc.pelp.actions.HomeAction@TAB_DELIVERIES}">
 					<li>
-						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.PelpAction@TAB_PROGRAMMING_ENVIROMENT"/>">
+						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.HomeAction@TAB_PROGRAMMING_ENVIROMENT"/>">
 							<s:text name="pelp.prog"/>
 						</a>
 					</li>
 					<li class="active">
-						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.PelpAction@TAB_DELIVERIES"/>">
+						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.HomeAction@TAB_DELIVERIES"/>">
 							<s:text name="pelp.delivers"/>
 						</a>
 					</li>
 				</s:if>
 				<s:else>
 					<li class="active">
-						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.PelpAction@TAB_PROGRAMMING_ENVIROMENT"/>">
+						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.HomeAction@TAB_PROGRAMMING_ENVIROMENT"/>">
 							<s:text name="pelp.prog"/>
 						</a>
 					</li>
 					<li>
-						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.PelpAction@TAB_DELIVERIES"/>">
+						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.HomeAction@TAB_DELIVERIES"/>">
 							<s:text name="pelp.delivers"/>
 						</a>
 					</li>

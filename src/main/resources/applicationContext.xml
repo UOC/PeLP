@@ -39,7 +39,7 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
     <util:properties id="propertiesUOCApi" location="classpath:UOCApi.properties"/>
     <!--========== /UOC Api Properties ==========-->
     
-    <bean id="campusConnection" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection">
+    <bean id="campusConnection" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection" scope="session">
         <property name="credentials" ref="propertiesUOCApi"/>
     </bean>
   
@@ -72,6 +72,10 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	</bean>
 	
 	<bean id="studentSpringAction" class="edu.uoc.pelp.actions.StudentAction" scope="request">
+		<property name="bUOC" ref="bUOC" />
+	</bean>
+	
+	<bean id="pelpSpringAction" class="edu.uoc.pelp.actions.HomeAction" scope="request">
 		<property name="bUOC" ref="bUOC" />
 	</bean>
 
