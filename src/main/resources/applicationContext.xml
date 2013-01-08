@@ -23,8 +23,6 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	</bean>
 	<!-- FIN TEMPORAL -->
 
-<!-- 	<bean id="pcpct" class="edu.uoc.pelp.test.tempClasses.PCPelpConfiguration" scope="singleton"> -->
-<!-- 	</bean> -->
 	
 	<bean id="pcpct" class="uoc.edu.pelp.bussines.PelpConfiguracionBO" scope="singleton">
 	</bean>
@@ -36,20 +34,16 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	</bean>
     
     <!--========== UOC Api Properties ==========-->
-    <util:properties id="propertiesUOCApi" location="classpath:UOCApi.properties"/>
+    <util:properties id="propertiesUOCApi" location="classpath:UOCApi.properties" scope="singleton" />
     <!--========== /UOC Api Properties ==========-->
     
-    <bean id="campusConnection" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection" scope="session">
-        <property name="credentials" ref="propertiesUOCApi"/>
-    </bean>
-  
     <!--========== Filters ==========-->
-    <!--
-    <bean id="loginFilterBean" class="edu.uoc.pelp.servlets.UOC.LoginFilter">
+    
+    <bean id="loginFilterBean" class="edu.uoc.pelp.servlets.UOC.LoginFilter" scope="request">
         <property name="bussines" ref="bUOC" />
         <property name="credentials" ref="propertiesUOCApi"/>
     </bean>
-    -->
+    
     <!--========== /Filters ==========-->
  
 	<!-- service objects -->
@@ -75,7 +69,7 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 		<property name="bUOC" ref="bUOC" />
 	</bean>
 	
-	<bean id="pelpSpringAction" class="edu.uoc.pelp.actions.HomeAction" scope="request">
+	<bean id="homeSpringAction" class="edu.uoc.pelp.actions.HomeAction" scope="request">
 		<property name="bUOC" ref="bUOC" />
 	</bean>
 

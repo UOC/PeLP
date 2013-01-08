@@ -132,12 +132,12 @@ class SessionTokenKey {
  */
 
 
-public class LoginFilter   {
+public class LoginFilter extends OncePerRequestFilter  {
     
     /**
      * Bussines object
      */
-    //private UOCPelpBussines bussines;
+    private UOCPelpBussines bussines;
         
     /**
      * UOC Api properties
@@ -173,7 +173,6 @@ public class LoginFilter   {
         
     }
     
-    /*@Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain fc) throws ServletException, IOException {
         
         // Check if authorization is demanded
@@ -196,7 +195,7 @@ public class LoginFilter   {
         
         // Apply other filters
         fc.doFilter(request, response);
-    }*/
+    }
 
     private void closeAuthentication(HttpServletRequest request) {
         /*try {
@@ -248,7 +247,7 @@ public class LoginFilter   {
             // Get original destination page
             String dstLocalURI=(String)request.getSession().getAttribute("authDst");
             request.getSession().removeAttribute("authDst");
-            /* FIXME
+            
             // Set the campus key
             if(bussines!=null) {
                 try {
@@ -257,7 +256,7 @@ public class LoginFilter   {
                     Logger.getLogger(LoginFilter.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            */
+            
             // Redirect to initial destination URL
             String dstURI=LOCAL_AUTH_URL + dstLocalURI;
             response.sendRedirect(dstURI);
@@ -449,7 +448,7 @@ public class LoginFilter   {
         this.credentials = properties;
     }
     
-/*
+
     public UOCPelpBussines getBussines() {
         return bussines;
     }
@@ -457,6 +456,6 @@ public class LoginFilter   {
     public void setBussines(UOCPelpBussines bussines) {
         this.bussines = bussines;
     }
-*/
+
     
 }
