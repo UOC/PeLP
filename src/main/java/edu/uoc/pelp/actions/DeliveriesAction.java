@@ -218,10 +218,14 @@ public class DeliveriesAction extends ActionSupport {
 						DeliverDetail objDetail = bUOC.compileCode(codePlain,
 								"JAVA", tests);
 						resulMessage = objDetail.getCompileMessage();
+						if (resulMessage.length() == 0)
+							resulMessage = "OK";
 					} else if (files != null) {
 						DeliverDetail objDetail = bUOC.compileCode(files,
 								"JAVA", tests, ruta);
 						resulMessage = objDetail.getCompileMessage(); // FIXME Flata implementar la part de la engine diu not  support yet.
+						if (resulMessage.length() == 0)
+							resulMessage = "OK";
 					}
 
 				}

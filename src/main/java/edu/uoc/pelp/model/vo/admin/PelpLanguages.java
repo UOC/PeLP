@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author Xavier Baró
  */
 @Entity
-@Table(name = "pelp_languages")
+@Table(name = "PELP_Languages")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "PelpLanguages.findAll", query = "SELECT p FROM PelpLanguages p"),

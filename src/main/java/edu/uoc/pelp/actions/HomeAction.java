@@ -17,6 +17,7 @@ import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
+import edu.uoc.pelp.bussines.vo.Classroom;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
 import edu.uoc.pelp.exception.PelpException;
@@ -67,6 +68,8 @@ public class HomeAction extends ActionSupport {
 	private Activity[] listActivity;
 	private DeliverSummary[] listDeliverSummaries;
 	private DeliverDetail[] listDeliverDetails;
+	
+	private int fileDim;
 
 	private String s_assign;
 	private String s_aula;
@@ -114,9 +117,19 @@ public class HomeAction extends ActionSupport {
 					}
 				}
 				String[] infoAssing = s_assign.split("_");
-				listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
-						infoAssing[0], infoAssing[2]), objActivity.getIndex());
-				
+				if(teacher){
+					Classroom objClass = null;
+					for(int i = 0;i<listClassroms.length;i++){
+						if(listClassroms[i].getIndex()== Integer.parseInt(s_aula)){
+							objClass = listClassroms[i]; 
+						}
+					}
+					bUOC.getAllClassroomDeliverDetails(objActivity, new UOCSubject(
+							infoAssing[0], infoAssing[2]), objClass.getIndex());
+				}else{
+					listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
+							infoAssing[0], infoAssing[2]), objActivity.getIndex());	
+				}
 			}
 			imageURL = bUOC.getUserInformation().getUserPhoto();
 			if(imageURL== null)imageURL = "img/user.png";
@@ -380,6 +393,14 @@ public class HomeAction extends ActionSupport {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	public int getFileDim() {
+		return fileDim;
+	}
+
+	public void setFileDim(int fileDim) {
+		this.fileDim = fileDim;
 	}
 
 }

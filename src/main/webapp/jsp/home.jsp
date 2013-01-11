@@ -529,7 +529,7 @@
 					<s:iterator value="listDeliverDetails" status="pos">
 						<tr> 
 							<td><a href="#" class="toggle collapsed" rel="a1_e<s:property value="#pos.index"/>"><span class="lbl"><s:text name="pelp.deliver"></s:text> <s:property value="DeliverIndex"/></span></a></td>
-							<td> <s:property value="SubmissionDate"/> </td>
+							<td><s:date name="SubmissionDate" format="dd/MM/yyyy" /></td>
 							<td><s:set name="totalTest" value="TotalPublicTests+TotalPrivateTests"/><s:property value="#totalTest"/></td>
 							<td><s:if test="CompileOK"><span class="ok"><span class="invisible"><s:text name="ok"></s:text> </span></span></s:if><s:else><span class="ko"><span class="invisible"><s:text name="ko"></s:text> </span></span></s:else></td>
 							<td><div class="tests"><span class="ko"><s:property value="TotalPublicTests"/></span><span class="ok"><s:property value="PassedPublicTests"/></span></div></td>
@@ -559,7 +559,6 @@
 										</s:iterator>
 										</tbody>
 									</table>
-									
 									<div class="heading"><span><s:text name="pelp.test.public"></s:text> </span></div>
 									<ul>
 									<s:iterator value="TestResults">
@@ -569,7 +568,6 @@
 										</s:if>
 									</s:iterator>	
 									</ul>
-									
 								</div>
 		
 							</td>
