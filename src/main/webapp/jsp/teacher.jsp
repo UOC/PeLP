@@ -19,6 +19,7 @@
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.customforminput.min.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.placeholder.min.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.tablesorter.min.js"></script>
+	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.ba-bbq.min.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/pelp.js"></script>
 </head>
 <body>

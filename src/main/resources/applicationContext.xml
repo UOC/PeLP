@@ -28,7 +28,7 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 	</bean>
 
 	<bean id="bUOC" class="edu.uoc.pelp.bussines.UOC.UOCPelpBussinesImpl" scope="session">
-		<constructor-arg ref="lcctj" />
+		<constructor-arg ref="lcct" />
 		<constructor-arg ref="sessionFactory" />
 		<constructor-arg ref="pcpct" />
 	</bean>

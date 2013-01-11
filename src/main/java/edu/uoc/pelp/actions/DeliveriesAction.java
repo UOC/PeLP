@@ -37,8 +37,8 @@ import edu.uoc.pelp.exception.PelpException;
 @Namespace("/")
 @ResultPath(value = "/")
 @Results({
-    @Result(name="index", type="redirectAction", params = {"actionName" , "deliveries"}),
-    @Result(name = "success", location = "jsp/deliveries.jsp")
+    @Result(name="index", type="redirectAction", params = {"actionName" , "home"}),
+    @Result(name = "success", location = "jsp/home.jsp")
 }) 
 
 public class DeliveriesAction extends ActionSupport {
@@ -86,9 +86,11 @@ public class DeliveriesAction extends ActionSupport {
 			this.rutaFile();
 			this.menuTop();
 			imageURL = bUOC.getUserInformation().getUserPhoto();
+			if(imageURL== null)imageURL = "img/user.png";
 			fullName = bUOC.getUserInformation().getUserFullName();
 		}else{
 			imageURL= null;
+			fullName = null;
 		}
 		
 		this.fileupload();
@@ -104,7 +106,7 @@ public class DeliveriesAction extends ActionSupport {
 		return "index";
 	}
 	@PreDestroy
-    public String logout(){
+    public String logout() throws PelpException{
     	bUOC.logout();
     	return "index";
     }
@@ -260,7 +262,10 @@ public class DeliveriesAction extends ActionSupport {
 				PelpConfiguracionBO.TEMP_PATH);
 		
 		String fullRuta = ruta; 
-		if(bUOC.getUserInformation()!=null)fullRuta +="/"+ bUOC.getUserInformation().getUserID()+"/";		
+		if(bUOC.getUserInformation()!=null)fullRuta +="/"+ bUOC.getUserInformation().getUserID()+"/";
+		else{
+			fullRuta +="/invited/";
+		}
 				
 		if(s_assign!=null&&s_aula!=null&&s_activ!=null){
 			fullRuta += s_assign+"/"+s_aula+"/"+s_activ+"/";	

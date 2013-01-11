@@ -40,6 +40,7 @@ import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidActivityPelpException;
 import edu.uoc.pelp.exception.InvalidSubjectPelpException;
 import edu.uoc.pelp.exception.InvalidTimePeriodPelpException;
+import edu.uoc.pelp.exception.PelpException;
 
 /**
  * Implementation of the UOC Bussines class
@@ -927,9 +928,9 @@ public class UOCPelpBussinesImpl extends PelpBussinesImpl implements UOCPelpBuss
     	SubjectID subjectID=(SubjectID) getSubjectID(subject);
     	return _engine.isStudent(subjectID);
     }
-    public void logout(){
-    	_campusConnection = null;
-    	_engine.setCampusConnection(new CampusConnection(""));
+    public void logout() throws PelpException{
+    	
+    	//this.setCampusSession("logout");
     	System.out.println("logout");
     }
 }

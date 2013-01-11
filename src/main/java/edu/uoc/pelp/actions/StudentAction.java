@@ -33,6 +33,7 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
+import edu.uoc.pelp.exception.PelpException;
 
 
 /**
@@ -106,7 +107,7 @@ public class StudentAction extends ActionSupport {
 	}
     
     @PreDestroy
-    public String logout(){
+    public String logout() throws PelpException{
     	bUOC.logout();
     	return "index";
     }

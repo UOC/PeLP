@@ -37,6 +37,7 @@ import edu.uoc.pelp.bussines.vo.Test;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidTimePeriodPelpException;
+import edu.uoc.pelp.exception.PelpException;
 
 /**
  * PeLP bussines interface for Universitat Oberta de Catalunya, that extends basic functionalities
@@ -334,6 +335,6 @@ public interface UOCPelpBussines extends PelpBussines {
     
     public Boolean isStudent(UOCSubject subject) throws AuthPelpException;
     
-    public void logout();
+    public void logout() throws PelpException;
 
 }
