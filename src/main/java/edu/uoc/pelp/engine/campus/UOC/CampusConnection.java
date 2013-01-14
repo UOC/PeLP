@@ -54,7 +54,7 @@ public class CampusConnection implements ICampusConnection {
     /**
      * UOC API token
      */    
-    private String _token=null;
+    private String _token = null;
     
     
     public CampusConnection() {
@@ -85,7 +85,7 @@ public class CampusConnection implements ICampusConnection {
             return null;
         }
         HttpClient httpClient = new DefaultHttpClient();
-        String operationURL=credentials.getProperty("urlUOCApi") + credentials.getProperty("apiPath") + operation;
+        String operationURL = credentials.getProperty("urlUOCApi") + credentials.getProperty("apiPath") + operation;
         HttpGet httpGet = new HttpGet(operationURL+"?access_token="+_token);
         httpGet.setHeader("content-type", "application/json");
         try {
@@ -271,7 +271,19 @@ public class CampusConnection implements ICampusConnection {
 
     @Override
     public boolean isRole(UserRoles role, ISubjectID subject) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    	boolean isRole = false;
+    	
+    	ClassroomList classroomsList = getCampusUserSubjects();
+    	if( classroomsList != null){
+    		
+    		edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomsList.getClassrooms();
+    		for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom : classrooms) {
+				//if(classroom.get)
+			}
+    	}
+    	
+    	
+    	return isRole;
     }
 
     @Override
