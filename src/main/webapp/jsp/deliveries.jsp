@@ -51,8 +51,8 @@
 		<div id="top">
 
 			<div id="user">
-				<s:if test="%{imageURL == null}">
-					<s:form  action="deliveries!auth.html" cssClass="form_login" id="form_login" theme="simple">
+				<s:if test="%{fullName == null}">
+					<s:form  action="home!auth.html?activeTab=programming-environment" cssClass="form_login" id="form_login" theme="simple">
 		<!-- 				<form action="/" method="POST" class="form_login" id="form_login"> -->
 							<fieldset>
 							<s:textfield name="username" id="username" label="username"></s:textfield>
@@ -69,7 +69,7 @@
 					<div class="profile"> 
 							<img src="<s:property value='imageURL'/>" alt="Profile Photo" />
 							<h2><s:property value="fullName"/></h2>
-							<a href="deliveries!logout.html" id="logout" class="btn"> <s:text name="pelp.exit"></s:text> </a>
+							<a href="home!logout.html" id="logout" class="btn"> <s:text name="pelp.exit"></s:text> </a>
 						</div>
 				</s:else>
 			</div>
@@ -105,11 +105,12 @@
 	<!-- /top -->
 
 	<!-- menu -->
+	
 	<div id="menu-container">
 		<div id="menu">
 			<ul class="menu">
-				<li class="active"><a href="deliveries.html"><s:text name="pelp.prog"></s:text> </a></li>
-				<li><a href="student.html"><s:text name="pelp.delivers"></s:text> </a></li>
+				<li class="active"><a href="home.html?activeTab=programming-environment"><s:text name="pelp.prog"></s:text> </a></li>
+				<li><a href="home.html"><s:text name="pelp.delivers"></s:text> </a></li>
 <!-- 				<li class="disabled"><a href="javascript:void(0);">Entregas</a></li> -->
 			</ul>
 		</div>
@@ -118,7 +119,6 @@
 
 	<!-- main -->
 	<div id="main">
-
 		<!-- form_envios -->
 <!-- 		<form action="/" method="POST" id="form_envios"> -->
 		<s:form theme="simple" method="POST" enctype="multipart/form-data" action="deliveries">

@@ -87,6 +87,7 @@
 			</div>
 
 			<form action="" method="POST" class="form_filters" id="form_filters">
+			<s:hidden key="ajaxCall"></s:hidden>
 				<fieldset>
 					 <select name="s_assign" id="s_assign">
 					 	<option value=""><s:text name="pelp.assigment"></s:text> </option>
@@ -121,38 +122,144 @@
 	<div id="menu-container">
 		<div id="menu">
 			<ul class="menu">
-				<s:if test="%{activeTab != @edu.uoc.pelp.actions.HomeAction@TAB_DELIVERIES}">
-					<li>
-						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.HomeAction@TAB_PROGRAMMING_ENVIROMENT"/>">
-							<s:text name="pelp.prog"/>
-						</a>
-					</li>
-					<li class="active">
-						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.HomeAction@TAB_DELIVERIES"/>">
-							<s:text name="pelp.delivers"/>
-						</a>
-					</li>
-				</s:if>
-				<s:else>
-				
-					<li class="active">
-						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.HomeAction@TAB_PROGRAMMING_ENVIROMENT"/>">
-							<s:text name="pelp.prog"/>
-						</a>
-					</li>
-					<li>
-						<a class="ajax-tab" href="?activeTab=<s:property value="@edu.uoc.pelp.actions.HomeAction@TAB_DELIVERIES"/>">
-							<s:text name="pelp.delivers"/>
-						</a>
-					</li>
-				</s:else>
+				<li class="">
+					<a href="#progMENU" id="progMENUn">
+						<s:text name="pelp.prog"/>
+					</a>
+				</li>
+				<li class="">
+					<a  href="#delviMENU" id="delviMENUn">
+						<s:text name="pelp.delivers"/>
+					</a>
+				</li>
 			</ul>
 		</div>
 	</div>
 	<!-- /menu -->
-
-	<!-- main -->
+	
+	<!-- main entorno -->
 	<div id="main">
+	<div id="progMENU" class="tab_content_menu">
+		<!-- form_envios -->
+<!-- 		<form action="/" method="POST" id="form_envios"> -->
+		<s:form theme="simple" method="POST" enctype="multipart/form-data" action="deliveries">
+		<s:hidden name="s_assign"></s:hidden>
+		<s:hidden name="s_activ"></s:hidden>
+		<s:hidden name="s_aula"></s:hidden>
+		<!-- tabs -->
+		<ul class="tabs">  
+			<li><a href="#tab_1"><s:text name="pelp.file.gest"></s:text> </a></li>  
+			<li><a href="#tab_2"><s:text name="pelp.text.edit"></s:text> </a></li>   
+		</ul> 
+		<!-- /tabs --> 
+
+		<!-- tabs_container -->
+		<div class="tabs_container">
+
+			<div id="tab_1" class="tab_content">
+
+				<fieldset class="fs">
+					<label for="search_file" class="hlabel"><s:text name="pelp.file.attach"></s:text> </label>
+					<s:file name="upload" label="Adjuntar"></s:file>
+<!-- 					<input type="submit" id="adj_file" name="adj_file" value="Adjuntar" class="btn" /> -->
+					<s:submit id="adj_file" value="Adjuntar" class="btn"></s:submit>
+				</fieldset>
+
+				<table id="tEnvios">
+					<thead>
+						<tr>
+							<th><s:checkbox name="matrizFile" key="matrizFile" id="chk_all" fieldValue="deleteAll"/><label for="chk_all"><s:text name="pelp.upload.file"></s:text> </label></th>
+							<th><s:text name="pelp.code"></s:text> </th>
+							<th><s:text name="pelp.memori"></s:text> </th>
+							<th><s:text name="pelp.f.principal"></s:text> </th>
+						</tr>
+					</thead>
+					<tbody>
+
+					<s:iterator status="stat" value="(fileDim).{ #this }" >
+						<tr id="frow_<s:property value='#stat.count'/>">
+							<td>
+								<s:set name="codeName" value="matrizFile[#stat.index][4]"/>
+<%-- 							<s:checkbox name="chk_del" value="%{#stat.count}" key="matrizFile"  id="chk_del_%{#stat.count}" /> <label for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label></td> --%>
+								<input type="checkbox" name="chk_del" id="chk_del_<s:property value='#stat.count'/>" value="<s:property value='#stat.count'/>" /> 
+								<label id="chk_del_title<s:property value='#stat.count'/>"  for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label>
+								<input type="hidden" id="chk_del_title_hash<s:property value='#stat.count'/>"  value="<s:property value='%{#codeName}'/>"/>
+							</td>
+							<td class="opt">
+											<s:checkbox name="matrizFile" key="matrizFile" id="chk_code_%{#stat.count}"  fieldValue="c%{#codeName}"/>
+											<label for="chk_code_<s:property value='#stat.count'/>"><span class="hidden"><s:text name="pelp.code"></s:text></span></label></td>
+							<td class="opt">
+											<s:checkbox name="matrizFile" key="matrizFile" id="chk_memo_%{#stat.count}"  fieldValue="m%{#codeName}"/>
+											<label for="chk_memo_<s:property value='#stat.count'/>"><span class="hidden"><s:text name="pelp.memori"></s:text></span></label></td>
+							<td class="opt">
+											<s:checkbox name="matrizFile" key="matrizFile" id="chk_file_%{#stat.count}"  fieldValue="f%{#codeName}"/>
+											<label for="chk_file_<s:property value='#stat.count'/>"><span class="hidden"><s:text name="pelp.f.principal"></s:text></span></label></td>
+						</tr>
+					</s:iterator>
+					</tbody>
+				</table>
+
+				<a href="javascript:void(0);" id="lnk_del" class="btn btndel"><span class="icon"></span><s:text name="pelp.file.delete"></s:text> </a>
+
+			</div>
+
+			<div id="tab_2" class="tab_content">
+				<fieldset class="fs">
+					<label for="txt_text" class="hlabel"><s:text name="pelp.add.text"></s:text> </label>
+					<s:textarea name="codePlain" id="txt_text" />
+				</fieldset>
+			</div> 
+
+		</div>  
+		<!-- /tab_container -->
+
+		<h2><s:text name="pelp.option.text"></s:text> </h2>
+
+		<fieldset class="fs bdotted">
+			<label class="hlabel"><s:text name="pelp.input"></s:text> <!-- <span>  <s:text name="pelp.change.format"></s:text> <a href="#" id="in" class="commut text"><s:text name="pelp.add.file"></s:text> </a></span> --></label>
+<!-- 			<div class="in_file"> -->
+<%-- 				<s:file name="testFile" id="file_in" label="file_in"></s:file> --%>
+<!-- <!-- 				<input type="file" id="file_in" name="file_in" /> --> 
+<!-- <!-- 				<input type="button" id="adj_in" name="adj_in" value="Adjuntar" class="btn" /> --> 
+<!-- 			</div> -->
+			<div class="in_text">
+				<s:textfield name="testPlain" id="txt_in"/>
+<!-- 				<input type="text" id="txt_in" name="txt_in" value="" placeholder="Introduir text" /> -->
+			</div>
+		</fieldset>
+
+		<fieldset class="fs bsolid">
+			<label class="hlabel"><s:text name="pelp.output"></s:text><!--  <span><s:text name="pelp.change.format"></s:text> <a href="#" id="out" class="commut file"><s:text name="pelp.add.text2"></s:text> </a></span>  --></label>
+<!-- 			<div class="out_file"> -->
+<%-- 				<s:file name="testFileOut" id="file_out" label="file_out"></s:file> --%>
+<!-- <!-- 				<input type="file" id="file_out" name="file_out" />  -->
+<!-- <!-- 				<input type="button" id="adj_out" name="adj_out" value="Adjuntar" class="btn" /> --> 
+<!-- 			</div> -->
+			<div class="out_text">
+				<s:textfield name="testPlainOut" id="txt_out"/>
+<!-- 				<input type="text" id="txt_out" name="txt_out" value="" placeholder="Introduir text"/> -->
+			</div>
+		</fieldset>
+
+		<fieldset class="fs fs_send">
+			<input type="submit" id="btn_send" name="btn_send" value="Enviar" class="btn btnsend" />
+			<s:if test="%{s_activ!=null}"><s:checkbox name="finalDeliver" id="chk_entrega" value="0"/>
+<!-- 			<input type="checkbox" name="chk_entrega" id="chk_entrega" value="1" /> --> <label for="chk_entrega"><s:text name="pelp.send.activity"></s:text> </label>
+			</s:if> 
+		</fieldset>
+
+<!-- 		</form> -->
+	</s:form>
+		<!--/form_envios -->
+
+		<h3><s:text name="pelp.message"></s:text> </h3>
+
+		<div class="messages">
+			<p> <s:property value="resulMessage"/> </p>
+		</div>
+	</div>
+	
+	<div id="delviMENU" class="tab_content_menu">
 	
 		<s:if test="%{teacher}">
 		
@@ -422,7 +529,7 @@
 					<s:iterator value="listDeliverDetails" status="pos">
 						<tr> 
 							<td><a href="#" class="toggle collapsed" rel="a1_e<s:property value="#pos.index"/>"><span class="lbl"><s:text name="pelp.deliver"></s:text> <s:property value="DeliverIndex"/></span></a></td>
-							<td> <s:property value="SubmissionDate"/> </td>
+							<td><s:date name="SubmissionDate" format="dd/MM/yyyy" /></td>
 							<td><s:set name="totalTest" value="TotalPublicTests+TotalPrivateTests"/><s:property value="#totalTest"/></td>
 							<td><s:if test="CompileOK"><span class="ok"><span class="invisible"><s:text name="ok"></s:text> </span></span></s:if><s:else><span class="ko"><span class="invisible"><s:text name="ko"></s:text> </span></span></s:else></td>
 							<td><div class="tests"><span class="ko"><s:property value="TotalPublicTests"/></span><span class="ok"><s:property value="PassedPublicTests"/></span></div></td>
@@ -442,91 +549,41 @@
 											</tr>
 										</thead>
 										<tbody>
-										<s:iterator value="DeliverFiles">
+										<s:iterator value="DeliverFiles" status="posfile">
 											<tr>
-												<td><a href="#">Lorem ipsum dolor sit amet</a></td>
-												<td><span class="check" title="Código"></span></td>
-												<td></td>
-												<td></td>
+												<td><a href="home!down.html?idDelivers=<s:property value="#pos.index"/>&idFile=<s:property value="#posfile.index"/>&s_aula=<s:property value="s_aula"/>&s_assign=<s:property value="s_assign"/>&s_activ=<s:property value="s_activ"/>"><s:property value="RelativePath"/></a></td>
+												<td><s:if test="IsCode"><span class="check" title="<s:text name='pelp.code'></s:text>"></span></s:if></td>
+												<td><s:if test="IsReport"><span class="check" title="<s:text name='pelp.memori'></s:text>"></span></s:if></td>
+												<td><s:if test="IsMain"><span class="check" title="<s:text name='pelp.f.principal'></s:text>"></span></s:if></td>
 											</tr>
 										</s:iterator>
-	<!-- 										<tr> -->
-	<!-- 											<td><a href="#">Cras egestas elementum augue</a></td> -->
-	<%-- 											<td><span class="check" title="Código"></span></td> --%>
-	<%-- 											<td><span class="check" title="Memoria"></span></td> --%>
-	<!-- 											<td></td> -->
-	<!-- 										</tr> -->
-	<!-- 										<tr> -->
-	<!-- 											<td><a href="#">Cras egestas elementum augue</a></td> -->
-	<%-- 											<td><span class="check" title="Código"></span></td> --%>
-	<!-- 											<td></td> -->
-	<%-- 											<td><span class="check" title="F. Principal"></span></td> --%>
-	<!-- 										</tr> -->
 										</tbody>
 									</table>
 									<div class="heading"><span><s:text name="pelp.test.public"></s:text> </span></div>
 									<ul>
 									<s:iterator value="TestResults">
-										<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
+										<s:if test="IsPublic">
+											<s:if test="IsPassed"><li><a href="#" target="_blank"><span class="ok"></span><s:property value="Output"/></a></li></s:if>
+											<s:else><li><a href="#" target="_blank"><span class="ko"></span><s:property value="Output"/></a></li></s:else>
+										</s:if>
 									</s:iterator>	
-	<%-- 									<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
-	<%-- 									<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
 									</ul>
 								</div>
 		
 							</td>
 						</tr>
 					</s:iterator>
-	<!-- 				<tr> -->
-	<%-- 					<td><a href="#" class="toggle collapsed" rel="a1_e2"><span class="lbl">Entrega 2</span></a></td> --%>
-	<!-- 					<td>01/07/12</td> -->
-	<!-- 					<td>12</td> -->
-	<%-- 					<td><span class="ok"><span class="invisible">ok</span></span></td> --%>
-	<%-- 					<td><div class="tests"><span class="ok">15</span></div></td> --%>
-	<%-- 					<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td> --%>
-	<!-- 				</tr> -->
-	<!-- 				<tr class="expand-child"> -->
-	<!-- 					<td colspan="6"> -->
-	
-	<!-- 						<div id="a1_e2" class="files_tests"> -->
-	<%-- 							<div class="heading"><span>Tests Públicos</span></div> --%>
-	<!-- 							<ul> -->
-	<%-- 								<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li> --%>
-	<%-- 								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
-	<%-- 								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
-	<!-- 							</ul> -->
-	<!-- 						</div> -->
-	
-	<!-- 					</td> -->
-	<!-- 				</tr> -->
-	<!-- 				<tr> -->
-	<%-- 					<td><a href="#" class="toggle collapsed" rel="a1_e1"><span class="lbl">Entrega 1</span></a></td> --%>
-	<!-- 					<td>01/07/12</td> -->
-	<!-- 					<td>12</td> -->
-	<%-- 					<td><span class="ok"><span class="invisible">ok</span></span></td> --%>
-	<%-- 					<td><div class="tests"><span class="ok">15</span></div></td> --%>
-	<%-- 					<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td> --%>
-	<!-- 				</tr> -->
-	<!-- 				<tr class="expand-child"> -->
-	<!-- 					<td colspan="6"> -->
-	
-	<!-- 						<div id="a1_e1" class="files_tests"> -->
-	<%-- 							<div class="heading"><span>Tests Públicos</span></div> --%>
-	<!-- 							<ul> -->
-	<%-- 								<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li> --%>
-	<%-- 								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
-	<%-- 								<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li> --%>
-	<!-- 							</ul> -->
-	<!-- 						</div> -->
-	
-	<!-- 					</td> -->
-	<!-- 				</tr> -->
-				</tbody>
 			</table>
 			<!-- /tAlumno -->
 		</s:else>
-
 	</div>
+	
+	</div>
+
+	<!-- main entregues -->
+	
+	
+	
 	<!-- /main -->
 
 </div>

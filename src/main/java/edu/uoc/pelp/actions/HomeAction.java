@@ -1,8 +1,11 @@
 package edu.uoc.pelp.actions;
 
-import javax.annotation.PreDestroy;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
@@ -14,8 +17,12 @@ import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
+import edu.uoc.pelp.bussines.vo.Classroom;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
+import edu.uoc.pelp.exception.PelpException;
+import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
+
 
 /**
  * 
@@ -24,11 +31,27 @@ import edu.uoc.pelp.bussines.vo.DeliverSummary;
  * @author oripolles
  * 
  */
+@ParentPackage("json-default")
 @Namespace("/")
 @ResultPath(value = "/")
 @Results({
-		@Result(name = "success", location = "jsp/pelp.jsp"),
-		@Result(name = "programming-environment", location = "jsp/deliveries.jsp") })
+		@Result(name = "success", location = "jsp/home.jsp"),
+		@Result(name = "programming-environment", location = "jsp/deliveries.jsp"),
+		@Result(name="rsuccess", type="redirectAction", params = {"actionName" , "home"}),
+		@Result(name="dinamic", type="json"),
+		@Result(name = "filedown", type = "stream", params =
+		{
+		    "contentType",
+		    "application/octet-stream",
+		    "inputName",
+		    "fileInputStream",
+		    "contentDisposition",
+		    "filename=\"${filename}\""
+		}),
+	    @Result(name="rprogramming-environment", type="redirectAction", params = {"actionName" , "home.html?activeTab=programming-environment"})
+		
+})
+
 public class HomeAction extends ActionSupport {
 
 	/**
@@ -45,6 +68,8 @@ public class HomeAction extends ActionSupport {
 	private Activity[] listActivity;
 	private DeliverSummary[] listDeliverSummaries;
 	private DeliverDetail[] listDeliverDetails;
+	
+	private int fileDim;
 
 	private String s_assign;
 	private String s_aula;
@@ -56,15 +81,19 @@ public class HomeAction extends ActionSupport {
 	private String fullName;
 
 	private String activeTab;
-	private boolean ajaxCall;
+	private boolean ajaxCall = true;
 	private String selectorToLoad;
-	private String filterType;
-	private String filterValue;
+	private String idDelivers;
+	private String idFile;
+	private String filename;
+	private InputStream fileInputStream;
+
 	private boolean teacher;
 
 	@Override
 	public String execute() throws Exception {
 
+		
 		if (bUOC.getUserInformation() != null) {
 			listSubjects = bUOC.getUserSubjects();
 			if (s_assign != null) {
@@ -88,16 +117,26 @@ public class HomeAction extends ActionSupport {
 					}
 				}
 				String[] infoAssing = s_assign.split("_");
-				listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
-						infoAssing[0], infoAssing[2]), objActivity.getIndex());
-				listDeliverSummaries = bUOC.getLastClassroomDeliverSummary(
-						objActivity, new UOCSubject(infoAssing[0],
-								infoAssing[2]), objActivity.getIndex());
+				if(teacher){
+					Classroom objClass = null;
+					for(int i = 0;i<listClassroms.length;i++){
+						if(listClassroms[i].getIndex()== Integer.parseInt(s_aula)){
+							objClass = listClassroms[i]; 
+						}
+					}
+					bUOC.getAllClassroomDeliverDetails(objActivity, new UOCSubject(
+							infoAssing[0], infoAssing[2]), objClass.getIndex());
+				}else{
+					listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
+							infoAssing[0], infoAssing[2]), objActivity.getIndex());	
+				}
 			}
 			imageURL = bUOC.getUserInformation().getUserPhoto();
+			if(imageURL== null)imageURL = "img/user.png";
 			fullName = bUOC.getUserInformation().getUserFullName();
 		} else {
 			imageURL = null;
+			fullName = null;
 		}
 
 		String toReturn = SUCCESS;
@@ -108,17 +147,84 @@ public class HomeAction extends ActionSupport {
 
 		return toReturn;
 	}
+	
+	public String combo() throws PelpException{
+		
+		if (s_assign != null) {
+			String[] infoAssing = s_assign.split("_");
+			teacher = bUOC.isTeacher(new UOCSubject(infoAssing[0],
+					infoAssing[2]));
+			listClassroms = bUOC.getUserClassrooms(new UOCSubject(
+					infoAssing[0], infoAssing[2]));
+		}
+		if (s_aula != null && s_aula.length() > 0 && s_assign != null) {
+			String[] infoAssing = s_assign.split("_");
+			listActivity = bUOC.getSubjectActivities(new UOCSubject(
+					infoAssing[0], infoAssing[2]));
+		}
+		
+		return "dinamic";
+	}
 
-	@PreDestroy
-	public String logout() {
-		bUOC.logout();
-		return "index";
+	public String down() throws Exception {
+		
+		if (s_aula != null && s_aula.length() > 0 && s_assign != null
+				&& s_activ != null && s_activ.length() > 0) {
+			
+			String[] infoAssing = s_assign.split("_");
+			listActivity = bUOC.getSubjectActivities(new UOCSubject(
+					infoAssing[0], infoAssing[2]));
+			
+			Activity objActivity = new Activity();
+			for (int j = 0; j < listActivity.length; j++) {
+				if (listActivity[j].getIndex() == Integer.parseInt(s_activ)) {
+					objActivity = listActivity[j];
+				}
+			}
+			
+			listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
+					infoAssing[0], infoAssing[2]), objActivity.getIndex());
+			
+			String urlpath = listDeliverDetails[Integer.parseInt(idDelivers)].getDeliverFiles()[Integer.parseInt(idFile)].getAbsolutePath();
+			File file = new File(urlpath);
+			fileInputStream = new FileInputStream(file);
+			filename = listDeliverDetails[Integer.parseInt(idDelivers)].getDeliverFiles()[Integer.parseInt(idFile)].getRelativePath();
+		}
+		
+		return "filedown";
+	}
+	
+	public String logout() throws PelpException {
+		//bUOC.logout();
+		LocalCampusConnection _campusConnection = new LocalCampusConnection();
+        // Add the register to the admin database to give administration rights
+        _campusConnection.setProfile("none");
+        
+        bUOC.setCampusConnection(_campusConnection);
+        
+		String toReturn = 'r'+SUCCESS;
+
+		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
+			toReturn = 'r'+TAB_PROGRAMMING_ENVIROMENT;
+		}
+
+		return toReturn;
 	}
 
 	public String auth() throws Exception, OsidException {
-		//FIXME
-		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
-		return "index";
+		//FIXME Miramos Si es estudiante , professor i dependiendo usaremos uno o otro
+		LocalCampusConnection _campusConnection = new LocalCampusConnection();
+        // Add the register to the admin database to give administration rights
+        _campusConnection.setProfile(username);
+        bUOC.setCampusConnection(_campusConnection);
+		
+        String toReturn = 'r'+SUCCESS;
+
+		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
+			toReturn = 'r'+TAB_PROGRAMMING_ENVIROMENT;
+		}
+
+		return toReturn;
 	}
 
 	public UOCPelpBussines getbUOC() {
@@ -249,28 +355,52 @@ public class HomeAction extends ActionSupport {
 		this.selectorToLoad = selectorToLoad;
 	}
 
-	public String getFilterType() {
-		return filterType;
-	}
-
-	public void setFilterType(String filterType) {
-		this.filterType = filterType;
-	}
-
-	public String getFilterValue() {
-		return filterValue;
-	}
-
-	public void setFilterValue(String filterValue) {
-		this.filterValue = filterValue;
-	}
-
 	public boolean isTeacher() {
 		return teacher;
 	}
 
 	public void setTeacher(boolean teacher) {
 		this.teacher = teacher;
+	}
+
+	public String getIdDelivers() {
+		return idDelivers;
+	}
+
+	public void setIdDelivers(String idDelivers) {
+		this.idDelivers = idDelivers;
+	}
+
+	public String getIdFile() {
+		return idFile;
+	}
+
+	public void setIdFile(String idFile) {
+		this.idFile = idFile;
+	}
+
+	public InputStream getFileInputStream() {
+		return fileInputStream;
+	}
+
+	public void setFileInputStream(InputStream fileInputStream) {
+		this.fileInputStream = fileInputStream;
+	}
+
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public int getFileDim() {
+		return fileDim;
+	}
+
+	public void setFileDim(int fileDim) {
+		this.fileDim = fileDim;
 	}
 
 }

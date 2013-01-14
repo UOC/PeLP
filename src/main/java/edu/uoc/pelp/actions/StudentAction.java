@@ -37,9 +37,7 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
-import edu.uoc.pelp.bussines.vo.UserInformation;
-import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
-import edu.uoc.pelp.servlets.UOC.SessionTokenKey;
+import edu.uoc.pelp.exception.PelpException;
 
 
 /**
@@ -129,10 +127,10 @@ public class StudentAction extends ActionSupport {
 	}
     
     @PreDestroy
-    public String logout() throws Exception {
+    public String logout() throws PelpException{
     	HttpServletRequest request = ServletActionContext.getRequest();
     	request.getSession().setAttribute("authUOC", "close");
-    	bUOC.setCampusConnection( new CampusConnection() );
+    	bUOC.logout();
     	return "index";
     }
     

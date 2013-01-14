@@ -55,15 +55,13 @@ j(document).ready(function(){
 	if(navigator.userAgent.indexOf('Mac') > 0)
     	j('body').addClass('mac-os');
 
-	// Eventos de filtros
-	j('#s_assign').change(function() { this.form.submit(); });
-	j('#s_aula').change(function() { this.form.submit(); });
-	j('#s_activ').change(function() { this.form.submit(); });
+	// Eventos de filtros s_activ
+	//j('#s_assign').change(function() { this.form.submit(); });
+	//j('#s_aula').change(function() { this.form.submit(); });
+	//j('#s_activ').change(function() { this.form.submit(); });
 
     // Ocultar elementos iniciales
 	j('#send_filters').hide();
-	j('div.in_file').hide();
-	j('div.out_text').hide();
 
     /* Env√≠os */
 
@@ -96,13 +94,33 @@ j(document).ready(function(){
 	j(".tab_content").hide();
 	j("ul.tabs li:first").addClass("active").show();
 	j(".tab_content:first").show();
-
+	
 	// Control pesta√±as
 	j("ul.tabs li a").click(function(ev) {
 		ev.preventDefault();
 		j("ul.tabs li").removeClass("active");
 		j(this).parent().addClass("active");
 		j(".tab_content").hide();
+		var activeTab = j(this).attr("href");
+		j(activeTab).show();
+	});
+	
+	// pestañas de navegación general
+	j(".tab_content_menu").hide();
+	// Cargamos dependiendo de valor call
+	if(j("#ajaxCall").val()=="true"){
+		j("ul.menu li:first").addClass("active").show();
+		j(".tab_content_menu:first").show();
+	}else{
+		j("ul.menu li:last").addClass("active").show();
+		j(".tab_content_menu:last").show();	
+	}
+			// Control pesta√±as
+	j("ul.menu li a").click(function(ev) {
+		ev.preventDefault();
+		j("ul.menu li").removeClass("active");
+		j(this).parent().addClass("active");
+		j(".tab_content_menu").hide();
 		var activeTab = j(this).attr("href");
 		j(activeTab).show();
 	});
@@ -127,6 +145,59 @@ j(document).ready(function(){
     			j('#frow_'+j(this).val()).remove();
     		}
     	});
+    });
+    
+    // cargar dinamicamente los combo.
+    j('#s_assign').change(function(ev){
+    	j("#deliveries_s_assign").val(j(this).val());
+    	callback="";
+    	j.ajax({
+			  url: "home!combo.html",
+			  dataType: 'json',
+			  data: "s_assign="+j(this).val(),
+			  success:function(data){
+				var options = j("#s_aula option")[0].outerHTML
+				classrooms = data.listClassroms
+				for (var i = 0; i < classrooms.length; i++) {
+					options += '<option value="' + classrooms[i].index + '">' + classrooms[i].index + '</option>';
+				}
+				j('#s_aula').html(options);
+			  },
+			  type: "POST"
+			});
+    });
+    
+    j('#s_aula').change(function(ev){
+    	
+    	j("#deliveries_s_aula").val(j(this).val());
+    	callback="";
+    	j.ajax({
+			  url: "home!combo.html",
+			  dataType: 'json',
+			  data: "s_assign="+j("#s_assign").val()+"&s_aula="+j(this).val(),
+			  success:function(data){
+				var options = j("#s_activ option")[0].outerHTML
+				classrooms = data.listActivity
+				for (var i = 0; i < classrooms.length; i++) {
+					options += '<option value="' + classrooms[i].index + '">' + classrooms[i].description + '</option>';
+				}
+				j('#s_activ').html(options);
+			  },
+			  type: "POST"
+			});
+    });
+    
+    j('#s_activ').change(function(ev){
+    	j("#deliveries_s_activ").val(j(this).val());
+    	this.form.submit();
+    });
+    
+    j("#progMENUn").click(function(ev) {
+    	j("#ajaxCall").val(true);
+    });
+    
+    j("#delviMENUn").click(function(ev) {
+    	j("#ajaxCall").val(false);
     });
 
     /* Entregas */
@@ -195,7 +266,8 @@ j(document).ready(function(){
 		});
 	});
 	
-
+/* menu*/
+		
 });
 
 function doBeforeChangeTab(jqXHR, settings){
