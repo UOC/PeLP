@@ -62,6 +62,14 @@ j(document).ready(function(){
 
     // Ocultar elementos iniciales
 	j('#send_filters').hide();
+	
+	// Miramos si estan selecionados los combos en caso de estar no los ponemos ocultos
+	
+	
+	if(j("#s_activ option:selected").val()!="")j("#s_activ").attr('disabled',false);
+	if(j("#s_aula option:selected").val()!="")j("#s_aula").attr('disabled',false);
+	
+	
 
     /* Envíos */
 
@@ -165,6 +173,7 @@ j(document).ready(function(){
 			  },
 			  type: "POST"
 			});
+    	j('#s_aula').attr('disabled',false);
     });
     
     j('#s_aula').change(function(ev){
@@ -185,6 +194,8 @@ j(document).ready(function(){
 			  },
 			  type: "POST"
 			});
+    	
+    	j('#s_activ').attr('disabled',false);
     });
     
     j('#s_activ').change(function(ev){

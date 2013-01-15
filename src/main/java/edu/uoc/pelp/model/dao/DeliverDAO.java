@@ -155,7 +155,8 @@ public class DeliverDAO implements IDeliverDAO {
         if(key==null) {
             return null;
         }
-                        
+               
+        getSession().beginTransaction();
         // Get the descriptions
         Query q=getSession().getNamedQuery("DeliverFile.findByDeliverID");
         q.setParameter("semester", key.getSemester());
@@ -164,8 +165,11 @@ public class DeliverDAO implements IDeliverDAO {
         q.setParameter("userID",key.getUserID());
         q.setParameter("deliverIndex",key.getDeliverIndex());
         
+        List<edu.uoc.pelp.model.vo.DeliverFile> list = null;
+        list = q.list();
+        getSession().close();
         // Get the list of descriptions
-        return q.list();
+        return list;
     }
     
     /**
@@ -266,7 +270,7 @@ public class DeliverDAO implements IDeliverDAO {
         
             // Get the object
             edu.uoc.pelp.model.vo.Deliver newObj=ObjectFactory.getDeliverReg(object);
-        
+            
             // Add a new object from given object, to break the reference
             DeliverPK key=ObjectFactory.getDeliverPK(newID);
             if(key==null) {
@@ -281,7 +285,9 @@ public class DeliverDAO implements IDeliverDAO {
             if(newObj.getSubmissionDate()==null) {
                 newObj.setSubmissionDate(new Date());
             }
+            transaction=getSession().beginTransaction();
             getSession().saveOrUpdate(newObj);
+            
             
             // Add deliver files
             if(!addDeliverFiles(newID,object.getFiles())) {
@@ -291,6 +297,7 @@ public class DeliverDAO implements IDeliverDAO {
             
             // Commit the results
             transaction.commit();
+            
             
         } catch (RuntimeException e) {
             if (transaction != null) {
@@ -494,8 +501,10 @@ public class DeliverDAO implements IDeliverDAO {
             fileList.toArray(fileArray);
         }
 
+        Deliver objDeliver = ObjectFactory.getDeliverObj(deliverReg,fileArray);
+        getSession().close();
         // Add the final register
-        return ObjectFactory.getDeliverObj(deliverReg,fileArray);
+        return objDeliver;
     }
    
     @Override
@@ -595,7 +604,7 @@ public class DeliverDAO implements IDeliverDAO {
                 lastID=ObjectFactory.getDeliverID(lastDeliver.get(0).getDeliverPK());
             }
         }
-        
+        getSession().close();
         // Return last id
         return lastID;
     }
@@ -631,7 +640,7 @@ public class DeliverDAO implements IDeliverDAO {
         if(activityPK==null) {
             return null;
         }
-        
+        getSession().beginTransaction();
         // Get the activity register
         Query query=getSession().getNamedQuery("Deliver.findActivityDeliversByClass");
         query.setParameter("semester", activityPK.getSemester());
@@ -640,6 +649,7 @@ public class DeliverDAO implements IDeliverDAO {
         query.setParameter("classroom", classPK.toString());
         List<edu.uoc.pelp.model.vo.Deliver> list=query.list();
         
+        getSession().close();
         // Return the results
         return getDeliverList(list); 
     }

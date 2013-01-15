@@ -25,7 +25,7 @@ http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 	</bean>
 	<!-- TEMPORAL -->
 	<bean id="lcct" class="edu.uoc.pelp.test.tempClasses.LocalCampusConnection" scope="session">
-		<property name="credentials" ref="propertiesUOCApi"/>
+<!-- 		<property name="credentials" ref="propertiesUOCApi"/> -->
 	</bean>
 	<!-- FIN TEMPORAL -->
 

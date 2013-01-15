@@ -5,8 +5,8 @@
     <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/pelp</property>
-    <property name="hibernate.connection.username">pelp</property>
-    <property name="hibernate.connection.password">.pelp.</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password"></property>
     
     <!-- Enable Hibernate's automatic session context management -->
     <property name="current_session_context_class">thread</property>

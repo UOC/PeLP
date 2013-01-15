@@ -504,6 +504,7 @@ public class ActivityDAO implements IActivityDAO {
         query.setParameter("activityIndex", key.getActivityIndex());
         List<edu.uoc.pelp.model.vo.Activity> newObj=query.list();
         if(newObj==null || newObj.size()!=1) {
+        	getSession().close();
             return null;
         }
         edu.uoc.pelp.model.vo.Activity activityReg=newObj.get(0);
@@ -515,9 +516,13 @@ public class ActivityDAO implements IActivityDAO {
             descArray=new ActivityDesc[descList.size()];
             descList.toArray(descArray);
         }
+        
+        
+        Activity objActiviti = null;
+        objActiviti = ObjectFactory.getActivityObj(activityReg,descArray);
         getSession().close();
         // Add the final register
-        return ObjectFactory.getActivityObj(activityReg,descArray);
+        return objActiviti;
     }
 
     @Override
@@ -687,7 +692,7 @@ public class ActivityDAO implements IActivityDAO {
         if(activity==null) {
             return null;
         }
-        
+        getSession().beginTransaction();
         // Get the key
         ActivityPK key=ObjectFactory.getActivityPK(activity);
         
@@ -699,8 +704,12 @@ public class ActivityDAO implements IActivityDAO {
         
         List<edu.uoc.pelp.model.vo.ActivityTest> list=query.list();
         
+        List<ActivityTest> listActivity = null;
+        
+        listActivity = getActivityTestList(list);
+        getSession().close();
         // Return the results
-        return getActivityTestList(list);
+        return listActivity;
     }
 
     @Override

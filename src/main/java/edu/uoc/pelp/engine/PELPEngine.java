@@ -777,13 +777,15 @@ public class PELPEngine implements IPELPEngine {
     */
     private void removePrivateResultInformation(DeliverResults results) {
         
-        // Analyze each test and remove the information from private ones.
-        for(TestID testID:_activityManager.getActivityTests(results.getDeliverID().activity)){
-            ActivityTest test=_activityManager.getTest(testID);
-            if(!test.isPublic()) {
-                results.removePrivateInformation(testID);
-            }
-        }
+    	if(results!= null){
+	        // Analyze each test and remove the information from private ones.
+	        for(TestID testID:_activityManager.getActivityTests(results.getDeliverID().activity)){
+	            ActivityTest test=_activityManager.getTest(testID);
+	            if(!test.isPublic()) {
+	                results.removePrivateInformation(testID);
+	            }
+	        }
+    	}
     }   
     
     @Override
