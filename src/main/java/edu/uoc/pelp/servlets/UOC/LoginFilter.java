@@ -59,7 +59,6 @@ public class LoginFilter extends OncePerRequestFilter  {
         
     	String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();
     	System.out.println(getAlreadyFilteredAttributeName());
-    	System.out.println(request.getAttribute(alreadyFilteredAttributeName) );
  
         // Check if authorization is demanded
     	System.out.println("authUOC: " + request.getSession().getAttribute("authUOC"));
@@ -69,7 +68,7 @@ public class LoginFilter extends OncePerRequestFilter  {
             
             // Perform actions
             if("close".compareToIgnoreCase(authUOC)==0) {
-                closeAuthentication(request);
+                closeAuthentication(request, response);
             } else if("request".compareToIgnoreCase(authUOC)==0) {
                 requestAuthentication(request,response);
                 return;
@@ -77,7 +76,7 @@ public class LoginFilter extends OncePerRequestFilter  {
                 //validateAuthentication(request);
             }
         } else {
-            validateAuthentication(request);
+            validateAuthentication(request, response);
         }    
         
         // Apply other filters
@@ -106,17 +105,25 @@ public class LoginFilter extends OncePerRequestFilter  {
     }
 
     
-    private void closeAuthentication(HttpServletRequest request) {
-        /*try {
-            // Disable campus connection
-            bussines.setCampusSession("");
-        } catch (InvalidSessionException ex) {
-            Logger.getLogger(LoginFilter.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        
-        // TODO: Close authentication session
+    private void closeAuthentication(HttpServletRequest request, HttpServletResponse response) {
         
     	System.out.println("closeAuthentication...");
+    	
+    	Cookie[] cookies = request.getCookies();
+    	if (cookies != null) {
+    		for (int i = 0; i < cookies.length; i++) {
+
+    			String cookieName = cookies[i].getName();
+
+    			if( "apiToken".equalsIgnoreCase(cookieName)  || "apiRefToken".equalsIgnoreCase(cookieName) || "tokenExp".equalsIgnoreCase(cookieName) ){
+    				cookies[i].setValue("");
+    				cookies[i].setPath("/");
+    				cookies[i].setMaxAge(0);
+    			}
+    			response.addCookie(cookies[i]);
+    		}
+    	}
+    	
         // Remove authentication request    	
         if(request.getSession().getAttribute("authUOC")!=null) {
             request.getSession().removeAttribute("authUOC");
@@ -146,7 +153,7 @@ public class LoginFilter extends OncePerRequestFilter  {
                         
             // If information is incorrect, stop authentication
             if(userIP==null) {
-                closeAuthentication(request);
+                closeAuthentication(request, response);
                 return;
             }
             
@@ -160,19 +167,10 @@ public class LoginFilter extends OncePerRequestFilter  {
             
             // Get original destination page
             String dstLocalURI=(String)request.getSession().getAttribute("authDst");
-            //if(dstLocalURI == null) dstLocalURI = request.getRequestURI();
+            if(dstLocalURI == null) dstLocalURI = request.getRequestURI();
             request.getSession().removeAttribute("authDst");
             
             request.getSession().setAttribute("access_token", tokenKey);
-            // Set the campus key
-            // FIXME
-/*            if(bussines!=null) {
-                try {
-                    bussines.setCampusSession(tokenKey);
-                } catch (InvalidSessionException ex) {
-                    Logger.getLogger(LoginFilter.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }*/
             
             
             // Redirect to initial destination URL
@@ -193,7 +191,7 @@ public class LoginFilter extends OncePerRequestFilter  {
         response.sendRedirect(getOAuthRequest(redirectURL).getLocationUri()+"&response_type=code&scope=READ");
     }
 
-    private void validateAuthentication(HttpServletRequest request) {
+    private void validateAuthentication(HttpServletRequest request, HttpServletResponse response) {
         
     	System.out.println("validateAuthentication...");
         SessionTokenKey authTokenKey=null;
@@ -211,7 +209,7 @@ public class LoginFilter extends OncePerRequestFilter  {
                 
         // Check authentication object and remove it if is not valid
         if(authTokenKey == null || !authTokenKey.isValid(secretKey)) {
-            closeAuthentication(request);
+            closeAuthentication(request, response);
         }
     }
     

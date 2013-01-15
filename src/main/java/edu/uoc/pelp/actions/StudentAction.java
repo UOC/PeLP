@@ -132,11 +132,12 @@ public class StudentAction extends ActionSupport {
     public String logout() throws PelpException{
     	HttpServletRequest request = ServletActionContext.getRequest();
     	request.getSession().setAttribute("authUOC", "close");
+    	bUOC.setCampusConnection(new CampusConnection());
     	bUOC.logout();
     	return "index";
     }
     
-    public String auth() throws Exception, OsidException{
+    public String auth() throws Exception{
     	// FIXME
 		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
     	HttpServletRequest request = ServletActionContext.getRequest();
