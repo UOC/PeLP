@@ -96,14 +96,14 @@
 							<s:else> <option value="<s:property value="SubjectID" />"><s:property value="Description"/></option> </s:else> 
 						</s:iterator> 
 					</select>
-					<select name="s_aula" id="s_aula">
+					<select name="s_aula" id="s_aula" disabled="disabled">
 						<option value=""><s:text name="pelp.classroom"></s:text> </option>
 						<s:iterator value="listClassroms">
 							<s:if test="%{s_aula == index}"><option selected="selected" value="<s:property value="index" />"><s:text name="pelp.classroom"></s:text> <s:property value="Index" /></option></s:if>
 							<s:else><option value="<s:property value="index" />"><s:text name="pelp.classroom"></s:text> <s:property value="Index" /></option></s:else>
 						</s:iterator>
 					</select>
-					<select name="s_activ" id="s_activ">
+					<select name="s_activ" id="s_activ" disabled="disabled">
 						<option value=""><s:text name="pelp.activiti"></s:text> </option>
 						<s:iterator value="listActivity" status="statsa">
 							<s:if test="%{s_activ == index}"><option selected="selected" value="<s:property value="index" />"><s:property value="description" /></option></s:if>
@@ -243,7 +243,8 @@
 
 		<fieldset class="fs fs_send">
 			<input type="submit" id="btn_send" name="btn_send" value="Enviar" class="btn btnsend" />
-			<s:if test="%{s_activ!=null}"><s:checkbox name="finalDeliver" id="chk_entrega" value="0"/>
+			
+			<s:if test="%{s_activ.length()>0}"><s:checkbox name="finalDeliver" id="chk_entrega" value="0"/>
 <!-- 			<input type="checkbox" name="chk_entrega" id="chk_entrega" value="1" /> --> <label for="chk_entrega"><s:text name="pelp.send.activity"></s:text> </label>
 			</s:if> 
 		</fieldset>

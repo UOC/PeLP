@@ -9,7 +9,6 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-import org.osid.OsidException;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -17,7 +16,6 @@ import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
-import edu.uoc.pelp.bussines.vo.Classroom;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
 import edu.uoc.pelp.exception.PelpException;
@@ -118,14 +116,16 @@ public class HomeAction extends ActionSupport {
 				}
 				String[] infoAssing = s_assign.split("_");
 				if(teacher){
-					Classroom objClass = null;
+					UOCClassroom objClassroom = null;
 					for(int i = 0;i<listClassroms.length;i++){
-						if(listClassroms[i].getIndex()== Integer.parseInt(s_aula)){
-							objClass = listClassroms[i]; 
+						if(listClassroms[i].getIndex() == Integer.parseInt(s_aula)){
+							objClassroom = listClassroms[i];
 						}
 					}
-					bUOC.getAllClassroomDeliverDetails(objActivity, new UOCSubject(
-							infoAssing[0], infoAssing[2]), objClass.getIndex());
+					listDeliverDetails = bUOC.getAllClassroomDeliverDetails(objActivity, objClassroom);
+//					listDeliverDetails = bUOC.getLastClassroomDeliverDetails(objActivity,
+//							new UOCSubject(infoAssing[0], infoAssing[2]),
+//							objActivity.getIndex());
 				}else{
 					listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
 							infoAssing[0], infoAssing[2]), objActivity.getIndex());	
@@ -211,7 +211,7 @@ public class HomeAction extends ActionSupport {
 		return toReturn;
 	}
 
-	public String auth() throws Exception, OsidException {
+	public String auth() throws Exception {
 		//FIXME Miramos Si es estudiante , professor i dependiendo usaremos uno o otro
 		LocalCampusConnection _campusConnection = new LocalCampusConnection();
         // Add the register to the admin database to give administration rights
