@@ -38,9 +38,20 @@ public class SubjectID implements ISubjectID {
      */
     private Semester _semester;
     
+    /**
+     * Domain Identifier for this object in the UOC Campus implementation
+     */
+    private String _domainID;
+    
     public SubjectID(String code,Semester semester) {
         _code=code;
         _semester=semester;
+    }
+    
+    public SubjectID(String code,Semester semester,String domainID) {
+        _code=code;
+        _semester=semester;
+        _domainID=domainID;
     }
     
     @Override
@@ -67,6 +78,14 @@ public class SubjectID implements ISubjectID {
     public String getCode() {
         return _code;
     }
+    
+    public void setDomainID(String domainID) {
+        _domainID=domainID;
+    }
+    
+    public String getDomainID() {
+        return _domainID;
+    }
 
     @Override
     public int compareTo(IPelpID arg0) {
@@ -81,6 +100,7 @@ public class SubjectID implements ISubjectID {
         if (genericID instanceof SubjectID) {
             _semester=((SubjectID)genericID)._semester;
             _code=((SubjectID)genericID)._code;
+            _domainID=((SubjectID)genericID)._domainID;
         } else {
             throw new PelpException("Object of type " + genericID.getClass() + " cannot be copided to an object of class " + this.getClass());
         }
@@ -98,6 +118,9 @@ public class SubjectID implements ISubjectID {
         if ((this._code == null) ? (other._code != null) : !this._code.equals(other._code)) {
             return false;
         }
+        if ((this._domainID == null) ? (other._domainID != null) : !this._domainID.equals(other._domainID)) {
+            return false;
+        }
         if (this._semester != other._semester && (this._semester == null || !this._semester.equals(other._semester))) {
             return false;
         }
@@ -107,14 +130,20 @@ public class SubjectID implements ISubjectID {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 89 * hash + (this._code != null ? this._code.hashCode() : 0);
-        hash = 89 * hash + (this._semester != null ? this._semester.hashCode() : 0);
+        hash = 23 * hash + (this._code != null ? this._code.hashCode() : 0);
+        hash = 23 * hash + (this._semester != null ? this._semester.hashCode() : 0);
+        hash = 23 * hash + (this._domainID != null ? this._domainID.hashCode() : 0);
         return hash;
     }
 
     @Override
     public String toString() {
-        return _semester + "__" + _code;
+        String msg=_semester + "__" + _code;
+        
+        if(_domainID!=null) {
+            msg += "__" + _domainID;
+        }
+        return msg;
     }
 
     @Override
@@ -128,6 +157,14 @@ public class SubjectID implements ISubjectID {
         }
         Semester semester=new Semester(str.substring(0,pos));
         String code=str.substring(pos+2);
-        return new SubjectID(code,semester);
+        
+        String domainID=null;
+        pos=code.indexOf("__");
+        if(pos>=0) {
+            domainID=code.substring(pos+2);
+            code=code.substring(0,pos);
+        }
+        
+        return new SubjectID(code,semester,domainID);
     }
 }
