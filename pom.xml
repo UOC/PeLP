@@ -11,13 +11,8 @@
 			<id>UOCTE</id>
 			<url>http://te.artifactory.uoc.es/artifactory/repo</url>
 		</repository>
-		<repository>
-			<id>artifactory.uoc.es</id>
-			<name>artifactory.uoc.es-releases</name>
-			<url>http://artifactory.uoc.es/artifactory/repo</url>
-		</repository>
-
 	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>biz.source_code</groupId>
@@ -104,133 +99,37 @@
 			<version>1.4.1</version>
 		</dependency>
 
-		<!-- SERVICES RAC -->
-		<dependency>
-			<groupId>remoteinterface</groupId>
-			<artifactId>remoteinterface-ws-client</artifactId>
-			<version>2.0.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>edu.uoc.serveis.gat.expedient-ws</groupId>
-			<artifactId>expedient-ws-client</artifactId>
-			<version>1.0.3</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>edu.uoc.serveis.gat.matricula-ws</groupId>
-			<artifactId>matricula-ws-client</artifactId>
-			<version>1.0.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>edu.uoc.serveis.gat.rac-ws</groupId>
-			<artifactId>rac-ws-client</artifactId>
-			<version>1.1.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>edu.uoc.serveis.gat.dades-academiques-ws</groupId>
-			<artifactId>dades-academiques-ws-client</artifactId>
-			<version>1.0.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-
-			<groupId>org.campusproject</groupId>
-			<artifactId>CampusComponentsJava</artifactId>
-			<version>1.4.0</version> 
-			<type>jar</type>
-			<classifier>config-uoc</classifier>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.campusproject</groupId>
-			<artifactId>CampusComponentsJava</artifactId>
-			<version>1.4.0</version> 
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>OKI</groupId>
-			<artifactId>OkiOSID</artifactId>
-			<version>2.0</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
 
 
+
+<dependency>
+	<groupId>org.apache.amber</groupId>
+	<artifactId>amber-oauth2-client</artifactId>
+	<version>0.22-incubating</version>
+</dependency>
 	<dependency>
-		    <groupId>edu.uoc.serveis.tercers.tercer-ws</groupId>
-		    <artifactId>tercer-ws-client</artifactId>
-		    <version>1.1.0</version>
-		    <scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-
+		<groupId>com.google.code.gson</groupId>
+		<artifactId>gson</artifactId>
+		<version>2.2.2</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>com.googlecode.json-simple</groupId>
+		<artifactId>json-simple</artifactId>
+		<version>1.1.1</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+		<version>4.2.2</version>
+		<scope>compile</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpcore</artifactId>
+		<version>4.2.2</version>
+		<scope>compile</scope>
+	</dependency>
 		
 
 	</dependencies>
@@ -293,7 +192,7 @@
 				<!--deploy parameters -->
 				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
 				
-				<jbossdeployhome>/Users/juanfrasr/servidor/pelpserver/server/default/deploy</jbossdeployhome>
+				<jbossdeployhome>/home/toni/opt/jboss4/server/default/deploy</jbossdeployhome>
 			</properties>
 			<build>
 				<plugins>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
        xmlns:util="http://www.springframework.org/schema/util"
@@ -8,18 +9,23 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
 http://www.springframework.org/schema/tx/spring-tx-2.5.xsd/spring-spring-tx-2.5.xsd-3.1.2.RELEASE.xsd
 http://www.springframework.org/schema/util
-http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+http://www.springframework.org/schema/util/spring-util-2.5.xsd
+http://www.springframework.org/schema/aop 
+http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
+    <!--========== UOC Api Properties ==========-->
+    <util:properties id="propertiesUOCApi" location="classpath:UOCApi.properties" scope="singleton" />
+    <!--========== /UOC Api Properties ==========-->
+    
 	<!-- objects test inject to pelpEnigne -->
 
 	<bean id="lcctj" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection" scope="session">
 		<!-- <property name="dao" ref="dAdministrationDAO" /> -->
-		<property name="credentials" ref="propertiesUOCApi"/>
-		<constructor-arg type="java.lang.String"
-			value="6191b9661e160042373c71e53da95783ae5e8bf9b635086fea0b5eb59a411bda0da38a8ade973c66d513cc97b3433b871b3f9cefa910af4a260ed4a6da04ee8" />
+		<property name="credentials" ref="propertiesUOCApi"/>		
 	</bean>
 	<!-- TEMPORAL -->
 	<bean id="lcct" class="edu.uoc.pelp.test.tempClasses.LocalCampusConnection" scope="session">
+<!-- 		<property name="credentials" ref="propertiesUOCApi"/> -->
 	</bean>
 	<!-- FIN TEMPORAL -->
 
@@ -33,14 +39,12 @@ http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 		<constructor-arg ref="pcpct" />
 	</bean>
     
-    <!--========== UOC Api Properties ==========-->
-    <util:properties id="propertiesUOCApi" location="classpath:UOCApi.properties" scope="singleton" />
-    <!--========== /UOC Api Properties ==========-->
+
     
     <!--========== Filters ==========-->
     
-    <bean id="loginFilterBean" class="edu.uoc.pelp.servlets.UOC.LoginFilter" scope="request">
-        <property name="bussines" ref="bUOC" />
+    <bean id="loginFilterBean" class="edu.uoc.pelp.servlets.UOC.LoginFilter" >
+        <!-- <property name="bussines" ref="bUOC" />  -->
         <property name="credentials" ref="propertiesUOCApi"/>
     </bean>
     

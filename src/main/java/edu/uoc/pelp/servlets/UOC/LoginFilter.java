@@ -4,31 +4,18 @@
  */
 package edu.uoc.pelp.servlets.UOC;
 
-import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
-import edu.uoc.pelp.bussines.UOC.exception.InvalidSessionException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.Signature;
-import java.security.SignatureException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.amber.oauth2.client.OAuthClient;
 import org.apache.amber.oauth2.client.URLConnectionClient;
 import org.apache.amber.oauth2.client.request.OAuthClientRequest;
@@ -39,91 +26,7 @@ import org.apache.amber.oauth2.common.message.types.GrantType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
-/**
- * Class that encodes campus connection information in the session. 
- * @author Xavier Baró
- */
-class SessionTokenKey {    
-    /**
-     * UOC Token that enables campus query
-     */
-    protected String tokenKey;
-    
-    /**
-     * IP of current user to avoid user suplantation
-     */
-    protected String userIP;
-    
-    /**
-     * Digest of class data to ensure that information is not altered
-     */
-    protected byte[] signature;
-    
-    /**
-     * Default constructor. Stores data and sign it
-     */
-    public SessionTokenKey(String secretKey,String userIP,String tokenKey) {
-        this.userIP=userIP;
-        this.tokenKey=tokenKey;
-        signature=createSignature(secretKey);
-    }
-    
-    /**
-     * Creates the signature of the object
-     * @param Get the secret key to initialize the signature object
-     * @return Signature for current data
-     */
-    private byte[] createSignature(String secretKey) {
-        try {
-            // Check given key
-            if(secretKey==null) {
-                return null;
-            }
-            
-            // Create a key pair using secretKey as random seed.
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA", "SUN");
-            SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-            random.setSeed(secretKey.getBytes());
-            keyGen.initialize(1024, random);
-            KeyPair pair = keyGen.generateKeyPair();
-            PrivateKey priv = pair.getPrivate();
-            PublicKey pub = pair.getPublic();
-                    
-            // Create a signature object and initialize with secret key
-            Signature dsa = Signature.getInstance("SHA1withDSA", "SUN");             
-            dsa.initSign(priv);
-            
-            // Sign current object
-            dsa.update(tokenKey.getBytes());
-            dsa.update(userIP.getBytes());
-            
-            // Return the signature
-            return dsa.sign();
-            
-        } catch (SignatureException ex) {
-            return null;
-        } catch (InvalidKeyException ex) {
-            return null;
-        } catch (NoSuchAlgorithmException ex) {
-            return null;
-        } catch (NoSuchProviderException ex) {
-            return null;
-        }
-    }
 
-    /**
-     * Check if the current object is valid.
-     * @param secretKey Secret key for the application
-     * @return True if current content is valid or false otherwise
-     */
-    public boolean isValid(String secretKey) {
-        if(signature==null) {
-            return false;
-        }
-        
-        return Arrays.equals(signature, createSignature(secretKey));
-    }
-}
 
 /**
  * Filter for UOC Campus login process. It allows to use the UOC campus to authenticate the user
@@ -137,7 +40,7 @@ public class LoginFilter extends OncePerRequestFilter  {
     /**
      * Bussines object
      */
-    private UOCPelpBussines bussines;
+    //private UOCPelpBussines bussines;
         
     /**
      * UOC Api properties
@@ -145,69 +48,83 @@ public class LoginFilter extends OncePerRequestFilter  {
     private Properties credentials;
     
     /**
-     * Enables or disablse cookies
+     * Enables or disables cookies
      */
     private boolean _useCookies=true;
       
     final static String LOCAL_AUTH_URL = "http://localhost:8080";
        
-    
-    private OAuthClientRequest getOAuthRequest(String redirectURI) {
-        OAuthClientRequest request;
-        try {
-                // Get the authorization uri
-                String authURI=credentials.getProperty("urlUOCApi") + "/webapps/uocapi/oauth/authorize";
-                // Get application keys
-                String clientKey=credentials.getProperty("client");
-                
-                // Create a new OAuth request with application parameters
-                request = OAuthClientRequest
-                        .authorizationLocation(authURI)                                
-                        .setClientId(clientKey)
-                        .setRedirectURI(redirectURI).buildQueryMessage();
-        } catch (OAuthSystemException e) {
-            return null;
-        }
-        
-        return request;
-        
-    }
-    
+   
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain fc) throws ServletException, IOException {
         
+    	String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();
+    	System.out.println(getAlreadyFilteredAttributeName());
+ 
         // Check if authorization is demanded
-        if(request.getSession().getAttribute("authUOC")!=null) {
+    	System.out.println("authUOC: " + request.getSession().getAttribute("authUOC"));
+        if(request.getSession().getAttribute("authUOC") != null) {
             // Get the value for current authUOC status
             String authUOC=(String)request.getSession().getAttribute("authUOC");
             
             // Perform actions
             if("close".compareToIgnoreCase(authUOC)==0) {
-                closeAuthentication(request);
+                closeAuthentication(request, response);
             } else if("request".compareToIgnoreCase(authUOC)==0) {
                 requestAuthentication(request,response);
                 return;
             } else if("authenticated".compareToIgnoreCase(authUOC)==0) {
-                validateAuthentication(request);
+                //validateAuthentication(request);
             }
         } else {
-            validateAuthentication(request);
+            validateAuthentication(request, response);
         }    
         
         // Apply other filters
         fc.doFilter(request, response);
     }
 
-    private void closeAuthentication(HttpServletRequest request) {
-        /*try {
-            // Disable campus connection
-            bussines.setCampusSession("");
-        } catch (InvalidSessionException ex) {
-            Logger.getLogger(LoginFilter.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
+    
+    private OAuthClientRequest getOAuthRequest(String redirectURI) {
+    	OAuthClientRequest request;
+    	try {
+    		// Get the authorization uri
+    		String authURI=credentials.getProperty("urlUOCApi") + "webapps/uocapi/oauth/authorize";
+    		// Get application keys
+    		String clientKey=credentials.getProperty("client");
+
+    		// Create a new OAuth request with application parameters
+    		request = OAuthClientRequest
+    				.authorizationLocation(authURI)                                
+    				.setClientId(clientKey)
+    				.setRedirectURI(redirectURI).buildQueryMessage();
+    	} catch (OAuthSystemException e) {
+    		return null;
+    	}
+
+    	return request;        
+    }
+
+    
+    private void closeAuthentication(HttpServletRequest request, HttpServletResponse response) {
         
-        // TODO: Close authentication session
-        
-        // Remove authentication request
+    	System.out.println("closeAuthentication...");
+    	
+    	Cookie[] cookies = request.getCookies();
+    	if (cookies != null) {
+    		for (int i = 0; i < cookies.length; i++) {
+
+    			String cookieName = cookies[i].getName();
+
+    			if( "apiToken".equalsIgnoreCase(cookieName)  || "apiRefToken".equalsIgnoreCase(cookieName) || "tokenExp".equalsIgnoreCase(cookieName) ){
+    				cookies[i].setValue("");
+    				cookies[i].setPath("/");
+    				cookies[i].setMaxAge(0);
+    			}
+    			response.addCookie(cookies[i]);
+    		}
+    	}
+    	
+        // Remove authentication request    	
         if(request.getSession().getAttribute("authUOC")!=null) {
             request.getSession().removeAttribute("authUOC");
         }
@@ -215,6 +132,7 @@ public class LoginFilter extends OncePerRequestFilter  {
         if(request.getSession().getAttribute("authTokenUOC")!=null) {
             request.getSession().removeAttribute("authTokenUOC");
         }
+        request.getSession().removeAttribute("access_token");
     }
 
     private void requestAuthentication(HttpServletRequest request,HttpServletResponse response) throws IOException {
@@ -223,42 +141,41 @@ public class LoginFilter extends OncePerRequestFilter  {
         String secretKey=credentials.getProperty("secret");
         
         // Create internal redirection
-        String redirectURL=LOCAL_AUTH_URL + request.getRequestURI();
+        String redirectURL = LOCAL_AUTH_URL + request.getRequestURI();
         
         // Check the current authentication status
-        String tokenKey=getAPIToken(request, response,redirectURL);
-        if(tokenKey!=null) {            
+        System.out.println("Obteniendo token...");
+        String tokenKey = getAPIToken( request, response,redirectURL);
+        System.out.println("TokenKey: " + tokenKey);
+        if(tokenKey != null) {            
             // Get temporal user information from request
             String userIP=request.getRemoteAddr();
                         
             // If information is incorrect, stop authentication
             if(userIP==null) {
-                closeAuthentication(request);
+                closeAuthentication(request, response);
                 return;
             }
             
             // Create authentication object
-            SessionTokenKey tokenObject=new SessionTokenKey(secretKey,userIP,tokenKey);
+            SessionTokenKey tokenObject = new SessionTokenKey(secretKey, userIP, tokenKey);
             request.getSession().setAttribute("authTokenUOC", tokenObject);   
             
             // Remove the authorization request
             request.getSession().removeAttribute("authUOC");
+            request.getSession().setAttribute("authUOC", "authenticated"); 
             
             // Get original destination page
             String dstLocalURI=(String)request.getSession().getAttribute("authDst");
+            if(dstLocalURI == null) dstLocalURI = request.getRequestURI();
             request.getSession().removeAttribute("authDst");
             
-            // Set the campus key
-            if(bussines!=null) {
-                try {
-                    bussines.setCampusSession(tokenKey);
-                } catch (InvalidSessionException ex) {
-                    Logger.getLogger(LoginFilter.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+            request.getSession().setAttribute("access_token", tokenKey);
+            
             
             // Redirect to initial destination URL
             String dstURI=LOCAL_AUTH_URL + dstLocalURI;
+            System.out.println("dstURI: " + dstURI);
             response.sendRedirect(dstURI);
             return;
         } 
@@ -268,27 +185,31 @@ public class LoginFilter extends OncePerRequestFilter  {
         request.getSession().setAttribute("authDst", dest);
 
         // Ask for api code
+        System.out.println("Solicitando code...");
+        dest =  getOAuthRequest(redirectURL).getLocationUri()+"&response_type=code&scope=READ";
+        System.out.println("dest: " + dest);
         response.sendRedirect(getOAuthRequest(redirectURL).getLocationUri()+"&response_type=code&scope=READ");
     }
 
-    private void validateAuthentication(HttpServletRequest request) {
+    private void validateAuthentication(HttpServletRequest request, HttpServletResponse response) {
         
+    	System.out.println("validateAuthentication...");
         SessionTokenKey authTokenKey=null;
         
         // Get the application secret key
         String secretKey=credentials.getProperty("secret");
         
         // Get authentication token
-        if(request.getSession().getAttribute("authTokenUOC")!=null) {
+        if(request.getSession().getAttribute("authTokenUOC") != null) {
             Object param=request.getSession().getAttribute("authTokenUOC");
             if(param instanceof SessionTokenKey) {
                 authTokenKey=(SessionTokenKey) param;
             }
-        } 
+        }
                 
         // Check authentication object and remove it if is not valid
-        if(authTokenKey==null || !authTokenKey.isValid(secretKey)) {
-            closeAuthentication(request);
+        if(authTokenKey == null || !authTokenKey.isValid(secretKey)) {
+            closeAuthentication(request, response);
         }
     }
     
@@ -300,7 +221,7 @@ public class LoginFilter extends OncePerRequestFilter  {
         Long expiresIn=null;
         
         // Get token server URI
-        String srvURI=credentials.getProperty("urlUOCApi") + "/webapps/uocapi/oauth/token";
+        String srvURI=credentials.getProperty("urlUOCApi") + "webapps/uocapi/oauth/token";
         
         // Get the application keys
         String secretKey=credentials.getProperty("secret");
@@ -345,7 +266,7 @@ public class LoginFilter extends OncePerRequestFilter  {
                             .setClientId(clientKey).setClientSecret(secretKey)
                             .setRedirectURI(redirectURL).setRefreshToken(refreshToken)
                             .buildBodyMessage();
-
+                        System.out.println("Solicitando access_token ...");
                         // Obtain the toket
                         OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
                         OAuthJSONAccessTokenResponse tokenResponse;
@@ -406,6 +327,8 @@ public class LoginFilter extends OncePerRequestFilter  {
                 .setRedirectURI(redirectURL).setCode(codes[0])
                 .buildBodyMessage();
 
+            	System.out.println("Solicitando access_token 2 ...");
+            
                 // Obtain the toket
                 OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
                 OAuthJSONAccessTokenResponse tokenResponse;
@@ -432,8 +355,10 @@ public class LoginFilter extends OncePerRequestFilter  {
                 
                 
         } catch (OAuthProblemException e1) {
+        	e1.printStackTrace();
             return null;
         } catch (OAuthSystemException e) {
+        	e.printStackTrace();
             return null;
         }   
         
@@ -448,14 +373,6 @@ public class LoginFilter extends OncePerRequestFilter  {
         this.credentials = properties;
     }
     
-
-    public UOCPelpBussines getBussines() {
-        return bussines;
-    }
-
-    public void setBussines(UOCPelpBussines bussines) {
-        this.bussines = bussines;
-    }
 
     
 }

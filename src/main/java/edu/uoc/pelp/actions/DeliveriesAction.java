@@ -14,7 +14,6 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-import org.osid.OsidException;
 
 import uoc.edu.pelp.bussines.PelpConfiguracionBO;
 
@@ -25,6 +24,7 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.exception.AuthorizationException;
 import edu.uoc.pelp.bussines.vo.Activity;
+import edu.uoc.pelp.bussines.vo.Classroom;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverFile;
 import edu.uoc.pelp.bussines.vo.Test;
@@ -38,6 +38,14 @@ import edu.uoc.pelp.exception.PelpException;
 @ResultPath(value = "/")
 @Results({
     @Result(name="index", type="redirectAction", params = {"actionName" , "home"}),
+    @Result(name="rindex", type="redirectAction", params = 
+	{
+    		"actionName" , "home",
+    		"s_assign","${s_assign}",
+    		"s_aula","${s_aula}",
+    		"s_activ","${s_activ}",
+    		"ajaxCall","false"
+	}),
     @Result(name = "success", location = "jsp/home.jsp")
 }) 
 
@@ -67,6 +75,7 @@ public class DeliveriesAction extends ActionSupport {
 	private String s_assign;
 	private String s_aula;
 	private String s_activ;
+	private boolean ajaxCall = true;
 
 	private String auxInfo;
 	private String resulMessage;
@@ -77,22 +86,35 @@ public class DeliveriesAction extends ActionSupport {
 	private String password;
 	private String imageURL;
 	private String fullName;
+	private Boolean teacher;
+	private DeliverDetail[] listDeliverDetails;
 
 	private static Logger log = Logger.getLogger(DeliveriesAction.class);
 
 	public String execute() throws Exception {
 		
-		if(bUOC.getUserInformation()!= null){
-			this.rutaFile();
-			this.menuTop();
+		if (bUOC.getUserInformation() != null) {
+			listSubjects = bUOC.getUserSubjects();
+			if (s_assign != null && s_assign.length()>0) {
+				String[] infoAssing = s_assign.split("_");
+				teacher = bUOC.isTeacher(new UOCSubject(infoAssing[0],
+						infoAssing[2]));
+				listClassroms = bUOC.getUserClassrooms(new UOCSubject(
+						infoAssing[0], infoAssing[2]));
+			}
+			if (s_aula != null && s_aula.length() > 0 && s_assign != null) {
+				String[] infoAssing = s_assign.split("_");
+				listActivity = bUOC.getSubjectActivities(new UOCSubject(
+						infoAssing[0], infoAssing[2]));
+			}
+			
 			imageURL = bUOC.getUserInformation().getUserPhoto();
 			if(imageURL== null)imageURL = "img/user.png";
 			fullName = bUOC.getUserInformation().getUserFullName();
-		}else{
-			imageURL= null;
+		} else {
+			imageURL = null;
 			fullName = null;
 		}
-		
 		this.fileupload();
 		this.crearDeliverFile();
 		this.listFile();
@@ -100,7 +122,7 @@ public class DeliveriesAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-	public String auth() throws Exception, OsidException{
+	public String auth() throws Exception {
 		// FIXME
 		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
 		return "index";
@@ -163,12 +185,10 @@ public class DeliveriesAction extends ActionSupport {
 							}
 							if (nameFileHas.equals("c" + nameFileFolder)) {
 								isFile = true;
-								log.warn("ENTRA CODIGO");
 								files[i].setIsCode(true);
 							}
 							if (nameFileHas.equals("f" + nameFileFolder)) {
 								isFile = true;
-								log.warn("ENTRA F PRINCIPAL");
 								files[i].setIsMain(true);
 							}
 						}
@@ -183,7 +203,6 @@ public class DeliveriesAction extends ActionSupport {
 						}
 
 						if (finalDeliver) {
-
 							DeliverDetail objDetail = bUOC.addDeliver(
 									objActivity, files);
 							resulMessage = objDetail.getCompileMessage();
@@ -223,7 +242,7 @@ public class DeliveriesAction extends ActionSupport {
 					} else if (files != null) {
 						DeliverDetail objDetail = bUOC.compileCode(files,
 								"JAVA", tests, ruta);
-						resulMessage = objDetail.getCompileMessage(); // FIXME Flata implementar la part de la engine diu not  support yet.
+						resulMessage = objDetail.getCompileMessage();
 						if (resulMessage.length() == 0)
 							resulMessage = "OK";
 					}
@@ -234,31 +253,51 @@ public class DeliveriesAction extends ActionSupport {
 	}
 
 	private void listFile() throws Exception {
+		String ruta = this.rutaFile();
+		File directorioPracticas = new File(ruta);
+		File[] ficheros = directorioPracticas.listFiles();
+		if (ficheros != null && ficheros.length > 0) {
+			log.info("Ficheros a mostrar: " + ficheros.length);
+			fileDim = ficheros.length;
+			matrizFile = new String[fileDim][5];
+			for (int i = 0; i < ficheros.length; i++) {
+				File file = ficheros[i];
+				log.info("NOMBRE DEL FICHERO " + file.getName());
+				matrizFile[i][0] = file.getName();
+				matrizFile[i][1] = "true";
+				matrizFile[i][2] = "true";
+				matrizFile[i][3] = "true";
+				matrizFile[i][4] = String.valueOf(file.getName()
+						.hashCode());
+			}
+		} else {
+			matrizFile = null;
+			fileDim = 0;
+		}
 		
-				String ruta = this.rutaFile();
-				File directorioPracticas = new File(ruta);
-				File[] ficheros = directorioPracticas.listFiles();
-				if (ficheros != null && ficheros.length > 0) {
-					log.info("Ficheros a mostrar: " + ficheros.length);
-					// listDeliversFile = new ArrayList<DeliverFile>();
-					fileDim = ficheros.length;
-					matrizFile = new String[fileDim][5];
-					for (int i = 0; i < ficheros.length; i++) {
-						File file = ficheros[i];
-						log.info("NOMBRE DEL FICHERO " + file.getName());
-						matrizFile[i][0] = file.getName();
-						matrizFile[i][1] = "true";
-						matrizFile[i][2] = "true";
-						matrizFile[i][3] = "true";
-						matrizFile[i][4] = String.valueOf(file.getName()
-								.hashCode());
-					}
-				} else {
-					matrizFile = null;
-					fileDim = 0;
+		if (s_aula != null && s_aula.length() > 0 && s_assign != null
+				&& s_activ != null && s_activ.length() > 0) {
+			Activity objActivity = new Activity();
+			for (int j = 0; j < listActivity.length; j++) {
+				if (listActivity[j].getIndex() == Integer.parseInt(s_activ)) {
+					objActivity = listActivity[j];
 				}
-			
-		
+			}
+			String[] infoAssing = s_assign.split("_");
+			if(teacher){
+				Classroom objClass = null;
+				for(int i = 0;i<listClassroms.length;i++){
+					if(listClassroms[i].getIndex()== Integer.parseInt(s_aula)){
+						objClass = listClassroms[i]; 
+					}
+				}
+				bUOC.getAllClassroomDeliverDetails(objActivity, new UOCSubject(
+						infoAssing[0], infoAssing[2]), objClass.getIndex());
+			}else{
+				setListDeliverDetails(bUOC.getUserDeliverDetails(new UOCSubject(
+						infoAssing[0], infoAssing[2]), objActivity.getIndex()));	
+			}
+		}
 	}
 
 	private String rutaFile() throws Exception{
@@ -538,6 +577,30 @@ public class DeliveriesAction extends ActionSupport {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
+	}
+
+	public boolean isAjaxCall() {
+		return ajaxCall;
+	}
+
+	public void setAjaxCall(boolean ajaxCall) {
+		this.ajaxCall = ajaxCall;
+	}
+
+	public Boolean getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(Boolean teacher) {
+		this.teacher = teacher;
+	}
+
+	public DeliverDetail[] getListDeliverDetails() {
+		return listDeliverDetails;
+	}
+
+	public void setListDeliverDetails(DeliverDetail[] listDeliverDetails) {
+		this.listDeliverDetails = listDeliverDetails;
 	}
 
 }

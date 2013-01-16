@@ -24,7 +24,6 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-import org.osid.OsidException;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -102,7 +101,7 @@ public class TeacherAction extends ActionSupport {
 		return SUCCESS;
 	}
 
-	public String auth() throws Exception, OsidException {
+	public String auth() throws Exception {
 		// FIXME
 		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
 		return "index";

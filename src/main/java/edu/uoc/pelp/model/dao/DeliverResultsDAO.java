@@ -256,6 +256,7 @@ public class DeliverResultsDAO implements IDeliverResultDAO {
             DeliverResult newObj=ObjectFactory.getDeliverResultReg(results);
         
             // Store the object
+            transaction=getSession().beginTransaction();
             getSession().saveOrUpdate(newObj);
             
             // Add test results
@@ -394,6 +395,7 @@ public class DeliverResultsDAO implements IDeliverResultDAO {
         
         List<edu.uoc.pelp.model.vo.DeliverResult> newObj=query.list();
         if(newObj==null || newObj.size()!=1) {
+        	getSession().close();
             return null;
         }
         edu.uoc.pelp.model.vo.DeliverResult deliverResultsReg=newObj.get(0);
@@ -406,8 +408,12 @@ public class DeliverResultsDAO implements IDeliverResultDAO {
             testResultList.toArray(testResultArray);
         }
 
+        DeliverResults objResult = null;
         // Add the final register
-        return ObjectFactory.getDeliverResultObj(deliverResultsReg, testResultArray);
+        objResult = ObjectFactory.getDeliverResultObj(deliverResultsReg, testResultArray);
+        getSession().close();
+        return objResult;
+        		
     }
 
     @Override

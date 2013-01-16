@@ -929,7 +929,6 @@ public class UOCPelpBussinesImpl extends PelpBussinesImpl implements UOCPelpBuss
     	return _engine.isStudent(subjectID);
     }
     public void logout() throws PelpException{
-    	
     	//this.setCampusSession("logout");
     	System.out.println("logout");
     }
