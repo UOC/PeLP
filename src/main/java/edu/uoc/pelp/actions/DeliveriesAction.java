@@ -14,10 +14,7 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 
 import uoc.edu.pelp.bussines.PelpConfiguracionBO;
 
@@ -126,11 +123,7 @@ public class DeliveriesAction extends ActionSupport {
 		return SUCCESS;
 	}
 	
-<<<<<<< HEAD
 	public String auth() throws Exception{
-=======
-	public String auth() throws Exception {
->>>>>>> origin/master
 		// FIXME
 		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
 		return "index";
