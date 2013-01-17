@@ -1,16 +1,5 @@
 package uoc.edu.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import javax.annotation.Resource;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
-
-import uoc.edu.pelp.model.vo.Example;
 
 /*@ContextConfiguration("/test-services.xml")
 public class ExampleServiceTest extends

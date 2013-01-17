@@ -21,6 +21,7 @@ package edu.uoc.pelp.engine.campus.UOC;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.http.HttpResponse;
@@ -255,7 +256,7 @@ public class CampusConnection implements ICampusConnection {
             Semester semester=new Semester(semesterCode);
                     
             // Build new Subject identifier
-            retList[i]=new SubjectID(code,semester);
+            retList[i]=new SubjectID(code,semester, classObj.getId());
         }
         
         return retList;
@@ -268,7 +269,48 @@ public class CampusConnection implements ICampusConnection {
 
     @Override
     public IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        String classroomsString = Get("classrooms");
+        log.info("classroomsString: " + classroomsString);
+        
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(java.util.Date.class, new DateDeserializer());
+        
+        Gson gson = gsonBuilder.create();        
+
+        ClassroomList classroomList = gson.fromJson(classroomsString, ClassroomList.class);
+        edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomList.getClassrooms();
+        
+        List<IClassroomID> lista = new ArrayList<IClassroomID>();
+        
+        if( subject != null ){
+        	// Filtramos por asignatura
+	        SubjectID subjectID = (SubjectID) subject;
+	        
+	        for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom : classrooms) {
+	        	// comparamos solo el codigo de asignatura y el semestre
+	        	// new SubjectID(getCode(classroom.getCode() ), new Semester( getSemester(classroom.getCode() )), classroom.getId()) )
+	        	/*
+				if(subjectID.getCode().equals( getCode(classroom.getCode()) )  && subjectID.getSemester().equals(  new Semester( getSemester(classroom.getCode() ) ) ) ){
+				*/
+				if( subjectID.getDomainID().equals( classroom.getFatherId() )  ) {	
+					ClassroomID classroomID = new ClassroomID(subjectID, getNumAula( classroom.getCode() ));
+					lista.add( classroomID ); 
+				}
+			}
+	        
+        } else {
+        	// Devolvemos todas las aulas
+        	for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom : classrooms) {
+        		SubjectID subjectID = new SubjectID(getCode(classroom.getCode() ), new Semester( getSemester(classroom.getCode() )), classroom.getId()) ;
+				ClassroomID classroomID = new ClassroomID(subjectID, getNumAula( classroom.getCode() ));
+				lista.add( classroomID ); 
+        	}
+        }
+        
+        IClassroomID[] retVal= new IClassroomID[lista.size()];
+        lista.toArray(retVal);
+        return retVal;
     }
 
     @Override
@@ -370,11 +412,11 @@ public class CampusConnection implements ICampusConnection {
         SubjectID id=(SubjectID)subjectID;
         
         // Ask for subjec data
-        edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom = getSubjectData( id.getCode() );
+        edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom = getSubjectData( id.getDomainID() );
         
         // Create the output object
-        Subject retVal=new Subject(subjectID);
-        retVal.setDescription(classroom.getTitle());
+        Subject retVal = new Subject(subjectID);
+        retVal.setDescription( classroom.getTitle() );
         //retVal.setLabFlag(true);
         //retVal.setParent(subjectID);
         //retVal.setShortName(_token);
@@ -431,13 +473,28 @@ public class CampusConnection implements ICampusConnection {
     }
     
     private static String getCode( String code ){
-    	return  code.substring( code.lastIndexOf("_") + 1 ); 
+    	String[] tokens = code.split("_");
+    	if( tokens.length >= 3 ){
+    		return tokens[2];
+    	} else {
+    		return null;
+    	}
     }
     
-    // uoc_121_02.003
-    // uoc2000_102_71.502
+    // uoc_121_02.003_01
+    // uoc2000_102_71.502_01
     private static String getSemester( String code ){
-    	return  "20" + code.substring(code.indexOf("_") + 1, code.lastIndexOf("_")); 
+    	String[] tokens = code.split("_");
+    	return  "20" + tokens[1]; 
+    }
+
+    private static int getNumAula( String code ){
+    	String[] tokens = code.split("_");
+    	if( tokens.length >= 4 ){
+    		return Integer.valueOf( tokens[3] );
+    	} else {
+    		return 0;
+    	}
     }
     
     private static boolean isStudent( String[] assignments ){

@@ -25,6 +25,8 @@ import edu.uoc.pelp.bussines.vo.Subject;
  * @author Xavier Baró
  */
 public class UOCSubject extends Subject {
+	
+	
         
     public UOCSubject(String semester, String subject) {
         super(getStrSubjectID(semester,subject));
