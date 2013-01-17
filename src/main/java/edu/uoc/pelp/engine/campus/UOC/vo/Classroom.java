@@ -29,6 +29,8 @@ public class Classroom {
     private java.lang.String color;
     private java.lang.String fatherId;
     private String[] assignments;
+    private String code;
+         
 
     public String getId() {
         return id;
@@ -69,4 +71,12 @@ public class Classroom {
     public void setAssignments(String[] assignments) {
         this.assignments = assignments;
     }
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 }

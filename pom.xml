@@ -1,53 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>oki-struts-spring-hibernate-jboss-webapp</artifactId>
-		<groupId>edu.uoc.te.maven</groupId>
-		<version>1.2.1</version>
-	</parent>
-	<repositories>
-		<repository>
-			<id>UOCTE</id>
-			<url>http://te.artifactory.uoc.es/artifactory/repo</url>
-		</repository>
-		<repository>
-			<id>artifactory.uoc.es</id>
-			<name>artifactory.uoc.es-releases</name>
-			<url>http://artifactory.uoc.es/artifactory/repo</url>
-		</repository>
 
-	</repositories>
 	<dependencies>
-		<dependency>
-			<groupId>biz.source_code</groupId>
-			<artifactId>base64coder</artifactId>
-			<version>2010-12-19</version>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.17</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>3.5.6-Final</version>
+	
+	<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-core</artifactId>
+			<version>2.2.1.1</version>
 			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-			<version>3.5.6-Final</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-c3p0</artifactId>
-			<version>3.5.6-Final</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.struts</groupId>
@@ -76,10 +38,112 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-convention-plugin</artifactId>
+			<version>2.2.1.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.5.6-Final</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.5.6-Final</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+        <dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-context</artifactId>
+        	<version>3.0.5.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-core</artifactId>
+        	<version>3.0.5.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-beans</artifactId>
+        	<version>3.0.5.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>3.0.5.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>3.0.5.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>3.0.5.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>3.0.5.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+        <dependency>
+        	<groupId>org.springframework</groupId>
+        	<artifactId>spring-web</artifactId>
+        	<version>3.0.5.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
+        </dependency>
+		<dependency>
+			<groupId>biz.source_code</groupId>
+			<artifactId>base64coder</artifactId>
+			<version>2010-12-19</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.17</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.struts</groupId>
 			<artifactId>struts2-json-plugin</artifactId>
 			<version>2.2.1.1</version>
 		</dependency>
-
 
 		<dependency>
 			<!-- This artifact is already loaded by JBoss 4.2.3 -->
@@ -104,134 +168,37 @@
 			<version>1.4.1</version>
 		</dependency>
 
-		<!-- SERVICES RAC -->
-		<dependency>
-			<groupId>remoteinterface</groupId>
-			<artifactId>remoteinterface-ws-client</artifactId>
-			<version>2.0.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>edu.uoc.serveis.gat.expedient-ws</groupId>
-			<artifactId>expedient-ws-client</artifactId>
-			<version>1.0.3</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>edu.uoc.serveis.gat.matricula-ws</groupId>
-			<artifactId>matricula-ws-client</artifactId>
-			<version>1.0.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>edu.uoc.serveis.gat.rac-ws</groupId>
-			<artifactId>rac-ws-client</artifactId>
-			<version>1.1.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>edu.uoc.serveis.gat.dades-academiques-ws</groupId>
-			<artifactId>dades-academiques-ws-client</artifactId>
-			<version>1.0.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-
-			<groupId>org.campusproject</groupId>
-			<artifactId>CampusComponentsJava</artifactId>
-			<version>1.4.0</version> 
-			<type>jar</type>
-			<classifier>config-uoc</classifier>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.campusproject</groupId>
-			<artifactId>CampusComponentsJava</artifactId>
-			<version>1.4.0</version> 
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>OKI</groupId>
-			<artifactId>OkiOSID</artifactId>
-			<version>2.0</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-
-
-	<dependency>
-		    <groupId>edu.uoc.serveis.tercers.tercer-ws</groupId>
-		    <artifactId>tercer-ws-client</artifactId>
-		    <version>1.1.0</version>
-		    <scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-
 		
+
+		<dependency>
+			<groupId>org.apache.amber</groupId>
+			<artifactId>amber-oauth2-client</artifactId>
+			<version>0.22-incubating</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+
 
 	</dependencies>
 	<modelVersion>4.0.0</modelVersion>
@@ -292,8 +259,8 @@
 
 				<!--deploy parameters -->
 				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
-				
-				<jbossdeployhome>/Users/juanfrasr/servidor/pelpserver/server/default/deploy</jbossdeployhome>
+
+				<jbossdeployhome>/home/toni/opt/jboss4/server/default/deploy</jbossdeployhome>
 			</properties>
 			<build>
 				<plugins>

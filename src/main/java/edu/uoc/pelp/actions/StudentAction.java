@@ -131,6 +131,7 @@ public class StudentAction extends ActionSupport {
     public String logout() throws PelpException{
     	HttpServletRequest request = ServletActionContext.getRequest();
     	request.getSession().setAttribute("authUOC", "close");
+    	bUOC.setCampusConnection(new CampusConnection());
     	bUOC.logout();
     	return "index";
     }

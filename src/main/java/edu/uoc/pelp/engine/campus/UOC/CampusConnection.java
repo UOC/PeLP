@@ -18,27 +18,39 @@
  */
 package edu.uoc.pelp.engine.campus.UOC;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import edu.uoc.pelp.engine.campus.*;
+
+import edu.uoc.pelp.engine.campus.Classroom;
+import edu.uoc.pelp.engine.campus.ICampusConnection;
+import edu.uoc.pelp.engine.campus.IClassroomID;
+import edu.uoc.pelp.engine.campus.ISubjectID;
+import edu.uoc.pelp.engine.campus.ITimePeriod;
+import edu.uoc.pelp.engine.campus.IUserID;
+import edu.uoc.pelp.engine.campus.Person;
+import edu.uoc.pelp.engine.campus.Subject;
+import edu.uoc.pelp.engine.campus.UserRoles;
 import edu.uoc.pelp.engine.campus.UOC.vo.ClassroomList;
 import edu.uoc.pelp.engine.campus.UOC.vo.PersonList;
 import edu.uoc.pelp.engine.campus.UOC.vo.User;
 import edu.uoc.pelp.exception.AuthPelpException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Properties;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 /**
  * Implements the campus access for the Universitat Oberta de Catalunya (UOC).
@@ -56,6 +68,7 @@ public class CampusConnection implements ICampusConnection {
      */    
     private String _token = null;
     
+    private static final Logger log = Logger.getLogger(CampusConnection.class);
     
     public CampusConnection() {
         
@@ -88,12 +101,17 @@ public class CampusConnection implements ICampusConnection {
         String operationURL = credentials.getProperty("urlUOCApi") + credentials.getProperty("apiPath") + operation;
         HttpGet httpGet = new HttpGet(operationURL+"?access_token="+_token);
         httpGet.setHeader("content-type", "application/json");
+        log.debug(operationURL);
         try {
             HttpResponse resp = httpClient.execute(httpGet);
-            if(resp.getStatusLine().getStatusCode()!=200) {
+            int statusCode = resp.getStatusLine().getStatusCode();
+            if(statusCode != 200) {
+            	log.warn("operationURL Response: " + operationURL + " -> " + statusCode);
                 return null;
             }
-            return EntityUtils.toString(resp.getEntity());
+            String responseString = EntityUtils.toString(resp.getEntity());
+            log.debug(responseString);
+            return responseString;
         } catch (Exception ex) {
             return null;
         }
@@ -158,13 +176,13 @@ public class CampusConnection implements ICampusConnection {
             return null;
         }
        
-        String userJSON=Get("subjects/" + id);
+        String userJSON = Get("subjects/" + id);
         
         
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(java.util.Date.class, new DateDeserializer());
         
-        Gson gson=gsonBuilder.create();        
+        Gson gson = gsonBuilder.create();        
 
         return gson.fromJson(userJSON, edu.uoc.pelp.engine.campus.UOC.vo.Classroom.class);
     }
@@ -231,14 +249,14 @@ public class CampusConnection implements ICampusConnection {
         
         for(int i=0;i<classList.length;i++) {
             edu.uoc.pelp.engine.campus.UOC.vo.Classroom classObj=classList[i];
-            String code=classObj.getId();
-            String semesterCode="";
+            String code = getCode(classObj.getCode());
+            String semesterCode = getSemester( classObj.getCode() );
            
             // Create the semester object
             Semester semester=new Semester(semesterCode);
                     
             // Build new Subject identifier
-            retList[i]=new SubjectID(code,semester);
+            retList[i]=new SubjectID(code,semester, classObj.getId());
         }
         
         return retList;
@@ -251,7 +269,48 @@ public class CampusConnection implements ICampusConnection {
 
     @Override
     public IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        String classroomsString = Get("classrooms");
+        log.info("classroomsString: " + classroomsString);
+        
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(java.util.Date.class, new DateDeserializer());
+        
+        Gson gson = gsonBuilder.create();        
+
+        ClassroomList classroomList = gson.fromJson(classroomsString, ClassroomList.class);
+        edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomList.getClassrooms();
+        
+        List<IClassroomID> lista = new ArrayList<IClassroomID>();
+        
+        if( subject != null ){
+        	// Filtramos por asignatura
+	        SubjectID subjectID = (SubjectID) subject;
+	        
+	        for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom : classrooms) {
+	        	// comparamos solo el codigo de asignatura y el semestre
+	        	// new SubjectID(getCode(classroom.getCode() ), new Semester( getSemester(classroom.getCode() )), classroom.getId()) )
+	        	/*
+				if(subjectID.getCode().equals( getCode(classroom.getCode()) )  && subjectID.getSemester().equals(  new Semester( getSemester(classroom.getCode() ) ) ) ){
+				*/
+				if( subjectID.getDomainID().equals( classroom.getFatherId() )  ) {	
+					ClassroomID classroomID = new ClassroomID(subjectID, getNumAula( classroom.getCode() ));
+					lista.add( classroomID ); 
+				}
+			}
+	        
+        } else {
+        	// Devolvemos todas las aulas
+        	for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom : classrooms) {
+        		SubjectID subjectID = new SubjectID(getCode(classroom.getCode() ), new Semester( getSemester(classroom.getCode() )), classroom.getId()) ;
+				ClassroomID classroomID = new ClassroomID(subjectID, getNumAula( classroom.getCode() ));
+				lista.add( classroomID ); 
+        	}
+        }
+        
+        IClassroomID[] retVal= new IClassroomID[lista.size()];
+        lista.toArray(retVal);
+        return retVal;
     }
 
     @Override
@@ -276,9 +335,21 @@ public class CampusConnection implements ICampusConnection {
     	ClassroomList classroomsList = getCampusUserSubjects();
     	if( classroomsList != null){
     		
-    		edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomsList.getClassrooms();
+    		SubjectID subjectID = (SubjectID) subject;
+     		edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomsList.getClassrooms();
     		for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom : classrooms) {
-				//if(classroom.get)
+				if( getCode(classroom.getCode()).equals( subjectID.getCode() ) ){
+					if( role == UserRoles.Student  ){
+						if( isStudent( classroom.getAssignments() ) ){
+							return true;
+						}
+					}
+					if( role == UserRoles.Teacher  ){
+						if( isTeacher( classroom.getAssignments() ) ){
+							return true;
+						}
+					}					
+				}
 			}
     	}
     	
@@ -341,11 +412,11 @@ public class CampusConnection implements ICampusConnection {
         SubjectID id=(SubjectID)subjectID;
         
         // Ask for subjec data
-        edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom=getSubjectData(id.getCode());
+        edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom = getSubjectData( id.getDomainID() );
         
         // Create the output object
-        Subject retVal=new Subject(subjectID);
-        retVal.setDescription(classroom.getTitle());
+        Subject retVal = new Subject(subjectID);
+        retVal.setDescription( classroom.getTitle() );
         //retVal.setLabFlag(true);
         //retVal.setParent(subjectID);
         //retVal.setShortName(_token);
@@ -400,5 +471,47 @@ public class CampusConnection implements ICampusConnection {
     public ITimePeriod[] getActivePeriods() {
         return getPeriods();
     }
+    
+    private static String getCode( String code ){
+    	String[] tokens = code.split("_");
+    	if( tokens.length >= 3 ){
+    		return tokens[2];
+    	} else {
+    		return null;
+    	}
+    }
+    
+    // uoc_121_02.003_01
+    // uoc2000_102_71.502_01
+    private static String getSemester( String code ){
+    	String[] tokens = code.split("_");
+    	return  "20" + tokens[1]; 
+    }
 
+    private static int getNumAula( String code ){
+    	String[] tokens = code.split("_");
+    	if( tokens.length >= 4 ){
+    		return Integer.valueOf( tokens[3] );
+    	} else {
+    		return 0;
+    	}
+    }
+    
+    private static boolean isStudent( String[] assignments ){
+    	for (String assig : assignments) {
+			if(assig.equalsIgnoreCase( Constants.ESTUDIANTE )){
+				return true;
+			}
+		}
+    	return false;
+    }
+    
+    private static boolean isTeacher( String[] assignments ){
+    	for (String assig : assignments) {
+			if(assig.equalsIgnoreCase( Constants.RESPONSABLE ) || assig.equalsIgnoreCase( Constants.PROFESSOR )){
+				return true;
+			}
+		}
+    	return false;
+    }
 }

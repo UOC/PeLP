@@ -24,7 +24,10 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 
 import com.opensymphony.xwork2.ActionSupport;
 
