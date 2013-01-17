@@ -26,7 +26,6 @@ import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-import org.osid.OsidException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -136,7 +135,7 @@ public class StudentAction extends ActionSupport {
     	return "index";
     }
     
-    public String auth() throws Exception, OsidException{
+    public String auth() throws Exception{
     	// FIXME
 		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
     	HttpServletRequest request = ServletActionContext.getRequest();

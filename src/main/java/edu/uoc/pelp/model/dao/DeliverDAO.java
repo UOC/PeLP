@@ -673,6 +673,7 @@ public class DeliverDAO implements IDeliverDAO {
         query.setParameter("activityIndex", activityPK.getActivityIndex());
         query.setParameter("classroom", classPK.toString());
         List<edu.uoc.pelp.model.vo.Deliver> list=query.list();*/
+        getSession().beginTransaction();
         String SQL="SELECT d1.* " +
                 "FROM pelp.deliver d1 " + 
                 "LEFT JOIN pelp.deliver d2 ON d1.semester=d2.semester and d1.subject=d2.subject and d1.activityIndex=d2.activityIndex and d1.userID=d2.userID and d1.deliverIndex<d2.deliverIndex " +
@@ -691,8 +692,11 @@ public class DeliverDAO implements IDeliverDAO {
         query.setParameter("classroom", classPK.toString());
         List<edu.uoc.pelp.model.vo.Deliver> list=query.list();
         
+        List<Deliver> listDelivers = getDeliverList(list); 
+        
+        getSession().close();
         // Return the results
-        return getDeliverList(list); 
+        return listDelivers; 
     }
     
     @Override

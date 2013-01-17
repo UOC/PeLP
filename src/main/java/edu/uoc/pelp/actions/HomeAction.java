@@ -11,6 +11,7 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.sun.tools.javac.code.Attribute.Array;
 
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
@@ -122,10 +123,9 @@ public class HomeAction extends ActionSupport {
 							objClassroom = listClassroms[i];
 						}
 					}
-					listDeliverDetails = bUOC.getAllClassroomDeliverDetails(objActivity, objClassroom);
-//					listDeliverDetails = bUOC.getLastClassroomDeliverDetails(objActivity,
-//							new UOCSubject(infoAssing[0], infoAssing[2]),
-//							objActivity.getIndex());
+					//listDeliverDetails = bUOC.getAllClassroomDeliverDetails(objActivity, objClassroom);
+					listDeliverDetails = bUOC.getLastClassroomDeliverDetails(objActivity, objClassroom);
+					//this.listStudents(listDeliverDetails);
 				}else{
 					listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
 							infoAssing[0], infoAssing[2]), objActivity.getIndex());	
@@ -146,6 +146,24 @@ public class HomeAction extends ActionSupport {
 		}
 
 		return toReturn;
+	}
+	private String listStudents(DeliverDetail[] listDelivers){
+		String arrayStudents[][] = null;
+		int userid = 0;
+		int pos =-1;
+		for (int i = 0; i < listDelivers.length; i++) {
+			
+			
+			if(userid!=Integer.parseInt(listDelivers[i].getUser().getUserID())){
+				pos++;
+				arrayStudents[pos][0]= listDelivers[i].getUser().getUsername();
+			}
+			
+			if(listDelivers[i]!=null)System.out.println(listDelivers[i].getUser().getUsername());
+			userid =  Integer.parseInt(listDelivers[i].getUser().getUserID());
+		}
+		
+		return "";
 	}
 	
 	public String combo() throws PelpException{
