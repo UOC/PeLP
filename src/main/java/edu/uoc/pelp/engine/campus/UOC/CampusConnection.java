@@ -50,6 +50,7 @@ import edu.uoc.pelp.engine.campus.UserRoles;
 import edu.uoc.pelp.engine.campus.UOC.vo.ClassroomList;
 import edu.uoc.pelp.engine.campus.UOC.vo.PersonList;
 import edu.uoc.pelp.engine.campus.UOC.vo.User;
+import edu.uoc.pelp.engine.campus.UOC.vo.UserList;
 import edu.uoc.pelp.exception.AuthPelpException;
 
 /**
@@ -269,7 +270,11 @@ public class CampusConnection implements ICampusConnection {
 
     @Override
     public IClassroomID[] getUserClassrooms(ISubjectID subject) throws AuthPelpException {
-        
+        return getUserClassrooms(null, subject);
+    }
+
+    @Override
+    public IClassroomID[] getUserClassrooms(UserRoles userRole, ISubjectID subject) throws AuthPelpException {
         String classroomsString = Get("classrooms");
         log.info("classroomsString: " + classroomsString);
         
@@ -290,12 +295,25 @@ public class CampusConnection implements ICampusConnection {
 	        for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom : classrooms) {
 	        	// comparamos solo el codigo de asignatura y el semestre
 	        	// new SubjectID(getCode(classroom.getCode() ), new Semester( getSemester(classroom.getCode() )), classroom.getId()) )
-	        	/*
+	        	
 				if(subjectID.getCode().equals( getCode(classroom.getCode()) )  && subjectID.getSemester().equals(  new Semester( getSemester(classroom.getCode() ) ) ) ){
-				*/
-				if( subjectID.getDomainID().equals( classroom.getFatherId() )  ) {	
+					subjectID.setDomainID(classroom.getFatherId());
 					ClassroomID classroomID = new ClassroomID(subjectID, getNumAula( classroom.getCode() ));
-					lista.add( classroomID ); 
+					
+					if( userRole != null){
+						if(userRole.compareTo(UserRoles.Student) == 0 && isStudent(classroom.getAssignments())){
+							lista.add( classroomID );
+						}
+						if(userRole.compareTo(UserRoles.Teacher) == 0 && isTeacher(classroom.getAssignments())){
+							lista.add( classroomID );
+						}
+						if(userRole.compareTo(UserRoles.MainTeacher) == 0 && isTeacher(classroom.getAssignments())){
+							lista.add( classroomID );
+						}
+						
+					} else {
+						lista.add( classroomID );
+					}
 				}
 			}
 	        
@@ -304,18 +322,26 @@ public class CampusConnection implements ICampusConnection {
         	for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom : classrooms) {
         		SubjectID subjectID = new SubjectID(getCode(classroom.getCode() ), new Semester( getSemester(classroom.getCode() )), classroom.getId()) ;
 				ClassroomID classroomID = new ClassroomID(subjectID, getNumAula( classroom.getCode() ));
-				lista.add( classroomID ); 
+				if( userRole != null){
+					if(userRole.compareTo(UserRoles.Student) == 0 && isStudent(classroom.getAssignments())){
+						lista.add( classroomID );
+					}
+					if(userRole.compareTo(UserRoles.Teacher) == 0 && isTeacher(classroom.getAssignments())){
+						lista.add( classroomID );
+					}
+					if(userRole.compareTo(UserRoles.MainTeacher) == 0 && isTeacher(classroom.getAssignments())){
+						lista.add( classroomID );
+					}
+					
+				} else {
+					lista.add( classroomID );
+				}
         	}
         }
         
         IClassroomID[] retVal= new IClassroomID[lista.size()];
         lista.toArray(retVal);
         return retVal;
-    }
-
-    @Override
-    public IClassroomID[] getUserClassrooms(UserRoles userRole, ISubjectID subject) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -339,20 +365,24 @@ public class CampusConnection implements ICampusConnection {
      		edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomsList.getClassrooms();
     		for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroom : classrooms) {
 				if( getCode(classroom.getCode()).equals( subjectID.getCode() ) ){
-					if( role == UserRoles.Student  ){
+					if( UserRoles.Student.compareTo(role) == 0  ){
 						if( isStudent( classroom.getAssignments() ) ){
 							return true;
 						}
 					}
-					if( role == UserRoles.Teacher  ){
+					if( UserRoles.Teacher.compareTo(role) == 0  ){
 						if( isTeacher( classroom.getAssignments() ) ){
 							return true;
 						}
-					}					
+					}	
+					if( UserRoles.MainTeacher.compareTo(role) == 0  ){
+						if( isTeacher( classroom.getAssignments() ) ){
+							return true;
+						}
+					}	
 				}
 			}
     	}
-    	
     	
     	return isRole;
     }
@@ -364,7 +394,17 @@ public class CampusConnection implements ICampusConnection {
 
     @Override
     public boolean isRole(UserRoles role, IClassroomID classroom) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+    	ClassroomID classroomID = (ClassroomID) classroom;
+    	IClassroomID[] classrooms = getUserClassrooms(role, classroomID.getSubject());
+    	
+    	for (IClassroomID iClassroomID : classrooms) {
+    		ClassroomID classroomIDaux = (ClassroomID) iClassroomID;
+			if( classroomIDaux.equals(classroomID)  ) {
+				return true;
+			}
+		}
+    	return false;
     }
 
     @Override
@@ -399,7 +439,7 @@ public class CampusConnection implements ICampusConnection {
 
     @Override
     public boolean isCampusConnection() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
 
     @Override
@@ -426,7 +466,74 @@ public class CampusConnection implements ICampusConnection {
 
     @Override
     public Classroom getClassroomData(IClassroomID classroomID) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    	// Get custom subject identifier
+    	ClassroomID classroomId = (ClassroomID) classroomID;
+    	
+    	SubjectID subjectId = classroomId.getSubject();
+        
+    	Classroom classroom = new Classroom(classroomId);
+    	
+    	
+        String classroomsString = Get("classrooms");
+        log.info("classroomsString: " + classroomsString);
+        
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(java.util.Date.class, new DateDeserializer());
+        
+        Gson gson = gsonBuilder.create();        
+
+        ClassroomList classroomList = gson.fromJson(classroomsString, ClassroomList.class);
+        edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomList.getClassrooms();
+        
+        List<IClassroomID> lista = new ArrayList<IClassroomID>();
+        String identificadorAula = null;
+	     
+	    for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroomUOC : classrooms) {
+	    	
+	    	if( classroomUOC.getFatherId().equals( subjectId.getDomainID() ) ){
+	    		// Misma asignatura
+	    		if( getNumAula( classroomUOC.getCode()) == classroomId.getClassIdx().intValue()  ){
+	    			identificadorAula = classroomUOC.getId();
+	    			break;
+	    		}
+	    	}	    	
+	    }
+    	
+	    if( identificadorAula != null ) {
+	    	
+	    	classroom.setSubjectRef( new Subject(subjectId));
+	    	
+	    	// Obtener estudiantes del aula
+	        String classroomStudentsString = Get("classrooms/"+identificadorAula+"/people/students" );
+	        log.info("classroomStudentsString: " + classroomStudentsString);
+	        
+	        gsonBuilder = new GsonBuilder();
+	        
+	        gson = gsonBuilder.create();        
+
+	        UserList studentList = gson.fromJson(classroomStudentsString, UserList.class);
+	        User[] users = studentList.getUser();
+			for (User user : users) {
+				classroom.addStudent(new Person(new UserID(user.getNumber() ) ));
+			}
+	    	
+			//Obtener profesores del aula
+	        String classroomTeachersString = Get("classrooms/"+identificadorAula+"/people/teachers" );
+	        log.info("classroomStudentsString: " + classroomStudentsString);
+	        
+	        gsonBuilder = new GsonBuilder();
+	        
+	        gson = gsonBuilder.create();        
+
+	        UserList teachersList = gson.fromJson(classroomTeachersString, UserList.class);
+	        users = studentList.getUser();
+			for (User user : users) {
+				classroom.addTeacher(new Person(new UserID(user.getNumber() ) ));
+			}	    	
+			
+	    }
+
+	    return classroom;
     }
     
     @Override
@@ -475,7 +582,7 @@ public class CampusConnection implements ICampusConnection {
     private static String getCode( String code ){
     	String[] tokens = code.split("_");
     	if( tokens.length >= 3 ){
-    		return tokens[2];
+    		return tokens[1] + "." + tokens[2];
     	} else {
     		return null;
     	}
@@ -485,7 +592,7 @@ public class CampusConnection implements ICampusConnection {
     // uoc2000_102_71.502_01
     private static String getSemester( String code ){
     	String[] tokens = code.split("_");
-    	return  "20" + tokens[1]; 
+    	return  "20" + tokens[0]; 
     }
 
     private static int getNumAula( String code ){

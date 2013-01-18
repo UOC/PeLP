@@ -100,6 +100,7 @@ public class UOCSubject extends Subject {
         if(subject==null) {
             subject="";
         }
+     
         return semester + "__" + subject;
     }
 
