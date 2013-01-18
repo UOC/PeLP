@@ -149,7 +149,7 @@
 		<!-- tabs -->
 		<ul class="tabs">  
 			<li><a href="#tab_1"><s:text name="pelp.file.gest"></s:text> </a></li>  
-			<li><a href="#tab_2"><s:text name="pelp.text.edit"></s:text> </a></li>   
+<%-- 			<li><a href="#tab_2"><s:text name="pelp.text.edit"></s:text> </a></li>    --%>
 		</ul> 
 		<!-- /tabs --> 
 
@@ -264,7 +264,7 @@
 	
 		<s:if test="%{teacher}">
 		
-			<h4><span>Inicio: 20/06/2012</span> <span>Final: 10/07/2012</span></h4>
+<%-- 			<h4><span>Inicio: 20/06/2012</span> <span>Final: 10/07/2012</span></h4> --%>
 	
 			<!-- tProfesor -->
 			<table id="tProfesor" class="tablesorter tlevel_1">
@@ -279,67 +279,70 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td><a href="#" class="toggle collapsed" rel="a1"><span class="lbl">Alumno 1</span></a></td>
-						<td><span class="tmp lbl">01/07/12</span></td>
-						<td><span class="tmp lbl">12</span></td>
-						<td><span class="tmp ko"><span class="lbl invisible">ko</span></span></td>
-						<td><div class="tests"><span class="tmp lbl ko">15</span></span></td>
-						<td><div class="tests"><span class="tmp lbl ko">14</span> <span class="tmp lbl ok">2</span></div></td>
+				
+				<s:iterator value="listDeliverDetails" status="teacherpos">
+				
+				<s:if test="%{User.UserID.length()>0}">
+				<s:if test="%{#userAnt!=User.UserID}">
+				<s:set name="posUser" value="#teacherpos.count"></s:set>
+					<tr> 
+						<td><a href="#" class="toggle collapsed" rel="a<s:property value="#posUser"/>"><span class="lbl"><s:property value="User.Username"/></span></a></td>
+						<td><span class="tmp lbl"><s:date name="SubmissionDate" format="dd/MM/yyyy" /></span></td>
+						<td><span class="tmp lbl"><s:set name="totalTest" value="TotalPublicTests+TotalPrivateTests"/><s:property value="#totalTest"/></span></td>
+						<td><s:if test="CompileOK"><span class="tmp ok"><span class="lbl invisible"><s:text name="ok"></s:text> </span></span></s:if><s:else><span class="tmp ko"><span class="lbl invisible"><s:text name="ko"></s:text> </span></span></s:else></td>
+						<td><div class="tests"><span class="tmp lbl ko"><s:property value="TotalPublicTests"/></span><span class="tmp lbl ok"><s:property value="PassedPublicTests"/></span></div></td>
+						<td><div class="tests"><span class="tmp lbl ko"><s:property value="TotalPrivateTests"/></span> <span class="tmp lbl ok"><s:property value="PassedPrivateTests"/></span></div></td>
 					</tr>
+					</s:if>
+					<s:if test="%{#userAnt!=User.UserID}">					
 					<tr class="expand-child">
 						<td colspan="6">
-	
-							<div id="a1" class="entregas">
+							<div id="a<s:property value="#posUser"/>" class="entregas">
+					
 								<table class="tlevel_2">
+					
 									<tbody>
+					</s:if>
 										<tr>
-											<td><a href="#" class="toggle expanded" rel="a1_e3"><span class="lbl">Entrega 3</span></a></td>
-											<td>01/07/12</td>
-											<td>12</td>
-											<td><span class="ko"><span class="invisible">ko</span></span></td>
-											<td><div class="tests"><span class="ko">15</span></div></td>
-											<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td>
+											<td><a href="#" class="toggle collapsed" rel="a<s:property value="#posUser"/>_e<s:property value="#teacherpos.count"/>"><span class="lbl"><s:text name="pelp.deliver"></s:text> <s:property value="DeliverIndex"/></span></a></td>
+											<td><s:date name="SubmissionDate" format="dd/MM/yyyy" /></td>
+											<td><s:set name="totalTest" value="TotalPublicTests+TotalPrivateTests"/><s:property value="#totalTest"/></td>
+											<td><s:if test="CompileOK"><span class="ok"><span class="invisible"><s:text name="ok"></s:text> </span></span></s:if><s:else><span class="ko"><span class="invisible"><s:text name="ko"></s:text> </span></span></s:else></td>
+											<td><div class="tests"><span class="ko"><s:property value="TotalPublicTests"/></span><span class="ok"><s:property value="PassedPublicTests"/></span></div></td>
+											<td><div class="tests"><span class="ko"><s:property value="TotalPrivateTests"/></span> <span class="ok"><s:property value="PassedPrivateTests"/></span></div></td>
 										</tr>
 										<tr class="expand-child">
 											<td colspan="6">
 	
-												<div id="a1_e3" class="files_tests">
+												<div id="a<s:property value="#posUser"/>_e<s:property value="#teacherpos.count"/>" class="files_tests">
 													<table class="tlevel_3">
 														<thead>
 															<tr>
-																<th>Ficheros</th>
-																<th>Código</th>
-																<th>Memoria</th>
-																<th>F. Principal</th>
+																<th><s:text name="pelp.file.title"></s:text> </th>
+																<th><s:text name="pelp.code"></s:text> </th>
+																<th><s:text name="pelp.memori"></s:text> </th>
+																<th><s:text name="pelp.f.principal"></s:text> </th>
 															</tr>
 														</thead>
 														<tbody>
-															<tr>
-																<td><a href="#">Lorem ipsum dolor sit amet</a></td>
-																<td><span class="check" title="Código"></span></td>
-																<td></td>
-																<td></td>
-															</tr>
-															<tr>
-																<td><a href="#">Cras egestas elementum augue</a></td>
-																<td><span class="check" title="Código"></span></td>
-																<td><span class="check" title="Memoria"></span></td>
-																<td></td>
-															</tr>
-															<tr>
-																<td><a href="#">Cras egestas elementum augue</a></td>
-																<td><span class="check" title="Código"></span></td>
-																<td></td>
-																<td><span class="check" title="F. Principal"></span></td>
-															</tr>
+															<s:iterator value="DeliverFiles" status="posfile">
+																<tr>
+																	<td><a href="home!down.html?idDelivers=<s:property value="#pos.index"/>&idFile=<s:property value="#posfile.index"/>&s_aula=<s:property value="s_aula"/>&s_assign=<s:property value="s_assign"/>&s_activ=<s:property value="s_activ"/>"><s:property value="RelativePath"/></a></td>
+																	<td><s:if test="IsCode"><span class="check" title="<s:text name='pelp.code'></s:text>"></span></s:if></td>
+																	<td><s:if test="IsReport"><span class="check" title="<s:text name='pelp.memori'></s:text>"></span></s:if></td>
+																	<td><s:if test="IsMain"><span class="check" title="<s:text name='pelp.f.principal'></s:text>"></span></s:if></td>
+																</tr>
+															</s:iterator>
 														</tbody>
 													</table>
-													<div class="heading"><span>Tests Publicos</span></div>
+													<div class="heading"><span><s:text name="pelp.test.public"></s:text></span></div>
 													<ul>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
+														<s:iterator value="TestResults">
+															<s:if test="IsPublic">
+																<s:if test="IsPassed"><li><a href="#" target="_blank"><span class="ok"></span><s:property value="Output"/></a></li></s:if>
+																<s:else><li><a href="#" target="_blank"><span class="ko"></span><s:property value="Output"/></a></li></s:else>
+															</s:if>
+														</s:iterator>
 													</ul>
 													<div class="heading"><span>Tests Privados</span></div>
 													<ul>
@@ -350,163 +353,18 @@
 	
 											</td>
 										</tr>
-										<tr>
-											<td><a href="#" class="toggle collapsed" rel="a1_e2"><span class="lbl">Entrega 2</span></a></td>
-											<td>01/07/12</td>
-											<td>12</td>
-											<td><span class="ok"><span class="invisible">ok</span></span></td>
-											<td><div class="tests"><span class="ok">15</span></div></td>
-											<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td>
-										</tr>
-										<tr class="expand-child">
-											<td colspan="6">
-	
-												<div id="a1_e2" class="files_tests">
-													<div class="heading"><span>Tests Públicos</span></div>
-													<ul>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-													</ul>
-													<div class="heading"><span>Tests Privados</span></div>
-													<ul>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Lorem ipsum dolor sit amet</a></li>
-													</ul>
-												</div>
-	
-											</td>
-										</tr>
-										<tr>
-											<td><a href="#" class="toggle collapsed" rel="a1_e1"><span class="lbl">Entrega 1</span></a></td>
-											<td>01/07/12</td>
-											<td>12</td>
-											<td><span class="ok"><span class="invisible">ok</span></span></td>
-											<td><div class="tests"><span class="ok">15</span></div></td>
-											<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td>
-										</tr>
-										<tr class="expand-child">
-											<td colspan="6">
-	
-												<div id="a1_e1" class="files_tests">
-													<div class="heading"><span>Tests Públicos</span></div>
-													<ul>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-													</ul>
-													<div class="heading"><span>Tests Privados</span></div>
-													<ul>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Lorem ipsum dolor sit amet</a></li>
-													</ul>
-												</div>
-	
-											</td>
-										</tr>
+					<s:set name="userAnt" value="User.UserID"></s:set>
+					<s:if test="%{#userAnt!=User.UserID}">
 									</tbody>
 								</table>
 							</div>
 	
 						</td>
 					</tr>
-					<tr>
-						<td><a href="#" class="toggle collapsed" rel="a2"><span class="lbl">Alumno 2</span></a></td>
-						<td><span class="tmp lbl">03/07/12</span></td>
-						<td><span class="tmp lbl">3</span></td>
-						<td><span class="tmp ok"><span class="lbl invisible">ok</span></span></td>
-						<td><div class="tests"><span class="tmp lbl ok">1</span></div></td>
-						<td><div class="tests"><span class="tmp lbl ko">2</span></div></td>
-					</tr>
-					<tr class="expand-child">
-						<td colspan="6">
-	
-							<div id="a2" class="entregas">
-								<table class="tlevel_2">
-									<tbody>
-										<tr>
-											<td><a href="#" class="toggle expanded" rel="a2_e2"><span class="lbl">Entrega 2</span></a></td>
-											<td>03/07/12</td>
-											<td>3</td>
-											<td><span class="ok"><span class="invisible">ko</span></span></td>
-											<td><div class="tests"><span class="ok">1</span></div></td>
-											<td><div class="tests"><span class="ko">2</span></div></td>
-										</tr>
-										<tr class="expand-child">
-											<td colspan="6">
-	
-												<div id="a2_e2" class="files_tests">
-													<table class="tlevel_3">
-														<thead>
-															<tr>
-																<th>Ficheros</th>
-																<th>Código</th>
-																<th>Memoria</th>
-																<th>F. Principal</th>
-															</tr>
-														</thead>
-														<tbody>
-															<tr>
-																<td><a href="#">Lorem ipsum dolor sit amet</a></td>
-																<td><span class="check" title="Código"></span></td>
-																<td></td>
-																<td></td>
-															</tr>
-															<tr>
-																<td><a href="#">Cras egestas elementum augue</a></td>
-																<td></td>
-																<td><span class="check" title="Memoria"></span></td>
-																<td></td>
-															</tr>
-														</tbody>
-													</table>
-													<div class="heading"><span>Tests Públicos</span></div>
-													<ul>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-													</ul>
-													<div class="heading"><span>Tests Privados</span></div>
-													<ul>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Lorem ipsum dolor sit amet</a></li>
-													</ul>
-												</div>
-	
-											</td>
-										</tr>
-										<tr>
-											<td><a href="#" class="toggle collapsed" rel="a2_e1"><span class="lbl">Entrega 1</span></a></td>
-											<td>01/07/12</td>
-											<td>12</td>
-											<td><span class="ok"><span class="invisible">ok</span></span></td>
-											<td><div class="tests"><span class="ok">15</span></div></td>
-											<td><div class="tests"><span class="ko">14</span> <span class="ok">2</span></div></td>
-										</tr>
-										<tr class="expand-child">
-											<td colspan="6">
-	
-												<div id="a2_e1" class="files_tests">
-													<div class="heading"><span>Tests Públicos</span></div>
-													<ul>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Cras egestas elementum augue</a></li>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-													</ul>
-													<div class="heading"><span>Tests Privados</span></div>
-													<ul>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Lorem ipsum dolor sit amet</a></li>
-													</ul>
-												</div>
-	
-											</td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-	
-						</td>
-					</tr>
+					</s:if>				
+					
+					</s:if>
+					</s:iterator>
 				</tbody>
 			</table>
 			<!-- /tProfesor -->

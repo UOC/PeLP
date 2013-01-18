@@ -251,7 +251,7 @@ public class DeliverResultsDAO implements IDeliverResultDAO {
                 transaction.rollback();
                 return false;
             }
-                               
+            transaction=getSession().beginTransaction();                   
             // Get the object
             DeliverResult newObj=ObjectFactory.getDeliverResultReg(results);
         
