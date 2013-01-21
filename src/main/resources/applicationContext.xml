@@ -16,7 +16,7 @@ http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     <!--========== UOC Api Properties ==========-->
     <util:properties id="propertiesUOCApi" location="classpath:UOCApi.properties" scope="singleton" />
     <!--========== /UOC Api Properties ==========-->
-     
+      
 	<!-- objects test inject to pelpEnigne -->
 
 	<bean id="lcctj" class="edu.uoc.pelp.engine.campus.UOC.CampusConnection" scope="session">
