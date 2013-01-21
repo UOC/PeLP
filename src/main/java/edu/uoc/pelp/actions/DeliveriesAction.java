@@ -7,28 +7,32 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
-
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import uoc.edu.pelp.bussines.PelpConfiguracionBO;
 
 import com.opensymphony.xwork2.ActionSupport;
+import com.sun.jmx.snmp.Timestamp;
 
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
-import edu.uoc.pelp.bussines.exception.AuthorizationException;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.Classroom;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverFile;
 import edu.uoc.pelp.bussines.vo.Test;
+import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.exception.PelpException;
 
 /**
@@ -89,10 +93,28 @@ public class DeliveriesAction extends ActionSupport {
 	private String fullName;
 	private Boolean teacher;
 	private DeliverDetail[] listDeliverDetails;
+	private String timeFile;
 
 	private static Logger log = Logger.getLogger(DeliveriesAction.class);
 
 	public String execute() throws Exception {
+		
+		//UOC API
+		HttpServletRequest request = ServletActionContext.getRequest();
+    	
+    	String token = (String) request.getSession().getAttribute("access_token");
+    	
+    	if( token != null) {
+    		System.out.println( token );
+            WebApplicationContext context =
+        			WebApplicationContextUtils.getRequiredWebApplicationContext(
+                                            ServletActionContext.getServletContext()
+                                );
+            //bUOC = (UOCPelpBussines)context.getBean("bUOC");
+            CampusConnection campusConnection = (CampusConnection) context.getBean("lcctj");
+            campusConnection.setCampusSession(token);
+            bUOC.setCampusConnection(campusConnection);
+    	}
 		
 		if (bUOC.getUserInformation() != null) {
 			listSubjects = bUOC.getUserSubjects();
@@ -292,7 +314,7 @@ public class DeliveriesAction extends ActionSupport {
 						objClass = listClassroms[i]; 
 					}
 				}
-				bUOC.getAllClassroomDeliverDetails(objActivity, new UOCSubject(
+				listDeliverDetails = bUOC.getLastClassroomDeliverDetails(objActivity, new UOCSubject(
 						infoAssing[0], infoAssing[2]), objClass.getIndex());
 			}else{
 				setListDeliverDetails(bUOC.getUserDeliverDetails(new UOCSubject(
@@ -306,9 +328,9 @@ public class DeliveriesAction extends ActionSupport {
 				PelpConfiguracionBO.TEMP_PATH);
 		
 		String fullRuta = ruta; 
-		if(bUOC.getUserInformation()!=null)fullRuta +="/"+ bUOC.getUserInformation().getUserID()+"/";
+		if(bUOC.getUserInformation()!=null)fullRuta +="/"+ bUOC.getUserInformation().getUserID()+"/"+timeFile+"/";
 		else{
-			fullRuta +="/invited/";
+			fullRuta +="/invited/"+timeFile+"/";
 		}
 				
 		if(s_assign!=null&&s_aula!=null&&s_activ!=null){
@@ -320,6 +342,10 @@ public class DeliveriesAction extends ActionSupport {
 		
 	}
 	private void fileupload() throws Exception {
+		
+		Timestamp objTime = new Timestamp();
+		if(timeFile==null || timeFile.length()<=0)this.timeFile = String.valueOf(objTime.getDateTime());
+
 		String ruta = this.rutaFile();
 		
 		if (uploads != null && !uploads.isEmpty()) {
@@ -334,22 +360,6 @@ public class DeliveriesAction extends ActionSupport {
 		this.cleanFile();
 	}
 
-	private void menuTop() throws PelpException, AuthorizationException,
-			PelpException {
-		listSubjects = bUOC.getUserSubjects();
-
-		if (s_assign != null && s_assign.length() > 0) {
-			String[] infoAssing = s_assign.split("_");
-			listClassroms = bUOC.getUserClassrooms(new UOCSubject(
-					infoAssing[0], infoAssing[2]));
-		}
-		if (s_aula != null && s_aula.length() > 0 && s_assign != null
-				&& s_assign.length() > 0) {
-			String[] infoAssing = s_assign.split("_");
-			listActivity = bUOC.getSubjectActivities(infoAssing[0],
-					infoAssing[2]);
-		}
-	}
 
 	private void cleanFile() {
 		try {
@@ -602,6 +612,14 @@ public class DeliveriesAction extends ActionSupport {
 
 	public void setListDeliverDetails(DeliverDetail[] listDeliverDetails) {
 		this.listDeliverDetails = listDeliverDetails;
+	}
+
+	public String getTimeFile() {
+		return timeFile;
+	}
+
+	public void setTimeFile(String timeFile) {
+		this.timeFile = timeFile;
 	}
 
 }

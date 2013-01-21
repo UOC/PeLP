@@ -19,11 +19,15 @@
 package edu.uoc.pelp.actions;
 
 import javax.annotation.PreDestroy;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -33,6 +37,7 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
+import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.exception.PelpException;
 
 /**
@@ -68,6 +73,23 @@ public class TeacherAction extends ActionSupport {
 
 	@Override
 	public String execute() throws Exception {
+		//UOC API
+		HttpServletRequest request = ServletActionContext.getRequest();
+    	
+    	String token = (String) request.getSession().getAttribute("access_token");
+    	
+    	if( token != null) {
+    		System.out.println( token );
+            WebApplicationContext context =
+        			WebApplicationContextUtils.getRequiredWebApplicationContext(
+                                            ServletActionContext.getServletContext()
+                                );
+            //bUOC = (UOCPelpBussines)context.getBean("bUOC");
+            CampusConnection campusConnection = (CampusConnection) context.getBean("lcctj");
+            campusConnection.setCampusSession(token);
+            bUOC.setCampusConnection(campusConnection);
+    	}
+		
 		if (bUOC.getUserInformation() != null) {
 			listSubjects = bUOC.getUserSubjects();
 			if (s_assign != null) {
@@ -102,16 +124,22 @@ public class TeacherAction extends ActionSupport {
 		return SUCCESS;
 	}
 
-	public String auth() throws Exception {
-		// FIXME
-		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
-		return "index";
-	}
-	@PreDestroy
+	 @PreDestroy
     public String logout() throws PelpException{
+    	HttpServletRequest request = ServletActionContext.getRequest();
+    	request.getSession().setAttribute("authUOC", "close");
+    	bUOC.setCampusConnection(new CampusConnection());
     	bUOC.logout();
     	return "index";
     }
+    
+    public String auth() throws Exception{
+    	// FIXME
+		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
+    	HttpServletRequest request = ServletActionContext.getRequest();
+    	request.getSession().setAttribute("authUOC", "request");
+		return "index";
+	}
 
 	public UOCSubject[] getListSubjects() {
 		return listSubjects;

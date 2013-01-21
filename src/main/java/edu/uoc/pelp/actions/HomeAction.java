@@ -4,11 +4,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.opensymphony.xwork2.ActionSupport;
 
@@ -18,8 +23,8 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
+import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.exception.PelpException;
-import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
 
 
 /**
@@ -85,12 +90,30 @@ public class HomeAction extends ActionSupport {
 	private String idFile;
 	private String filename;
 	private InputStream fileInputStream;
+	private String timeFile;
 
 	private boolean teacher;
 
 	@Override
 	public String execute() throws Exception {
 
+		//UOC API
+		HttpServletRequest request = ServletActionContext.getRequest();
+    	
+    	String token = (String) request.getSession().getAttribute("access_token");
+    	
+    	if( token != null) {
+    		System.out.println( token );
+            WebApplicationContext context =
+        			WebApplicationContextUtils.getRequiredWebApplicationContext(
+                                            ServletActionContext.getServletContext()
+                                );
+            //bUOC = (UOCPelpBussines)context.getBean("bUOC");
+            CampusConnection campusConnection = (CampusConnection) context.getBean("lcctj");
+            campusConnection.setCampusSession(token);
+            bUOC.setCampusConnection(campusConnection);
+    	}
+		
 		
 		if (bUOC.getUserInformation() != null) {
 			listSubjects = bUOC.getUserSubjects();
@@ -146,24 +169,6 @@ public class HomeAction extends ActionSupport {
 
 		return toReturn;
 	}
-	private String listStudents(DeliverDetail[] listDelivers){
-		String arrayStudents[][] = null;
-		int userid = 0;
-		int pos =-1;
-		for (int i = 0; i < listDelivers.length; i++) {
-			
-			
-			if(userid!=Integer.parseInt(listDelivers[i].getUser().getUserID())){
-				pos++;
-				arrayStudents[pos][0]= listDelivers[i].getUser().getUsername();
-			}
-			
-			if(listDelivers[i]!=null)System.out.println(listDelivers[i].getUser().getUsername());
-			userid =  Integer.parseInt(listDelivers[i].getUser().getUserID());
-		}
-		
-		return "";
-	}
 	
 	public String combo() throws PelpException{
 		
@@ -212,12 +217,10 @@ public class HomeAction extends ActionSupport {
 	}
 	
 	public String logout() throws PelpException {
-		//bUOC.logout();
-		LocalCampusConnection _campusConnection = new LocalCampusConnection();
-        // Add the register to the admin database to give administration rights
-        _campusConnection.setProfile("none");
-        
-        bUOC.setCampusConnection(_campusConnection);
+		HttpServletRequest request = ServletActionContext.getRequest();
+    	request.getSession().setAttribute("authUOC", "close");
+    	bUOC.setCampusConnection(new CampusConnection());
+    	bUOC.logout();
         
 		String toReturn = 'r'+SUCCESS;
 
@@ -229,11 +232,8 @@ public class HomeAction extends ActionSupport {
 	}
 
 	public String auth() throws Exception {
-		//FIXME Miramos Si es estudiante , professor i dependiendo usaremos uno o otro
-		LocalCampusConnection _campusConnection = new LocalCampusConnection();
-        // Add the register to the admin database to give administration rights
-        _campusConnection.setProfile(username);
-        bUOC.setCampusConnection(_campusConnection);
+		HttpServletRequest request = ServletActionContext.getRequest();
+    	request.getSession().setAttribute("authUOC", "request");
 		
         String toReturn = 'r'+SUCCESS;
 
@@ -418,6 +418,14 @@ public class HomeAction extends ActionSupport {
 
 	public void setFileDim(int fileDim) {
 		this.fileDim = fileDim;
+	}
+
+	public String getTimeFile() {
+		return timeFile;
+	}
+
+	public void setTimeFile(String timeFile) {
+		this.timeFile = timeFile;
 	}
 
 }

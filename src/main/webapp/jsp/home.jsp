@@ -146,6 +146,7 @@
 		<s:hidden name="s_assign"></s:hidden>
 		<s:hidden name="s_activ"></s:hidden>
 		<s:hidden name="s_aula"></s:hidden>
+		<s:hidden name="timeFile"></s:hidden>
 		<!-- tabs -->
 		<ul class="tabs">  
 			<li><a href="#tab_1"><s:text name="pelp.file.gest"></s:text> </a></li>  
@@ -344,10 +345,14 @@
 															</s:if>
 														</s:iterator>
 													</ul>
-													<div class="heading"><span>Tests Privados</span></div>
+													<div class="heading"><span><s:text name="pelp.test.private"></s:text></span></div>
 													<ul>
-														<li><a href="test_info_ok.html" target="_blank"><span class="ok"></span>Lorem ipsum dolor sit amet</a></li>
-														<li><a href="test_info_ko.html" target="_blank"><span class="ko"></span>Lorem ipsum dolor sit amet</a></li>
+														<s:iterator value="TestResults">
+															<s:if test="!IsPublic">
+																<s:if test="IsPassed"><li><a href="#" target="_blank"><span class="ok"></span><s:property value="Output"/></a></li></s:if>
+																<s:else><li><a href="#" target="_blank"><span class="ko"></span><s:property value="Output"/></a></li></s:else>
+															</s:if>
+														</s:iterator>
 													</ul>
 												</div>
 	
