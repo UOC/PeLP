@@ -2,6 +2,7 @@ package edu.uoc.pelp.actions;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import uoc.edu.pelp.bussines.PelpConfiguracionBO;
 
 import com.opensymphony.xwork2.ActionSupport;
-import com.sun.jmx.snmp.Timestamp;
+
 
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
@@ -343,8 +344,7 @@ public class DeliveriesAction extends ActionSupport {
 	}
 	private void fileupload() throws Exception {
 		
-		Timestamp objTime = new Timestamp();
-		if(timeFile==null || timeFile.length()<=0)this.timeFile = String.valueOf(objTime.getDateTime());
+		if(timeFile==null || timeFile.length()<=0)this.timeFile = String.valueOf(System.currentTimeMillis());
 
 		String ruta = this.rutaFile();
 		
