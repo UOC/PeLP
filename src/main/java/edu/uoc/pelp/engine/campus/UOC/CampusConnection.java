@@ -37,6 +37,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 
 import edu.uoc.pelp.engine.campus.Classroom;
 import edu.uoc.pelp.engine.campus.ICampusConnection;
@@ -102,7 +103,7 @@ public class CampusConnection implements ICampusConnection {
         String operationURL = credentials.getProperty("urlUOCApi") + credentials.getProperty("apiPath") + operation;
         HttpGet httpGet = new HttpGet(operationURL+"?access_token="+_token);
         httpGet.setHeader("content-type", "application/json");
-        log.debug(operationURL);
+        log.info(operationURL+"?access_token="+_token);
         try {
             HttpResponse resp = httpClient.execute(httpGet);
             int statusCode = resp.getStatusLine().getStatusCode();
@@ -474,64 +475,68 @@ public class CampusConnection implements ICampusConnection {
     	Classroom classroom = new Classroom(classroomId);
     	
     	
-        String classroomsString = Get("classrooms");
-        log.info("classroomsString: " + classroomsString);
-        
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(java.util.Date.class, new DateDeserializer());
-        
-        Gson gson = gsonBuilder.create();        
-
-        ClassroomList classroomList = gson.fromJson(classroomsString, ClassroomList.class);
-        edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomList.getClassrooms();
-        
-        List<IClassroomID> lista = new ArrayList<IClassroomID>();
-        String identificadorAula = null;
-	     
-	    for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroomUOC : classrooms) {
-	    	
-	    	if( classroomUOC.getFatherId().equals( subjectId.getDomainID() ) ){
-	    		// Misma asignatura
-	    		if( getNumAula( classroomUOC.getCode()) == classroomId.getClassIdx().intValue()  ){
-	    			identificadorAula = classroomUOC.getId();
-	    			break;
-	    		}
-	    	}	    	
-	    }
-    	
-	    if( identificadorAula != null ) {
-	    	
-	    	classroom.setSubjectRef( new Subject(subjectId));
-	    	
-	    	// Obtener estudiantes del aula
-	        String classroomStudentsString = Get("classrooms/"+identificadorAula+"/people/students" );
-	        log.info("classroomStudentsString: " + classroomStudentsString);
-	        
-	        gsonBuilder = new GsonBuilder();
-	        
-	        gson = gsonBuilder.create();        
-
-	        UserList studentList = gson.fromJson(classroomStudentsString, UserList.class);
-	        User[] users = studentList.getUser();
-			for (User user : users) {
-				classroom.addStudent(new Person(new UserID(user.getNumber() ) ));
-			}
-	    	
-			//Obtener profesores del aula
-	        String classroomTeachersString = Get("classrooms/"+identificadorAula+"/people/teachers" );
-	        log.info("classroomStudentsString: " + classroomStudentsString);
-	        
-	        gsonBuilder = new GsonBuilder();
-	        
-	        gson = gsonBuilder.create();        
-
-	        UserList teachersList = gson.fromJson(classroomTeachersString, UserList.class);
-	        users = studentList.getUser();
-			for (User user : users) {
-				classroom.addTeacher(new Person(new UserID(user.getNumber() ) ));
-			}	    	
+        try {
+			String classroomsString = Get("classrooms");
+			log.info("classroomsString: " + classroomsString);
 			
-	    }
+			GsonBuilder gsonBuilder = new GsonBuilder();
+			gsonBuilder.registerTypeAdapter(java.util.Date.class, new DateDeserializer());
+			
+			Gson gson = gsonBuilder.create();        
+
+			ClassroomList classroomList = gson.fromJson(classroomsString, ClassroomList.class);
+			edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomList.getClassrooms();
+			
+			List<IClassroomID> lista = new ArrayList<IClassroomID>();
+			String identificadorAula = null;
+			 
+			for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroomUOC : classrooms) {
+				
+				if( classroomUOC.getFatherId().equals( subjectId.getDomainID() ) ){
+					// Misma asignatura
+					if( getNumAula( classroomUOC.getCode()) == classroomId.getClassIdx().intValue()  ){
+						identificadorAula = classroomUOC.getId();
+						break;
+					}
+				}	    	
+			}
+			
+			if( identificadorAula != null ) {
+				
+				classroom.setSubjectRef( new Subject(subjectId));
+				
+				// Obtener estudiantes del aula
+			    String classroomStudentsString = Get("classrooms/"+identificadorAula+"/people/students" );
+			    log.info("classroomStudentsString: " + classroomStudentsString);
+			    
+			    gsonBuilder = new GsonBuilder();
+			    
+			    gson = gsonBuilder.create();        
+
+			    UserList studentList = gson.fromJson(classroomStudentsString, UserList.class);
+			    User[] users = studentList.getUsers();
+				for (User user : users) {
+					classroom.addStudent(new Person(new UserID(user.getNumber() ) ));
+				}
+				
+				//Obtener profesores del aula
+			    String classroomTeachersString = Get("classrooms/"+identificadorAula+"/people/teachers" );
+			    log.info("classroomStudentsString: " + classroomStudentsString);
+			    
+			    gsonBuilder = new GsonBuilder();
+			    
+			    gson = gsonBuilder.create();        
+
+			    UserList teachersList = gson.fromJson(classroomTeachersString, UserList.class);
+			    users = studentList.getUsers();
+				for (User user : users) {
+					classroom.addTeacher(new Person(new UserID(user.getNumber() ) ));
+				}	    	
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	    return classroom;
     }
@@ -592,7 +597,7 @@ public class CampusConnection implements ICampusConnection {
     // uoc2000_102_71.502_01
     private static String getSemester( String code ){
     	String[] tokens = code.split("_");
-    	return  "20" + tokens[0]; 
+    	return  "20" + tokens[0].replace("cv", ""); 
     }
 
     private static int getNumAula( String code ){

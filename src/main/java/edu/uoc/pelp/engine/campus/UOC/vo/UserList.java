@@ -24,14 +24,14 @@ package edu.uoc.pelp.engine.campus.UOC.vo;
  */
 public class UserList {
 
-	private User[] user;
+	private User[] users;
 
-	public User[] getUser() {
-		return user;
+	public User[] getUsers() {
+		return users;
 	}
 
-	public void setUser(User[] user) {
-		this.user = user;
+	public void setUsers(User[] users) {
+		this.users = users;
 	}
 
 }
