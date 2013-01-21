@@ -2,7 +2,6 @@ package edu.uoc.pelp.actions;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +22,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import uoc.edu.pelp.bussines.PelpConfiguracionBO;
 
 import com.opensymphony.xwork2.ActionSupport;
-
 
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
@@ -147,12 +145,16 @@ public class DeliveriesAction extends ActionSupport {
 	}
 	
 	public String auth() throws Exception{
-		// FIXME
-		//bUOC.setCampusSession(Utils.authUserForCampus(username, password));
+		HttpServletRequest request = ServletActionContext.getRequest();
+    	request.getSession().setAttribute("authUOC", "request");
+		
 		return "index";
 	}
 	@PreDestroy
     public String logout() throws PelpException{
+		HttpServletRequest request = ServletActionContext.getRequest();
+    	request.getSession().setAttribute("authUOC", "close");
+    	bUOC.setCampusConnection(new CampusConnection());
     	bUOC.logout();
     	return "index";
     }
@@ -236,7 +238,7 @@ public class DeliveriesAction extends ActionSupport {
 					}
 
 				}
-				if (( finalDeliver != null && !finalDeliver) && (matrizFile.length > 1 || (codePlain != null && codePlain.length() > 5))) {
+				if (( finalDeliver == null || !finalDeliver) && (matrizFile.length > 1 || (codePlain != null && codePlain.length() > 5))) {
 
 					Test[] tests  = new Test[1];
 
