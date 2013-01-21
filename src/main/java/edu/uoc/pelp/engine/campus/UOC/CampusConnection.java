@@ -345,9 +345,10 @@ public class CampusConnection implements ICampusConnection {
         return retVal;
     }
 
+    
     @Override
     public IClassroomID[] getSubjectClassrooms(ISubjectID subject, UserRoles userRole) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getUserClassrooms(userRole, subject);    	
     }
 
     @Override
@@ -528,10 +529,10 @@ public class CampusConnection implements ICampusConnection {
 			    gson = gsonBuilder.create();        
 
 			    UserList teachersList = gson.fromJson(classroomTeachersString, UserList.class);
-			    users = studentList.getUsers();
+			    users = teachersList.getUsers();
 				for (User user : users) {
 					classroom.addTeacher(new Person(new UserID(user.getNumber() ) ));
-				}	    	
+				}
 				
 			}
 		} catch (Exception e) {

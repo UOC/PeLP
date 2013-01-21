@@ -90,6 +90,7 @@ public class StudentAction extends ActionSupport {
             campusConnection.setCampusSession(token);
             bUOC.setCampusConnection(campusConnection);
     	}
+    	
     	UserInformation userInformation = bUOC.getUserInformation();
     	if( userInformation != null){
     		listSubjects = bUOC.getUserSubjects();
@@ -98,7 +99,7 @@ public class StudentAction extends ActionSupport {
     			String[] infoAssing = s_assign.split("_");
     			
     			if(bUOC.isTeacher(new UOCSubject(infoAssing[0],infoAssing[2]))){
-    				return "teacher";
+    				//return "teacher";
     			}
     			
      			listClassroms = bUOC.getUserClassrooms(new UOCSubject(infoAssing[0],infoAssing[2]));
