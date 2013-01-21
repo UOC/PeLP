@@ -205,7 +205,7 @@ public class PELPEngine implements IPELPEngine {
         }
         
         // Sort the results
-        Collections.sort(classroomList);
+        //Collections.sort(classroomList);
         
         // Create the return list
         Classroom[] retList=new Classroom[classroomList.size()];

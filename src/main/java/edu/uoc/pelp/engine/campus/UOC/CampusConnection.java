@@ -37,7 +37,6 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
 
 import edu.uoc.pelp.engine.campus.Classroom;
 import edu.uoc.pelp.engine.campus.ICampusConnection;
@@ -461,7 +460,7 @@ public class CampusConnection implements ICampusConnection {
         retVal.setDescription( classroom.getTitle() );
         //retVal.setLabFlag(true);
         //retVal.setParent(subjectID);
-        //retVal.setShortName(_token);
+        retVal.setShortName(classroom.getTitle());
         
         return retVal;
     }
@@ -486,26 +485,29 @@ public class CampusConnection implements ICampusConnection {
 			Gson gson = gsonBuilder.create();        
 
 			ClassroomList classroomList = gson.fromJson(classroomsString, ClassroomList.class);
-			edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomList.getClassrooms();
 			
-			List<IClassroomID> lista = new ArrayList<IClassroomID>();
 			String identificadorAula = null;
-			 
-			for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroomUOC : classrooms) {
-				
-				if( classroomUOC.getFatherId().equals( subjectId.getDomainID() ) ){
-					// Misma asignatura
-					if( getNumAula( classroomUOC.getCode()) == classroomId.getClassIdx().intValue()  ){
-						identificadorAula = classroomUOC.getId();
-						break;
-					}
-				}	    	
-			}
 			
+			if( classroomList != null ){
+				edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classrooms = classroomList.getClassrooms();
+				
+				List<IClassroomID> lista = new ArrayList<IClassroomID>();
+				 
+				for (edu.uoc.pelp.engine.campus.UOC.vo.Classroom classroomUOC : classrooms) {
+					
+					if( classroomUOC.getFatherId().equals( subjectId.getDomainID() ) ){
+						// Misma asignatura
+						if( getNumAula( classroomUOC.getCode()) == classroomId.getClassIdx().intValue()  ){
+							identificadorAula = classroomUOC.getId();
+							break;
+						}
+					}	    	
+				}
+			}
 			if( identificadorAula != null ) {
 				
-				classroom.setSubjectRef( new Subject(subjectId));
-				
+				classroom.setSubjectRef( getSubjectData(subjectId) );
+				/*
 				// Obtener estudiantes del aula
 			    String classroomStudentsString = Get("classrooms/"+identificadorAula+"/people/students" );
 			    log.info("classroomStudentsString: " + classroomStudentsString);
@@ -533,7 +535,7 @@ public class CampusConnection implements ICampusConnection {
 				for (User user : users) {
 					classroom.addTeacher(new Person(new UserID(user.getNumber() ) ));
 				}
-				
+				*/
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -544,7 +546,26 @@ public class CampusConnection implements ICampusConnection {
     
     @Override
     public Person getUserData(IUserID userID) throws AuthPelpException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    	
+    	throw new UnsupportedOperationException("Not supported yet.");
+    	/*
+        UserID userId = (UserID) userID;        
+        // FIXME falta obtener el userid de campus
+        edu.uoc.pelp.engine.campus.UOC.vo.Person personData = getCampusPersonData(userId.idp);        
+        if(userData!=null) {
+            Person newData=new Person(new UserID(userData.getId()));
+            newData.setFullName(userData.getFullName());
+            newData.setLanguage(userData.getLanguage());
+            newData.setName(userData.getName());
+            newData.setUserPhoto(userData.getPhotoUrl());
+            newData.setUsername(userData.getUsername());
+            if(personData!=null) {
+                newData.seteMail(personData.getEmail());
+            }
+            return newData;
+        }
+        return null;
+        */
     }
 
     @Override
