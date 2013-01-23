@@ -101,7 +101,7 @@ public class CampusConnection implements ICampusConnection {
         String operationURL = credentials.getProperty("urlUOCApi") + credentials.getProperty("apiPath") + operation;
         HttpGet httpGet = new HttpGet(operationURL+"?access_token="+_token);
         httpGet.setHeader("content-type", "application/json");
-        log.info(operationURL+"?access_token="+_token);
+        log.info(operationURL);
         try {
             HttpResponse resp = httpClient.execute(httpGet);
             int statusCode = resp.getStatusLine().getStatusCode();
@@ -215,21 +215,21 @@ public class CampusConnection implements ICampusConnection {
     
     @Override
     public Person getUserData() throws AuthPelpException {
-        User userData=getCampusUserData();
-        edu.uoc.pelp.engine.campus.UOC.vo.Person personData= getCampusPersonData(userData.getId());
-        if(userData!=null) {
-            Person newData=new Person(new UserID(userData.getId()));
-            newData.setFullName(userData.getFullName());
-            newData.setLanguage(userData.getLanguage());
-            newData.setName(userData.getName());
-            newData.setUserPhoto(userData.getPhotoUrl());
-            newData.setUsername(userData.getUsername());
-            if(personData!=null) {
-                newData.seteMail(personData.getEmail());
-            }
-            return newData;
-        }
-        return null;
+    	User userData = getCampusUserData();
+    	edu.uoc.pelp.engine.campus.UOC.vo.Person personData = getCampusPersonData(userData.getId());
+    	if(userData!=null) {
+    		Person newData=new Person(new UserID(userData.getId()));
+    		newData.setFullName(userData.getFullName());
+    		newData.setLanguage(userData.getLanguage());
+    		newData.setName(userData.getName());
+    		newData.setUserPhoto(userData.getPhotoUrl());
+    		newData.setUsername(userData.getUsername());
+    		if(personData!=null) {
+    			newData.seteMail(personData.getEmail());
+    		}
+    		return newData;
+    	}
+    	return null;
     }
 
 

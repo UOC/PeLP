@@ -23,6 +23,7 @@ import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
+import edu.uoc.pelp.bussines.vo.UserInformation;
 import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.exception.PelpException;
 
@@ -114,8 +115,8 @@ public class HomeAction extends ActionSupport {
             bUOC.setCampusConnection(campusConnection);
     	}
 		
-		
-		if (bUOC.getUserInformation() != null) {
+		UserInformation userInfo = bUOC.getUserInformation();
+		if (userInfo != null) {
 			listSubjects = bUOC.getUserSubjects();
 			if (s_assign != null) {
 				String[] infoAssing = s_assign.split("_");
@@ -153,9 +154,9 @@ public class HomeAction extends ActionSupport {
 							infoAssing[0], infoAssing[2]), objActivity.getIndex());	
 				}
 			}
-			imageURL = bUOC.getUserInformation().getUserPhoto();
+			imageURL = userInfo.getUserPhoto();
 			if(imageURL== null)imageURL = "img/user.png";
-			fullName = bUOC.getUserInformation().getUserFullName();
+			fullName = userInfo.getUserFullName();
 		} else {
 			imageURL = null;
 			fullName = null;
