@@ -50,7 +50,6 @@ import edu.uoc.pelp.engine.campus.UserRoles;
 import edu.uoc.pelp.engine.campus.UOC.vo.ClassroomList;
 import edu.uoc.pelp.engine.campus.UOC.vo.PersonList;
 import edu.uoc.pelp.engine.campus.UOC.vo.User;
-import edu.uoc.pelp.engine.campus.UOC.vo.UserList;
 import edu.uoc.pelp.exception.AuthPelpException;
 
 /**
