@@ -46,8 +46,6 @@ public class LoginFilter extends OncePerRequestFilter  {
 	 */
 	private boolean _useCookies=true;
 
-	final static String LOCAL_AUTH_URL = "http://localhost:8080";
-
 
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain fc) throws ServletException, IOException {
 
@@ -80,10 +78,10 @@ public class LoginFilter extends OncePerRequestFilter  {
 	private void requestAuthentication(HttpServletRequest request,HttpServletResponse response) throws IOException {
 
 		// Get the application secret key
-		String secretKey=credentials.getProperty("secret");
-
+		String secretKey = credentials.getProperty("secret");
+		String localAuthUrl = credentials.getProperty("urlLocalAuth");
 		// Create internal redirection
-		String redirectURL = LOCAL_AUTH_URL + request.getRequestURI();
+		String redirectURL = localAuthUrl + request.getRequestURI();
 
 		// Check the current authentication status
 		log.info("Obteniendo token...");
@@ -119,7 +117,7 @@ public class LoginFilter extends OncePerRequestFilter  {
 
 
 			// Redirect to initial destination URL
-			String dstURI=LOCAL_AUTH_URL + dstLocalURI;
+			String dstURI=localAuthUrl + dstLocalURI;
 			log.info("dstURI: " + dstURI);
 			response.sendRedirect(dstURI);
 			return;
@@ -280,7 +278,8 @@ public class LoginFilter extends OncePerRequestFilter  {
 		try {
 
 			log.info("Solicitando access_token ...");
-
+			log.info("srvURI: " + srvURI);
+			
 			tokenRequest = OAuthClientRequest
 					.tokenLocation(srvURI)
 					.setGrantType(GrantType.AUTHORIZATION_CODE)
@@ -362,8 +361,6 @@ public class LoginFilter extends OncePerRequestFilter  {
 				String cookieName = cookies[i].getName();
 
 				if( "apiToken".equalsIgnoreCase(cookieName)  || "apiRefToken".equalsIgnoreCase(cookieName) || "tokenExp".equalsIgnoreCase(cookieName) ){
-					cookies[i].setValue("");
-					cookies[i].setPath("/");
 					cookies[i].setMaxAge(0);
 				}
 				response.addCookie(cookies[i]);

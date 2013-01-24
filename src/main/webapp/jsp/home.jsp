@@ -65,16 +65,11 @@
 			<div id="user">
 				<s:if test="%{fullName == null}">
 					<s:form  action="home!auth.html" cssClass="form_login" id="form_login" theme="simple">
-		<!-- 				<form action="/" method="POST" class="form_login" id="form_login"> -->
-							<fieldset>
-<%-- 							<s:textfield name="username" id="username" label="username"></s:textfield> --%>
-<%-- 							<s:password name="password" id="password" label="password"></s:password> --%>
-		<!-- 						<input type="text" id="username" name="username" placeholder="Nom d'usuari"  /> -->
-		<!-- 						<input type="password" id="password" name="password" placeholder="Contrasenya"  /> -->
-		<!-- 						<input type="submit" id="login" name="login" value="Accedir" class="btn" /> -->
-								<s:submit id="login" value="Accedir" cssClass="btn"></s:submit>
-							</fieldset>
-		<!-- 				</form> -->
+						<fieldset>
+							<s:textfield name="username" id="username" label="username"></s:textfield>
+							<s:password name="password" id="password" label="password"></s:password>
+							<s:submit id="login" value="Accedir" cssClass="btn"></s:submit>
+						</fieldset>
 					</s:form>
 				</s:if>
 				<s:else>

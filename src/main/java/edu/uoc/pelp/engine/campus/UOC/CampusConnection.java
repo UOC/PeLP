@@ -50,7 +50,6 @@ import edu.uoc.pelp.engine.campus.UserRoles;
 import edu.uoc.pelp.engine.campus.UOC.vo.ClassroomList;
 import edu.uoc.pelp.engine.campus.UOC.vo.PersonList;
 import edu.uoc.pelp.engine.campus.UOC.vo.User;
-import edu.uoc.pelp.engine.campus.UOC.vo.UserList;
 import edu.uoc.pelp.exception.AuthPelpException;
 
 /**
@@ -70,6 +69,10 @@ public class CampusConnection implements ICampusConnection {
     private String _token = null;
     
     private static final Logger log = Logger.getLogger(CampusConnection.class);
+    
+    private String campusUserSubjects = null;
+    private String classroomsString = null;
+    private User userData = null;
     
     public CampusConnection() {
         
@@ -112,27 +115,68 @@ public class CampusConnection implements ICampusConnection {
             }
             String responseString = EntityUtils.toString(resp.getEntity());
             log.debug(responseString);
+            responseString = decode(responseString, 'X');
             return responseString;
         } catch (Exception ex) {
             return null;
         }
     }
     
+    @Override
+    public boolean isUserAuthenticated() throws AuthPelpException {
+    	userData = getCampusUserData();
+        if( userData != null) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public IUserID getUserID() throws AuthPelpException {
+        if( userData != null) userData = getCampusUserData();
+        if(userData != null) {
+            return new UserID(userData.getNumber());
+        }
+        return null;
+    }
+    
+    @Override
+    public Person getUserData() throws AuthPelpException {
+    	User userData = getCampusUserData();    	
+    	if(userData!=null) {
+    		edu.uoc.pelp.engine.campus.UOC.vo.Person personData = getCampusPersonData(userData.getId());
+    		Person newData=new Person(new UserID(userData.getId()));
+    		newData.setFullName(userData.getFullName());
+    		newData.setLanguage(userData.getLanguage());
+    		newData.setName(userData.getName());
+    		newData.setUserPhoto(userData.getPhotoUrl());
+    		newData.setUsername(userData.getUsername());
+    		if(personData!=null) {
+    			newData.seteMail(personData.getEmail());
+    		}
+    		return newData;
+    	}
+    	return null;
+    }
+    
     private User getCampusUserData() {
         if(_token==null) {
             return null;
         }
-        String userJSON=Get("user");
+        String userJSON = Get("user");
+        
         Gson gson = new Gson();
-        return gson.fromJson(userJSON, User.class);
+        User user = gson.fromJson(userJSON, User.class);
+        user.setId( user.getId().replace("USER.", ""));
+        return user;
     }
-    
+
     private PersonList getCampusPersonData() {
         if(_token==null) {
             return null;
         }
 
-        String userJSON=Get("people");       
+        String userJSON = Get("people");       
         
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(java.util.Date.class, new DateDeserializer());
@@ -161,15 +205,16 @@ public class CampusConnection implements ICampusConnection {
             return null;
         }
        
-        String userJSON=Get("subjects");
-        
+        if( campusUserSubjects == null ){
+        	campusUserSubjects = Get("subjects");
+        }
         
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(java.util.Date.class, new DateDeserializer());
         
         Gson gson=gsonBuilder.create();        
 
-        return gson.fromJson(userJSON, ClassroomList.class);
+        return gson.fromJson(campusUserSubjects, ClassroomList.class);
     }
     
     private edu.uoc.pelp.engine.campus.UOC.vo.Classroom getSubjectData(String id) {
@@ -197,53 +242,19 @@ public class CampusConnection implements ICampusConnection {
     }
     
 
-    @Override
-    public boolean isUserAuthenticated() throws AuthPelpException {
-        if(getCampusUserData()!=null) {
-            return true;
-        }
-        return false;
-    }
 
-    @Override
-    public IUserID getUserID() throws AuthPelpException {
-        User userData=getCampusUserData();
-        if(userData!=null) {
-            return new UserID(userData.getId());
-        }
-        return null;
-    }
-    
-    @Override
-    public Person getUserData() throws AuthPelpException {
-    	User userData = getCampusUserData();
-    	edu.uoc.pelp.engine.campus.UOC.vo.Person personData = getCampusPersonData(userData.getId());
-    	if(userData!=null) {
-    		Person newData=new Person(new UserID(userData.getId()));
-    		newData.setFullName(userData.getFullName());
-    		newData.setLanguage(userData.getLanguage());
-    		newData.setName(userData.getName());
-    		newData.setUserPhoto(userData.getPhotoUrl());
-    		newData.setUsername(userData.getUsername());
-    		if(personData!=null) {
-    			newData.seteMail(personData.getEmail());
-    		}
-    		return newData;
-    	}
-    	return null;
-    }
 
 
     @Override
     public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {
         
-        ClassroomList classrooms=getCampusUserSubjects();
+        ClassroomList classrooms = getCampusUserSubjects();
         if(classrooms==null || classrooms.getClassrooms()==null) {
             return null;
         }
         
         // Get the classrooms 
-        edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classList=classrooms.getClassrooms();
+        edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classList = classrooms.getClassrooms();
         
         // Create the output list        
         SubjectID[] retList=new SubjectID[classList.length];        
@@ -275,7 +286,8 @@ public class CampusConnection implements ICampusConnection {
 
     @Override
     public IClassroomID[] getUserClassrooms(UserRoles userRole, ISubjectID subject) throws AuthPelpException {
-        String classroomsString = Get("classrooms");
+        
+    	if( classroomsString == null  ) classroomsString = Get("classrooms");
         log.info("classroomsString: " + classroomsString);
         
         GsonBuilder gsonBuilder = new GsonBuilder();
@@ -476,7 +488,7 @@ public class CampusConnection implements ICampusConnection {
     	
     	
         try {
-			String classroomsString = Get("classrooms");
+			if( classroomsString == null ) classroomsString = Get("classrooms");
 			log.info("classroomsString: " + classroomsString);
 			
 			GsonBuilder gsonBuilder = new GsonBuilder();
@@ -508,6 +520,9 @@ public class CampusConnection implements ICampusConnection {
 				
 				classroom.setSubjectRef( getSubjectData(subjectId) );
 				/*
+				 * Comentado por motivos de rendimiento
+				 * buscando por referencias parece que no se utiliza esta informacion
+				 * 
 				// Obtener estudiantes del aula
 			    String classroomStudentsString = Get("classrooms/"+identificadorAula+"/people/students" );
 			    log.info("classroomStudentsString: " + classroomStudentsString);
@@ -647,5 +662,48 @@ public class CampusConnection implements ICampusConnection {
 			}
 		}
     	return false;
+    }
+    
+    /**
+     * Decodes a String with Numeric Character References.
+     * <p>
+     * 
+     * @param str A NCR encoded String
+     * @param unknownCh, A character that is used if nnnn of &#nnnn; is not a int.
+     * 
+     * @return The decoded String.
+     */
+     public static String decode(String str, char unknownCh) {
+            StringBuffer sb = new StringBuffer();
+            int i1=0;
+            int i2=0;
+
+            while(i2<str.length()) {
+               i1 = str.indexOf("&#",i2);
+               if (i1 == -1 ) {
+                    sb.append(str.substring(i2));
+                    break ;
+               }
+               sb.append(str.substring(i2, i1));
+               i2 = str.indexOf(";", i1);
+               if (i2 == -1 ) {
+                    sb.append(str.substring(i1));
+                    break ;
+               }
+
+               String tok = str.substring(i1+2, i2);
+                try {
+                     int radix = 10 ;
+                     if (tok.charAt(0) == 'x' || tok.charAt(0) == 'X') {
+                        radix = 16 ;
+                        tok = tok.substring(1);
+                     }
+                     sb.append((char) Integer.parseInt(tok, radix));
+                } catch (NumberFormatException exp) {
+                     sb.append(unknownCh);
+                }
+                i2++ ;
+            }
+            return sb.toString();
     }
 }

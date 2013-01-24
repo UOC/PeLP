@@ -26,6 +26,7 @@ import edu.uoc.pelp.bussines.vo.DeliverSummary;
 import edu.uoc.pelp.bussines.vo.UserInformation;
 import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.exception.PelpException;
+import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
 
 
 /**
@@ -233,6 +234,11 @@ public class HomeAction extends ActionSupport {
 	}
 
 	public String auth() throws Exception {
+		 //FIXME Miramos Si es estudiante , professor i dependiendo usaremos uno o otro
+		LocalCampusConnection _campusConnection = new LocalCampusConnection();
+		_campusConnection.setProfile(username);			  	
+		bUOC.setCampusConnection(_campusConnection);
+		
 		HttpServletRequest request = ServletActionContext.getRequest();
     	request.getSession().setAttribute("authUOC", "request");
 		
