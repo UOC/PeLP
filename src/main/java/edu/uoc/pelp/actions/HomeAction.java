@@ -231,6 +231,8 @@ public class HomeAction extends ActionSupport {
 		return toReturn;
 		*/
 		//bUOC.logout();
+		HttpServletRequest request = ServletActionContext.getRequest();
+    	request.getSession().setAttribute("authUOC", "close");
 		LocalCampusConnection _campusConnection = new LocalCampusConnection();
 		        // Add the register to the admin database to give administration rights
 		        _campusConnection.setProfile("none");
