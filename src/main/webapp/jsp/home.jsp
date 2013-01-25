@@ -23,6 +23,7 @@
 	<meta name="keywords" content="" />
 	<meta name="robots" content="index, follow" /> 
 	<link rel="stylesheet" type="text/css" href="css/main.css" media="all" />
+	<link rel="stylesheet" type="text/css" href="css/messi.min.css" media="all" />
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>  
 	<script type="text/javascript">window.jQuery || document.write("<script type='text/javascript' src='<s:property value="contextPath"/>/js/jquery-1.7.2.min.js'>\x3C/script>")</script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.easing.1.3.js"></script>
@@ -31,6 +32,9 @@
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.placeholder.min.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.tablesorter.min.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/pelp.js"></script>
+	<script type="text/javascript" src="<s:property value="contextPath"/>/js/messi.min.js"></script>
+	<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script>
+	
 </head>
 <body>
 
@@ -67,8 +71,8 @@
 					<s:form  action="home!auth.html" cssClass="form_login" id="form_login" theme="simple">
 		<!-- 				<form action="/" method="POST" class="form_login" id="form_login"> -->
 							<fieldset>
-<%-- 							<s:textfield name="username" id="username" label="username"></s:textfield> --%>
-<%-- 							<s:password name="password" id="password" label="password"></s:password> --%>
+							<s:textfield name="username" id="username" label="username"></s:textfield>
+							<s:password name="password" id="password" label="password"></s:password>
 		<!-- 						<input type="text" id="username" name="username" placeholder="Nom d'usuari"  /> -->
 		<!-- 						<input type="password" id="password" name="password" placeholder="Contrasenya"  /> -->
 		<!-- 						<input type="submit" id="login" name="login" value="Accedir" class="btn" /> -->
@@ -90,21 +94,21 @@
 			<s:hidden key="ajaxCall"></s:hidden>
 				<fieldset>
 					 <select name="s_assign" id="s_assign">
-					 	<option value=""><s:text name="pelp.assigment"></s:text> </option>
+					 	<option value="-1"><s:text name="pelp.assigment"></s:text> </option>
 						<s:iterator value="listSubjects" >
 							<s:if test="%{s_assign == SubjectID}"> <option selected="selected" value="<s:property value="SubjectID" />"><s:property value="Description"/></option></s:if> 
 							<s:else> <option value="<s:property value="SubjectID" />"><s:property value="Description"/></option> </s:else> 
 						</s:iterator> 
 					</select>
 					<select name="s_aula" id="s_aula" disabled="disabled">
-						<option value=""><s:text name="pelp.classroom"></s:text> </option>
+						<option value="-1"><s:text name="pelp.classroom"></s:text> </option>
 						<s:iterator value="listClassroms">
 							<s:if test="%{s_aula == index}"><option selected="selected" value="<s:property value="index" />"><s:text name="pelp.classroom"></s:text> <s:property value="Index" /></option></s:if>
 							<s:else><option value="<s:property value="index" />"><s:text name="pelp.classroom"></s:text> <s:property value="Index" /></option></s:else>
 						</s:iterator>
 					</select>
 					<select name="s_activ" id="s_activ" disabled="disabled">
-						<option value=""><s:text name="pelp.activiti"></s:text> </option>
+						<option value="-1"><s:text name="pelp.activiti"></s:text> </option>
 						<s:iterator value="listActivity" status="statsa">
 							<s:if test="%{s_activ == index}"><option selected="selected" value="<s:property value="index" />"><s:property value="description" /></option></s:if>
 							<s:else><option value="<s:property value="index" />"><s:property value="description" /></option></s:else>
@@ -142,7 +146,8 @@
 	<div id="progMENU" class="tab_content_menu">
 		<!-- form_envios -->
 <!-- 		<form action="/" method="POST" id="form_envios"> -->
-		<s:form theme="simple" method="POST" enctype="multipart/form-data" action="deliveries">
+		<s:form theme="simple" method="POST" enctype="multipart/form-data" action="deliveries" >
+		<s:hidden key="formCall"></s:hidden>
 		<s:hidden name="s_assign"></s:hidden>
 		<s:hidden name="s_activ"></s:hidden>
 		<s:hidden name="s_aula"></s:hidden>
@@ -175,28 +180,26 @@
 							<th><s:text name="pelp.f.principal"></s:text> </th>
 						</tr>
 					</thead>
-					<tbody>
-
-					<s:iterator status="stat" value="(fileDim).{ #this }" >
-						<tr id="frow_<s:property value='#stat.count'/>">
-							<td>
-								<s:set name="codeName" value="matrizFile[#stat.index][4]"/>
-<%-- 							<s:checkbox name="chk_del" value="%{#stat.count}" key="matrizFile"  id="chk_del_%{#stat.count}" /> <label for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label></td> --%>
-								<input type="checkbox" name="chk_del" id="chk_del_<s:property value='#stat.count'/>" value="<s:property value='#stat.count'/>" /> 
-								<label id="chk_del_title<s:property value='#stat.count'/>"  for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label>
-								<input type="hidden" id="chk_del_title_hash<s:property value='#stat.count'/>"  value="<s:property value='%{#codeName}'/>"/>
-							</td>
-							<td class="opt">
-											<s:checkbox name="matrizFile" key="matrizFile" id="chk_code_%{#stat.count}"  fieldValue="c%{#codeName}"/>
-											<label for="chk_code_<s:property value='#stat.count'/>"><span class="hidden"><s:text name="pelp.code"></s:text></span></label></td>
-							<td class="opt">
-											<s:checkbox name="matrizFile" key="matrizFile" id="chk_memo_%{#stat.count}"  fieldValue="m%{#codeName}"/>
-											<label for="chk_memo_<s:property value='#stat.count'/>"><span class="hidden"><s:text name="pelp.memori"></s:text></span></label></td>
-							<td class="opt">
-											<s:checkbox name="matrizFile" key="matrizFile" id="chk_file_%{#stat.count}"  fieldValue="f%{#codeName}"/>
-											<label for="chk_file_<s:property value='#stat.count'/>"><span class="hidden"><s:text name="pelp.f.principal"></s:text></span></label></td>
-						</tr>
-					</s:iterator>
+					<tbody id="fileuploadajax">
+						<s:iterator status="stat" value="(fileDim).{ #this }" >
+							<tr id="frow_<s:property value='#stat.count'/>">
+								<td>
+									<s:set name="codeName" value="matrizFile[#stat.index][4]"/>
+									<input type="checkbox" name="chk_del" id="chk_del_<s:property value='#stat.count'/>" value="<s:property value='#stat.count'/>" /> 
+									<label id="chk_del_title<s:property value='#stat.count'/>"  for="chk_del_<s:property value='#stat.count'/>"><s:property value="matrizFile[#stat.index][0]"/></label>
+									<input type="hidden" id="chk_del_title_hash<s:property value='#stat.count'/>"  value="<s:property value='%{#codeName}'/>"/>
+								</td>
+								<td class="opt">
+												<s:checkbox name="matrizFile" key="matrizFile" id="chk_code_%{#stat.count}"  fieldValue="c%{#codeName}"/>
+												<label for="chk_code_<s:property value='#stat.count'/>"><span class="hidden"><s:text name="pelp.code"></s:text></span></label></td>
+								<td class="opt">
+												<s:checkbox name="matrizFile" key="matrizFile" id="chk_memo_%{#stat.count}"  fieldValue="m%{#codeName}"/>
+												<label for="chk_memo_<s:property value='#stat.count'/>"><span class="hidden"><s:text name="pelp.memori"></s:text></span></label></td>
+								<td class="opt">
+												<s:checkbox name="matrizFile" key="matrizFile" id="chk_file_%{#stat.count}"  fieldValue="f%{#codeName}"/>
+												<label for="chk_file_<s:property value='#stat.count'/>"><span class="hidden"><s:text name="pelp.f.principal"></s:text></span></label></td>
+							</tr>
+						</s:iterator>
 					</tbody>
 				</table>
 
@@ -256,7 +259,7 @@
 
 		<h3><s:text name="pelp.message"></s:text> </h3>
 
-		<div class="messages">
+		<div class="messages" id="messagesFINAL">
 			<p> <s:property value="resulMessage"/> </p>
 		</div>
 	</div>
@@ -451,6 +454,9 @@
 	<!-- /main -->
 
 </div>
+<div class="modal"></div>
+<div class="textAula" style="display: none;"><s:text name="pelp.classroom"></s:text></div>
+<div class="needFile" style="display: none;"><s:text name="pelp.need.file"></s:text></div>
 <!-- /container -->
 </body>
 </html>

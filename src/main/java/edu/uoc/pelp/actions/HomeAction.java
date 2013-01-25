@@ -26,6 +26,7 @@ import edu.uoc.pelp.bussines.vo.DeliverSummary;
 import edu.uoc.pelp.bussines.vo.UserInformation;
 import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.exception.PelpException;
+import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
 
 
 /**
@@ -218,7 +219,7 @@ public class HomeAction extends ActionSupport {
 	}
 	
 	public String logout() throws PelpException {
-		HttpServletRequest request = ServletActionContext.getRequest();
+		/*HttpServletRequest request = ServletActionContext.getRequest();
     	request.getSession().setAttribute("authUOC", "close");
     	bUOC.setCampusConnection(new CampusConnection());
     	bUOC.logout();
@@ -230,16 +231,44 @@ public class HomeAction extends ActionSupport {
 		}
 
 		return toReturn;
+		*/
+		//bUOC.logout();
+		LocalCampusConnection _campusConnection = new LocalCampusConnection();
+		        // Add the register to the admin database to give administration rights
+		        _campusConnection.setProfile("none");
+		        
+		        bUOC.setCampusConnection(_campusConnection);
+		        
+		String toReturn = 'r'+SUCCESS;
+
+		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
+		toReturn = 'r'+TAB_PROGRAMMING_ENVIROMENT;
+		}
+
+		return toReturn;
 	}
 
 	public String auth() throws Exception {
-		HttpServletRequest request = ServletActionContext.getRequest();
-    	request.getSession().setAttribute("authUOC", "request");
-		
-        String toReturn = 'r'+SUCCESS;
+//		HttpServletRequest request = ServletActionContext.getRequest();
+//    	request.getSession().setAttribute("authUOC", "request");
+//		
+//        String toReturn = 'r'+SUCCESS;
+//
+//		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
+//			toReturn = 'r'+TAB_PROGRAMMING_ENVIROMENT;
+//		}
+//
+//		return toReturn;
+		//FIXME Miramos Si es estudiante , professor i dependiendo usaremos uno o otro
+		LocalCampusConnection _campusConnection = new LocalCampusConnection();
+		        // Add the register to the admin database to give administration rights
+		        _campusConnection.setProfile(username);
+		        bUOC.setCampusConnection(_campusConnection);
+
+		        String toReturn = 'r'+SUCCESS;
 
 		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
-			toReturn = 'r'+TAB_PROGRAMMING_ENVIROMENT;
+		toReturn = 'r'+TAB_PROGRAMMING_ENVIROMENT;
 		}
 
 		return toReturn;

@@ -140,13 +140,22 @@ j(document).ready(function(){
 
     // Borrar archivos seleccionados
     j('#lnk_del').click(function(ev) {
+    	// comprovamos si tiene eleguido los combos.
+    	s_assign = j("#s_assign").val();
+    	s_aula = j("#s_aula").val();
+    	s_activ = j("#s_activ").val();
+    	petitionClassroom = "";
+    	
+    	if(s_assign)petitionClassroom += "&s_assign="+s_assign;
+    	if(s_aula)petitionClassroom += "&s_aula="+s_aula;
+    	if(s_activ)petitionClassroom += "&s_activ="+s_activ;
     	j("input[name='chk_del'][type='checkbox']").each(function(i){
     		if(j(this).is(':checked')){
     			callback="";
     			j.ajax({
     				  url: "deliveries!delete.html",
     				  dataType: 'json',
-    				  data: "auxInfo="+j('#chk_del_title_hash'+j(this).val()).val(),
+    				  data: "auxInfo="+j('#chk_del_title_hash'+j(this).val()).val()+"&timeFile="+j("#deliveries_timeFile").val()+petitionClassroom,
     				  success: callback,
     				  type: "POST"
     				});
@@ -158,7 +167,10 @@ j(document).ready(function(){
     // cargar dinamicamente los combo.
     j('#s_assign').change(function(ev){
     	j("#deliveries_s_assign").val(j(this).val());
+    	j('#s_aula').val("-1");
+    	j('#s_activ').val("-1");
     	callback="";
+    	j('body').addClass("loading"); 
     	j.ajax({
 			  url: "home!combo.html",
 			  dataType: 'json',
@@ -167,9 +179,10 @@ j(document).ready(function(){
 				var options = j("#s_aula option")[0].outerHTML
 				classrooms = data.listClassroms
 				for (var i = 0; i < classrooms.length; i++) {
-					options += '<option value="' + classrooms[i].index + '">' + classrooms[i].index + '</option>';
+					options += '<option value="' + classrooms[i].index + '">' +j('.textAula').html() +" "+ classrooms[i].index + '</option>';
 				}
 				j('#s_aula').html(options);
+				j('body').removeClass("loading"); 
 			  },
 			  type: "POST"
 			});
@@ -179,7 +192,9 @@ j(document).ready(function(){
     j('#s_aula').change(function(ev){
     	
     	j("#deliveries_s_aula").val(j(this).val());
+    	j('#s_activ').val("-1");
     	callback="";
+    	j('body').addClass("loading"); 
     	j.ajax({
 			  url: "home!combo.html",
 			  dataType: 'json',
@@ -191,6 +206,7 @@ j(document).ready(function(){
 					options += '<option value="' + classrooms[i].index + '">' + classrooms[i].description + '</option>';
 				}
 				j('#s_activ').html(options);
+				j('body').removeClass("loading"); 
 			  },
 			  type: "POST"
 			});
@@ -276,6 +292,68 @@ j(document).ready(function(){
 			event.preventDefault();
 		});
 	});
+	
+if(j('#logout').html()){	
+	
+	j('#deliveries_formCall').val(true);
+	j('#deliveries').ajaxForm({
+        beforeSubmit: function() {
+        	j('body').addClass("loading"); 
+        },
+        success: function(data) {
+        	// Miramos si el resultado es de message o de fileupload.
+            if(data.resulMessage){
+            	j('#deliveries_timeFile').val(data.timeFile); // el fichero que se usa.
+            	j('#messagesFINAL').html('<p>'+data.resulMessage+'</p>');
+            	j('body').removeClass("loading");
+            	
+            	
+            	if(data.resulMessage=="OK" && data.finalDeliver){
+            		s_assign = j("#s_assign").val();
+                	s_aula = j("#s_aula").val();
+                	s_activ = j("#s_activ").val();
+                	petitionClassroom = "";
+                	
+                	if(s_assign)petitionClassroom += "&s_assign="+s_assign;
+                	if(s_aula)petitionClassroom += "&s_aula="+s_aula;
+                	if(s_activ)petitionClassroom += "&s_activ="+s_activ;
+                	
+            		j(window).attr("location","home.html?ajaxCall=false"+petitionClassroom);
+            	}
+            	
+            }else{
+            	if(data.matrizFile){
+	            	var out = j('#fileuploadajax'); // Creamos el listado de ficheros.
+	            	content = "";
+	            	j.each(data.matrizFile, function(index, value) {
+	            		
+	            		content += "<tr id='frow_"+index+"'><td>";
+	            		content += "<input type='checkbox' name='chk_del' id='chk_del_"+index+"' value='"+index+"' />";
+	            		content += "<label id='"+index+"'  for='chk_del_"+index+"'>"+value[0]+"</label>";
+	            		content += "<input type='hidden' id='chk_del_title_hash"+index+"'  value='"+value[4]+"'/>";
+	            		content += "</td><td class='opt'>";
+	            		content += "<input type='checkbox' name='matrizFile' value='c"+value[4]+"' id='chk_code_"+index+"'/><label for='chk_code_"+index+"'><span class='hidden'>CODE HACK</span></label></td>";
+	            		content += "<td class='opt'><input type='checkbox' name='matrizFile' value='m"+value[4]+"' id='chk_memo_"+index+"'/><label for='chk_memo_"+index+"'><span class='hidden'>memo HACK</span></label></td>";
+	            		content += "<td class='opt'><input type='checkbox' name='matrizFile' value='f"+value[4]+"' id='chk_file_"+index+"'/><label for='chk_file_"+index+"'><span class='hidden'>principal HACK</span></label></td>";
+	            		content += "</tr>";
+	            	});
+	            	out.html(content);
+	            	// eliminamos los cambos anteriores
+	            	j(".customfile").html("<input id='deliveries_upload' class='customfile-input' type='file' value='' name='upload'>")
+	            	j('#deliveries_timeFile').val(data.timeFile); // el fichero que se usa.
+	            	j('input').customFormInput({
+	            		browseLbl: 'Examinar...',				/* browse button label */
+	            		changeLbl: 'Canviar...',				/* change button label */
+	            		noneLbl: 'Cap fitxer seleccionat'		/* no file label */
+	            	});
+            	}else{
+            		new Messi(j(".needFile").html());
+            	}
+            	j('body').removeClass("loading"); 
+            }
+        }
+    });
+}
 	
 /* menu*/
 		

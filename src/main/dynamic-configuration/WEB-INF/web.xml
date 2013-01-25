@@ -17,7 +17,7 @@
     
     <filter-mapping>
         <filter-name>loginFilterBean</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/openapi/*</url-pattern>
     </filter-mapping>
     
 	<filter>

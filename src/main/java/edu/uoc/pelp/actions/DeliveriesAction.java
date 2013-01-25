@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Namespace;
+import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
@@ -31,17 +32,19 @@ import edu.uoc.pelp.bussines.vo.Classroom;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverFile;
 import edu.uoc.pelp.bussines.vo.Test;
+import edu.uoc.pelp.bussines.vo.UserInformation;
 import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.exception.PelpException;
 
 /**
  * @author jsanchezramos
  */
-
+@ParentPackage("json-default")
 @Namespace("/")
 @ResultPath(value = "/")
 @Results({
     @Result(name="index", type="redirectAction", params = {"actionName" , "home"}),
+    @Result(name="dinamic", type="json"),
     @Result(name="rindex", type="redirectAction", params = 
 	{
     		"actionName" , "home",
@@ -80,6 +83,7 @@ public class DeliveriesAction extends ActionSupport {
 	private String s_aula;
 	private String s_activ;
 	private boolean ajaxCall = true;
+	private boolean formCall = false;
 
 	private String auxInfo;
 	private String resulMessage;
@@ -115,7 +119,8 @@ public class DeliveriesAction extends ActionSupport {
             bUOC.setCampusConnection(campusConnection);
     	}
 		
-		if (bUOC.getUserInformation() != null) {
+    	UserInformation userInfo = bUOC.getUserInformation();
+		if (userInfo != null) {
 			listSubjects = bUOC.getUserSubjects();
 			if (s_assign != null && s_assign.length()>0) {
 				String[] infoAssing = s_assign.split("_");
@@ -130,9 +135,9 @@ public class DeliveriesAction extends ActionSupport {
 						infoAssing[0], infoAssing[2]));
 			}
 			
-			imageURL = bUOC.getUserInformation().getUserPhoto();
+			imageURL = userInfo.getUserPhoto();
 			if(imageURL== null)imageURL = "img/user.png";
-			fullName = bUOC.getUserInformation().getUserFullName();
+			fullName = userInfo.getUserFullName();
 		} else {
 			imageURL = null;
 			fullName = null;
@@ -141,7 +146,11 @@ public class DeliveriesAction extends ActionSupport {
 		this.crearDeliverFile();
 		this.listFile();
 
-		return SUCCESS;
+		
+		if(formCall)return "dinamic";
+		else
+			return SUCCESS;
+		
 	}
 	
 	public String auth() throws Exception{
@@ -184,6 +193,7 @@ public class DeliveriesAction extends ActionSupport {
 	private void crearDeliverFile() throws Exception {
 		if (matrizFile != null) {
 			String ruta = this.rutaFile();
+			this.deleteClass();
 			File directorioPracticas = new File(ruta);
 			File[] ficheros = directorioPracticas.listFiles();
 			if (ficheros != null && ficheros.length > 0 || codePlain != null) {
@@ -337,7 +347,8 @@ public class DeliveriesAction extends ActionSupport {
 		}
 				
 		if(s_assign!=null&&s_aula!=null&&s_activ!=null){
-			fullRuta += s_assign+"/"+s_aula+"/"+s_activ+"/";	
+			String idassing = s_assign.replaceAll("_","").replace(".","");
+			fullRuta += idassing+"/"+s_aula+"/"+s_activ+"/";	
 		}
 		
 		return fullRuta;
@@ -350,7 +361,7 @@ public class DeliveriesAction extends ActionSupport {
 
 		String ruta = this.rutaFile();
 		
-		if (uploads != null && !uploads.isEmpty()) {
+ 		if (uploads != null && !uploads.isEmpty() && uploads.get(0)!= null ) {
 			try {
 				File destFile = new File(ruta, uploadFileNames.get(0));
 				FileUtils.copyFile(uploads.get(0), destFile);
@@ -387,6 +398,34 @@ public class DeliveriesAction extends ActionSupport {
 					log.info("Ficheros borrados: " + eliminados);
 				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void deleteClass(){
+		try {
+			synchronized (this) {
+				String ruta = this.rutaFile();
+				File directorioPracticas = new File(ruta);
+				File[] ficheros = directorioPracticas.listFiles();
+
+				if (ficheros != null && ficheros.length > 0) {
+					log.info("Borrando ficheros temporales: " + ficheros.length);
+					
+					int eliminados = 0;
+					for (int i = 0; i < ficheros.length; i++) {
+						File file = ficheros[i];
+						if(file.getName().indexOf(".class")!=-1)
+							if (!file.delete()) {
+								file.deleteOnExit();
+							}
+							eliminados++;
+						}
+						log.info("Ficheros borrados: " + eliminados);
+					}
+				}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -622,6 +661,14 @@ public class DeliveriesAction extends ActionSupport {
 
 	public void setTimeFile(String timeFile) {
 		this.timeFile = timeFile;
+	}
+
+	public boolean isFormCall() {
+		return formCall;
+	}
+
+	public void setFormCall(boolean formCall) {
+		this.formCall = formCall;
 	}
 
 }
