@@ -105,12 +105,10 @@ public class HomeAction extends ActionSupport {
     	String token = (String) request.getSession().getAttribute("access_token");
     	
     	if( token != null) {
-    		System.out.println( token );
             WebApplicationContext context =
         			WebApplicationContextUtils.getRequiredWebApplicationContext(
                                             ServletActionContext.getServletContext()
                                 );
-            //bUOC = (UOCPelpBussines)context.getBean("bUOC");
             CampusConnection campusConnection = (CampusConnection) context.getBean("lcctj");
             campusConnection.setCampusSession(token);
             bUOC.setCampusConnection(campusConnection);
@@ -233,16 +231,13 @@ public class HomeAction extends ActionSupport {
 		return toReturn;
 	}
 
-	public String auth() throws Exception {
-		 //FIXME Miramos Si es estudiante , professor i dependiendo usaremos uno o otro
+	public String authLocal() throws Exception {
+		//FIXME Miramos Si es estudiante , professor i dependiendo usaremos uno o otro
 		LocalCampusConnection _campusConnection = new LocalCampusConnection();
 		_campusConnection.setProfile(username);			  	
 		bUOC.setCampusConnection(_campusConnection);
-		
-		HttpServletRequest request = ServletActionContext.getRequest();
-    	request.getSession().setAttribute("authUOC", "request");
-		
-        String toReturn = 'r'+SUCCESS;
+
+		String toReturn = 'r'+SUCCESS;
 
 		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
 			toReturn = 'r'+TAB_PROGRAMMING_ENVIROMENT;
@@ -251,6 +246,19 @@ public class HomeAction extends ActionSupport {
 		return toReturn;
 	}
 
+	public String auth() throws Exception {
+		HttpServletRequest request = ServletActionContext.getRequest();
+		request.getSession().setAttribute("authUOC", "request");
+
+		String toReturn = 'r'+SUCCESS;
+
+		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
+			toReturn = 'r'+TAB_PROGRAMMING_ENVIROMENT;
+		}
+
+		return toReturn;
+	}
+	
 	public UOCPelpBussines getbUOC() {
 		return bUOC;
 	}

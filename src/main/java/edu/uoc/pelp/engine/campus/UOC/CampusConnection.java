@@ -167,7 +167,9 @@ public class CampusConnection implements ICampusConnection {
         
         Gson gson = new Gson();
         User user = gson.fromJson(userJSON, User.class);
-        user.setId( user.getId().replace("USER.", ""));
+        if( user != null ){
+        	user.setId( user.getId().replace("USER.", ""));
+        }
         return user;
     }
 
