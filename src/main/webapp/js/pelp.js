@@ -298,6 +298,7 @@ if(j('#logout').html()){
 	j('#deliveries_formCall').val(true);
 	j('#deliveries').ajaxForm({
         beforeSubmit: function() {
+        	j('#messagesFINAL').html('<p></p>');
         	j('body').addClass("loading"); 
         },
         success: function(data) {
@@ -319,6 +320,8 @@ if(j('#logout').html()){
                 	if(s_activ)petitionClassroom += "&s_activ="+s_activ;
                 	
             		j(window).attr("location","home.html?ajaxCall=false"+petitionClassroom);
+            	}else if(data.resulMessage=="OK"){
+            		new Messi(j(".okCompile").html());
             	}
             	
             }else{

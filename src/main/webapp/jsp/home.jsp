@@ -455,6 +455,8 @@
 <div class="modal"></div>
 <div class="textAula" style="display: none;"><s:text name="pelp.classroom"></s:text></div>
 <div class="needFile" style="display: none;"><s:text name="pelp.need.file"></s:text></div>
+<div class="okCompile" style="display: none;"><s:text name="pelp.compile.text"></s:text></div>
+
 <!-- /container -->
 </body>
 </html>

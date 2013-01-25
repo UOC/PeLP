@@ -229,7 +229,7 @@ public class DeliveriesAction extends ActionSupport {
 							}
 						}
 					}
-					if (isFile && listActivity != null) {
+					if (isFile && listActivity != null&& listActivity.length>0) {
 						Activity objActivity = new Activity();
 						for (int j = 0; j < listActivity.length; j++) {
 							if (listActivity[j].getIndex() == Integer
@@ -346,7 +346,7 @@ public class DeliveriesAction extends ActionSupport {
 			fullRuta +="/invited/"+timeFile+"/";
 		}
 				
-		if(s_assign!=null&&s_aula!=null&&s_activ!=null){
+		if(s_assign!=null&&!s_assign.equals("-1")&&s_assign.length()>0&&s_aula!=null&&!s_aula.equals("-1")&&s_aula.length()>0&&s_activ!=null&&!s_activ.equals("-1")&&s_activ.length()>0){
 			String idassing = s_assign.replaceAll("_","").replace(".","");
 			fullRuta += idassing+"/"+s_aula+"/"+s_activ+"/";	
 		}
