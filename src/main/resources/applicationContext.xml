@@ -25,7 +25,6 @@ http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 	</bean>
 	<!-- TEMPORAL -->
 	<bean id="lcct" class="edu.uoc.pelp.test.tempClasses.LocalCampusConnection" scope="session">
-<!-- 		<property name="credentials" ref="propertiesUOCApi"/> -->
 	</bean>
 	<!-- FIN TEMPORAL -->
 
@@ -44,7 +43,6 @@ http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
     <!--========== Filters ==========-->
     
     <bean id="loginFilterBean" class="edu.uoc.pelp.servlets.UOC.LoginFilter" >
-        <!-- <property name="bussines" ref="bUOC" />  -->
         <property name="credentials" ref="propertiesUOCApi"/>
     </bean>
     
