@@ -93,6 +93,7 @@ public class HomeAction extends ActionSupport {
 	private String filename;
 	private InputStream fileInputStream;
 	private String timeFile;
+	private String maxDelivers;
 
 	private boolean teacher;
 
@@ -147,10 +148,12 @@ public class HomeAction extends ActionSupport {
 					}
 					//listDeliverDetails = bUOC.getAllClassroomDeliverDetails(objActivity, objClassroom);
 					listDeliverDetails = bUOC.getLastClassroomDeliverDetails(objActivity, objClassroom);
+					if(listDeliverDetails.length>0&& listDeliverDetails!= null)maxDelivers =  String.valueOf(listDeliverDetails[0].getMaxDelivers());
 					//this.listStudents(listDeliverDetails);
 				}else{
 					listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
 							infoAssing[0], infoAssing[2]), objActivity.getIndex());	
+					if(listDeliverDetails.length>0&& listDeliverDetails!= null)maxDelivers =  String.valueOf(listDeliverDetails[0].getMaxDelivers());
 				}
 			}
 			imageURL = userInfo.getUserPhoto();
@@ -460,6 +463,14 @@ public class HomeAction extends ActionSupport {
 
 	public void setTimeFile(String timeFile) {
 		this.timeFile = timeFile;
+	}
+
+	public String getMaxDelivers() {
+		return maxDelivers;
+	}
+
+	public void setMaxDelivers(String maxDelivers) {
+		this.maxDelivers = maxDelivers;
 	}
 
 }

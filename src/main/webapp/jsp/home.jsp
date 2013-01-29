@@ -150,6 +150,8 @@
 		<s:hidden name="s_activ"></s:hidden>
 		<s:hidden name="s_aula"></s:hidden>
 		<s:hidden name="timeFile"></s:hidden>
+		<s:hidden name="maxDelivers"></s:hidden>
+		<s:hidden name="totalDelivers" value="%{listDeliverDetails.length}"></s:hidden>
 		<!-- tabs -->
 		<ul class="tabs">  
 			<li><a href="#tab_1"><s:text name="pelp.file.gest"></s:text> </a></li>  
@@ -456,6 +458,10 @@
 <div class="textAula" style="display: none;"><s:text name="pelp.classroom"></s:text></div>
 <div class="needFile" style="display: none;"><s:text name="pelp.need.file"></s:text></div>
 <div class="okCompile" style="display: none;"><s:text name="pelp.compile.text"></s:text></div>
+<div class="koLimit" style="display: none;"><s:text name="pelp.limit"></s:text></div>
+<div class="koFile" style="display: none;"><s:text name="pelp.alert.file"></s:text></div>
+
+
 
 <!-- /container -->
 </body>

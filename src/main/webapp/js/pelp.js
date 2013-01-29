@@ -298,6 +298,18 @@ if(j('#logout').html()){
 	j('#deliveries_formCall').val(true);
 	j('#deliveries').ajaxForm({
         beforeSubmit: function() {
+        	// Comprovamos si no pasa el numeor maximo de entregas.
+        	
+        	if(!validate_filename((j(':file').val()))){
+        		new Messi(j(".koFile").html());
+        		return false;
+        	}
+        	
+        	if(j('#deliveries_totalDelivers').val()>j('#deliveries_maxDelivers')){
+        		new Messi(j(".koLimit").html());
+        		return false;
+        	}
+        	
         	j('#messagesFINAL').html('<p></p>');
         	j('body').addClass("loading"); 
         },
@@ -393,5 +405,12 @@ function doCompleteChangeTab(jqXHR, textStatus) {
 
 function doErrorChangingTab(jqXHR, textStatus, errorThrown) {
 	//alert('error! ' + textStatus);
+}
+function validate_filename(filename){
+	//(/^([a-z]+\..+[a-z]+)$/.test("tesst.uoc"))
+	if (!(/^([a-z]+\..+[a-z]+)$/.test(filename))){
+		  return false;
+	}
+	return true;
 }
 

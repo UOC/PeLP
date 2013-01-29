@@ -782,8 +782,8 @@ private void createDummyData() {
                                                          df.parse("15/01/2012")));
         _dummySemesters.put("20112",new Semester("20112",df.parse("16/01/2011"),
                                                          df.parse("01/08/2012")));
-        _dummySemesters.put("20121",new Semester("20121",df.parse("20/09/2012"),
-                                                         df.parse("28/01/2013")));
+        _dummySemesters.put("20121",new Semester("20121",df.parse("12/11/2012"),
+                                                         df.parse("31/03/2013")));
     } catch (ParseException ex) {
         Logger.getLogger(LocalCampusConnection.class.getName()).log(Level.SEVERE, null, ex);
     }
