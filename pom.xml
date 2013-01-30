@@ -54,7 +54,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-annotations</artifactId>
-			<version>3.2.1.GA</version>
+			<version>3.2.1.ga</version>
 			<type>jar</type>
 		</dependency>
 		
