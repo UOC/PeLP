@@ -76,7 +76,7 @@
 							<s:submit id="login" value="Accedir" cssClass="btn"></s:submit>
 						</fieldset>
 					</s:form>
-					<a href="home!auth.html" id="loginopenapi" class="btn">OpenAPI</a>
+					<a href="home!auth.html" id="loginopenapi" class="btnopenapi" ></a>
 				</s:if>
 				<s:else>
 					<div class="profile"> 

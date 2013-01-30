@@ -303,6 +303,29 @@ min-width:120px;
 }
 
 a.btn{min-height:28px;height:28px;padding:0 20px 0}
+
+a.btnopenapi {
+padding:0px 0px;
+margin-top: 10px;
+min-height:28px;
+line-height:28px;
+font-family:Arial, Helvetica, sans-serif;
+font-weight:normal;
+font-size:12px;
+border: 1px solid #3399ff;
+cursor: pointer;
+text-align:center;
+display:inline-block;
+text-decoration:none;
+min-width:200px;
+min-height:28px;height:28px;padding:0 0px 0;
+background: white url(../img/uoc-boton.png) no-repeat 0 0
+}
+a.btnopenapi:hover{
+outline:none;
+background:#ecf5ff url(../img/uoc-boton.png) no-repeat 0 0;
+}
+
 a.btndel{position:relative;padding:0 20px 0 40px;font-family:Verdana, Arial, Helvetica, sans-serif;color:#ff0000;border:1px solid #ff0000;background: #fff}
 a.btndel .icon{display:block;width:15px;height:18px;position:absolute;top:4px;left:19px;background: transparent url(../img/icon_trash.png) no-repeat 0 0}
 input.btnsend{font-family:Verdana, Arial, Helvetica, sans-serif;background:#3399ff;color:#fff;font-weight:bold;min-width:200px;min-height:35px;line-height:33px;font-size:1.1em;}
