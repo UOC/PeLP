@@ -156,6 +156,16 @@ j(document).ready(function(){
     				  url: "deliveries!delete.html",
     				  dataType: 'json',
     				  data: "auxInfo="+j('#chk_del_title_hash'+j(this).val()).val()+"&timeFile="+j("#deliveries_timeFile").val()+petitionClassroom,
+    				  error: function(data) {
+    			        	if(data.responseText){
+    			        		init = data.responseText.indexOf("Exception:")+10;
+    			        		fin = data.responseText.substr(init,data.responseText.indexOf("edu.")).indexOf("\n");
+    			        		stringFinal = data.responseText.substr(init,fin);
+    			        		new Messi("Error: "+stringFinal); j('body').removeClass("loading");
+    			        	}else{
+    			        		new Messi("Error");
+    			        	}
+    			        },
     				  success: callback,
     				  type: "POST"
     				});
@@ -163,6 +173,7 @@ j(document).ready(function(){
     		}
     	});
     });
+    
     
     // cargar dinamicamente los combo.
     j('#s_assign').change(function(ev){
@@ -175,6 +186,16 @@ j(document).ready(function(){
 			  url: "home!combo.html",
 			  dataType: 'json',
 			  data: "s_assign="+j(this).val(),
+			  error: function(data) {
+		        	if(data.responseText){
+		        		init = data.responseText.indexOf("Exception:")+10;
+		        		fin = data.responseText.substr(init,data.responseText.indexOf("edu.")).indexOf("\n");
+		        		stringFinal = data.responseText.substr(init,fin);
+		        		new Messi("Error: "+stringFinal); j('body').removeClass("loading");
+		        	}else{
+		        		new Messi("Error");
+		        	}
+		        },
 			  success:function(data){
 				var options = j("#s_aula option")[0].outerHTML
 				classrooms = data.listClassroms
@@ -199,6 +220,16 @@ j(document).ready(function(){
 			  url: "home!combo.html",
 			  dataType: 'json',
 			  data: "s_assign="+j("#s_assign").val()+"&s_aula="+j(this).val(),
+			  error: function(data) {
+		        	if(data.responseText){
+		        		init = data.responseText.indexOf("Exception:")+10;
+		        		fin = data.responseText.substr(init,data.responseText.indexOf("edu.")).indexOf("\n");
+		        		stringFinal = data.responseText.substr(init,fin);
+		        		new Messi("Error: "+stringFinal); j('body').removeClass("loading");
+		        	}else{
+		        		new Messi("Error");
+		        	}
+		        },
 			  success:function(data){
 				var options = j("#s_activ option")[0].outerHTML
 				classrooms = data.listActivity
@@ -300,10 +331,12 @@ if(j('#logout').html()){
         beforeSubmit: function() {
         	// Comprovamos si no pasa el numeor maximo de entregas.
         	
-        	if(!validate_filename((j(':file').val()))){
-        		new Messi(j(".koFile").html());
-        		return false;
-        	}
+        	if(j(':file').val()!=""){
+	        	if(!validate_filename((j(':file').val()))){
+	        		new Messi(j(".koFile").html());
+	        		return false;
+	        	}
+        	}        	
         	
         	if(j('#deliveries_totalDelivers').val()>j('#deliveries_maxDelivers')){
         		new Messi(j(".koLimit").html());
@@ -312,6 +345,16 @@ if(j('#logout').html()){
         	
         	j('#messagesFINAL').html('<p></p>');
         	j('body').addClass("loading"); 
+        },
+        error: function(data) {
+        	if(data.responseText){
+        		init = data.responseText.indexOf("Exception:")+10;
+        		fin = data.responseText.substr(init,data.responseText.indexOf("edu.")).indexOf("\n");
+        		stringFinal = data.responseText.substr(init,fin);
+        		new Messi("Error: "+stringFinal); j('body').removeClass("loading");
+        	}else{
+        		new Messi("Error");
+        	}
         },
         success: function(data) {
         	// Miramos si el resultado es de message o de fileupload.
