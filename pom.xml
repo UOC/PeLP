@@ -267,7 +267,7 @@
 				<!--deploy parameters -->
 				<!-- Aqui es donde pondreis la ruta de vuestro servidor jboss -->
 
-				<jbossdeployhome>/home/toni/opt/jboss4/server/default/deploy</jbossdeployhome>
+				<jbossdeployhome>/Users/juanfrasr/servidor/pelpserver/server/default/deploy</jbossdeployhome>
 			</properties>
 			<build>
 				<plugins>
