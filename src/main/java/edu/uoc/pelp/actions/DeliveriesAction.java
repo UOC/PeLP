@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import uoc.edu.pelp.bussines.PelpConfiguracionBO;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
@@ -156,7 +159,26 @@ public class DeliveriesAction extends ActionSupport {
 	public String auth() throws Exception{
 		HttpServletRequest request = ServletActionContext.getRequest();
     	request.getSession().setAttribute("authUOC", "request");
-		
+    	
+    	if(bUOC != null && bUOC.getUserInformation()!=null){
+			String lang = bUOC.getUserInformation().getLanguage();
+			System.out.println("IDIOMA USUARIO: "+lang);
+			Map session = ActionContext.getContext().getSession();	
+		  	if(lang.equals("ca")){
+		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("ca"));
+		  		Locale locale = new Locale("ca", "ES");
+		  		 	session.put("org.apache.tiles.LOCALE", locale);
+		  	}else if(lang.equals("es")){
+		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("es"));
+		  		Locale locale = new Locale("es", "ES");
+		  		 	session.put("org.apache.tiles.LOCALE", locale);
+		  	}else if(lang.equals("en")){
+		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("en"));
+		  		Locale locale = new Locale("en", "UK");
+		  		 	session.put("org.apache.tiles.LOCALE", locale);
+		  	}   	
+		}
+    	
 		return "index";
 	}
 	@PreDestroy

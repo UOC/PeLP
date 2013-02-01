@@ -3,10 +3,14 @@ package edu.uoc.pelp.actions;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
+import org.apache.struts2.convention.annotation.InterceptorRef;
+import org.apache.struts2.convention.annotation.InterceptorRefs;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -15,6 +19,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
@@ -36,7 +41,9 @@ import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
  * @author oripolles
  * 
  */
-@ParentPackage("json-default")
+@ParentPackage(value = "default")
+@InterceptorRefs(value = { @InterceptorRef(value = "langInterceptor"), @InterceptorRef(value = "defaultStack") })
+
 @Namespace("/")
 @ResultPath(value = "/")
 @Results({
@@ -270,6 +277,25 @@ public class HomeAction extends ActionSupport {
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 		request.getSession().setAttribute("authUOC", "request");
+		
+		if(bUOC != null && bUOC.getUserInformation()!=null){
+			String lang = bUOC.getUserInformation().getLanguage();
+			System.out.println("IDIOMA USUARIO: "+lang);
+			Map session = ActionContext.getContext().getSession();	
+		  	if(lang.equals("ca")){
+		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("ca"));
+		  		Locale locale = new Locale("ca", "ES");
+		  		 	session.put("org.apache.tiles.LOCALE", locale);
+		  	}else if(lang.equals("es")){
+		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("es"));
+		  		Locale locale = new Locale("es", "ES");
+		  		 	session.put("org.apache.tiles.LOCALE", locale);
+		  	}else if(lang.equals("en")){
+		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("en"));
+		  		Locale locale = new Locale("en", "UK");
+		  		 	session.put("org.apache.tiles.LOCALE", locale);
+		  	}   	
+		}
 
 		String toReturn = 'r'+SUCCESS;
 
