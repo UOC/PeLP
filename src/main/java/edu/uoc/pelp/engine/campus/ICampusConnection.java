@@ -19,6 +19,8 @@
 package edu.uoc.pelp.engine.campus;
 
 import edu.uoc.pelp.exception.AuthPelpException;
+import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
+import java.util.List;
 
 /**
  * This interface describes the methods to retrieve information from the campus, 
@@ -51,7 +53,16 @@ public interface ICampusConnection {
      * @throws AuthPelpException There is no user authenticated.
      */
     ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException;
-        
+    
+    /**
+     * Retrieve all the subjects where the current logged user is inscribed,
+     * both if is the teacher or if is student.
+     * @param timePeriod Filter results using the time period. If null, all results are retrived. 
+     * @return Array with the identifier for each subject.
+     * @throws AuthPelpException There is no user authenticated.
+     */
+    ISubjectID[] getUserSubjects(ITimePeriod timePeriod,List<PelpActiveSubjects> filter) throws AuthPelpException;
+    
     /**
      * Retrieve all the subjects where the current logged user is inscribed,
      * as the given role.

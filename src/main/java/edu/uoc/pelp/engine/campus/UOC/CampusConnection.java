@@ -51,6 +51,7 @@ import edu.uoc.pelp.engine.campus.UOC.vo.ClassroomList;
 import edu.uoc.pelp.engine.campus.UOC.vo.PersonList;
 import edu.uoc.pelp.engine.campus.UOC.vo.User;
 import edu.uoc.pelp.exception.AuthPelpException;
+import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
 
 /**
  * Implements the campus access for the Universitat Oberta de Catalunya (UOC).
@@ -243,9 +244,25 @@ public class CampusConnection implements ICampusConnection {
         this.credentials = properties;
     }
     
-
-
-
+    @Override
+    public ISubjectID[] getUserSubjects(ITimePeriod timePeriod,List<PelpActiveSubjects> filter) throws AuthPelpException {
+        ISubjectID[] subjectList=getUserSubjects(timePeriod);
+        ArrayList<ISubjectID> retList=new ArrayList<ISubjectID>(subjectList.length);
+        
+        for(ISubjectID s:subjectList){
+            SubjectID s2=(SubjectID)s;
+            for(PelpActiveSubjects sf:filter) {
+                if(sf.getActive() && sf.getPelpActiveSubjectsPK().getSemester().equals(s2.getCode())) {
+                    retList.add(s);
+                }
+            }
+        }
+        
+        ISubjectID[] retArray=new ISubjectID[retList.size()];
+        retList.toArray(retArray);
+    
+        return retArray;
+    }
 
     @Override
     public ISubjectID[] getUserSubjects(ITimePeriod timePeriod) throws AuthPelpException {

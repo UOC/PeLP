@@ -41,6 +41,8 @@ import edu.uoc.pelp.engine.campus.UOC.Semester;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import edu.uoc.pelp.engine.campus.UOC.UserID;
 import edu.uoc.pelp.exception.AuthPelpException;
+import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
+import java.util.List;
 
 
 public class LocalCampusConnection implements ICampusConnection{
@@ -999,4 +1001,25 @@ public ITimePeriod[] getActivePeriods() {
     
     return retList;
 }
+
+    @Override
+    public ISubjectID[] getUserSubjects(ITimePeriod timePeriod, List<PelpActiveSubjects> filter) throws AuthPelpException {
+                ISubjectID[] subjectList=getUserSubjects(timePeriod);
+        ArrayList<ISubjectID> retList=new ArrayList<ISubjectID>(subjectList.length);
+        
+        for(ISubjectID s:subjectList){
+            SubjectID s2=(SubjectID)s;
+            for(PelpActiveSubjects sf:filter) {
+                if(sf.getActive() && sf.getPelpActiveSubjectsPK().getSemester().equals(s2.getCode())) {
+                    retList.add(s);
+                }
+            }
+        }
+        
+        ISubjectID[] retArray=new ISubjectID[retList.size()];
+        retList.toArray(retArray);
+    
+        return retArray;
+
+    }
 }

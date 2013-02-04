@@ -35,9 +35,11 @@ import edu.uoc.pelp.engine.deliver.IDeliverManager;
 import edu.uoc.pelp.engine.information.DAOInformationManager;
 import edu.uoc.pelp.engine.information.IInformationManager;
 import edu.uoc.pelp.exception.*;
+import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * This class implements the engine of the PELP system. 
@@ -168,8 +170,9 @@ public class PELPEngine implements IPELPEngine {
         ArrayList<Subject> subjectsList=new ArrayList<Subject>();
 
         // Add subjects
-        for(ITimePeriod period:_campusConnection.getActivePeriods()) {            
-            for(ISubjectID subjectID:_campusConnection.getUserSubjects(period)) {
+        for(ITimePeriod period:_campusConnection.getActivePeriods()) {       
+            List<PelpActiveSubjects> filter = _administrationManager.getActiveSubjects(period.toString());
+            for(ISubjectID subjectID:_campusConnection.getUserSubjects(period,filter)) {
                 subjectsList.add(_campusConnection.getSubjectData(subjectID));
             }
         }

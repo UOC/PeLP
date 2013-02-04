@@ -250,11 +250,16 @@ public class AdministrationDAO implements IAdministrationDAO {
 
     @Override
     public List<PelpActiveSubjects> getActiveSubjects() {
-                
+        
+        getSession().beginTransaction();
         // Get the language registers
         Query query=getSession().getNamedQuery("PelpActiveSubjects.findAllActive");
-                
-        return query.list();
+        
+        List retList = query.list();
+        
+        getSession().close();
+        
+        return retList;
     }
     
     @Override
@@ -263,11 +268,18 @@ public class AdministrationDAO implements IAdministrationDAO {
         if(semester==null) {
             return null;
         }   
+        
+        getSession().beginTransaction();
+        
         // Get the language registers
         Query query=getSession().getNamedQuery("PelpActiveSubjects.findActiveBySemester");
         query.setParameter("semester", semester);
-                
-        return query.list();
+        
+        List retList = query.list();
+        
+        getSession().close();
+        
+        return retList;
     }
 
     @Override
