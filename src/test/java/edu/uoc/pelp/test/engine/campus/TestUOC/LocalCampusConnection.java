@@ -1007,7 +1007,7 @@ public class LocalCampusConnection implements ICampusConnection{
         for(ISubjectID s:subjectList){
             SubjectID s2=(SubjectID)s;
             for(PelpActiveSubjects sf:filter) {
-                if(sf.getActive() && sf.getPelpActiveSubjectsPK().getSemester().equals(s2.getCode())) {
+                if(sf.getActive() && sf.getPelpActiveSubjectsPK().getSubject().equals(s2.getCode())) {
                     retList.add(s);
                 }
             }

@@ -252,7 +252,7 @@ public class CampusConnection implements ICampusConnection {
         for(ISubjectID s:subjectList){
             SubjectID s2=(SubjectID)s;
             for(PelpActiveSubjects sf:filter) {
-                if(sf.getActive() && sf.getPelpActiveSubjectsPK().getSemester().equals(s2.getCode())) {
+                if(sf.getActive() && sf.getPelpActiveSubjectsPK().getSubject().equals(s2.getCode())) {
                     retList.add(s);
                 }
             }
@@ -272,25 +272,35 @@ public class CampusConnection implements ICampusConnection {
             return null;
         }
         
+        // Get semester
+        Semester filter=null;
+        if(timePeriod instanceof Semester) {
+            filter=(Semester)timePeriod;
+        }
+        
         // Get the classrooms 
         edu.uoc.pelp.engine.campus.UOC.vo.Classroom[] classList = classrooms.getClassrooms();
         
         // Create the output list        
-        SubjectID[] retList=new SubjectID[classList.length];        
-        
+        ArrayList<ISubjectID> retList=new ArrayList<ISubjectID>(classList.length);
+                
         for(int i=0;i<classList.length;i++) {
             edu.uoc.pelp.engine.campus.UOC.vo.Classroom classObj=classList[i];
             String code = getCode(classObj.getCode());
             String semesterCode = getSemester( classObj.getCode() );
            
-            // Create the semester object
-            Semester semester=new Semester(semesterCode);
-                    
-            // Build new Subject identifier
-            retList[i]=new SubjectID(code,semester, classObj.getId());
+            if(filter!=null && semesterCode.equals(filter.getID())) {
+                // Create the semester object
+                Semester semester=new Semester(semesterCode);
+
+                // Build new Subject identifier
+                retList.add(new SubjectID(code,semester, classObj.getId()));
+            }
         }
         
-        return retList;
+        SubjectID[] retArray=new SubjectID[classList.length];        
+        retList.toArray(retArray);
+        return retArray;
     }
 
     @Override
