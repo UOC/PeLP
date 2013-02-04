@@ -979,7 +979,7 @@
             } else if (c.dateFormat == "uk") {
                 // reformat the string in ISO format
                 s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$2/$1");
-            } else if (c.dateFormat == "dd/mm/yy" || c.dateFormat == "dd-mm-yy") {
+            } else if (c.dateFormat == "dd/MM/yy" || c.dateFormat == "dd-mm-yy") {
                 s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2})/, "$1/$2/$3");
             }
             return $.tablesorter.formatFloat(new Date(s).getTime());

@@ -31,7 +31,7 @@ public class UocBussinesImpl implements UocBussines {
 	}
 
 	public Classroom[] getClassroomSubjects(String idSubject) throws Exception {
-		DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		Classroom[] arrayClass = null;
 //
 //		if (idSubject != null) {
@@ -51,7 +51,7 @@ public class UocBussinesImpl implements UocBussines {
 
 	public Map<String, String> getActivitiClassroom(String idClassroom)
 			throws Exception, PelpException {
-		DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		Activity[] arrayActiviy = null;
 		//String[] arrayString = null;
 		
@@ -124,7 +124,7 @@ public class UocBussinesImpl implements UocBussines {
 	}
 	
 	public Deliver[] getDelivers(String activity) throws PelpException, Exception{
-		DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 		Deliver[] listDelivers = null;
 //		
 //		if(activity != null && activity.length()>0){

@@ -252,7 +252,7 @@ public class CampusConnection implements ICampusConnection {
         for(ISubjectID s:subjectList){
             SubjectID s2=(SubjectID)s;
             for(PelpActiveSubjects sf:filter) {
-                if(sf.getActive() && sf.getPelpActiveSubjectsPK().getSubject().equals(s2.getCode())) {
+                if(s2!=null && sf!=null && sf.getPelpActiveSubjectsPK() != null && sf.getActive() && sf.getPelpActiveSubjectsPK().getSubject().equals(s2.getCode())) {
                     retList.add(s);
                 }
             }
@@ -591,8 +591,6 @@ public class CampusConnection implements ICampusConnection {
     @Override
     public Person getUserData(IUserID userID) throws AuthPelpException {
     	
-    	throw new UnsupportedOperationException("Not supported yet.");
-    	/*
         UserID userId = (UserID) userID;        
         // FIXME falta obtener el userid de campus
         edu.uoc.pelp.engine.campus.UOC.vo.Person personData = getCampusPersonData(userId.idp);        
@@ -609,8 +607,6 @@ public class CampusConnection implements ICampusConnection {
             return newData;
         }
         return null;
-        */
-    	
     }
 
     @Override

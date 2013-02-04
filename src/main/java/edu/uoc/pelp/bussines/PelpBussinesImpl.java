@@ -549,7 +549,12 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         
         // Create the new object
         DeliverSummary result=new DeliverSummary();
-        result.setUser(getUserInformation());
+        
+        //result.setUser(getUserInformation()); // PONER USER ID CON EL IDP QUE TOCA.
+        
+        Person objPerson = _campusConnection.getUserData(deliver.getID().user);
+        result.setUser(getUserInformationObject(objPerson));
+        
         result.setDeliverIndex((int)deliverResult.getDeliverID().index);
         result.setProgrammingLanguage(deliverResult.getBuildResults().getLanguage());
         result.setCompileOK(deliverResult.getBuildResults().isCorrect());

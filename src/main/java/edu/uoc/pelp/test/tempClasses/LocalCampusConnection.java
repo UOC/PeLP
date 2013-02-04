@@ -778,7 +778,7 @@ private void createDummyData() {
     
     // Create the semesters
     try {    
-        DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         _dummySemesters.clear();
         _dummySemesters.put("20111",new Semester("20111",df.parse("21/09/2011"),
                                                          df.parse("15/01/2012")));
