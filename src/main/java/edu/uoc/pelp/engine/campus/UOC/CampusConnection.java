@@ -50,6 +50,7 @@ import edu.uoc.pelp.engine.campus.UserRoles;
 import edu.uoc.pelp.engine.campus.UOC.vo.ClassroomList;
 import edu.uoc.pelp.engine.campus.UOC.vo.PersonList;
 import edu.uoc.pelp.engine.campus.UOC.vo.User;
+import edu.uoc.pelp.engine.campus.UOC.vo.UserList;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
 
@@ -134,19 +135,21 @@ public class CampusConnection implements ICampusConnection {
 
     @Override
     public IUserID getUserID() throws AuthPelpException {
-        if( userData != null) userData = getCampusUserData();
+        if( userData != null) {
+        	userData = getCampusUserData();
+        }
         if(userData != null) {
-            return new UserID(userData.getNumber());
+            return new UserID(userData.getId());
         }
         return null;
     }
     
     @Override
     public Person getUserData() throws AuthPelpException {
-    	User userData = getCampusUserData();    	
+    	User userData = getCampusUserData();
     	if(userData!=null) {
     		edu.uoc.pelp.engine.campus.UOC.vo.Person personData = getCampusPersonData(userData.getId());
-    		Person newData=new Person(new UserID(userData.getId()));
+    		Person newData = new Person(new UserID(userData.getId()));
     		newData.setFullName(userData.getFullName());
     		newData.setLanguage(userData.getLanguage());
     		newData.setName(userData.getName());
@@ -201,6 +204,24 @@ public class CampusConnection implements ICampusConnection {
         Gson gson=gsonBuilder.create();        
 
         return gson.fromJson(userJSON, edu.uoc.pelp.engine.campus.UOC.vo.Person.class);
+    }
+    
+    @Override
+    public Person getUserData(IUserID userID) throws AuthPelpException {
+
+    	UserID userId = (UserID) userID;        
+    	edu.uoc.pelp.engine.campus.UOC.vo.Person personData = getCampusPersonData(userId.idp);        
+    	if(userData!=null) {
+    		Person newData=new Person(new UserID(userData.getId()));
+    		newData.setFullName( personData.getName() + personData.getSurname1() + personData.getSurname2() );
+    		newData.setLanguage( personData.getLanguages());
+    		newData.setName(personData.getName());
+    		newData.setUserPhoto( "http://cv.uoc.edu/UOC/mc-icons/fotos/" + personData.getUsername() + ".jpg");
+    		newData.setUsername(personData.getUsername());
+    		newData.seteMail(personData.getEmail());
+    		return newData;
+    	}
+    	return null;
     }
     
     private ClassroomList getCampusUserSubjects() {
@@ -563,7 +584,7 @@ public class CampusConnection implements ICampusConnection {
 			    UserList studentList = gson.fromJson(classroomStudentsString, UserList.class);
 			    User[] users = studentList.getUsers();
 				for (User user : users) {
-					classroom.addStudent(new Person(new UserID(user.getNumber() ) ));
+					classroom.addStudent(new Person(new UserID(user.getId() ) ));
 				}
 				
 				//Obtener profesores del aula
@@ -577,7 +598,7 @@ public class CampusConnection implements ICampusConnection {
 			    UserList teachersList = gson.fromJson(classroomTeachersString, UserList.class);
 			    users = teachersList.getUsers();
 				for (User user : users) {
-					classroom.addTeacher(new Person(new UserID(user.getNumber() ) ));
+					classroom.addTeacher(new Person(new UserID(user.getId() ) ));
 				}
 				*/
 			}
@@ -588,26 +609,7 @@ public class CampusConnection implements ICampusConnection {
 	    return classroom;
     }
     
-    @Override
-    public Person getUserData(IUserID userID) throws AuthPelpException {
-    	
-        UserID userId = (UserID) userID;        
-        // FIXME falta obtener el userid de campus
-        edu.uoc.pelp.engine.campus.UOC.vo.Person personData = getCampusPersonData(userId.idp);        
-        if(userData!=null) {
-            Person newData=new Person(new UserID(userData.getId()));
-            newData.setFullName(userData.getFullName());
-            newData.setLanguage(userData.getLanguage());
-            newData.setName(userData.getName());
-            newData.setUserPhoto(userData.getPhotoUrl());
-            newData.setUsername(userData.getUsername());
-            if(personData!=null) {
-                newData.seteMail(personData.getEmail());
-            }
-            return newData;
-        }
-        return null;
-    }
+
 
     @Override
     public ITimePeriod[] getPeriods() {
