@@ -155,6 +155,7 @@ public class HomeAction extends ActionSupport {
 					}
 					//listDeliverDetails = bUOC.getAllClassroomDeliverDetails(objActivity, objClassroom);
 					listDeliverDetails = bUOC.getLastClassroomDeliverDetails(objActivity, objClassroom);
+					
 					if(listDeliverDetails.length>0&& listDeliverDetails!= null)maxDelivers =  String.valueOf(listDeliverDetails[0].getMaxDelivers());
 					//this.listStudents(listDeliverDetails);
 				}else{
