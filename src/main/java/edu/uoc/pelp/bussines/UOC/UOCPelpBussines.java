@@ -18,8 +18,6 @@
 */
 package edu.uoc.pelp.bussines.UOC;
 
-import java.util.Date;
-
 import edu.uoc.pelp.bussines.PelpBussines;
 import edu.uoc.pelp.bussines.UOC.exception.InvalidSessionException;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
@@ -34,10 +32,12 @@ import edu.uoc.pelp.bussines.vo.DeliverSummary;
 import edu.uoc.pelp.bussines.vo.MultilingualTextArray;
 import edu.uoc.pelp.bussines.vo.Resource;
 import edu.uoc.pelp.bussines.vo.Test;
+import edu.uoc.pelp.engine.campus.UOC.UserID;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.InvalidTimePeriodPelpException;
 import edu.uoc.pelp.exception.PelpException;
+import java.util.Date;
 
 /**
  * PeLP bussines interface for Universitat Oberta de Catalunya, that extends basic functionalities
@@ -52,7 +52,7 @@ public interface UOCPelpBussines extends PelpBussines {
     public void setCampusSession(String session) throws InvalidSessionException;
 
     /**
-     * Get a summary information for a certain deliver
+     * Get a summary information for a certain deliver for current user
      * @param semester Semester code
      * @param subject Subject code
      * @param activityIndex Activity index
@@ -65,7 +65,21 @@ public interface UOCPelpBussines extends PelpBussines {
     public DeliverSummary getUserDeliverSummary(String semester,String subject,int activityIndex,int deliverIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
     
     /**
-     * Get a detailed information for a certain deliver
+     * Get a summary information for a certain deliver of a certain user
+     * @param userID User identifier
+     * @param semester Semester code
+     * @param subject Subject code
+     * @param activityIndex Activity index
+     * @param deliverIndex Deliver index
+     * @return Object with summary information of the deliver
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user is not the owner or a teacher of the classroom where owner belongs to
+     */
+    public DeliverSummary getUserDeliverSummary(UserID userID,String semester,String subject,int activityIndex,int deliverIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+    
+    /**
+     * Get a detailed information for a certain deliver for current user
      * @param semester Semester code
      * @param subject Subject code
      * @param activityIndex Activity index
@@ -78,7 +92,21 @@ public interface UOCPelpBussines extends PelpBussines {
     public DeliverDetail getUserDeliverDetails(String semester,String subject,int activityIndex,int deliverIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
 
     /**
-     * Get a summarized information for all delivers in a given classroom
+     * Get a detailed information for a certain deliver for a certain user
+     * @param userID User identifier
+     * @param semester Semester code
+     * @param subject Subject code
+     * @param activityIndex Activity index
+     * @param deliverIndex Deliver index
+     * @return Object with summary information of the deliver
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user is not the owner or a teacher of the classroom where owner belongs to
+     */
+    public DeliverDetail getUserDeliverDetails(UserID userID,String semester,String subject,int activityIndex,int deliverIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+
+    /**
+     * Get a summarized information for all delivers for current user in a given activity
      * @param semester Semester code
      * @param subject Subject code
      * @param activityIndex Activity Index
@@ -88,6 +116,19 @@ public interface UOCPelpBussines extends PelpBussines {
      * @throws AuthorizationException if user is not a teacher of this classroom
      */
     public DeliverSummary[] getUserDeliverSummary(String semester,String subject,int activityIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
+
+    /**
+     * Get a summarized information for all delivers for a certain user in a given activity
+     * @param userID User identifier
+     * @param semester Semester code
+     * @param subject Subject code
+     * @param activityIndex Activity Index
+     * @return Array of Object with summary information of the delivers
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user is not a teacher of this classroom
+     */
+    public DeliverSummary[] getUserDeliverSummary(UserID userID,String semester,String subject,int activityIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException;
 
     /**
      * Get a detailed information for all delivers from this user to given activity
@@ -101,6 +142,19 @@ public interface UOCPelpBussines extends PelpBussines {
      */
     public DeliverDetail[] getUserDeliverDetails(String semester,String subject,int activityIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
     
+    /**
+     * Get a detailed information for all delivers from a given user to given activity
+     * @param userID User identifier
+     * @param semester Semester code
+     * @param subject Subject code
+     * @param activityIndex Activity Index
+     * @return Array of Object with summary information of the delivers
+     * @throws ExecPelpException if some error accurs during process execution
+     * @throws InvalidEngineException if the engine is not properly initialized
+     * @throws AuthorizationException if user is not a teacher of this classroom
+     */
+    public DeliverDetail[] getUserDeliverDetails(UserID userID,String semester,String subject,int activityIndex) throws ExecPelpException,InvalidEngineException,AuthorizationException; 
+
     /**
      * Add a new deliver for a certain activity
      * @param semester Semester Code

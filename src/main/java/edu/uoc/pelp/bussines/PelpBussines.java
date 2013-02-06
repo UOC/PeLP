@@ -24,6 +24,7 @@ import edu.uoc.pelp.engine.campus.ICampusConnection;
 import edu.uoc.pelp.engine.campus.IClassroomID;
 import edu.uoc.pelp.engine.campus.ISubjectID;
 import edu.uoc.pelp.engine.campus.ITimePeriod;
+import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.exception.ExecPelpException;
 import java.util.Date;
 import org.hibernate.SessionFactory;
@@ -509,6 +510,13 @@ public interface PelpBussines {
      * @return Classroom object identifier
      */
     public IClassroomID getClassroomID(Classroom classroom);
+    
+    /**
+     * Check if current user is a PeLP administrator
+     * @return True if user is an administrator of False otherwise
+     * @throws AuthPelpException if user is not authentified
+     */
+    public Boolean isAdministrator() throws AuthPelpException;
     
 }
 
