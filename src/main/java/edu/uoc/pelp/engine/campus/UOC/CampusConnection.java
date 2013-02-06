@@ -577,6 +577,8 @@ public class CampusConnection implements ICampusConnection {
 				 * Comentado por motivos de rendimiento
 				 * buscando por referencias parece que no se utiliza esta informacion
 				 * 
+				 * 
+				*/
 				// Obtener estudiantes del aula
 			    String classroomStudentsString = Get("classrooms/"+identificadorAula+"/people/students" );
 			    log.info("classroomStudentsString: " + classroomStudentsString);
@@ -604,7 +606,7 @@ public class CampusConnection implements ICampusConnection {
 				for (User user : users) {
 					classroom.addTeacher(new Person(new UserID(user.getId() ) ));
 				}
-				*/
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
