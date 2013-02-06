@@ -1,10 +1,5 @@
 package edu.uoc.pelp.bussines.UOC;
 
-import java.io.File;
-import java.util.Date;
-
-import org.hibernate.SessionFactory;
-
 import edu.uoc.pelp.bussines.PelpBussinesImpl;
 import edu.uoc.pelp.bussines.UOC.exception.InvalidSessionException;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
@@ -33,6 +28,7 @@ import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.engine.campus.UOC.ClassroomID;
 import edu.uoc.pelp.engine.campus.UOC.Semester;
 import edu.uoc.pelp.engine.campus.UOC.SubjectID;
+import edu.uoc.pelp.engine.campus.UOC.UserID;
 import edu.uoc.pelp.engine.deliver.Deliver;
 import edu.uoc.pelp.engine.deliver.DeliverResults;
 import edu.uoc.pelp.exception.AuthPelpException;
@@ -41,6 +37,9 @@ import edu.uoc.pelp.exception.InvalidActivityPelpException;
 import edu.uoc.pelp.exception.InvalidSubjectPelpException;
 import edu.uoc.pelp.exception.InvalidTimePeriodPelpException;
 import edu.uoc.pelp.exception.PelpException;
+import java.io.File;
+import java.util.Date;
+import org.hibernate.SessionFactory;
 
 /**
  * Implementation of the UOC Bussines class
@@ -324,11 +323,6 @@ public class UOCPelpBussinesImpl extends PelpBussinesImpl implements UOCPelpBuss
         return classroomID;
     }
 
-    
-    
-    
-    
-    
     @Override
     public DeliverSummary getUserDeliverSummary(Subject subject, int activityIndex, int deliverIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -343,7 +337,7 @@ public class UOCPelpBussinesImpl extends PelpBussinesImpl implements UOCPelpBuss
     public DeliverSummary[] getUserDeliverSummary(Subject subject, int activityIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
     @Override
     public DeliverDetail[] getUserDeliverDetails(Subject subject, int activityIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
         
@@ -918,18 +912,78 @@ public class UOCPelpBussinesImpl extends PelpBussinesImpl implements UOCPelpBuss
         
         return retList;
     }
+    @Override
     public Boolean isTeacher(UOCSubject subject) throws AuthPelpException{
     	
     	SubjectID subjectID=(SubjectID) getSubjectID(subject);
     	return _engine.isTeacher(subjectID);
     	 
     }
+    @Override
     public Boolean isStudent(UOCSubject subject) throws AuthPelpException{
     	SubjectID subjectID=(SubjectID) getSubjectID(subject);
     	return _engine.isStudent(subjectID);
     }
+    @Override
     public void logout() throws PelpException{
     	//this.setCampusSession("logout");
     	System.out.println("logout");
+    }
+
+    @Override
+    public DeliverSummary getUserDeliverSummary(UserID userID, String semester, String subject, int activityIndex, int deliverIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public DeliverDetail getUserDeliverDetails(UserID userID, String semester, String subject, int activityIndex, int deliverIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public DeliverSummary[] getUserDeliverSummary(UserID userID, String semester, String subject, int activityIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public DeliverDetail[] getUserDeliverDetails(UserID userID, String semester, String subject, int activityIndex) throws ExecPelpException, InvalidEngineException, AuthorizationException {
+        // Check the engine
+        if(_engine==null) {
+            throw new InvalidEngineException("Uninitialized engine.");
+        }
+        
+        // Check the parameters
+        if(semester==null || subject==null) {
+            return null;
+        }
+                
+        // Creat the activity identifier
+        SubjectID subjectID=new SubjectID(subject,new Semester(semester));
+        ActivityID activityID=new ActivityID(subjectID,activityIndex);
+        
+        // Get the delivers
+        Deliver[] delivers=null;
+        try {
+            delivers=_engine.getActivityDelivers(userID, activityID);
+        } catch (AuthPelpException ex) {
+            throw new AuthorizationException(ex.getMessage());
+        }
+        
+        // Build the return array
+        DeliverDetail[] retArray=new DeliverDetail[delivers.length];
+        for(int i=0;i<retArray.length;i++) {
+            try {
+                DeliverResults deliverResults=_engine.getDeliverResults(delivers[i].getID());
+                retArray[i]=getDeliverDetailObject(delivers[i],deliverResults);
+            } catch (InvalidActivityPelpException ex) {
+                throw new ExecPelpException(ex.getMessage());
+            } catch (InvalidSubjectPelpException ex) {
+                throw new ExecPelpException(ex.getMessage());
+            } catch (AuthPelpException ex) {
+                throw new AuthorizationException(ex.getMessage());
+            }
+        }
+        
+        return retArray;
     }
 }

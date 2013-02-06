@@ -19,9 +19,9 @@
 package edu.uoc.pelp.bussines;
 
 import edu.uoc.pelp.bussines.exception.*;
+import edu.uoc.pelp.bussines.vo.*;
 import edu.uoc.pelp.bussines.vo.Classroom;
 import edu.uoc.pelp.bussines.vo.Subject;
-import edu.uoc.pelp.bussines.vo.*;
 import edu.uoc.pelp.conf.IPelpConfiguration;
 import edu.uoc.pelp.engine.DAOPELPEngine;
 import edu.uoc.pelp.engine.IPELPEngine;
@@ -775,5 +775,8 @@ public abstract class PelpBussinesImpl implements PelpBussines {
         return retList;
     }
     
-    
+    @Override
+    public Boolean isAdministrator() throws AuthPelpException {
+        return _engine.isAdministrator();
+    }
 }
