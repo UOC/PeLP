@@ -91,7 +91,7 @@
 			<form action="" method="POST" class="form_filters" id="form_filters">
 			<s:hidden key="ajaxCall"></s:hidden>
 				<fieldset>
-					 <select name="s_assign" id="s_assign">
+					 <select name="s_assign" id="s_assign" disabled="disabled">
 					 	<option value="-1"><s:text name="pelp.assigment"></s:text> </option>
 						<s:iterator value="listSubjects" >
 							<s:if test="%{s_assign == SubjectID}"> <option selected="selected" value="<s:property value="SubjectID" />"><s:property value="Description"/></option></s:if> 
@@ -287,7 +287,6 @@
 				<s:iterator value="listDeliverDetails" status="teacherpos">
 				
 				<s:if test="%{User.UserID.length()>0}">
-				<s:if test="%{#userAnt!=User.UserID}">
 				<s:set name="posUser" value="#teacherpos.count"></s:set>
 					<tr> 
 						<td><a href="#" class="toggle collapsed" rel="a<s:property value="#posUser"/>"><span class="lbl"><s:property value="User.Username"/></span></a></td>
@@ -297,16 +296,13 @@
 						<td><div class="tests"><span class="tmp lbl ko"><s:property value="TotalPublicTests"/></span><span class="tmp lbl ok"><s:property value="PassedPublicTests"/></span></div></td>
 						<td><div class="tests"><span class="tmp lbl ko"><s:property value="TotalPrivateTests"/></span> <span class="tmp lbl ok"><s:property value="PassedPrivateTests"/></span></div></td>
 					</tr>
-					</s:if>
-					<s:if test="%{#userAnt!=User.UserID}">					
+					
+										
 					<tr class="expand-child">
 						<td colspan="6">
 							<div id="a<s:property value="#posUser"/>" class="entregas">
-					
 								<table class="tlevel_2">
-					
 									<tbody>
-					</s:if>
 										<tr>
 											<td><a href="#" class="toggle collapsed" rel="a<s:property value="#posUser"/>_e<s:property value="#teacherpos.count"/>"><span class="lbl"><s:text name="pelp.deliver"></s:text> <s:property value="DeliverIndex"/></span></a></td>
 											<td><s:date name="SubmissionDate" format="dd/MM/yyyy" /></td>
@@ -361,15 +357,15 @@
 	
 											</td>
 										</tr>
-					<s:set name="userAnt" value="User.UserID"></s:set>
-					<s:if test="%{#userAnt!=User.UserID}">
+					
+					
 									</tbody>
 								</table>
 							</div>
 	
 						</td>
 					</tr>
-					</s:if>				
+							
 					
 					</s:if>
 					</s:iterator>

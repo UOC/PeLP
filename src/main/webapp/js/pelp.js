@@ -56,9 +56,9 @@ j(document).ready(function(){
     	j('body').addClass('mac-os');
 
 	// Eventos de filtros s_activ
-	//j('#s_assign').change(function() { this.form.submit(); });
-	//j('#s_aula').change(function() { this.form.submit(); });
-	//j('#s_activ').change(function() { this.form.submit(); });
+//	j('#s_assign').attr('disabled',true);
+//	j('#s_aula').attr('disabled',true);
+//	j('#s_activ').attr('disabled',true);
 
     // Ocultar elementos iniciales
 	j('#send_filters').hide();
@@ -66,8 +66,15 @@ j(document).ready(function(){
 	// Miramos si estan selecionados los combos en caso de estar no los ponemos ocultos
 	
 	
-	if(j("#s_activ option:selected").val()!="")j("#s_activ").attr('disabled',false);
-	if(j("#s_aula option:selected").val()!="")j("#s_aula").attr('disabled',false);
+	if(j('.profile').html()!= null){
+		j("#s_assign").attr('disabled',false);
+		j('#delviMENUn').show();
+	}else
+		j('#delviMENUn').hide();
+	
+	if(j("#s_assign option:selected").val()!=""&&j("#s_assign option:selected").val()!="-1")j("#s_assign").attr('disabled',false);
+	if(j("#s_activ option:selected").val()!=""&&j("#s_activ option:selected").val()!="-1")j("#s_activ").attr('disabled',false);
+	if(j("#s_aula option:selected").val()!=""&&j("#s_aula option:selected").val()!="-1")j("#s_aula").attr('disabled',false);
 	
 	
 
@@ -450,8 +457,11 @@ function doErrorChangingTab(jqXHR, textStatus, errorThrown) {
 	//alert('error! ' + textStatus);
 }
 function validate_filename(filename){
+	var n=filename.lastIndexOf("\\");
+	var string=filename.substr(n+1,filename.length)		
+	
 	//(/^([a-z]+\..+[a-z]+)$/.test("tesst.uoc"))
-	if (!(/^([a-z]+\..+[a-z]+)$/.test(filename))){
+	if (!(/^([a-z]+\..+[a-z]+)$/.test(string))){
 		  return false;
 	}
 	return true;

@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,7 +43,6 @@ import edu.uoc.pelp.engine.campus.UOC.SubjectID;
 import edu.uoc.pelp.engine.campus.UOC.UserID;
 import edu.uoc.pelp.exception.AuthPelpException;
 import edu.uoc.pelp.model.vo.admin.PelpActiveSubjects;
-import java.util.List;
 
 
 public class LocalCampusConnection implements ICampusConnection{
