@@ -374,7 +374,9 @@ public class CampusConnection implements ICampusConnection {
 						}
 						
 					} else {
-						lista.add( classroomID );
+						if( isTeacher(classroom.getAssignments()) || isStudent(classroom.getAssignments()) ){
+							lista.add( classroomID );
+						}
 					}
 				}
 			}
@@ -396,7 +398,9 @@ public class CampusConnection implements ICampusConnection {
 					}
 					
 				} else {
-					lista.add( classroomID );
+					if( isTeacher(classroom.getAssignments()) || isStudent(classroom.getAssignments()) ){
+						lista.add( classroomID );
+					}
 				}
         	}
         }

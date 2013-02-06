@@ -12,6 +12,7 @@ import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
+import edu.uoc.pelp.bussines.vo.UserInformation;
 
 
 
@@ -45,9 +46,9 @@ public class InterceptorLang extends AbstractInterceptor implements Interceptor{
 			
 			
 			UOCPelpBussines bUOC = (UOCPelpBussines) context.getBean("bUOC");
-			
-			if(bUOC != null && bUOC.getUserInformation()!=null){
-				String lang = bUOC.getUserInformation().getLanguage();
+			UserInformation userInformation = bUOC.getUserInformation();
+			if(bUOC != null && userInformation != null){
+				String lang = userInformation.getLanguage();
 				System.out.println("IDIOMA USUARIO: "+lang);
 				Map session = ActionContext.getContext().getSession();	
     		  	if(lang.equals("ca")){
