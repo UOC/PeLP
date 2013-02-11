@@ -25,11 +25,15 @@ import com.opensymphony.xwork2.ActionSupport;
 import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
+import edu.uoc.pelp.bussines.exception.AuthorizationException;
+import edu.uoc.pelp.bussines.exception.InvalidEngineException;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
 import edu.uoc.pelp.bussines.vo.UserInformation;
 import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
+import edu.uoc.pelp.engine.campus.UOC.UserID;
+import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.PelpException;
 import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
 
@@ -47,8 +51,8 @@ import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
 @Namespace("/")
 @ResultPath(value = "/")
 @Results({
-		@Result(name = "success", location = "jsp/home.jsp"),
-		@Result(name = "programming-environment", location = "jsp/deliveries.jsp"),
+		@Result(name = "success", location = "WEB-INF/jsp/home.jsp"),
+		@Result(name = "programming-environment", location = "WEB-INF/jsp/deliveries.jsp"),
 		@Result(name="rsuccess", type="redirectAction", params = {"actionName" , "home"}),
 		@Result(name="dinamic", type="json"),
 		@Result(name = "filedown", type = "stream", params =
@@ -101,6 +105,7 @@ public class HomeAction extends ActionSupport {
 	private InputStream fileInputStream;
 	private String timeFile;
 	private String maxDelivers;
+	private String userId;
 
 	private boolean teacher;
 
@@ -156,7 +161,7 @@ public class HomeAction extends ActionSupport {
 					//listDeliverDetails = bUOC.getAllClassroomDeliverDetails(objActivity, objClassroom);
 					listDeliverDetails = bUOC.getLastClassroomDeliverDetails(objActivity, objClassroom);
 					
-					if(listDeliverDetails.length>0&& listDeliverDetails!= null)maxDelivers =  String.valueOf(listDeliverDetails[0].getMaxDelivers());
+					if(listDeliverDetails!= null&&listDeliverDetails.length>0)maxDelivers =  String.valueOf(listDeliverDetails[0].getMaxDelivers());
 					//this.listStudents(listDeliverDetails);
 				}else{
 					listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
@@ -198,6 +203,15 @@ public class HomeAction extends ActionSupport {
 		
 		return "dinamic";
 	}
+	
+	public String detaill() throws Exception, PelpException, AuthorizationException{
+		String[] infoAssing = s_assign.split("_");
+		
+		UserID objUser =  new UserID(userId);
+		listDeliverDetails = bUOC.getUserDeliverDetails(objUser, infoAssing[0],infoAssing[2],Integer.parseInt(s_activ)); //(UserID userID, String semester, String subject, int activityIndex)
+		
+		return "dinamic";
+	}
 
 	public String down() throws Exception {
 		
@@ -215,8 +229,15 @@ public class HomeAction extends ActionSupport {
 				}
 			}
 			
-			listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
-					infoAssing[0], infoAssing[2]), objActivity.getIndex());
+			
+			// Miramos si tiene userId, entonces la llamada es diferente
+			
+			if(userId!=null){
+				UserID objUser =  new UserID(userId);
+				listDeliverDetails = bUOC.getUserDeliverDetails(objUser, infoAssing[0],infoAssing[2],Integer.parseInt(s_activ));
+			}else{
+				listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(infoAssing[0], infoAssing[2]), objActivity.getIndex());
+			}
 			
 			String urlpath = listDeliverDetails[Integer.parseInt(idDelivers)].getDeliverFiles()[Integer.parseInt(idFile)].getAbsolutePath();
 			File file = new File(urlpath);
@@ -498,6 +519,14 @@ public class HomeAction extends ActionSupport {
 
 	public void setMaxDelivers(String maxDelivers) {
 		this.maxDelivers = maxDelivers;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 }

@@ -397,9 +397,9 @@ if(j('#logout').html()){
 	            		content += "<label id='"+index+"'  for='chk_del_"+index+"'>"+value[0]+"</label>";
 	            		content += "<input type='hidden' id='chk_del_title_hash"+index+"'  value='"+value[4]+"'/>";
 	            		content += "</td><td class='opt'>";
-	            		content += "<input type='checkbox' name='matrizFile' value='c"+value[4]+"' id='chk_code_"+index+"'/><label for='chk_code_"+index+"'><span class='hidden'>CODE HACK</span></label></td>";
-	            		content += "<td class='opt'><input type='checkbox' name='matrizFile' value='m"+value[4]+"' id='chk_memo_"+index+"'/><label for='chk_memo_"+index+"'><span class='hidden'>memo HACK</span></label></td>";
-	            		content += "<td class='opt'><input type='checkbox' name='matrizFile' value='f"+value[4]+"' id='chk_file_"+index+"'/><label for='chk_file_"+index+"'><span class='hidden'>principal HACK</span></label></td>";
+	            		content += "<input type='checkbox' name='matrizFile' value='c"+value[4]+"' id='chk_code_"+index+"'/><label for='chk_code_"+index+"'><span class='hidden'>"+j("code").html()+"</span></label></td>";
+	            		content += "<td class='opt'><input type='checkbox' name='matrizFile' value='m"+value[4]+"' id='chk_memo_"+index+"'/><label for='chk_memo_"+index+"'><span class='hidden'>"+j("memori").html()+"</span></label></td>";
+	            		content += "<td class='opt'><input type='checkbox' name='matrizFile' value='f"+value[4]+"' id='chk_file_"+index+"'/><label for='chk_file_"+index+"'><span class='hidden'>"+j("principal").html()+"</span></label></td>";
 	            		content += "</tr>";
 	            	});
 	            	out.html(content);
@@ -419,6 +419,138 @@ if(j('#logout').html()){
         }
     });
 }
+
+
+/* Llamar ajax para cargar delivers*/
+
+j(".toggle").click(function(ev) {
+	if(j(this).attr("id")=="ajaxDelivers"){
+		userId=j(this).attr("href").substr(1,(j(this).attr("href").length));
+		
+		
+		if(j(this).attr("class")=="toggle expanded"){
+			j.ajax({
+			  url: "home!detaill.html",
+			  dataType: 'json',
+			  data: "s_assign="+j("#s_assign").val()+"&userId="+userId+"&s_activ="+j("#s_activ").val(),
+			  error: function(data) {
+	    		init = data.responseText.indexOf("Exception:")+10;
+	    		fin = data.responseText.substr(init,data.responseText.indexOf("edu.")).indexOf("\n");
+	    		stringFinal = data.responseText.substr(init,fin);
+	    		new Messi("Error: "+stringFinal); j('body').removeClass("loading");
+		        },
+			  success:function(data){
+				  
+				  resultDelivers = "<table class=\"tlevel_2\"><tbody>";
+				  
+				  j.each(data.listDeliverDetails, function(index, value) {
+					  if(value!=null){
+						  resultDelivers += "<tr>";
+						  resultDelivers += "<td><a href=\"#\" class=\"toggle collapsed\" rel=\"a"+userId+"_e"+index+"\"><span class=\"lbl\">"+j(".deliverFile").html()+" "+value.deliverIndex+"</span></a></td>";
+						  // Parse date
+						  arrayDate = value.submissionDate.split("-");
+						  stringday = arrayDate[2].substr(0,arrayDate[2].indexOf("T"));
+						  dateString = stringday+"/"+arrayDate[1]+"/"+arrayDate[0];
+						  
+						  resultDelivers += "<td>"+dateString+"</td>";
+						  totalsum = value.totalPublicTests+value.totalPrivateTests;
+						  resultDelivers += "<td>"+totalsum+"</td>";
+						  resultDelivers += "<td>";
+						  	if(value.compileOK){
+						  		resultDelivers +="<span class=\"ok\"><span class=\"invisible\">Ok</span></span>";
+						  	}else{
+						  		resultDelivers +="<span class=\"ko\"><span class=\"invisible\">Ko</span></span>";
+						  	}
+						  	resultDelivers +="</td>";
+						  	resultDelivers += "<td><div class=\"tests\"><span class=\"ko\">"+value.totalPublicTests+"</span><span class=\"ok\">"+value.passedPublicTests+"</span></div></td>";
+						  	resultDelivers += "<td><div class=\"tests\"><span class=\"ko\">"+value.totalPrivateTests+"</span> <span class=\"ok\">"+value.passedPrivateTests+"</span></div></td>";
+						  	resultDelivers += "</tr>";
+						  	
+						  	resultDelivers += '<tr class="expand-child"><td colspan="6"><div id="a'+userId+'_e'+index+'" class="files_tests"><table class="tlevel_3"><thead>';
+						  	resultDelivers += "<tr>";
+						  	resultDelivers += "<th>"+j(".fileTitle").html()+"</th><th>"+j(".code").html()+"</th><th>"+j(".memori").html()+"</th><th>"+j(".principal").html()+"</th>";
+						  	resultDelivers += "</tr></thead><tbody>";
+						  	
+						  	j.each(value.deliverFiles, function(indexFile, valueFile) {
+						  		resultDelivers += "<tr>";
+						  		resultDelivers += "<td><a href=\"home!down.html?idDelivers="+index+"&idFile="+indexFile+"&s_aula="+j("#s_aula").val()+"&s_assign="+j("#s_assign").val()+"&s_activ="+j("#s_activ").val()+"&userId="+userId+"\">"+valueFile.relativePath+"</a></td>";
+						  		resultDelivers += "<td>";
+						  		if(valueFile.isCode){
+						  			resultDelivers += "<span class=\"check\" title=\"Code\"></span>";
+						  		}
+						  		resultDelivers += "</td>";
+						  		
+						  		resultDelivers += "<td>";
+						  		if(valueFile.isReport){
+						  			resultDelivers += "<span class=\"check\" title=\"Memori\"></span>";
+						  		}
+						  		resultDelivers += "</td>";
+						  		
+						  		resultDelivers += "<td>";
+						  		if(valueFile.isMain){
+						  			resultDelivers += "<span class=\"check\" title=\"principal\"></span>";
+						  		}
+						  		resultDelivers += "</td></tr>";
+						  	});
+						  	resultDelivers += "</tbody></table>";
+						  	
+						  	resultDelivers += "<div class=\"heading\"><span>"+j(".testPublic").html()+"</span></div>";
+						  	if(value.testResults.length >0){
+						  	resultDelivers += "<ul>";
+						  	j.each(value.testResults, function(indexResult, valueResult) {
+						  		if(valueResult.isPublic){
+						  			if(valueResult.isPassed){
+						  				resultDelivers +="<li><a href=\"#\" target=\"_blank\"><span class=\"ok\"></span>"+valueResult.output+"</a></li>";
+						  			}else{
+						  				resultDelivers +="<li><a href=\"#\" target=\"_blank\"><span class=\"ko\"></span>"+valueResult.output+"</a></li>";
+						  			}
+						  		}
+						  	});
+						  	resultDelivers +="</ul>";
+						  	}
+						  	resultDelivers += "<div class=\"heading\"><span>"+j(".testPrivate").html()+"</span></div>";
+						  	if(value.testResults.length >0){
+						  	resultDelivers += "<ul>";
+						  	j.each(value.testResults, function(indexResult, valueResult) {
+						  		if(!valueResult.isPublic){
+						  			if(valueResult.isPassed){
+						  				resultDelivers +="<li><a href=\"#\" target=\"_blank\"><span class=\"ok\"></span>"+valueResult.output+"</a></li>";
+						  			}else{
+						  				resultDelivers +="<li><a href=\"#\" target=\"_blank\"><span class=\"ko\"></span>"+valueResult.output+"</a></li>";
+						  			}
+						  		}
+						  	});
+						  	resultDelivers +="</ul>";
+						  	}
+						  	
+						  	resultDelivers +="</div></td></tr>";
+				  		}
+				  });
+				resultDelivers +="</tbody></table>";
+				  
+				j("#a"+userId).html(resultDelivers);  
+				
+
+				j('a.toggle').prepend('<span class="icon"></span>');
+				j('a.toggle').click(function(ev) {
+					if(j(this).attr("id")!="ajaxDelivers"){
+						ev.preventDefault();
+						j(this).expandCollapseRow(j(this).attr('rel'));
+					}
+				});
+	
+				j('a.collapsed').each(function(){
+					j("#" + j(this).attr('rel')).hide();
+				});
+
+				j('body').removeClass("loading"); 
+			  },
+			  type: "POST"
+			});
+		}
+	}
+});
+
 	
 /* menu*/
 		

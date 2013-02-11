@@ -51,6 +51,7 @@ public class InterceptorLang extends AbstractInterceptor implements Interceptor{
 				String lang = userInformation.getLanguage();
 				System.out.println("IDIOMA USUARIO: "+lang);
 				Map session = ActionContext.getContext().getSession();	
+				
     		  	if(lang.equals("ca")){
     		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("ca"));
     		  		Locale locale = new Locale("ca", "ES");

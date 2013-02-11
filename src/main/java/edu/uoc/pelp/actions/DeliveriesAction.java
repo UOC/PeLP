@@ -56,7 +56,7 @@ import edu.uoc.pelp.exception.PelpException;
     		"s_activ","${s_activ}",
     		"ajaxCall","false"
 	}),
-    @Result(name = "success", location = "jsp/home.jsp")
+    @Result(name = "success", location = "WEB-INF/jsp/home.jsp")
 }) 
 
 public class DeliveriesAction extends ActionSupport {
