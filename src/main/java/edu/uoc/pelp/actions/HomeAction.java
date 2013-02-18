@@ -161,12 +161,32 @@ public class HomeAction extends ActionSupport {
 					//listDeliverDetails = bUOC.getAllClassroomDeliverDetails(objActivity, objClassroom);
 					listDeliverDetails = bUOC.getLastClassroomDeliverDetails(objActivity, objClassroom);
 					
-					if(listDeliverDetails!= null&&listDeliverDetails.length>0)maxDelivers =  String.valueOf(listDeliverDetails[0].getMaxDelivers());
+					if(listDeliverDetails!= null&&listDeliverDetails.length>0){
+						int cont = 0;
+						Boolean exit=false;
+						while(!exit){
+							if(listDeliverDetails[cont] != null){
+								maxDelivers =  String.valueOf(listDeliverDetails[cont].getMaxDelivers());
+								exit=true;
+							}
+							cont++;
+						}
+					}
 					//this.listStudents(listDeliverDetails);
 				}else{
 					listDeliverDetails = bUOC.getUserDeliverDetails(new UOCSubject(
 							infoAssing[0], infoAssing[2]), objActivity.getIndex());	
-					if(listDeliverDetails.length>0&& listDeliverDetails!= null)maxDelivers =  String.valueOf(listDeliverDetails[0].getMaxDelivers());
+					if(listDeliverDetails!= null && listDeliverDetails.length>0){
+						int cont = 0;
+						Boolean exit=false;
+						while(!exit){
+							if(listDeliverDetails[cont] != null){
+								maxDelivers =  String.valueOf(listDeliverDetails[cont].getMaxDelivers());
+								exit=true;
+							}
+							cont++;
+						}
+					}
 				}
 			}
 			imageURL = userInfo.getUserPhoto();
