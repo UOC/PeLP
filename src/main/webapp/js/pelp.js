@@ -331,7 +331,6 @@ j(document).ready(function(){
 		});
 	});
 	
-if(j('#logout').html()){	
 	
 	j('#deliveries_formCall').val(true);
 	j('#deliveries').ajaxForm({
@@ -418,7 +417,7 @@ if(j('#logout').html()){
             }
         }
     });
-}
+
 
 
 /* Llamar ajax para cargar delivers*/

@@ -145,7 +145,7 @@
 		<!-- form_envios -->
 <!-- 		<form action="/" method="POST" id="form_envios"> -->
 		<s:form theme="simple" method="POST" enctype="multipart/form-data" action="deliveries" >
-		<s:hidden key="formCall"></s:hidden>
+		<s:hidden key="formCall" value="true"></s:hidden>
 		<s:hidden name="s_assign"></s:hidden>
 		<s:hidden name="s_activ"></s:hidden>
 		<s:hidden name="s_aula"></s:hidden>

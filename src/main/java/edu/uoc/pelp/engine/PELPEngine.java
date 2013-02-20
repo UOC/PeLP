@@ -164,7 +164,8 @@ public class PELPEngine implements IPELPEngine {
     public Subject[] getActiveSubjects() throws AuthPelpException {
         // Check user authentication
         if(!isUserAuthenticated()) {
-            throw new AuthPelpException("User must be authenticated");
+            //throw new AuthPelpException("User must be authenticated");
+        	return null;
         }
         
         ArrayList<Subject> subjectsList=new ArrayList<Subject>();

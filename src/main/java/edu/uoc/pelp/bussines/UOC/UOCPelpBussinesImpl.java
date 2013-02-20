@@ -907,7 +907,7 @@ public class UOCPelpBussinesImpl extends PelpBussinesImpl implements UOCPelpBuss
                 }
             }
         } catch (AuthPelpException ex) {
-            throw new AuthorizationException(ex.getMessage());
+            //throw new AuthorizationException(ex.getMessage());
         }
         
         return retList;

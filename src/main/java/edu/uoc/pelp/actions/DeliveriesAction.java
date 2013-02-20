@@ -42,7 +42,7 @@ import edu.uoc.pelp.exception.PelpException;
 /**
  * @author jsanchezramos
  */
-@ParentPackage("json-default")
+@ParentPackage(value = "default")
 @Namespace("/")
 @ResultPath(value = "/")
 @Results({
@@ -78,9 +78,9 @@ public class DeliveriesAction extends ActionSupport {
 
 	private int fileDim;
 
-	private UOCSubject[] listSubjects;
-	private UOCClassroom[] listClassroms;
-	private Activity[] listActivity;
+	private UOCSubject[] listSubjects = null;
+	private UOCClassroom[] listClassroms = null;
+	private Activity[] listActivity = null;
 
 	private String s_assign;
 	private String s_aula;
@@ -265,7 +265,7 @@ public class DeliveriesAction extends ActionSupport {
 									objActivity, files);
 							resulMessage = objDetail.getCompileMessage();
 							if (resulMessage.length() == 0)
-								resulMessage = "OK";
+								resulMessage = "OK"; //FIXME MENSAJE COMPILACION Y EL TITULO DE MESSI EN NEGRITA.
 						}
 					}
 
