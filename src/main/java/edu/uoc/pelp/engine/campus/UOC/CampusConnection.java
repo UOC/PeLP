@@ -691,12 +691,13 @@ public class CampusConnection implements ICampusConnection {
     
     private static boolean isTeacher( String[] assignments ){
     	for (String assig : assignments) {
-			if(assig.equalsIgnoreCase( Constants.RESPONSABLE ) || assig.equalsIgnoreCase( Constants.PROFESSOR )){
+			if(assig.equalsIgnoreCase( Constants.RESPONSABLE ) || assig.equalsIgnoreCase( Constants.CREADOR )){
 				return true;
 			}
 		}
     	return false;
     }
+
     
     /**
      * Decodes a String with Numeric Character References.
