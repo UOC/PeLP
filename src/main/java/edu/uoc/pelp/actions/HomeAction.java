@@ -26,14 +26,12 @@ import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.exception.AuthorizationException;
-import edu.uoc.pelp.bussines.exception.InvalidEngineException;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
 import edu.uoc.pelp.bussines.vo.UserInformation;
 import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.engine.campus.UOC.UserID;
-import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.PelpException;
 import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
 
@@ -307,7 +305,7 @@ public class HomeAction extends ActionSupport {
 		LocalCampusConnection _campusConnection = new LocalCampusConnection();
 		_campusConnection.setProfile(username);			  	
 		bUOC.setCampusConnection(_campusConnection);
-		//FIXME A–adur password de usuario para los test campus25 de password.
+		//FIXME Anadir password de usuario para los test campus25 de password.
 		String toReturn = 'r'+SUCCESS;
 
 		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
