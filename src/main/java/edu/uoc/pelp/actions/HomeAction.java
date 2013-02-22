@@ -26,12 +26,14 @@ import edu.uoc.pelp.bussines.UOC.UOCPelpBussines;
 import edu.uoc.pelp.bussines.UOC.vo.UOCClassroom;
 import edu.uoc.pelp.bussines.UOC.vo.UOCSubject;
 import edu.uoc.pelp.bussines.exception.AuthorizationException;
+import edu.uoc.pelp.bussines.exception.InvalidEngineException;
 import edu.uoc.pelp.bussines.vo.Activity;
 import edu.uoc.pelp.bussines.vo.DeliverDetail;
 import edu.uoc.pelp.bussines.vo.DeliverSummary;
 import edu.uoc.pelp.bussines.vo.UserInformation;
 import edu.uoc.pelp.engine.campus.UOC.CampusConnection;
 import edu.uoc.pelp.engine.campus.UOC.UserID;
+import edu.uoc.pelp.exception.ExecPelpException;
 import edu.uoc.pelp.exception.PelpException;
 import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
 
@@ -62,7 +64,15 @@ import edu.uoc.pelp.test.tempClasses.LocalCampusConnection;
 		    "contentDisposition",
 		    "filename=\"${filename}\""
 		}),
-	    @Result(name="rprogramming-environment", type="redirectAction", params = {"actionName" , "home.html?activeTab=programming-environment"})
+	    @Result(name="rprogramming-environment", type="redirectAction", params = {"actionName" , "home.html?activeTab=programming-environment"}),
+		@Result(name="rindex", type="redirectAction", params = 
+		{
+    		"actionName" , "home",
+    		"s_assign","${s_assign}",
+    		"s_aula","${s_aula}",
+    		"s_activ","${s_activ}",
+    		"ajaxCall","true"
+		})
 		
 })
 
@@ -107,6 +117,7 @@ public class HomeAction extends ActionSupport {
 
 	private boolean teacher;
 
+	
 	@Override
 	public String execute() throws Exception {
 
@@ -128,12 +139,20 @@ public class HomeAction extends ActionSupport {
 		UserInformation userInfo = bUOC.getUserInformation();
 		if (userInfo != null) {
 			listSubjects = bUOC.getUserSubjects();
+			if(listSubjects.length>0&&s_assign==null&&s_activ==null)s_assign= listSubjects[0].getSubjectID();
+			
 			if (s_assign != null) {
 				String[] infoAssing = s_assign.split("_");
 				teacher = bUOC.isTeacher(new UOCSubject(infoAssing[0],
 						infoAssing[2]));
 				listClassroms = bUOC.getUserClassrooms(new UOCSubject(
 						infoAssing[0], infoAssing[2]));
+				
+				
+				
+				if (listClassroms.length == 1){
+					s_aula = String.valueOf(listClassroms[0].getIndex());
+				}
 				//FIXME mirar si es codi tercers o domainid el getID(). o getCode
 				
 			}
@@ -141,6 +160,9 @@ public class HomeAction extends ActionSupport {
 				String[] infoAssing = s_assign.split("_");
 				listActivity = bUOC.getSubjectActivities(new UOCSubject(
 						infoAssing[0], infoAssing[2]));
+				if(listActivity.length == 1){
+					s_activ = String.valueOf(listActivity[0].getIndex());
+				}
 			}
 			if (s_aula != null && s_aula.length() > 0 && s_assign != null
 					&& s_activ != null && s_activ.length() > 0) {
@@ -268,7 +290,7 @@ public class HomeAction extends ActionSupport {
 		return "filedown";
 	}
 	
-	public String logout() throws PelpException {
+	public String logout() throws Exception {
 		/*HttpServletRequest request = ServletActionContext.getRequest();
     	request.getSession().setAttribute("authUOC", "close");
     	bUOC.setCampusConnection(new CampusConnection());

@@ -92,21 +92,21 @@
 			<s:hidden key="ajaxCall"></s:hidden>
 				<fieldset>
 					 <select name="s_assign" id="s_assign" disabled="disabled">
-					 	<option value="-1"><s:text name="pelp.assigment"></s:text> </option>
+					 <s:if test="%{!listSubjects}"><option value="-1"><s:text name="pelp.assigment"></s:text> </option></s:if>
 						<s:iterator value="listSubjects" >
 							<s:if test="%{s_assign == SubjectID}"> <option selected="selected" value="<s:property value="SubjectID" />"><s:property value="Description"/></option></s:if> 
 							<s:else> <option value="<s:property value="SubjectID" />"><s:property value="Description"/></option> </s:else> 
 						</s:iterator> 
 					</select>
 					<select name="s_aula" id="s_aula" disabled="disabled">
-						<option value="-1"><s:text name="pelp.classroom"></s:text> </option>
+					<s:if test="%{!listClassroms}"><option value="-1"><s:text name="pelp.classroom"></s:text> </option></s:if>
 						<s:iterator value="listClassroms">
 							<s:if test="%{s_aula == index}"><option selected="selected" value="<s:property value="index" />"><s:text name="pelp.classroom"></s:text> <s:property value="Index" /></option></s:if>
 							<s:else><option value="<s:property value="index" />"><s:text name="pelp.classroom"></s:text> <s:property value="Index" /></option></s:else>
 						</s:iterator>
 					</select>
 					<select name="s_activ" id="s_activ" disabled="disabled">
-						<option value="-1"><s:text name="pelp.activiti"></s:text> </option>
+					<s:if test="%{!listActivity}"><option value="-1"><s:text name="pelp.activiti"></s:text> </option></s:if>
 						<s:iterator value="listActivity" status="statsa">
 							<s:if test="%{s_activ == index}"><option selected="selected" value="<s:property value="index" />"><s:property value="description" /></option></s:if>
 							<s:else><option value="<s:property value="index" />"><s:property value="description" /></option></s:else>

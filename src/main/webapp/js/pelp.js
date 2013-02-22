@@ -204,17 +204,65 @@ j(document).ready(function(){
 		        	}
 		        },
 			  success:function(data){
-				var options = j("#s_aula option")[0].outerHTML
+				
+				var options = "";
 				classrooms = data.listClassroms
 				for (var i = 0; i < classrooms.length; i++) {
 					options += '<option value="' + classrooms[i].index + '">' +j('.textAula').html() +" "+ classrooms[i].index + '</option>';
 				}
 				j('#s_aula').html(options);
+				j('#s_aula').attr('disabled',false);
+				if(classrooms.length == 1){
+						j.ajax({
+							  url: "home!combo.html",
+							  dataType: 'json',
+							  data: "s_assign="+j("#s_assign").val()+"&s_aula="+classrooms[0].index,
+							  error: function(data) {
+						        	if(data.responseText){
+						        		init = data.responseText.indexOf("Exception:")+10;
+						        		fin = data.responseText.substr(init,data.responseText.indexOf("edu.")).indexOf("\n");
+						        		stringFinal = data.responseText.substr(init,fin);
+						        		new Messi("Error: "+stringFinal); j('body').removeClass("loading");
+						        	}else{
+						        		new Messi("Error");
+						        	}
+						        },
+							  success:function(data2){
+								  
+								  var options = "";
+								  
+								classrooms2 = data2.listActivity
+								total = classrooms2.length;
+								for (var a = 0; a < classrooms2.length; a++) {
+									if(a<total){
+										if(classrooms2[a] !== "undefined"){
+											options += '<option value="' + classrooms2[a].index + '">' + classrooms2[a].description + '</option>';	
+										}
+									}
+								}
+								j('#s_activ').html(options);
+								j('#s_activ').attr('disabled',false);
+								if(classrooms2.length == 1){
+									j("#deliveries_s_activ").val(classrooms2[0].index);
+									j('#form_filters').submit();
+								}else{
+									j('#s_activ').html(options);
+									j('#tAlumno').html("");
+									
+								}
+								j('body').removeClass("loading"); 
+							  },
+							  type: "POST"
+							});
+				}else{
+					j('#s_aula').html(options);
+					j('#tAlumno').html("");
+				}
 				j('body').removeClass("loading"); 
 			  },
 			  type: "POST"
 			});
-    	j('#s_aula').attr('disabled',false);
+    	
     });
     
     j('#s_aula').change(function(ev){
@@ -344,7 +392,8 @@ j(document).ready(function(){
 	        	}
         	}        	
         	
-        	if(j('#deliveries_totalDelivers').val()>j('#deliveries_maxDelivers')){
+        	
+        	if(j('#deliveries_totalDelivers').val()>j('#deliveries_maxDelivers')&&j('#chk_entrega').val()!="undefined"){
         		new Messi(j(".koLimit").html());
         		return false;
         	}
@@ -382,7 +431,7 @@ j(document).ready(function(){
                 	
             		j(window).attr("location","home.html?ajaxCall=false"+petitionClassroom);
             	}else if(data.resulMessage=="OK"){
-            		new Messi(j(".okCompile").html());
+            		//new Messi(j(".okCompile").html());
             	}
             	
             }else{
@@ -590,9 +639,9 @@ function doErrorChangingTab(jqXHR, textStatus, errorThrown) {
 function validate_filename(filename){
 	var n=filename.lastIndexOf("\\");
 	var string=filename.substr(n+1,filename.length)		
-	
+	regexString = /[^\u00e1\u00e9\u00ed\u00f3\u00fa\u00c1\u00c9\u00cd\u00d3\u00da\u00f1\u00d1\u00FC\u00DC]+$/;
 	//(/^([a-z]+\..+[a-z]+)$/.test("tesst.uoc"))
-	if (!(/^([a-z]+\..+[a-z]+)$/.test(string))){
+	if (!(regexString.test(string))){
 		  return false;
 	}
 	return true;
