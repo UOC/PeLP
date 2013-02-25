@@ -94,8 +94,8 @@
 					 <select name="s_assign" id="s_assign" disabled="disabled">
 					 <s:if test="%{!listSubjects}"><option value="-1"><s:text name="pelp.assigment"></s:text> </option></s:if>
 						<s:iterator value="listSubjects" >
-							<s:if test="%{s_assign == SubjectID}"> <option selected="selected" value="<s:property value="SubjectID" />"><s:property value="Description"/></option></s:if> 
-							<s:else> <option value="<s:property value="SubjectID" />"><s:property value="Description"/></option> </s:else> 
+							<s:if test="%{s_assign == SubjectID}"> <option selected="selected" value="<s:property value="SubjectID" />"><s:property value="SubjectCode"/> - <s:property value="Description"/></option></s:if> 
+							<s:else> <option value="<s:property value="SubjectID" />"><s:property value="SubjectCode"/> - <s:property value="Description"/></option> </s:else> 
 						</s:iterator> 
 					</select>
 					<select name="s_aula" id="s_aula" disabled="disabled">
