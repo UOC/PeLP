@@ -123,7 +123,7 @@ public class HomeAction extends ActionSupport {
 		HttpServletRequest request = ServletActionContext.getRequest();
     	
     	String token = (String) request.getSession().getAttribute("access_token");
-    	
+    	String toReturn = SUCCESS;
     	if( token != null) {
             WebApplicationContext context =
         			WebApplicationContextUtils.getRequiredWebApplicationContext(
@@ -133,8 +133,33 @@ public class HomeAction extends ActionSupport {
             campusConnection.setCampusSession(token);
             bUOC.setCampusConnection(campusConnection);
     	}
+    	
+    	
+    	UserInformation userInfo = bUOC.getUserInformation();
+    	
+    	if(userInfo!= null){
+			String lang = userInfo.getLanguage();
+			System.out.println("IDIOMA USUARIO: "+lang);
+			Map session = ActionContext.getContext().getSession();	
+		  	if(lang.equals("ca")){
+		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("ca"));
+		  		Locale locale = new Locale("ca", "ES");
+		  		 	session.put("org.apache.tiles.LOCALE", locale);
+		  	}else if(lang.equals("es")){
+		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("es"));
+		  		Locale locale = new Locale("es", "ES");
+		  		 	session.put("org.apache.tiles.LOCALE", locale);
+		  	}else if(lang.equals("en")){
+		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("en"));
+		  		Locale locale = new Locale("en", "UK");
+		  		 	session.put("org.apache.tiles.LOCALE", locale);
+		  	}
+		  	if(!lang.equals(getLocale().getLanguage())){
+		  		toReturn = 'r'+SUCCESS;	
+		  	}
+		}
 		
-		UserInformation userInfo = bUOC.getUserInformation();
+		
 		if (userInfo != null) {
 			listSubjects = bUOC.getUserSubjects();
 			if(listSubjects.length>0&&s_assign==null&&s_activ==null)s_assign= listSubjects[0].getSubjectID();
@@ -146,13 +171,9 @@ public class HomeAction extends ActionSupport {
 				listClassroms = bUOC.getUserClassrooms(new UOCSubject(
 						infoAssing[0], infoAssing[2]));
 				
-				
-				
 				if (listClassroms.length == 1){
 					s_aula = String.valueOf(listClassroms[0].getIndex());
 				}
-				//FIXME mirar si es codi tercers o domainid el getID(). o getCode
-				
 			}
 			if (s_aula != null && s_aula.length() > 0 && s_assign != null) {
 				String[] infoAssing = s_assign.split("_");
@@ -217,7 +238,7 @@ public class HomeAction extends ActionSupport {
 			fullName = null;
 		}
 
-		String toReturn = SUCCESS;
+		
 
 		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
 			toReturn = TAB_PROGRAMMING_ENVIROMENT;
@@ -341,28 +362,8 @@ public class HomeAction extends ActionSupport {
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 		request.getSession().setAttribute("authUOC", "request");
-		
-		if(bUOC != null && bUOC.getUserInformation()!=null){
-			String lang = bUOC.getUserInformation().getLanguage();
-			System.out.println("IDIOMA USUARIO: "+lang);
-			Map session = ActionContext.getContext().getSession();	
-		  	if(lang.equals("ca")){
-		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("ca"));
-		  		Locale locale = new Locale("ca", "ES");
-		  		 	session.put("org.apache.tiles.LOCALE", locale);
-		  	}else if(lang.equals("es")){
-		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("es"));
-		  		Locale locale = new Locale("es", "ES");
-		  		 	session.put("org.apache.tiles.LOCALE", locale);
-		  	}else if(lang.equals("en")){
-		  		session.put("WW_TRANS_I18N_LOCALE",new java.util.Locale("en"));
-		  		Locale locale = new Locale("en", "UK");
-		  		 	session.put("org.apache.tiles.LOCALE", locale);
-		  	}   	
-		}
 
 		String toReturn = 'r'+SUCCESS;
-
 
 		if (TAB_PROGRAMMING_ENVIROMENT.equals(activeTab)) {
 		toReturn = 'r'+TAB_PROGRAMMING_ENVIROMENT;
