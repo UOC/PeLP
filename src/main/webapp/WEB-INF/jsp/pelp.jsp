@@ -31,6 +31,7 @@
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.placeholder.min.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/jquery.tablesorter.min.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/pelp.js"></script>
+	<script src="http://rawgithub.com/ajaxorg/ace-builds/master/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
 

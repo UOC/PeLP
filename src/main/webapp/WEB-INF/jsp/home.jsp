@@ -34,6 +34,13 @@
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/pelp.js"></script>
 	<script type="text/javascript" src="<s:property value="contextPath"/>/js/messi.min.js"></script>
 	<script type="text/javascript" src="http://malsup.github.com/jquery.form.js"></script>
+
+	<link rel="stylesheet" href="<s:property value="contextPath"/>/js/codemirror/lib/codemirror.css">
+    <script src="<s:property value="contextPath"/>/js/codemirror/lib/codemirror.js"></script>
+    <script src="<s:property value="contextPath"/>/js/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="<s:property value="contextPath"/>/js/codemirror/mode/clike/clike.js"></script>
+    <script src="<s:property value="contextPath"/>/js/codemirror/addon/mode/loadmode.js"></script>
+
 	
 </head>
 <body>
@@ -155,7 +162,7 @@
 		<!-- tabs -->
 		<ul class="tabs">  
 			<li><a href="#tab_1"><s:text name="pelp.file.gest"></s:text> </a></li>  
-<%-- 			<li><a href="#tab_2"><s:text name="pelp.text.edit"></s:text> </a></li>    --%>
+			<li><a href="#tab_2"><s:text name="pelp.text.edit"></s:text> </a></li>   
 		</ul> 
 		<!-- /tabs --> 
 
@@ -212,6 +219,22 @@
 					<label for="txt_text" class="hlabel"><s:text name="pelp.add.text"></s:text> </label>
 					<s:textarea name="codePlain" id="txt_text" />
 				</fieldset>
+				<select onchange="selectcode(this)">
+				<option value="text/x-c++src">C++</option>
+				<option selected="selected" value="text/x-java">Java</option>
+				</select>
+				<script>
+				
+			      var editor = CodeMirror.fromTextArea(document.getElementById("txt_text"), {
+			        lineNumbers: true,
+			        matchBrackets: true
+			      });
+			      editor.setOption("mode", "text/x-java");
+			      function selectcode(objcode){
+					editor.setOption("mode", objcode.value);
+					//CodeMirror.autoLoadMode(editor, objcode.value);
+				 }
+			    </script>
 			</div> 
 
 		</div>  
